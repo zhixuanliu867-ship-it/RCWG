@@ -29,3 +29,16 @@ Unresolved items:
 ```
 
 每个环境只填写自己实测的结果。共享前检查账号、路径、IP、密钥与隐藏数据；公共PR可以记录脱敏摘要，私有原始证据另存。后续验收通过时更新本文件与PROJECT_STATE，保留历史状态和时间。
+## 本地验收进展 — 2026-09-19
+
+原始交付状态保留在上表；本节仅追加带日期的进展证据。
+
+| 门禁 | 更新后状态 | 证据 |
+|---|---|---|
+| G1 BOOT 核心 | PASS（用户 WSL / Python 3.12.14） | unittest 43/43；日志 hash 见 PR #1 |
+| G2 本机环境 | 已采集（doctor） | 新 doctor：python 3.12.14；docker/gcloud 仍不可用 |
+| G3 目标容器 | PENDING（延后至首次云部署前） | — |
+| G4 公共仓库 | PR #1 已建立 | 见 PR #1 |
+| G5 云端 | DEFERRED_BY_OWNER | 保留门禁 |
+| G6 API | NOT_EXECUTED | 后续 API 票 |
+| G7 正式门禁 | BLOCKED_NOT_FROZEN | 不变 |
