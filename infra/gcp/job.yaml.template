@@ -1,0 +1,26 @@
+# Render WORKER_SERVICE_ACCOUNT, IMAGE_DIGEST, ARTIFACT_BUCKET manually.
+# Select the approved project with gcloud --project.
+# REGION in the workflow and all regional resources must match.
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: rcwg-boot-smoke
+spec:
+  template:
+    spec:
+      taskCount: 1
+      parallelism: 1
+      template:
+        spec:
+          serviceAccountName: WORKER_SERVICE_ACCOUNT
+          maxRetries: 0
+          timeoutSeconds: '120'
+          containers:
+            - image: IMAGE_DIGEST
+              env:
+                - name: RCWG_ARTIFACT_BUCKET
+                  value: ARTIFACT_BUCKET
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 1Gi

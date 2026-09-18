@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "provider": "mock",
+  "api_requests": 0,
+  "scope": "CONNECTIVITY_ONLY",
+  "actual_cost_usd": 0,
+  "remote_gpu_ns": null,
+  "formal_result": false
+}

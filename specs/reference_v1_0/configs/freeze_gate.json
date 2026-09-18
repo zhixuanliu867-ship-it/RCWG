@@ -1,0 +1,18 @@
+{
+  "required_before_official_run": [
+    "all model revisions and tokenizer/template hashes",
+    "container digest and dependency lock",
+    "hardware inventory and isolation report",
+    "dataset manifest and license review",
+    "tool implementation commit and test report",
+    "prompt hashes and generation adapters",
+    "candidate pool and quality thresholds",
+    "statistical analysis preregistration",
+    "test-gold RBAC and unseal policy"
+  ],
+  "allow_unresolved": false,
+  "allow_latest": false,
+  "network_in_primary_execution": false,
+  "manual_edits_in_primary_results": false,
+  "status": "NOT_FROZEN"
+}

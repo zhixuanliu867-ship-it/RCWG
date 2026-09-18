@@ -1,0 +1,9 @@
+Using TASK and OPERATORS, return a compact logical contract as JSON with fields:
+required_outputs, hard_constraints, necessary_operations, data_dependencies,
+information_requirements, permissible_alternatives, uncertainty.
+Describe externally checkable planning decisions only. Do not output or request
+private chain-of-thought. Do not invent data or hidden optimal-plan labels.
+TASK
+{{task_json}}
+OPERATORS
+{{operator_catalog}}

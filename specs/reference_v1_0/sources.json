@@ -1,0 +1,408 @@
+[
+  {
+    "id": "R01",
+    "title": "Benchmarking Agentic Workflow Generation / WorfBench",
+    "url": "https://arxiv.org/abs/2410.07869",
+    "status": "用户上传 ICLR 2025 全文，25页；任务§2.1、评分§2.4、实验§3–4及附录。全文核对。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R02",
+    "title": "TaskBench: Benchmarking Large Language Models for Task Automation",
+    "url": "https://arxiv.org/abs/2311.18760",
+    "status": "前序讨论保留项；本文不新增其定量结果。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R03",
+    "title": "WorkflowLLM: Enhancing Workflow Orchestration Capability of Large Language Models",
+    "url": "https://arxiv.org/abs/2411.05451",
+    "status": "公开摘要及前序全文分析；与实际运行的 Pass Rate 区分。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R04",
+    "title": "ComfyBench",
+    "url": "https://xxyqwq.github.io/ComfyBench/",
+    "status": "官方项目页；真实运行与需求满足评测。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R05",
+    "title": "Chat2Workflow",
+    "url": "https://arxiv.org/html/2604.19667v2",
+    "status": "公开 v2 原文；27任务、79指令、237测试实例。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R06",
+    "title": "CostBench",
+    "url": "https://arxiv.org/html/2511.02734v3",
+    "status": "公开 v3 原文；工具路径成本，而非旅行商品价格。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R07",
+    "title": "TPS-Bench: Tool Planning and Scheduling",
+    "url": "https://arxiv.org/html/2511.01527",
+    "status": "公开原文及代码；本文保留代码与论文的边界。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R08",
+    "title": "TPS-Bench fixed public repository",
+    "url": "https://github.com/hanwenxu1/mcp-agent/tree/dd95edf02649a32d02b7bdbb35bbd44f3a294029",
+    "status": "静态代码审计；没有宣称已完成论文实验复现。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R09",
+    "title": "PeakBench",
+    "url": "https://arxiv.org/html/2608.24509v1",
+    "status": "公开 v1；依赖恢复和资源受限物理调度。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R10",
+    "title": "CCTU: A Benchmark for Tool Use under Complex Constraints",
+    "url": "https://arxiv.org/abs/2603.15309",
+    "status": "摘要核对；步骤约束验证先例，非本文主实现。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R11",
+    "title": "SemBench: A Benchmark for Semantic Query Processing Engines",
+    "url": "https://arxiv.org/html/2511.01716v2",
+    "status": "公开 v2；避免与其他同名 SemBench 混淆。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R12",
+    "title": "Semantic Operators: A Declarative Model for Rich, AI-based Data Processing / LOTUS",
+    "url": "https://arxiv.org/html/2407.11418",
+    "status": "公开原文；逻辑语义与实现算法区分。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R13",
+    "title": "Palimpzest / Abacus research index",
+    "url": "https://palimpzest.org/research",
+    "status": "官方研究页；复用具体代码前仍需锁定对应论文和仓库提交。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R14",
+    "title": "DocETL: Agentic Query Rewriting and Evaluation for Complex Document Processing",
+    "url": "https://arxiv.org/html/2410.12189v3",
+    "status": "公开 v3；任务、数据与上下文重写。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R15",
+    "title": "MOAR: Multi-Objective Agentic Rewrites for Unstructured Data Processing",
+    "url": "https://arxiv.org/abs/2512.02289",
+    "status": "本轮摘要核对；详细优化器实现不作为已复现事实。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R16",
+    "title": "KramaBench",
+    "url": "https://arxiv.org/html/2506.06541v2",
+    "status": "公开 v2；数据密集型任务、流水线设计与实现。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R17",
+    "title": "BigO(Bench)",
+    "url": "https://arxiv.org/html/2503.15242v2",
+    "status": "公开 v2；复杂度和程序效率相关先例。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R18",
+    "title": "EffiBench-X",
+    "url": "https://arxiv.org/abs/2505.13004",
+    "status": "公开摘要；多语言生成代码效率。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R19",
+    "title": "AFlow: Automating Agentic Workflow Generation",
+    "url": "https://arxiv.org/abs/2410.10762",
+    "status": "公开论文；工作流搜索方法，非主评测协议。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R20",
+    "title": "LLMCompiler",
+    "url": "https://arxiv.org/abs/2312.04511",
+    "status": "公开论文；工具依赖编排相关方法。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R21",
+    "title": "ReWOO",
+    "url": "https://arxiv.org/abs/2305.18323",
+    "status": "公开论文；规划与观察分离。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R22",
+    "title": "ASlib: A Benchmark Library for Algorithm Selection",
+    "url": "https://arxiv.org/abs/1506.02465",
+    "status": "算法选择基础先例。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R23",
+    "title": "Semantic Evaluation for Text-to-SQL with Distilled Test Suites",
+    "url": "https://arxiv.org/abs/2010.02840",
+    "status": "多实例执行验收的思想来源。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R24",
+    "title": "QASPER: A Dataset of Information-Seeking Questions and Answers Anchored in Research Papers",
+    "url": "https://arxiv.org/abs/2105.03011",
+    "status": "NAACL 2021；自然问题、答案和证据。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R25",
+    "title": "QASPER dataset card",
+    "url": "https://huggingface.co/datasets/allenai/qasper",
+    "status": "公开数据卡；许可、字段和版本仍需下载时冻结。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R26",
+    "title": "Fact or Fiction: Verifying Scientific Claims / SciFact",
+    "url": "https://arxiv.org/abs/2004.14974",
+    "status": "科学主张和证据支持/反驳标签；本项目只作离线数据任务。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R27",
+    "title": "SciFact dataset card",
+    "url": "https://huggingface.co/datasets/allenai/scifact",
+    "status": "公开数据卡；未标注文档不自动视为负例。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R28",
+    "title": "FlowBench",
+    "url": "https://arxiv.org/abs/2406.14884",
+    "status": "前序讨论记录；遵循给定流程不等于生成流程。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R29",
+    "title": "AppWorld",
+    "url": "https://arxiv.org/abs/2407.18901",
+    "status": "前序讨论记录；可执行环境近邻。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R30",
+    "title": "tau-bench",
+    "url": "https://arxiv.org/abs/2406.12045",
+    "status": "前序讨论记录；状态验收与重复执行可靠性。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R31",
+    "title": "ComfyFlow",
+    "url": "https://aclanthology.org/2026.findings-acl.140/",
+    "status": "前序讨论记录；本轮不新增其定量结论。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R32",
+    "title": "GNNs as Predictors of Agentic Workflow Performances / FLORA-Bench",
+    "url": "https://arxiv.org/abs/2503.11301",
+    "status": "旁支：性能预测；60万配对不是60万独立工作流。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R33",
+    "title": "JudgeFlow",
+    "url": "https://arxiv.org/abs/2601.07477",
+    "status": "旁支：失败责任诊断与修改。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R34",
+    "title": "CapFlow",
+    "url": "https://arxiv.org/abs/2602.11114",
+    "status": "旁支：跨域工作流生成；不把内部成分屏蔽等同节点执行干预。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R35",
+    "title": "Do We Always Need Query-Level Workflows? / SCALE",
+    "url": "https://aclanthology.org/2026.findings-acl.254/",
+    "status": "旁支：查询级与任务级工作流复用。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R36",
+    "title": "When to use Graphs in RAG",
+    "url": "https://arxiv.org/abs/2506.05690",
+    "status": "最初 GraphRAG 方向讨论记录；不据此证明本项目新颖性。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R37",
+    "title": "RAGSearch",
+    "url": "https://arxiv.org/abs/2604.09666",
+    "status": "历史检索记录；本轮未逐项复核。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R38",
+    "title": "GABench",
+    "url": "https://arxiv.org/abs/2608.01684",
+    "status": "历史检索记录；本轮未逐项复核。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "R39",
+    "title": "AgenticRAG-FP",
+    "url": "https://arxiv.org/abs/2608.20627",
+    "status": "历史检索记录；本轮未逐项复核。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T01",
+    "title": "Qwen3-8B model card",
+    "url": "https://huggingface.co/Qwen/Qwen3-8B",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T02",
+    "title": "Qwen3.5-4B model card",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-4B",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T03",
+    "title": "Qwen3.5-9B model card",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-9B",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T04",
+    "title": "Qwen3.5-27B model card",
+    "url": "https://huggingface.co/Qwen/Qwen3.5-27B",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T05",
+    "title": "Gemma 4 26B A4B instruction model",
+    "url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T06",
+    "title": "Gemma 4 31B instruction model",
+    "url": "https://huggingface.co/google/gemma-4-31B-it",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T07",
+    "title": "Gemma 4 official model card",
+    "url": "https://ai.google.dev/gemma/docs/core/model_card_4",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T08",
+    "title": "vLLM 0.29.0 release",
+    "url": "https://github.com/vllm-project/vllm/releases/tag/v0.29.0",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T09",
+    "title": "vLLM structured outputs",
+    "url": "https://docs.vllm.ai/en/latest/features/structured_outputs/",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T10",
+    "title": "Linux cgroup v2 documentation",
+    "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T11",
+    "title": "OpenTelemetry traces",
+    "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T12",
+    "title": "React Flow documentation",
+    "url": "https://reactflow.dev/learn",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T13",
+    "title": "Apache Arrow Python IPC",
+    "url": "https://arrow.apache.org/docs/python/ipc.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T14",
+    "title": "NVIDIA DCGM feature overview",
+    "url": "https://docs.nvidia.com/datacenter/dcgm/latest/user-guide/feature-overview.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T15",
+    "title": "LangGraph overview",
+    "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T16",
+    "title": "Prefect flows",
+    "url": "https://docs.prefect.io/v3/concepts/flows",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T17",
+    "title": "PyTorch benchmark utilities",
+    "url": "https://docs.pytorch.org/docs/stable/benchmark_utils.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T18",
+    "title": "Python heapq",
+    "url": "https://docs.python.org/3/library/heapq.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  },
+  {
+    "id": "T19",
+    "title": "DuckDB configuration pragmas",
+    "url": "https://duckdb.org/docs/stable/configuration/pragmas.html",
+    "status": "官方文档/模型卡；功能核对不等于本机部署验收。",
+    "access_date": "2026-09-18"
+  }
+]

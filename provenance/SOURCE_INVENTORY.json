@@ -1,0 +1,395 @@
+{
+  "retrieved_on": "2026-09-18",
+  "coverage": "Two selected RCWG source archives; not the entire Library.",
+  "archives": [
+    {
+      "archive_name": "RCWG_Machine_Readable_Specifications.zip",
+      "sha256": "33c10f54dcd8e7b2bedf9dfe4ae004b33016455cad7d1043c88513fe310ec68d",
+      "size_bytes": 21558,
+      "members": [
+        {
+          "path": "spec_bundle/README.md",
+          "size_bytes": 852,
+          "sha256": "1c54cf84242af45d526317fadefbc06e4b20374a7a4c91469482137cf3777732"
+        },
+        {
+          "path": "spec_bundle/catalogs/operators.json",
+          "size_bytes": 9881,
+          "sha256": "1fbe5aedad04f3ab01459d963905d1b20b318f4322703984778f39ccfb4c63c0"
+        },
+        {
+          "path": "spec_bundle/catalogs/task_templates.json",
+          "size_bytes": 22366,
+          "sha256": "92e2ae2c45afa8b15cd1e15177b252f86497773a7efc5bebd49c63b1a5080620"
+        },
+        {
+          "path": "spec_bundle/checks/validate_specs.py",
+          "size_bytes": 1777,
+          "sha256": "6bf26bb6c9cb69bf5250640d8c1d9e62d5ca1dd4c84d9b3f73c6bbc4244969b3"
+        },
+        {
+          "path": "spec_bundle/configs/campaign.json",
+          "size_bytes": 1020,
+          "sha256": "6aae21ad2121a2b53532008ea5581d5b9be045a5f2d433c80e04e3ec7f1bc9e6"
+        },
+        {
+          "path": "spec_bundle/configs/freeze_gate.json",
+          "size_bytes": 623,
+          "sha256": "2a82cc002113ce5b3fc02433a5769ba5a7f697dcbc62bee4247489761843c354"
+        },
+        {
+          "path": "spec_bundle/configs/generation.json",
+          "size_bytes": 667,
+          "sha256": "cd9a4613b1246fe2609f83bb82d0fd27ce1c15118fca7714f05ee6d0351e132b"
+        },
+        {
+          "path": "spec_bundle/configs/hardware.json",
+          "size_bytes": 695,
+          "sha256": "d4f43013abbb56b79098cfe00a88d02ea19a015b8d50fe473a487a6db0716147"
+        },
+        {
+          "path": "spec_bundle/configs/model_source_pins.json",
+          "size_bytes": 419,
+          "sha256": "cccc7ebbd9c3763f356cd3268fc100f0f146ee794b043a0917507dc47ba33743"
+        },
+        {
+          "path": "spec_bundle/configs/models.json",
+          "size_bytes": 2656,
+          "sha256": "7e3c4844ebb458270443195736b95d373e72722668fbf4892ebd969fc43f85bc"
+        },
+        {
+          "path": "spec_bundle/examples/task_input.json",
+          "size_bytes": 1024,
+          "sha256": "162009abc8eb38505481114212ffd072a9d556680099c207e7d9b8ae5d3f603d"
+        },
+        {
+          "path": "spec_bundle/examples/workflow_topk.json",
+          "size_bytes": 2153,
+          "sha256": "3f43833f8ae688ff2860332f3799c629027e1f8d3b351c2f4a2a204c553831bc"
+        },
+        {
+          "path": "spec_bundle/examples/workflow_topk_sort.json",
+          "size_bytes": 2148,
+          "sha256": "9ae708250264a4224bc6527e6ed4e39ffa8117b6a5a19fd7b8bd9b23b32f5475"
+        },
+        {
+          "path": "spec_bundle/prompts/chinese_equivalent.txt",
+          "size_bytes": 556,
+          "sha256": "dad00d29dc9d5cda34ce0603b57d1a85356bbe738d9e191f3ad77f5574bc9db5"
+        },
+        {
+          "path": "spec_bundle/prompts/executor_extract.txt",
+          "size_bytes": 499,
+          "sha256": "d0c497ea2c9e84ba3a2f1b3595d17bbbcfefcddbddf498a14d62afeb6fc1e059"
+        },
+        {
+          "path": "spec_bundle/prompts/p0_user.txt",
+          "size_bytes": 178,
+          "sha256": "4c9a224059c7e9b58e59537e9739904a2a85daed65567426f04d77e7181969ae"
+        },
+        {
+          "path": "spec_bundle/prompts/p1_logical.txt",
+          "size_bytes": 429,
+          "sha256": "9b8bc6666a92b74c3c14134c8827b256986a090980bd61fe1f91525bea9b634d"
+        },
+        {
+          "path": "spec_bundle/prompts/p1_physical.txt",
+          "size_bytes": 338,
+          "sha256": "c75b099fe72906c0efd4bb60e42ac6494e2ed50143d4c1993607df58fc7133b4"
+        },
+        {
+          "path": "spec_bundle/prompts/resource_audit.txt",
+          "size_bytes": 451,
+          "sha256": "b06ebc31cd328f7720972631957d17fcc27fbaf850099e070ba1b9e826b84427"
+        },
+        {
+          "path": "spec_bundle/prompts/system.txt",
+          "size_bytes": 702,
+          "sha256": "1b4203bbc985f6e6c2121acdbfb2bfe653e8bcb6dd3e86c0a0eff01537d59a91"
+        },
+        {
+          "path": "spec_bundle/schemas/artifact.schema.json",
+          "size_bytes": 1148,
+          "sha256": "7bc1e43d1a2b8a5a873fa9131dec741fd89c7b14d50bbf55d29fb2711a877635"
+        },
+        {
+          "path": "spec_bundle/schemas/event.schema.json",
+          "size_bytes": 1079,
+          "sha256": "d797e1133b2d954ac6c84c38f9dc698b3834ae5a7a5119febca43d2b669b51f6"
+        },
+        {
+          "path": "spec_bundle/schemas/evidence.schema.json",
+          "size_bytes": 1432,
+          "sha256": "8606a60c09044c0680b3595df1e0534e592b9c829c315447d44abf4703a3914c"
+        },
+        {
+          "path": "spec_bundle/schemas/workflow.schema.json",
+          "size_bytes": 4734,
+          "sha256": "be8f295c7f3381af4e869e2b7e8b4280d9f9d922c6c4d6d940e6d61ea5d191d9"
+        },
+        {
+          "path": "spec_bundle/sources.json",
+          "size_bytes": 13825,
+          "sha256": "9a243b2291d9ab9134c056855b04d20a2106c2626f0aa80148c2e3447ae14253"
+        }
+      ]
+    },
+    {
+      "archive_name": "RCWG_实验设计书与流程图_v1.1.zip",
+      "sha256": "4bcd29e6e89f0adaf7248afd474bb6deb90f273bf373c61b30c2714367cc3fec",
+      "size_bytes": 17730600,
+      "members": [
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/02_正式实验设计书_流程详解版_v1.1.docx",
+          "size_bytes": 5137363,
+          "sha256": "ff076ce44400c94d364aedd6b1b429dc66f7413e7d93b89151a3d6ad0b68e6dd"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/02_正式实验设计书_流程详解版_v1.1.pdf",
+          "size_bytes": 5639348,
+          "sha256": "7c401adb50b3f82a650a0bde967d93a5485d0228ecd37b448ab638cec4b19fe5"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/03_实验流程图册_v1.1.pdf",
+          "size_bytes": 8178039,
+          "sha256": "241522609e414c06cb075e6b49780a5001a5d99b3cb152baa72ed3bc66b1c3e5"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/DOCUMENT_CHECKS.json",
+          "size_bytes": 264,
+          "sha256": "085fd3f4949cbdd3fde6fdeafbdf17ff0d0656ce548eadfd633723ca1ca26d14"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/README.md",
+          "size_bytes": 1507,
+          "sha256": "c10b66b2928ff1f54b4f5fe123abc7f8bd5be00d83a56b8c50b943365838f6a4"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/REVISION_NOTES.md",
+          "size_bytes": 1455,
+          "sha256": "3cfe9142f247892b9bdd8ef5a64326111ce1ed779ec8e00e80a422a7794edf8c"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/SHA256SUMS.txt",
+          "size_bytes": 4405,
+          "sha256": "3f38a68dccf4d85b98c47ae8cb2ac740bf746fc044c174aa386f3d80a46c8f57"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/INDEX.md",
+          "size_bytes": 19727,
+          "sha256": "2892b16a95cfc0267f8287d8a3a6b7c121708f388109863c0ecb0a198ef8d676"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/figures.json",
+          "size_bytes": 33805,
+          "sha256": "dc1b49a19ffe5fbe88670f6c199764cc8b46630a985f312361afd9a8a52f3f91"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_01.dot",
+          "size_bytes": 1955,
+          "sha256": "afc75fe887bed1632f463f8b04ef782a353bd8438b9d0b57ad62e57a2d33e6db"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_01.svg",
+          "size_bytes": 16296,
+          "sha256": "3ff60bc395d190e9bd8dae565a28c62095222aa420dc7bf91f81e960622537e1"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_02.dot",
+          "size_bytes": 1787,
+          "sha256": "d4fcd0c4f4849b92a731e9c886b448ac4ec093a48b26e9356c26e6259d762f26"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_02.svg",
+          "size_bytes": 12724,
+          "sha256": "e96dcf56a7ddc76524ea380691f7c2a0d51dc4df9208cc52ac77618a01f99249"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_03.dot",
+          "size_bytes": 1441,
+          "sha256": "3991225a3cce07e95c8bfe81eed54bb13ffaf257660fc030fba93dd044c8605e"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_03.svg",
+          "size_bytes": 10288,
+          "sha256": "cce161536ff660f052d37f901378c624b3b46aa7cddf89fd10a70c4be03ccbeb"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_04.dot",
+          "size_bytes": 1534,
+          "sha256": "aa05fc8afe3279c1b008cc5d1655c3cd2accef70cc1486edc8370076fef2e353"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_04.svg",
+          "size_bytes": 11634,
+          "sha256": "0004389a5a4f10375b542382a2901add65d4a936c299700fc53b1aeec9a0b310"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_05.dot",
+          "size_bytes": 1745,
+          "sha256": "d10b86cfb73db8c7b8c12c0f0260cbfa7e936cea9b8627132a13e450c608fc69"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_05.svg",
+          "size_bytes": 14071,
+          "sha256": "ed8391a0ab59d02b3532950504f1de1e4b29d5bc0630d3cf20a9f11790e1266d"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_06.dot",
+          "size_bytes": 2023,
+          "sha256": "dad3fbcaba03b95a195278b911c12c4c16a06c1190c2c1bae9ee77443ea49c0a"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_06.svg",
+          "size_bytes": 15445,
+          "sha256": "d379a604b16193ab8f80a11113f8d7515116a584cb82efcd96c79f9a355ebb4d"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_07.dot",
+          "size_bytes": 1663,
+          "sha256": "1ee0f8075ee4381aba10ab047ad514554c5fe5913ba222b7b7f277dc7f416eaf"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_07.svg",
+          "size_bytes": 12797,
+          "sha256": "008f3afc6a5b846b6f0c7ddab16f5f5d2e8f8feef841e9f16836370895c85804"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_08.dot",
+          "size_bytes": 1570,
+          "sha256": "73f6d51034af24517d427786bad9207af16dfb56c75dda148f4de60d37e8f207"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_08.svg",
+          "size_bytes": 11103,
+          "sha256": "01b94dfa82b907223fed6febc23232ee49a00050445aa6de935c29f5ed151143"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_09.dot",
+          "size_bytes": 1534,
+          "sha256": "2f59abbb7f34e5bdc24fa8baaf1fab93dcecff09479fc92c55512084aab99e1b"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_09.svg",
+          "size_bytes": 12166,
+          "sha256": "7777f81210e8b14563a0cad4772951ec19edd02c7f4c3ab957a0553bca21d874"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_10.dot",
+          "size_bytes": 1753,
+          "sha256": "91b9c9ec3d0dd604cc06fc926f85ed5f351976bed994cac66252a47c304c74ca"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_10.svg",
+          "size_bytes": 13673,
+          "sha256": "95c4a990488185513cba24a92ad3a6198ab197e216a21c57f788ec29504c32c6"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_11.dot",
+          "size_bytes": 1806,
+          "sha256": "db8e31aec2238a51c3fcb163979349b76c0b5332fa3dff78fba46ef3044a343e"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_11.svg",
+          "size_bytes": 14196,
+          "sha256": "d16e083fd18f0abf2ba32268106741c5383b2ee6a35338361b464f9718fa2873"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_12.dot",
+          "size_bytes": 1850,
+          "sha256": "56cc640bfccfcee2b353f2ffb48ec2b49403b41cd98d80f99995ed890e4c0439"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_12.svg",
+          "size_bytes": 14770,
+          "sha256": "d946e18b8df18df7071bddc115432538cfa719ec4237b178880ff24080f88ccc"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_13.dot",
+          "size_bytes": 1527,
+          "sha256": "5baf2549ea1633925c6c82b87e86fcab3f24129b6198b22937225b1297cb49e7"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_13.svg",
+          "size_bytes": 10817,
+          "sha256": "a112687295311cea36692c3f14631cf4978e25b522eb258d498d8df394c36de7"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_14.dot",
+          "size_bytes": 1344,
+          "sha256": "21d30bd2c63bab321fc057f4546fab9d21b9e5b8896ae08037829d098bb8f985"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_14.svg",
+          "size_bytes": 10116,
+          "sha256": "41663936de6d121bc63a732c855ce1f2066dbf781648e151482d60af31bc4fcd"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_15.dot",
+          "size_bytes": 1849,
+          "sha256": "cb5a2f52769a89e76f51bbb4fb759b790c7d1ff947840c3ca3e3657cdc8def1c"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_15.svg",
+          "size_bytes": 15706,
+          "sha256": "0f2847029eaf364dfa5aa9621ba2cf695c3ec35c5750629fc7c71520bd68dcb8"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_16.dot",
+          "size_bytes": 1827,
+          "sha256": "7137853da7ee0edd016b8a1fa50923b5172911293ca2ca9665b6473838ac98df"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/diagrams/flow_16.svg",
+          "size_bytes": 15770,
+          "sha256": "58e3a5162b87520bad360715a9c6b16b62742a63066cdd210a36cdc306dad66f"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/editable/02_Formal_Experimental_Design_v1.1.md",
+          "size_bytes": 106653,
+          "sha256": "12d1c18b83fcab31caa622a620be446320f165911e065a11440486f7e848a7ec"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/README.md",
+          "size_bytes": 501,
+          "sha256": "7205c13183fa68bb3d86ed467c9e7864f3bd17223ac33ff9426a70b59229d647"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/chinese_equivalent.txt",
+          "size_bytes": 638,
+          "sha256": "422c6c4f1203eaa527fbc336af18a3ef899a9da942eced83b532e65ff791aefd"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/executor_extract.txt",
+          "size_bytes": 559,
+          "sha256": "5dd73385eed76294f6ea5cb0408dd61cee8880e4fe108ee92e68c9e46d327e16"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/p0_user.txt",
+          "size_bytes": 178,
+          "sha256": "4c9a224059c7e9b58e59537e9739904a2a85daed65567426f04d77e7181969ae"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/p1_logical.txt",
+          "size_bytes": 436,
+          "sha256": "d5bb848521b1fa8e459356d658d80fc420eb9472d955f8839c3fa2c7424d204c"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/p1_physical.txt",
+          "size_bytes": 427,
+          "sha256": "08babbb6f0bc791fffa346ef27ad72abec64f5fa2972c92bc9f8ab975d27f734"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/resource_audit.txt",
+          "size_bytes": 466,
+          "sha256": "023b2d7dcd1a3d508bcce2355d89e3b8270c6aa87922090a69f96102d8e28673"
+        },
+        {
+          "path": "RCWG_实验设计书_流程详解版_v1.1/prompts_v1.1/system.txt",
+          "size_bytes": 864,
+          "sha256": "3ec629e8f505c02fb1428e719525103c9737b7cc48bf2240eaa9a7215c2ff8a4"
+        }
+      ]
+    }
+  ]
+}

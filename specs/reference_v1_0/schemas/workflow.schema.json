@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rcwg:workflow:1.0",
+  "title": "RCWG WorkIR 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ir_version",
+    "task_id",
+    "external_inputs",
+    "nodes",
+    "result"
+  ],
+  "properties": {
+    "ir_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "external_inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "minItems": 1,
+      "maxItems": 48
+    },
+    "result": {
+      "type": "string"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_node_instances": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "max_loop_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "operator",
+        "implementation",
+        "inputs",
+        "params",
+        "outputs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,47}$"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "scan",
+            "filter",
+            "project",
+            "join",
+            "aggregate",
+            "deduplicate",
+            "sort",
+            "top_k",
+            "set_op",
+            "graph_neighbors",
+            "graph_reachability",
+            "graph_shortest_path",
+            "graph_filter",
+            "graph_subgraph",
+            "read_documents",
+            "text_retrieve",
+            "split_documents",
+            "gather_context",
+            "semantic_extract",
+            "evidence_merge",
+            "evidence_validate",
+            "materialize",
+            "stream_read",
+            "broadcast",
+            "release",
+            "cache",
+            "map",
+            "branch",
+            "loop",
+            "collect",
+            "emit",
+            "stats"
+          ]
+        },
+        "implementation": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "params": {
+          "type": "object"
+        },
+        "outputs": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "after": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "resources": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cpu_slots": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "max_parallelism": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "batch_rows": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            }
+          }
+        },
+        "storage": {
+          "enum": [
+            "stream",
+            "memory",
+            "disk",
+            "shared_ref"
+          ]
+        },
+        "regions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "body": {
+              "$ref": "#/$defs/region"
+            },
+            "then": {
+              "$ref": "#/$defs/region"
+            },
+            "else": {
+              "$ref": "#/$defs/region"
+            }
+          }
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bindings",
+        "nodes",
+        "yield"
+      ],
+      "properties": {
+        "bindings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "maxItems": 48
+        },
+        "yield": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

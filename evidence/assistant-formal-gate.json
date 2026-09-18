@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED_NOT_FROZEN",
+  "reference_files_verified": 33,
+  "operators": 32,
+  "templates": 72,
+  "formal_generation_attempts": 23040,
+  "formal_core_execution_attempts_upper_bound": 61440,
+  "full_jsonschema_validation": "SEPARATE_REFERENCE_CHECK",
+  "formal_ready": false,
+  "formal_blockers": [
+    "USER_WSL_DOCTOR",
+    "PYTHON_3_12_TARGET_TEST",
+    "TARGET_CONTAINER_DIGEST",
+    "GCP_PROJECT_AND_BILLING",
+    "DEPLOYMENT_REGION_APPROVAL",
+    "LIVE_CLOUD_SMOKE",
+    "API_PROVIDER_MODEL_AND_PRICE",
+    "LIVE_API_PROBE",
+    "API_PROTOCOL_AMENDMENT",
+    "FORMAL_EXECUTOR_AND_METROLOGY"
+  ]
+}

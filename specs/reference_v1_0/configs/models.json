@@ -1,0 +1,96 @@
+{
+  "status": "DESIGN_NOT_HARDWARE_VALIDATED",
+  "vllm_candidate_version": "0.29.0",
+  "max_model_len": 32768,
+  "generators": [
+    {
+      "id": "G0",
+      "model_id": "Qwen/Qwen3-8B",
+      "estimated_total_parameters_b": 8,
+      "tensor_parallel_size": 1,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    },
+    {
+      "id": "G1",
+      "model_id": "Qwen/Qwen3.5-4B",
+      "estimated_total_parameters_b": 4,
+      "tensor_parallel_size": 1,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    },
+    {
+      "id": "G2",
+      "model_id": "Qwen/Qwen3.5-9B",
+      "estimated_total_parameters_b": 9,
+      "tensor_parallel_size": 1,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    },
+    {
+      "id": "G3",
+      "model_id": "Qwen/Qwen3.5-27B",
+      "estimated_total_parameters_b": 27,
+      "tensor_parallel_size": 2,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    },
+    {
+      "id": "G4",
+      "model_id": "google/gemma-4-26B-A4B-it",
+      "estimated_total_parameters_b": 25.2,
+      "tensor_parallel_size": 2,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    },
+    {
+      "id": "G5",
+      "model_id": "google/gemma-4-31B-it",
+      "estimated_total_parameters_b": 31,
+      "tensor_parallel_size": 2,
+      "dtype": "bfloat16",
+      "quantization": null,
+      "revision": "UNRESOLVED",
+      "tokenizer_revision": "UNRESOLVED",
+      "chat_template_sha256": "UNRESOLVED",
+      "role": "generator",
+      "thinking_enabled": true
+    }
+  ],
+  "executor": {
+    "id": "E0",
+    "model_id": "Qwen/Qwen3.5-9B",
+    "revision": "UNRESOLVED",
+    "dtype": "bfloat16",
+    "thinking_enabled": false,
+    "temperature": 0,
+    "max_input_tokens": 12288,
+    "max_output_tokens": 2048,
+    "max_num_seqs": 1
+  }
+}

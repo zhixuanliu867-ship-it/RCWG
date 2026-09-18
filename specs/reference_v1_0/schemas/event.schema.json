@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event",
+    "run_id",
+    "monotonic_ns",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "event": {
+      "enum": [
+        "run_started",
+        "node_ready",
+        "node_started",
+        "artifact_created",
+        "artifact_read",
+        "artifact_released",
+        "node_finished",
+        "run_finished",
+        "verification_finished"
+      ]
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "node_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "monotonic_ns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "object"
+    },
+    "artifacts_in": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifacts_out": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

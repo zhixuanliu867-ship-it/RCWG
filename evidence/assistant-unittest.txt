@@ -1,0 +1,69 @@
+test_bad_json_output (test_core.Api.test_bad_json_output) ... ok
+test_cloud_live_probe_blocked (test_core.Api.test_cloud_live_probe_blocked) ... ok
+test_dashscope_one_request (test_core.Api.test_dashscope_one_request) ... ok
+test_exact_boolean_required (test_core.Api.test_exact_boolean_required) ... ok
+test_failure_not_refunded_or_retried (test_core.Api.test_failure_not_refunded_or_retried) ... ok
+test_gemini_one_request (test_core.Api.test_gemini_one_request) ... ok
+test_malformed_response_recorded (test_core.Api.test_malformed_response_recorded) ... ok
+test_missing_key_blocked_before_reserving (test_core.Api.test_missing_key_blocked_before_reserving) ... ok
+test_mock_no_network (test_core.Api.test_mock_no_network) ... ok
+test_paid_requires_opt_in (test_core.Api.test_paid_requires_opt_in) ... ok
+test_concurrent_admission_is_bounded (test_core.Budget.test_concurrent_admission_is_bounded) ... /mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7229a0310>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7229a05e0>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7229a3f10>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7226a14e0>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd722b03c40>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7226a1b70>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG-BOOT-001/rcwg_boot/budget.py:14: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd7226a1d50>
+  if not amount.is_finite() or amount <= 0 or amount > Decimal("0.20"):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_five_calls_then_blocked (test_core.Budget.test_five_calls_then_blocked) ... ok
+test_invalid_reservations (test_core.Budget.test_invalid_reservations) ... ok
+test_restart_preserves_gate (test_core.Budget.test_restart_preserves_gate) ... ok
+test_local_cloud_entry_blocked (test_core.Cloud.test_local_cloud_entry_blocked) ... ok
+test_missing_config_no_network (test_core.Cloud.test_missing_config_no_network) ... ok
+test_storage_upload_mocked (test_core.Cloud.test_storage_upload_mocked) ... ok
+test_bad_endpoint (test_core.Endpoints.test_bad_endpoint) ... ok
+test_bad_model_id (test_core.Endpoints.test_bad_model_id) ... ok
+test_gemini_endpoint (test_core.Endpoints.test_gemini_endpoint) ... ok
+test_legacy_endpoint (test_core.Endpoints.test_legacy_endpoint) ... ok
+test_redirect_denied (test_core.Endpoints.test_redirect_denied) ... ok
+test_workspace_endpoint (test_core.Endpoints.test_workspace_endpoint) ... ok
+test_boot_integrity (test_core.Environment.test_boot_integrity) ... ok
+test_changed_safety_config_blocked (test_core.Environment.test_changed_safety_config_blocked) ... ok
+test_formal_gate_blocked (test_core.Environment.test_formal_gate_blocked) ... ok
+test_reference_tampering_blocked (test_core.Environment.test_reference_tampering_blocked) ... ok
+test_report_sanitized (test_core.Environment.test_report_sanitized) ... ok
+test_canonical_order (test_core.Serialization.test_canonical_order) ... ok
+test_evidence_not_overwritten (test_core.Serialization.test_evidence_not_overwritten) ... ok
+test_nonfinite_rejected (test_core.Serialization.test_nonfinite_rejected) ... ok
+test_bool_k_rejected (test_core.Smoke.test_bool_k_rejected) ... ok
+test_empty (test_core.Smoke.test_empty) ... ok
+test_filter_before_topk (test_core.Smoke.test_filter_before_topk) ... ok
+test_fixed_expected (test_core.Smoke.test_fixed_expected) ... ok
+test_fixture_hash_stable_across_attempts (test_core.Smoke.test_fixture_hash_stable_across_attempts) ... ok
+test_k_large (test_core.Smoke.test_k_large) ... ok
+test_k_zero (test_core.Smoke.test_k_zero) ... ok
+test_multiple_small_inputs (test_core.Smoke.test_multiple_small_inputs) ... ok
+test_negative_k (test_core.Smoke.test_negative_k) ... ok
+test_no_mutation (test_core.Smoke.test_no_mutation) ... ok
+test_tie_break (test_core.Smoke.test_tie_break) ... ok
+test_verifier_detects_change (test_core.Smoke.test_verifier_detects_change) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.042s
+
+OK

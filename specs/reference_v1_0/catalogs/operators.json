@@ -1,0 +1,431 @@
+[
+  {
+    "operator": "scan",
+    "input_type": "Table",
+    "output_type": "Stream[Record]",
+    "implementations": [
+      "sequential",
+      "index_range"
+    ],
+    "semantics": "源表、访问路径与索引版本固定；不自动下推新谓词。",
+    "parameter_fields": [
+      "source",
+      "columns",
+      "predicate"
+    ]
+  },
+  {
+    "operator": "filter",
+    "input_type": "Stream[Record]",
+    "output_type": "Stream[Record]",
+    "implementations": [
+      "vectorized",
+      "scalar"
+    ],
+    "semantics": "确定性谓词AST，空值按三值逻辑；false与unknown不混为同一语义标签。",
+    "parameter_fields": [
+      "predicate"
+    ]
+  },
+  {
+    "operator": "project",
+    "input_type": "Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "column_view",
+      "copy"
+    ],
+    "semantics": "输出列类型保留；view的对象存活和后续读取计费。",
+    "parameter_fields": [
+      "columns"
+    ]
+  },
+  {
+    "operator": "join",
+    "input_type": "Table|Stream,Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "hash",
+      "sort_merge",
+      "block_nested"
+    ],
+    "semantics": "null/重复键/外连接语义固定；禁止暗中换算法。",
+    "parameter_fields": [
+      "keys",
+      "join_type",
+      "build_side"
+    ]
+  },
+  {
+    "operator": "aggregate",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "hash_group",
+      "sorted_group"
+    ],
+    "semantics": "聚合函数和空值、浮点容差在任务契约声明。",
+    "parameter_fields": [
+      "group_by",
+      "aggregates"
+    ]
+  },
+  {
+    "operator": "deduplicate",
+    "input_type": "Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "hash",
+      "sort_unique"
+    ],
+    "semantics": "保留规则确定；不得通过漏读去重。",
+    "parameter_fields": [
+      "keys",
+      "keep"
+    ]
+  },
+  {
+    "operator": "sort",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "in_memory",
+      "external_merge"
+    ],
+    "semantics": "外排的临时文件和I/O计费。",
+    "parameter_fields": [
+      "keys"
+    ]
+  },
+  {
+    "operator": "top_k",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "full_sort",
+      "streaming_heap"
+    ],
+    "semantics": "精确top-k；并列规则明确，近似检索另设算子。",
+    "parameter_fields": [
+      "k",
+      "keys"
+    ]
+  },
+  {
+    "operator": "set_op",
+    "input_type": "Set,Set",
+    "output_type": "Set",
+    "implementations": [
+      "hash",
+      "sorted_merge"
+    ],
+    "semantics": "union/intersection/difference；重复和顺序契约独立。",
+    "parameter_fields": [
+      "mode"
+    ]
+  },
+  {
+    "operator": "graph_neighbors",
+    "input_type": "Graph,NodeSet",
+    "output_type": "EdgeStream",
+    "implementations": [
+      "csr",
+      "indexed_adjacency"
+    ],
+    "semantics": "方向、关系类型和时间过滤不能省略。",
+    "parameter_fields": [
+      "direction",
+      "edge_types"
+    ]
+  },
+  {
+    "operator": "graph_reachability",
+    "input_type": "Graph,NodeSet",
+    "output_type": "NodeSet",
+    "implementations": [
+      "bfs",
+      "dfs"
+    ],
+    "semantics": "本节点只回答可达性；DFS不得伪称最短跳数。",
+    "parameter_fields": [
+      "max_hops",
+      "direction"
+    ]
+  },
+  {
+    "operator": "graph_shortest_path",
+    "input_type": "Graph,NodeSet",
+    "output_type": "PathSet",
+    "implementations": [
+      "bfs",
+      "dijkstra"
+    ],
+    "semantics": "BFS仅合法于等权目标；Dijkstra需非负权。",
+    "parameter_fields": [
+      "target",
+      "weight_field"
+    ]
+  },
+  {
+    "operator": "graph_filter",
+    "input_type": "Graph",
+    "output_type": "GraphView",
+    "implementations": [
+      "edge_mask",
+      "index_filter"
+    ],
+    "semantics": "只提供视图，扫描与物化何时发生均有日志。",
+    "parameter_fields": [
+      "predicate"
+    ]
+  },
+  {
+    "operator": "graph_subgraph",
+    "input_type": "Graph,NodeSet",
+    "output_type": "Graph",
+    "implementations": [
+      "induced",
+      "edge_selected"
+    ],
+    "semantics": "两种子图语义不混用。",
+    "parameter_fields": [
+      "mode"
+    ]
+  },
+  {
+    "operator": "read_documents",
+    "input_type": "DocumentIndex,IDSet",
+    "output_type": "DocumentStream",
+    "implementations": [
+      "batched",
+      "per_document"
+    ],
+    "semantics": "读正文时才计实际读取；元数据不能包含隐藏答案。",
+    "parameter_fields": [
+      "fields",
+      "batch_size"
+    ]
+  },
+  {
+    "operator": "text_retrieve",
+    "input_type": "DocumentIndex",
+    "output_type": "RankedIDSet",
+    "implementations": [
+      "bm25",
+      "dense_fixed"
+    ],
+    "semantics": "近似候选不具有全集召回保证；exact任务不得盲目信任。",
+    "parameter_fields": [
+      "query",
+      "limit"
+    ]
+  },
+  {
+    "operator": "split_documents",
+    "input_type": "DocumentStream",
+    "output_type": "ChunkStream",
+    "implementations": [
+      "section",
+      "token_window"
+    ],
+    "semantics": "边界和span映射保留，空段规则固定。",
+    "parameter_fields": [
+      "size",
+      "overlap"
+    ]
+  },
+  {
+    "operator": "gather_context",
+    "input_type": "ChunkStream",
+    "output_type": "ChunkStream",
+    "implementations": [
+      "neighbors",
+      "section_header"
+    ],
+    "semantics": "额外上下文读取计费，不能调用隐藏证据定位器。",
+    "parameter_fields": [
+      "window"
+    ]
+  },
+  {
+    "operator": "semantic_extract",
+    "input_type": "DocumentStream|ChunkStream",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "fixed_e0"
+    ],
+    "semantics": "固定E0、模板和解码，输出true/false/unknown或带证据字段。",
+    "parameter_fields": [
+      "field_schema",
+      "context_budget"
+    ]
+  },
+  {
+    "operator": "evidence_merge",
+    "input_type": "EvidenceTable",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "by_entity",
+      "by_document"
+    ],
+    "semantics": "冲突不能随意取第一条；证据来源保留。",
+    "parameter_fields": [
+      "keys",
+      "conflict_policy"
+    ]
+  },
+  {
+    "operator": "evidence_validate",
+    "input_type": "EvidenceTable,DocumentIndex",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "span_check"
+    ],
+    "semantics": "只验证引用和公开规则，不访问gold。",
+    "parameter_fields": [
+      "strict"
+    ]
+  },
+  {
+    "operator": "materialize",
+    "input_type": "Stream",
+    "output_type": "Table",
+    "implementations": [
+      "memory",
+      "disk"
+    ],
+    "semantics": "明确物化，持久对象按生命周期收费。",
+    "parameter_fields": [
+      "format"
+    ]
+  },
+  {
+    "operator": "stream_read",
+    "input_type": "ArtifactRef",
+    "output_type": "Stream",
+    "implementations": [
+      "arrow_batches"
+    ],
+    "semantics": "所有读取走计量代理。",
+    "parameter_fields": [
+      "batch_size"
+    ]
+  },
+  {
+    "operator": "broadcast",
+    "input_type": "ArtifactRef",
+    "output_type": "ArtifactRef[]",
+    "implementations": [
+      "shared_ref",
+      "copy_each"
+    ],
+    "semantics": "零复制只降低实际复制，不能抹去后续读取。",
+    "parameter_fields": [
+      "consumers"
+    ]
+  },
+  {
+    "operator": "release",
+    "input_type": "ArtifactRef",
+    "output_type": "ControlToken",
+    "implementations": [
+      "explicit"
+    ],
+    "semantics": "禁止释放仍被下游使用的共享对象。",
+    "parameter_fields": [
+      "artifact"
+    ]
+  },
+  {
+    "operator": "cache",
+    "input_type": "ArtifactRef",
+    "output_type": "ArtifactRef",
+    "implementations": [
+      "memory",
+      "disk"
+    ],
+    "semantics": "只允许同次运行内合法复用；跨运行缓存主轨关闭。",
+    "parameter_fields": [
+      "key_fields"
+    ]
+  },
+  {
+    "operator": "map",
+    "input_type": "Stream",
+    "output_type": "Stream",
+    "implementations": [
+      "bounded_map"
+    ],
+    "semantics": "有限输入，实例数上限；批次日志。",
+    "parameter_fields": [
+      "subworkflow",
+      "max_concurrency"
+    ]
+  },
+  {
+    "operator": "branch",
+    "input_type": "Scalar",
+    "output_type": "Choice",
+    "implementations": [
+      "predicate_branch"
+    ],
+    "semantics": "只执行所选分支；选择是公开状态的函数。",
+    "parameter_fields": [
+      "predicate",
+      "then",
+      "else"
+    ]
+  },
+  {
+    "operator": "loop",
+    "input_type": "State",
+    "output_type": "State",
+    "implementations": [
+      "bounded_loop"
+    ],
+    "semantics": "显式状态与最大次数；到达上限不是成功。",
+    "parameter_fields": [
+      "body",
+      "condition",
+      "max_iterations"
+    ]
+  },
+  {
+    "operator": "collect",
+    "input_type": "Stream",
+    "output_type": "Table",
+    "implementations": [
+      "bounded_collect"
+    ],
+    "semantics": "截断需任务允许；不可用limit伪造精确查询。",
+    "parameter_fields": [
+      "limit"
+    ]
+  },
+  {
+    "operator": "emit",
+    "input_type": "Table|EvidenceTable|PathSet",
+    "output_type": "Result",
+    "implementations": [
+      "json_artifact"
+    ],
+    "semantics": "最终结果必须artifact化，不能只返回完成叙述。",
+    "parameter_fields": [
+      "output_contract"
+    ]
+  },
+  {
+    "operator": "stats",
+    "input_type": "DatasetRef",
+    "output_type": "Stats",
+    "implementations": [
+      "metadata",
+      "sample"
+    ],
+    "semantics": "只在探测轨可在生成阶段调用，成本计入。",
+    "parameter_fields": [
+      "fields",
+      "sample_size"
+    ]
+  }
+]

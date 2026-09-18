@@ -1,0 +1,28 @@
+name: RCWG bootstrap acceptance
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Standard-library unit tests, no credentials or live requests
+        run: python -m unittest discover -s tests -v
+      - name: Reference integrity and safe config
+        run: python -m rcwg_boot check
+      - name: Mock execution
+        run: python -m rcwg_boot smoke
+      - name: Formal gate must stay closed
+        run: |
+          set +e
+          python -m rcwg_boot check --formal
+          status=$?
+          test "$status" -eq 2

@@ -1,0 +1,20 @@
+{
+  "parser": "PyYAML 6.0.3",
+  "results": [
+    {
+      "file": "infra/gcp/workflow.yaml",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    },
+    {
+      "file": "infra/gcp/job.yaml.template",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    }
+  ]
+}
