@@ -1,0 +1,127 @@
+{
+  "ticket": "RCWG-BOOT-001",
+  "timestamp_utc": "2026-09-18T13:26:14.414212+00:00",
+  "environment": "ASSISTANT_SANDBOX_NOT_USER_WSL",
+  "python": "3.13.5",
+  "system": "Linux",
+  "core_runtime_dependencies": [],
+  "unit_tests": 43,
+  "unit_tests_passed": 43,
+  "reference_validation_library": "jsonschema 4.26.0",
+  "commands": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "pass": true,
+      "evidence": "evidence/assistant-unittest.txt"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "rcwg_boot",
+        "check"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "pass": true,
+      "evidence": "evidence/assistant-check.json"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "rcwg_boot",
+        "check",
+        "--formal"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "pass": true,
+      "evidence": "evidence/assistant-formal-gate.json"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "specs/reference_v1_0/checks/validate_specs.py"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "pass": true,
+      "evidence": "evidence/assistant-reference-schema.txt"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "rcwg_boot",
+        "scripts",
+        "tests"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "pass": true,
+      "evidence": "evidence/assistant-compile.txt"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--offline",
+        "--frozen",
+        "--python",
+        "/usr/bin/python3.13",
+        "python",
+        "-m",
+        "rcwg_boot",
+        "check"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "pass": true,
+      "evidence": "evidence/assistant-uv-lock.txt"
+    }
+  ],
+  "yaml": [
+    {
+      "file": "infra/gcp/workflow.yaml",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    },
+    {
+      "file": "infra/gcp/job.yaml.template",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "status": "YAML_PARSE_PASS",
+      "semantic_cloud_validation": "NOT_EXECUTED"
+    }
+  ],
+  "stable_smoke_output_sha256": "0652656dc4a2676f40a4f58b8b3c969a994b3d26879b017240a995430f8405e9",
+  "cloud_live_tests": false,
+  "model_api_live_requests": 0,
+  "user_wsl_tested": false,
+  "target_python_3_12_tested": false,
+  "container_build_executed": false,
+  "github_write_result": "403 Resource not accessible by integration; no remote write performed",
+  "observed_remote_main_sha": "6337ff75c16ebd014bf9be7210402b8741caad0a",
+  "notes": [
+    "Core uv lock generated offline with zero third-party dependencies.",
+    "GitHub was read through the connected tool. Container git clone failed on DNS resolution.",
+    "Docker and Python 3.12 were unavailable in the assistant runtime.",
+    "No cloud resources were created and no model API was invoked."
+  ]
+}

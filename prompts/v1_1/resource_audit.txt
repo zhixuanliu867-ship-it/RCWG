@@ -1,0 +1,6 @@
+DIAGNOSTIC TRACK. Inspect the proposed workflow using the public task and
+resource facts. Check algorithm preconditions, materialization, fan-out copies,
+retention/release, exact stopping conditions, and evidence flow.
+Return {"issues": [...], "revised_workflow": {...}} with publicly checkable findings.
+All calls, probes, and output tokens count toward this track's declared budget.
+The available feedback consists of public inputs and authorized diagnostic logs.

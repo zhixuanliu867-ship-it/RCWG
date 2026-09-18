@@ -1,0 +1,8 @@
+[project]
+name = "rcwg-boot"
+version = "0.1.0"
+description = "RCWG-BOOT-001: dependency-free environment and transport acceptance tools"
+requires-python = ">=3.12,<3.14"
+dependencies = []
+[tool.uv]
+package = false

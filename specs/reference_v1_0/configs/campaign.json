@@ -1,0 +1,47 @@
+{
+  "campaign_id": "RCWG-1.0",
+  "phase": "SPECIFICATION",
+  "date": "2026-09-18",
+  "dataset": {
+    "families": 6,
+    "dev_templates": 24,
+    "test_templates": 48,
+    "instances_per_template": 5,
+    "conditions_per_instance": 4,
+    "dev_cases": 480,
+    "test_cases": 960
+  },
+  "core_models": 6,
+  "protocols": [
+    "P0",
+    "P1"
+  ],
+  "generation_seeds": [
+    17,
+    29
+  ],
+  "execution_repeats": {
+    "deterministic": 3,
+    "semantic": 2
+  },
+  "expected_counts": {
+    "generation_attempts": 23040,
+    "deterministic_execution_attempts": 46080,
+    "semantic_execution_attempts": 15360,
+    "total_execution_attempts": 61440
+  },
+  "primary_metrics": [
+    "success_at_budget",
+    "efficient_success_eps_0.20"
+  ],
+  "eps_sensitivity": [
+    0.1,
+    0.5
+  ],
+  "bootstrap_clusters": "template_id",
+  "bootstrap_draws": 10000,
+  "hardware_profile": "UNRESOLVED",
+  "dataset_manifest_sha256": "UNRESOLVED",
+  "test_unseal_after": "ALL_CORE_RUNS_SEALED",
+  "official_run_blocked_until_frozen": true
+}

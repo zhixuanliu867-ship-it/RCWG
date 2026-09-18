@@ -1,0 +1,39 @@
+{
+  "ticket": "RCWG-BOOT-001",
+  "scope": "BOOT_ONLY",
+  "protocol_reference": "RCWG 1.0 / document v1.1",
+  "preferred_cloud": "gcp",
+  "region_candidate": "us-central1",
+  "api_default": "mock",
+  "formal_run_enabled": false,
+  "cloud_api_probe_enabled": false,
+  "job": {
+    "cpu": 1,
+    "memory_gib": 1,
+    "tasks": 1,
+    "parallelism": 1,
+    "max_retries": 0,
+    "timeout_s": 120
+  },
+  "round_budget_usd": {
+    "working_envelope": 150,
+    "ceiling_requires_owner_approval": 200,
+    "api_allocation": 100,
+    "compute_allocation": 20,
+    "storage_registry_logs_allocation": 10,
+    "reserve": 20
+  },
+  "first_cloud_acceptance_budget_usd": 5,
+  "unresolved": [
+    "USER_WSL_DOCTOR",
+    "PYTHON_3_12_TARGET_TEST",
+    "TARGET_CONTAINER_DIGEST",
+    "GCP_PROJECT_AND_BILLING",
+    "DEPLOYMENT_REGION_APPROVAL",
+    "LIVE_CLOUD_SMOKE",
+    "API_PROVIDER_MODEL_AND_PRICE",
+    "LIVE_API_PROBE",
+    "API_PROTOCOL_AMENDMENT",
+    "FORMAL_EXECUTOR_AND_METROLOGY"
+  ]
+}

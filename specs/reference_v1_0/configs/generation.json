@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "primary_decoding": "native_thinking_raw_final_json",
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "generation_seeds": [
+    17,
+    29
+  ],
+  "max_model_len": 32768,
+  "max_input_tokens_any_model": 12288,
+  "max_final_json_bytes": 65536,
+  "protocols": {
+    "P0": {
+      "calls": 1,
+      "max_new_tokens": [
+        16384
+      ]
+    },
+    "P1": {
+      "calls": 2,
+      "max_new_tokens": [
+        4096,
+        12288
+      ]
+    }
+  },
+  "repair_primary": false,
+  "provider_retries_after_valid_response": 0,
+  "on_input_overflow": "DATASET_BUILD_FAILURE_NOT_MODEL_FAILURE",
+  "no_test_feedback_to_generator": true
+}

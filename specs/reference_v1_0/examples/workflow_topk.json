@@ -1,0 +1,113 @@
+{
+  "ir_version": "1.0",
+  "task_id": "F1-demo-001",
+  "external_inputs": {
+    "records": "dataset:records:v1"
+  },
+  "nodes": [
+    {
+      "id": "read",
+      "operator": "scan",
+      "implementation": "sequential",
+      "inputs": {
+        "source": "$input.records"
+      },
+      "params": {
+        "columns": [
+          "id",
+          "score",
+          "eligible"
+        ]
+      },
+      "outputs": {
+        "rows": "Stream[Record]"
+      },
+      "storage": "stream"
+    },
+    {
+      "id": "keep",
+      "operator": "filter",
+      "implementation": "vectorized",
+      "inputs": {
+        "rows": "read.rows"
+      },
+      "params": {
+        "predicate": {
+          "op": "eq",
+          "left": {
+            "field": "eligible"
+          },
+          "right": {
+            "literal": true
+          }
+        }
+      },
+      "outputs": {
+        "rows": "Stream[Record]"
+      },
+      "storage": "stream"
+    },
+    {
+      "id": "best",
+      "operator": "top_k",
+      "implementation": "streaming_heap",
+      "inputs": {
+        "rows": "keep.rows"
+      },
+      "params": {
+        "k": 20,
+        "keys": [
+          {
+            "field": "score",
+            "direction": "desc"
+          },
+          {
+            "field": "id",
+            "direction": "asc"
+          }
+        ]
+      },
+      "outputs": {
+        "rows": "Table"
+      },
+      "storage": "memory"
+    },
+    {
+      "id": "fields",
+      "operator": "project",
+      "implementation": "column_view",
+      "inputs": {
+        "rows": "best.rows"
+      },
+      "params": {
+        "columns": [
+          "id",
+          "score"
+        ]
+      },
+      "outputs": {
+        "rows": "Table"
+      },
+      "storage": "shared_ref"
+    },
+    {
+      "id": "answer",
+      "operator": "emit",
+      "implementation": "json_artifact",
+      "inputs": {
+        "rows": "fields.rows"
+      },
+      "params": {
+        "output_contract": "exact_ordered_topk_v1"
+      },
+      "outputs": {
+        "result": "Result"
+      }
+    }
+  ],
+  "result": "answer.result",
+  "limits": {
+    "max_node_instances": 4096,
+    "max_loop_iterations": 16
+  }
+}

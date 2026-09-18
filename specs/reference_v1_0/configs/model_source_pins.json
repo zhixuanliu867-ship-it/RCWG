@@ -1,0 +1,7 @@
+{
+  "status": "UNRESOLVED",
+  "checked_at": "2026-09-18",
+  "reason": "Official model cards were checked through web browsing. Runtime direct model metadata download failed DNS; weight revisions and template hashes have not been resolved or tested.",
+  "downloaded_weights": false,
+  "next_action": "Resolve immutable revisions on experiment host; record file manifests and pass freeze gate before any official run."
+}

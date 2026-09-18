@@ -1,0 +1,11 @@
+TASK
+{{task_json}}
+OPERATORS
+{{operator_catalog}}
+LOGICAL CONTRACT
+{{logical_contract}}
+WORKIR
+{{workflow_schema}}
+Compile your logical contract into a complete executable WorkIR 1.0 object.
+You may correct your own proposed contract when needed to satisfy the original
+user task. Do not receive verifier labels or test execution scores.

@@ -1,0 +1,12 @@
+TASK
+{{task_json}}
+OPERATORS
+{{operator_catalog}}
+LOGICAL CONTRACT
+{{logical_contract}}
+WORKIR
+{{workflow_schema}}
+Compile the logical contract into a complete executable WorkIR 1.0 JSON object.
+Use the original task as the authoritative requirement and revise your proposed
+logical contract where needed. Ground decisions in the supplied public inputs.
+Return the final workflow using the declared schema and resource budget.

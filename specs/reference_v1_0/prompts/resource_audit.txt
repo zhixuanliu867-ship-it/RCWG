@@ -1,0 +1,6 @@
+DIAGNOSTIC TRACK ONLY. Inspect the proposed workflow against the public task
+and resource facts. Check physical algorithm preconditions, materialization,
+fan-out copies, retention/release, exact stopping conditions, and evidence flow.
+Return {"issues": [...], "revised_workflow": {...}}. All calls and output tokens
+count toward the separately declared audit-track budget. No private reasoning is
+requested and no gold verifier feedback is available.

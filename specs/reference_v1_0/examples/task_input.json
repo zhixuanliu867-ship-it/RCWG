@@ -1,0 +1,37 @@
+{
+  "task_id": "F1-demo-001",
+  "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+  "datasets": [
+    {
+      "id": "dataset:records:v1",
+      "schema": {
+        "id": "int64",
+        "score": "float64",
+        "eligible": "bool"
+      },
+      "stats": {
+        "row_count": 1000000,
+        "estimated_row_bytes": 24,
+        "eligible_fraction_estimate": 0.05,
+        "estimate_source": "public_metadata"
+      }
+    }
+  ],
+  "resources": {
+    "cpu_slots": 8,
+    "worker_memory_limit_bytes": 2147483648,
+    "wall_timeout_s": 300
+  },
+  "output_contract": {
+    "type": "ordered_records",
+    "fields": [
+      "id",
+      "score"
+    ],
+    "k": 20,
+    "tie_breaker": "id",
+    "mode": "exact"
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "Pedagogical example only, not a generated test instance."
+}

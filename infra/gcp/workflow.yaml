@@ -1,0 +1,26 @@
+# Fixed outer workflow. Operator approval is required before deploying or executing.
+# The job is always the mock-only boot container; there is no model API key here.
+main:
+  steps:
+    - initialize:
+        assign:
+          - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          - region: us-central1
+          - job: rcwg-boot-smoke
+    - execute_mock_job:
+        call: googleapis.run.v1.namespaces.jobs.run
+        args:
+          name: ${"namespaces/" + project_id + "/jobs/" + job}
+          location: ${region}
+        connector_params:
+          timeout: 300
+          polling_policy:
+            initial_delay: 5
+            multiplier: 1.5
+            max_delay: 15
+        result: execution
+    - complete:
+        return:
+          scope: BOOT_ONLY
+          api_requests: 0
+          cloud_run_execution: ${execution}

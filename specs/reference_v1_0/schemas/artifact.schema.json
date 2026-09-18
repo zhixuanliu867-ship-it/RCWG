@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "content_sha256",
+    "type",
+    "producer",
+    "serialized_bytes",
+    "created_ns"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string"
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "type": {
+      "type": "string"
+    },
+    "producer": {
+      "type": "string"
+    },
+    "serialized_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rows": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "created_ns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "released_ns": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "format": {
+      "enum": [
+        "arrow_stream",
+        "arrow_file",
+        "parquet",
+        "json",
+        "text"
+      ]
+    },
+    "schema_id": {
+      "type": "string"
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+TASK
+{{task_json}}
+
+OPERATORS
+{{operator_catalog}}
+
+WORKIR SCHEMA
+{{workflow_schema}}
+
+DEVELOPMENT EXAMPLE
+{{example_json}}
+
+Return a complete WorkIR 1.0 workflow for this task.

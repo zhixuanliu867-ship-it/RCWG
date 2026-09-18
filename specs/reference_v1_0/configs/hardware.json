@@ -1,0 +1,20 @@
+{
+  "planning_baseline": {
+    "gpu": "2 x RTX A6000 48GB",
+    "cpu": "UNCONFIRMED; recommended >=24 physical cores",
+    "ram_gib": "UNCONFIRMED; recommended 256",
+    "nvme_tib": "UNCONFIRMED; recommended 4"
+  },
+  "executor_cpu_slots": 8,
+  "worker_memory_profiles_gib": [
+    2,
+    8,
+    32
+  ],
+  "semantic_server_memory_accounting": "separate dedicated service; not included in worker-only cap",
+  "gpu_accounting": "NVML observed memory/usage; no unsupported DCGM fields set to zero",
+  "os": "Linux with functional cgroup v2; kernel, driver and container digest must be pinned",
+  "kernel_release": "UNRESOLVED",
+  "driver_version": "UNRESOLVED",
+  "container_digest": "UNRESOLVED"
+}

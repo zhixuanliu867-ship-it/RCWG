@@ -1,0 +1,10 @@
+中文鲁棒性轨模板：
+生成符合 WorkIR 1.0 的可执行计算工作流。使用给定算子和声明的数据源，满足
+任务语义、硬约束、证据要求与输出契约。明确物理算法、参数和数据依赖，并
+依据公开规模与资源条件选择任务分解和数据传递方式。保持任务要求的精确度。
+证据状态分别为 supported、refuted、unknown；信息不足时返回 unknown。
+最终输出一个纯 JSON 对象，result 引用工作流实际生成的 artifact；可简要填写
+公开 assumptions。
+任务：{{task_json}}
+算子：{{operator_catalog}}
+结构：{{workflow_schema}}

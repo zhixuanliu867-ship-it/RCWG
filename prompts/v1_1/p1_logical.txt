@@ -1,0 +1,9 @@
+Using TASK and OPERATORS, return a compact logical contract as JSON with fields:
+required_outputs, hard_constraints, necessary_operations, data_dependencies,
+information_requirements, permissible_alternatives, uncertainty.
+Describe publicly checkable planning decisions grounded in the supplied task and
+operator descriptions. Use uncertainty for facts that require execution evidence.
+TASK
+{{task_json}}
+OPERATORS
+{{operator_catalog}}

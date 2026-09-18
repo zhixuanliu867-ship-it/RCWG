@@ -1,0 +1,47 @@
+{
+  "ticket": "RCWG-BOOT-001",
+  "scope": "BOOT_ONLY_NOT_A_BENCHMARK_RESULT",
+  "attempt_id": "boot-0140f59186a8406f9306176f88008313",
+  "created_at_utc": "2026-09-18T13:26:14.413388+00:00",
+  "status": "PASS",
+  "provider": "mock",
+  "api_requests": 0,
+  "input_sha256": "0410441b02cbc63ce1c09a93cb26f8207a53ed1c60b492ae141e77c9f023358e",
+  "output_sha256": "0652656dc4a2676f40a4f58b8b3c969a994b3d26879b017240a995430f8405e9",
+  "result": [
+    {
+      "id": 19,
+      "score": 97
+    },
+    {
+      "id": 49,
+      "score": 96
+    },
+    {
+      "id": 8,
+      "score": 94
+    },
+    {
+      "id": 38,
+      "score": 93
+    },
+    {
+      "id": 16,
+      "score": 87
+    }
+  ],
+  "measured_fixture_wall_ns": 38578,
+  "measured_fixture_process_cpu_ns": 35302,
+  "rss": {
+    "value_bytes": 96382976,
+    "scope": "PROCESS_LIFETIME_HIGH_WATER_MARK",
+    "formal_worker_peak": null
+  },
+  "remote_model_cpu_ns": null,
+  "remote_model_gpu_ns": null,
+  "remote_model_vram_bytes": null,
+  "remote_metrics_status": "NOT_OBSERVABLE",
+  "formal_result": false,
+  "runtime_python": "3.13.5",
+  "interpretation": "Wall/CPU timing covers fixture compute only; RSS covers process lifetime. No efficiency claim."
+}
