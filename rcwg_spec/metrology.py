@@ -96,7 +96,8 @@ def score_repeat(expected,observed,reference=None,epsilon=0.20):
         ref_t=number(reference["time_s"],"reference.time_s",positive=True);covered=True
     rho=None;near=None
     wall=observed["metrics"].get("wall_s")
-    if covered and wall is not None and wall["status"]=="MEASURED":
+    # A measured elapsed duration on an aborted run is not a completion time.
+    if covered and status=="COMPLETED" and wall is not None and wall["status"]=="MEASURED":
         rho=wall["value"]/ref_t
         near=Decimal(str(wall["value"])) <= (Decimal(1)+Decimal(str(epsilon)))*Decimal(str(ref_t))
     efficient=tri_and([V,near]) if covered and status not in UNKNOWN else None

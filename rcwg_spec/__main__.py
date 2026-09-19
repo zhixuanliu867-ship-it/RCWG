@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from .common import load,write_new,ContractError
+from .common import load,write_new,ContractError,keys
 from .task_input import validate_task
 from .metrology import score_manifest
 from .cgroup_probe import read_snapshot
@@ -30,7 +30,8 @@ def main():
         elif args.command=="cgroup-probe":report=read_snapshot(args.directory)
         else:
             data=load(ROOT/"specs/spec001a/examples/synthetic_ledger.json" if args.command=="demo" else args.input)
-            if set(data)!={"manifest","observations","references","fixture_scope"} or data["fixture_scope"]!="ENGINEERING_ONLY":
+            keys(data,{"manifest","observations","references","fixture_scope"},set(),"$")
+            if data["fixture_scope"]!="ENGINEERING_ONLY":
                 raise ContractError("ENGINEERING_SCOPE","fixture_scope","this calculator entry point accepts ENGINEERING_ONLY fixtures")
             report=score_manifest(data["manifest"],data["observations"],data["references"])
         if getattr(args,"output",None):write_new(args.output,report)

@@ -7,13 +7,14 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 result = subprocess.run(['git', 'ls-files', '-z'], cwd=root, capture_output=True, check=True)
 patterns = [re.compile(rb'AIza[0-9A-Za-z_\-]{35}'),
+            re.compile(rb'gh[pousr]_[A-Za-z0-9]{36}\b'),
+            re.compile(rb'github_pat_[A-Za-z0-9_]{20,}'),
             re.compile(rb'-----BEGIN ' + rb'(?:RSA |EC |OPENSSH )?PRIVATE KEY-----')]
 bad = []
 for raw in result.stdout.split(b'\0'):
     if not raw: continue
-    name = raw.decode('utf-8'); p = root / name
-    if not p.is_file(): continue
-    if name == '.env' or name.startswith(('runs/', 'private_inputs/', 'gold/', 'data/')):
+    name = raw.decode('utf-8')
+    if name == '.env' or name.startswith(('runs/', '.venv/', 'private_inputs/', 'gold/', 'data/')):
         bad.append(name + ': private path is tracked')
     content = subprocess.run(['git', 'show', ':' + name], cwd=root, capture_output=True, check=True).stdout
     if any(pattern.search(content) for pattern in patterns):

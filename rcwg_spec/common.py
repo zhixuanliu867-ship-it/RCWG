@@ -42,8 +42,14 @@ def load(path):
             result[key]=value
         return result
     def bad(value): raise ContractError("INVALID_NUMBER", "$", value)
+    def finite_float(raw):
+        value = float(raw)
+        if not math.isfinite(value):
+            raise ContractError("INVALID_NUMBER", "$", "JSON number exceeds finite float range")
+        return value
     try:
-        return json.loads(Path(path).read_text(encoding="utf8"),object_pairs_hook=pairs,parse_constant=bad)
+        return json.loads(Path(path).read_text(encoding="utf8"),object_pairs_hook=pairs,
+                          parse_constant=bad,parse_float=finite_float)
     except json.JSONDecodeError as exc:
         raise ContractError("INVALID_JSON", "$", f"line={exc.lineno}; column={exc.colno}") from exc
 

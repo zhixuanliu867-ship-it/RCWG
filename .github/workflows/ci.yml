@@ -30,3 +30,5 @@ jobs:
         run: python -m rcwg_spec check
       - name: Synthetic metric fixture (no measured model results)
         run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json
+      - name: Public repository guard
+        run: python scripts/check_public_tree.py

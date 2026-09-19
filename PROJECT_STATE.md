@@ -71,3 +71,14 @@ Issue 状态：按实际单独登记（不因 PR 已存在而推定 Issue 已创
 采用 docs/spec001a/SPEC-001_DECISIONS.md、METROLOGY-001.md 与 CLAIMS_AND_FALSIFICATION.md。
 新增接口和文件在新路径；原33个参考文件保持不变。configs/boot.json仅移除已有用户证据支持的两个本地blocker，正式运行标志保持关闭。
 本次远端写入结果与交付端实测结果见 docs/spec001a/TEST_REPORT.md；不把本地补丁生成当作远端已合并。
+
+## SPEC-001A 用户 WSL 导入验收 — 2026-09-19
+
+
+独立分支 `rcwg/spec-001a`；原包 121 文件与导入 tree 逐字节一致。
+用户 WSL / Python 3.12.14：原 117/117，修订后 **131/131 PASS**；BOOT/SPEC、mock、原件完整性及公开仓库 guard 通过。
+修复 JSON 数值溢出、评分输入异常边界、未完成运行时延比与暂存凭据检查；保持科学主比较、32 算子/72 模板/6 模型槽及原件不变。
+证据：`docs/spec001a/OWNER_WSL_ACCEPTANCE.md`、`evidence/spec001a-owner/ACCEPTANCE.json`；日志在 `runs/spec001a-owner-20260919T095950Z-3473`（不入 Git）。
+新 doctor 保留 Docker 不可用、gcloud 不存在、formal_isolation_verified=false、formal_ready=false 的实测状态。
+正式门禁 `BLOCKED_NOT_FROZEN`、退出码 2；真实模型/云/IAM 动作 0。
+下一阶段 **SPEC-001B**；完整验证器与 32 算子运行时仍未实现。GitHub CI 和远端状态另行核实。
