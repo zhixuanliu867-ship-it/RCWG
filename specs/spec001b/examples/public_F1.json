@@ -1,0 +1,53 @@
+{
+  "task_id": "F1-public-contract-BOOT_ONLY",
+  "instruction": "Return eligible records with highest score, ties by id ascending.",
+  "datasets": [
+    {
+      "id": "dataset:records:v1",
+      "kind": "table",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "id": "int64",
+        "score": "float64",
+        "eligible": "bool"
+      },
+      "stats": {
+        "row_count": 4
+      },
+      "indexes": [
+        {
+          "id": "score_range",
+          "kind": "range",
+          "fields": [
+            "score"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index"
+        }
+      ]
+    }
+  ],
+  "resources": {
+    "cpu_slots": 4,
+    "worker_memory_limit_bytes": 104857600,
+    "wall_timeout_s": 60
+  },
+  "output_contract": {
+    "type": "ordered_records",
+    "mode": "exact",
+    "id": "exact_ordered_topk_v1",
+    "fields": [
+      "id",
+      "score"
+    ],
+    "schema": {
+      "id": "int64",
+      "score": "float64"
+    },
+    "k": 2,
+    "tie_breaker": "id"
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "BOOT_ONLY public contract fixture; no real data materialized; source and content must be verified before any future freeze."
+}

@@ -1,0 +1,84 @@
+{
+  "task_id": "F4-public-contract-BOOT_ONLY",
+  "instruction": "Project and share rows using explicit bounded resources, preserving each result.",
+  "datasets": [
+    {
+      "id": "dataset:records:v1",
+      "kind": "table",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "id": "int64",
+        "score": "float64",
+        "eligible": "bool"
+      },
+      "stats": {
+        "row_count": 4
+      },
+      "indexes": [
+        {
+          "id": "score_range",
+          "kind": "range",
+          "fields": [
+            "score"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index"
+        }
+      ]
+    },
+    {
+      "id": "dataset:condition:v1",
+      "kind": "scalar",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "type": "bool",
+      "value": true
+    },
+    {
+      "id": "dataset:state:v1",
+      "kind": "record",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "remaining": "int64"
+      }
+    },
+    {
+      "id": "dataset:left_ids:v1",
+      "kind": "set",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "item_type": "int64",
+      "stats": {
+        "item_count": 3
+      }
+    },
+    {
+      "id": "dataset:right_ids:v1",
+      "kind": "set",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "item_type": "int64",
+      "stats": {
+        "item_count": 2
+      }
+    }
+  ],
+  "resources": {
+    "cpu_slots": 4,
+    "worker_memory_limit_bytes": 104857600,
+    "wall_timeout_s": 60
+  },
+  "output_contract": {
+    "type": "records",
+    "mode": "exact",
+    "id": "shared_records_v1",
+    "schema": {
+      "id": "int64",
+      "score": "float64"
+    }
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "BOOT_ONLY public contract fixture; no real data materialized; source and content must be verified before any future freeze."
+}

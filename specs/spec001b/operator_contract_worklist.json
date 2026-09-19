@@ -1,0 +1,782 @@
+{
+  "version": "SPEC001B_CONTRACT_WORKLIST_0.1",
+  "status": "DESIGN_APPROVED",
+  "operators": [
+    {
+      "operator": "scan",
+      "implementations": [
+        "sequential",
+        "index_range"
+      ],
+      "input_ports": "source:DatasetRef[Table[S]]",
+      "output_ports": "rows:Stream[Record[S]]",
+      "required_parameters": [
+        "columns"
+      ],
+      "optional_parameters": [
+        "predicate"
+      ],
+      "static_rules": [
+        "source only in inputs; params.source is rejected",
+        "selected columns exist",
+        "index_range must resolve a declared public index"
+      ],
+      "runtime_obligations": [
+        "INDEX_AVAILABLE_AT_RUNTIME"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "filter",
+      "implementations": [
+        "vectorized",
+        "scalar"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:SameRepresentation[S]",
+      "required_parameters": [
+        "predicate"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "finite predicate AST returns Bool/Nullable[Bool]",
+        "accepting a native Table overload does not insert a Stream adapter"
+      ],
+      "runtime_obligations": [
+        "PREDICATE_THREE_VALUED_EVALUATION"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "project",
+      "implementations": [
+        "column_view",
+        "copy"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:ProjectedSameRepresentation[S]",
+      "required_parameters": [
+        "columns"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "all selected columns exist and output schema is derived, not trusted",
+        "column_view preserves storage alias identity"
+      ],
+      "runtime_obligations": [],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "join",
+      "implementations": [
+        "hash",
+        "sort_merge",
+        "block_nested"
+      ],
+      "input_ports": "left:RowReadable[L],right:RowReadable[R]",
+      "output_ports": "rows:Table[JoinedSchema]",
+      "required_parameters": [
+        "keys",
+        "join_type",
+        "build_side"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "keys are nonempty [{left,right}], compatible key types",
+        "join_type in inner,left,right,full,semi,anti",
+        "build_side in left,right; output nullability derived for outer joins",
+        "side prefixes left. and right. resolve collisions; no guessed column"
+      ],
+      "runtime_obligations": [
+        "SORT_INPUT_OR_COSTED_LOCAL_SORT",
+        "JOIN_MEMORY_AND_SPILL_GUARD"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "aggregate",
+      "implementations": [
+        "hash_group",
+        "sorted_group"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:Table[AggregateSchema]",
+      "required_parameters": [
+        "group_by",
+        "aggregates"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "aggregate specs {function,field,as}; function in count,sum,min,max,mean",
+        "count allows field=null; other functions require a typed field",
+        "group_by fields exist; aliases unique"
+      ],
+      "runtime_obligations": [
+        "ORDER_AND_OVERFLOW_POLICY"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "deduplicate",
+      "implementations": [
+        "hash",
+        "sort_unique"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:SameRepresentation[S]",
+      "required_parameters": [
+        "keys",
+        "keep"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "keep in first,last; declared upstream traversal order required for deterministic selection"
+      ],
+      "runtime_obligations": [
+        "TRAVERSAL_ORDER_EVIDENCE"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "sort",
+      "implementations": [
+        "in_memory",
+        "external_merge"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:Table[S]",
+      "required_parameters": [
+        "keys"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "keys [{field,direction,nulls?}] direction asc/desc; no bool as direction",
+        "nullable sort keys require explicit nulls first/last"
+      ],
+      "runtime_obligations": [
+        "MEMORY_OR_EXTERNAL_SORT_IO"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "top_k",
+      "implementations": [
+        "full_sort",
+        "streaming_heap"
+      ],
+      "input_ports": "rows:RowReadable[S]",
+      "output_ports": "rows:Table[S]",
+      "required_parameters": [
+        "k",
+        "keys"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "k is nonnegative integer, bool rejected; old F1-only public API retains its old k>0 profile",
+        "same ordering checks as sort; algorithm choice preserved"
+      ],
+      "runtime_obligations": [
+        "EXACT_OUTPUT_AND_TIE_CHECK"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "set_op",
+      "implementations": [
+        "hash",
+        "sorted_merge"
+      ],
+      "input_ports": "left:Set[T],right:Set[T]",
+      "output_ports": "items:Set[T]",
+      "required_parameters": [
+        "mode"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "mode in union,intersection,difference; both elements have same domain/type"
+      ],
+      "runtime_obligations": [],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "graph_neighbors",
+      "implementations": [
+        "csr",
+        "indexed_adjacency"
+      ],
+      "input_ports": "graph:GraphReadable[G],seeds:NodeSet[G]",
+      "output_ports": "edges:EdgeStream[G]",
+      "required_parameters": [
+        "direction",
+        "edge_types"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "direction in out,in,both; edge_types is explicit array (empty=all public types)",
+        "seed graph domain matches graph"
+      ],
+      "runtime_obligations": [
+        "DIRECTION_TIME_AND_RELATION_FILTERS"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "graph_reachability",
+      "implementations": [
+        "bfs",
+        "dfs"
+      ],
+      "input_ports": "graph:GraphReadable[G],seeds:NodeSet[G]",
+      "output_ports": "nodes:NodeSet[G]",
+      "required_parameters": [
+        "max_hops",
+        "direction"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "max_hops >=0 integer; includes depth-zero seeds",
+        "direction in out,in,both; type/domain consistent"
+      ],
+      "runtime_obligations": [
+        "FINITE_HOP_CORRECTNESS"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "graph_shortest_path",
+      "implementations": [
+        "bfs",
+        "dijkstra"
+      ],
+      "input_ports": "graph:GraphReadable[G],seeds:NodeSet[G]",
+      "output_ports": "paths:PathSet[G]",
+      "required_parameters": [
+        "target",
+        "weight_field"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "target ID(s) match graph node ID type",
+        "weight_field may be null only for unit-weight semantics",
+        "metadata contradicting BFS equal-weight or Dijkstra nonnegative prerequisite invalidates plan; absence of metadata creates runtime obligation"
+      ],
+      "runtime_obligations": [
+        "WEIGHT_DOMAIN_CHECK",
+        "UNREACHABLE_AND_TIE_RULE"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "graph_filter",
+      "implementations": [
+        "edge_mask",
+        "index_filter"
+      ],
+      "input_ports": "graph:GraphReadable[G]",
+      "output_ports": "graph:GraphView[G]",
+      "required_parameters": [
+        "predicate"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "predicate typed against public edge/node schema",
+        "view retains graph domain and underlying revision"
+      ],
+      "runtime_obligations": [],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "graph_subgraph",
+      "implementations": [
+        "induced",
+        "edge_selected"
+      ],
+      "input_ports": "graph:GraphReadable[G],nodes:NodeSet[G] OR graph:GraphReadable[G],edges:EdgeStream[G]",
+      "output_ports": "graph:Graph[G]",
+      "required_parameters": [
+        "mode"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "mode must match induced or edge_selected implementation",
+        "induced consumes nodes; edge_selected consumes explicit edges; no conflation"
+      ],
+      "runtime_obligations": [],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "read_documents",
+      "implementations": [
+        "batched",
+        "per_document"
+      ],
+      "input_ports": "index:DocumentIndex[D],ids:IDSelection[D]",
+      "output_ports": "documents:DocumentStream[D]",
+      "required_parameters": [
+        "fields",
+        "batch_size"
+      ],
+      "optional_parameters": [
+        "id_field"
+      ],
+      "static_rules": [
+        "IDSelection has document domain; arbitrary graph-node IDs do not implicitly become document IDs",
+        "single-column Table or ranked selection is admitted only with explicit matching id_field and public domain mapping",
+        "fields exist; batch_size >0"
+      ],
+      "runtime_obligations": [
+        "DOCUMENT_REVISION_MATCH"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "text_retrieve",
+      "implementations": [
+        "bm25",
+        "dense_fixed"
+      ],
+      "input_ports": "index:DocumentIndex[D]",
+      "output_ports": "ids:RankedIDSet[D]",
+      "required_parameters": [
+        "query",
+        "limit"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "query nonempty; limit nonnegative integer",
+        "dense_fixed requires registered index/model identity; missing service evidence is facility readiness, not model failure"
+      ],
+      "runtime_obligations": [
+        "APPROXIMATE_CANDIDATE_COVERAGE"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "split_documents",
+      "implementations": [
+        "section",
+        "token_window"
+      ],
+      "input_ports": "documents:DocumentStream[D]",
+      "output_ports": "chunks:ChunkStream[D]",
+      "required_parameters": [
+        "size",
+        "overlap"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "size positive; 0<=overlap<size",
+        "token_window tokenizer ID comes from frozen execution profile"
+      ],
+      "runtime_obligations": [
+        "TOKENIZER_SPAN_COORDINATE_CHECK"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "gather_context",
+      "implementations": [
+        "neighbors",
+        "section_header"
+      ],
+      "input_ports": "chunks:ChunkStream[D]",
+      "output_ports": "chunks:ChunkStream[D]",
+      "required_parameters": [
+        "window"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "window nonnegative integer; document revision/provenance retained"
+      ],
+      "runtime_obligations": [
+        "PUBLIC_CONTEXT_READ_LEDGER"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "semantic_extract",
+      "implementations": [
+        "fixed_e0"
+      ],
+      "input_ports": "documents:DocumentStream[D]|ChunkStream[D]",
+      "output_ports": "evidence:EvidenceTable[S,D]",
+      "required_parameters": [
+        "field_schema",
+        "context_budget"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "field_schema nonempty typed map; context_budget positive",
+        "service binding is separate readiness check; typed offline contract can validate without network"
+      ],
+      "runtime_obligations": [
+        "SERVICE_BINDING_REQUIRED",
+        "CONTEXT_LIMIT",
+        "PROVENANCE_RETENTION"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "evidence_merge",
+      "implementations": [
+        "by_entity",
+        "by_document"
+      ],
+      "input_ports": "evidence:EvidenceTable[S,D]",
+      "output_ports": "evidence:EvidenceTable[S,D]",
+      "required_parameters": [
+        "keys",
+        "conflict_policy"
+      ],
+      "optional_parameters": [
+        "priority_rule"
+      ],
+      "static_rules": [
+        "conflict_policy in keep_all,reject,declared_priority",
+        "declared_priority requires public priority_rule; first-wins is not accepted"
+      ],
+      "runtime_obligations": [
+        "CONFLICT_AND_PROVENANCE_CHECK"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "evidence_validate",
+      "implementations": [
+        "span_check"
+      ],
+      "input_ports": "evidence:EvidenceTable[S,D],index:DocumentIndex[D]",
+      "output_ports": "evidence:EvidenceTable[S,D]",
+      "required_parameters": [
+        "strict"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "strict is boolean; this operator never accepts gold/hidden-verifier handles"
+      ],
+      "runtime_obligations": [
+        "PUBLIC_SPAN_VALIDATION"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "materialize",
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "input_ports": "rows:Stream[Record[S]]",
+      "output_ports": "rows:Table[S]",
+      "required_parameters": [
+        "format"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "format in arrow_ipc,parquet; storage agrees with memory/disk implementation"
+      ],
+      "runtime_obligations": [
+        "BUFFER_AND_SPILL_LEDGER"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "stream_read",
+      "implementations": [
+        "arrow_batches"
+      ],
+      "input_ports": "artifact:ReadableArtifact[S]",
+      "output_ports": "rows:Stream[Record[S]]",
+      "required_parameters": [
+        "batch_size"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "batch_size positive; handle points to declared readable typed object"
+      ],
+      "runtime_obligations": [
+        "METERED_READ"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "broadcast",
+      "implementations": [
+        "shared_ref",
+        "copy_each"
+      ],
+      "input_ports": "artifact:ReadonlyArtifact[T]",
+      "output_ports": "DYNAMIC consumer_name:ArtifactRef[T]",
+      "required_parameters": [
+        "consumers"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "consumers is a nonempty unique identifier list; one declared output port per consumer",
+        "shared_ref aliases existing buffers; copy_each allocates independently"
+      ],
+      "runtime_obligations": [
+        "ALIAS_OR_COPY_LEDGER"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "release",
+      "implementations": [
+        "explicit"
+      ],
+      "input_ports": "artifact:ReadonlyArtifact[T]",
+      "output_ports": "done:ControlToken",
+      "required_parameters": [],
+      "optional_parameters": [],
+      "static_rules": [
+        "artifact is input-only, not duplicated in params",
+        "known aliases and consumers must precede actual release; uncertain control-dependent lifetimes require runtime checks"
+      ],
+      "runtime_obligations": [
+        "LAST_CONSUMER_GUARD"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "cache",
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "input_ports": "artifact:ReadonlyArtifact[T]",
+      "output_ports": "artifact:ArtifactRef[T]",
+      "required_parameters": [
+        "key_fields"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "key_fields nonempty; same-run content/schema identity included; cross-run cache remains disabled"
+      ],
+      "runtime_obligations": [
+        "SAME_RUN_ONLY"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "map",
+      "implementations": [
+        "bounded_map"
+      ],
+      "input_ports": "rows:Stream[Record[S]]",
+      "output_ports": "rows:Stream[Record[T]]",
+      "required_parameters": [],
+      "optional_parameters": [],
+      "static_rules": [
+        "only regions.body; body binds $item explicitly and yields exactly rows of Record[T]",
+        "resources.max_parallelism controls local admission, does not multiply global CPU allowance"
+      ],
+      "runtime_obligations": [
+        "GLOBAL_INSTANCE_COUNTER",
+        "GLOBAL_CPU_SLOTS",
+        "BOUNDED_BACKPRESSURE"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "branch",
+      "implementations": [
+        "predicate_branch"
+      ],
+      "input_ports": "condition:Bool, plus explicitly named capture ports",
+      "output_ports": "region-yield ports with branch-compatible types",
+      "required_parameters": [
+        "predicate"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "only regions.then and regions.else; exact same yield-port sets",
+        "Bool/nullable predicate, unknown policy is explicit runtime error; arm result types join without invented cast"
+      ],
+      "runtime_obligations": [
+        "BRANCH_SELECTION_EVENT"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "loop",
+      "implementations": [
+        "bounded_loop"
+      ],
+      "input_ports": "state:T, plus explicitly named capture ports",
+      "output_ports": "state:T",
+      "required_parameters": [
+        "condition",
+        "max_iterations"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "only regions.body; bindings may use $state; type invariant T -> T",
+        "max_iterations in 1..16 and no larger than global limit; condition is continuation predicate",
+        "at cap: inspect condition; false may succeed, true -> LOOP_LIMIT_REACHED"
+      ],
+      "runtime_obligations": [
+        "GLOBAL_INSTANCE_COUNTER",
+        "CONTINUATION_AT_LIMIT"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "collect",
+      "implementations": [
+        "bounded_collect"
+      ],
+      "input_ports": "rows:Stream[Record[S]]",
+      "output_ports": "rows:Table[S]",
+      "required_parameters": [
+        "limit"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "limit nonnegative integer protection bound; never implies legal answer truncation"
+      ],
+      "runtime_obligations": [
+        "LIMIT_WITHOUT_SILENT_TRUNCATION"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "emit",
+      "implementations": [
+        "json_artifact"
+      ],
+      "input_ports": "rows:Emittable[T]",
+      "output_ports": "result:Result",
+      "required_parameters": [
+        "output_contract"
+      ],
+      "optional_parameters": [],
+      "static_rules": [
+        "output_contract resolves a public task contract; old exact_ordered_topk_v1 mapping supported",
+        "schema compatibility is checked; natural-language answer correctness remains runtime verifier work"
+      ],
+      "runtime_obligations": [
+        "RESULT_ARTIFACT_HASH",
+        "INDEPENDENT_VERIFICATION"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    },
+    {
+      "operator": "stats",
+      "implementations": [
+        "metadata",
+        "sample"
+      ],
+      "input_ports": "source:DatasetRef[T]",
+      "output_ports": "stats:Stats",
+      "required_parameters": [
+        "fields"
+      ],
+      "optional_parameters": [
+        "sample_size"
+      ],
+      "static_rules": [
+        "only stage=generation_probe with I2; sample implementation requires positive sample_size"
+      ],
+      "runtime_obligations": [
+        "PROBE_GENERATION_BUDGET"
+      ],
+      "contract_status": "DESIGN_APPROVED",
+      "executable_contract_status": "TO_IMPLEMENT_AND_TEST_IN_SPEC001B",
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "source": "SPEC001A + explicit SPEC001B decisions; prose types are not an executable type checker"
+    }
+  ]
+}

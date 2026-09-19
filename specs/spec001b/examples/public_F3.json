@@ -1,0 +1,70 @@
+{
+  "task_id": "F3-public-contract-BOOT_ONLY",
+  "instruction": "Return all nodes reachable within three outgoing hops, including seeds.",
+  "datasets": [
+    {
+      "id": "dataset:graph:v1",
+      "kind": "graph",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "domain": "graph:BOOT_ONLY",
+      "node_schema": {
+        "id": "int64",
+        "label": "utf8"
+      },
+      "edge_schema": {
+        "source": "int64",
+        "target": "int64",
+        "weight": "float64",
+        "relation": "utf8"
+      },
+      "node_id_type": "int64",
+      "directed": true,
+      "weight_field": "weight",
+      "weight_nonnegative": true,
+      "weight_equal": false,
+      "stats": {
+        "node_count": 4,
+        "edge_count": 5
+      },
+      "indexes": [
+        {
+          "id": "adjacency",
+          "kind": "csr",
+          "fields": [
+            "source",
+            "target"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index"
+        }
+      ]
+    },
+    {
+      "id": "dataset:seeds:v1",
+      "kind": "node_set",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "domain": "graph:BOOT_ONLY",
+      "id_type": "int64",
+      "stats": {
+        "item_count": 1
+      }
+    }
+  ],
+  "resources": {
+    "cpu_slots": 4,
+    "worker_memory_limit_bytes": 104857600,
+    "wall_timeout_s": 60
+  },
+  "output_contract": {
+    "type": "node_set",
+    "mode": "exact",
+    "id": "reachable_v1",
+    "domain": "graph:BOOT_ONLY",
+    "revision": "dev-v1",
+    "item_type": "int64"
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "BOOT_ONLY public contract fixture; no real data materialized; source and content must be verified before any future freeze."
+}

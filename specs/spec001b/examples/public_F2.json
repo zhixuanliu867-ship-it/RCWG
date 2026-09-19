@@ -1,0 +1,48 @@
+{
+  "task_id": "F2-public-contract-BOOT_ONLY",
+  "instruction": "Join customers with orders and report the total amount per region.",
+  "datasets": [
+    {
+      "id": "dataset:orders:v1",
+      "kind": "table",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "customer": "int64",
+        "amount": "float64"
+      },
+      "stats": {
+        "row_count": 5
+      }
+    },
+    {
+      "id": "dataset:customers:v1",
+      "kind": "table",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "customer": "int64",
+        "region": "utf8"
+      },
+      "stats": {
+        "row_count": 3
+      }
+    }
+  ],
+  "resources": {
+    "cpu_slots": 4,
+    "worker_memory_limit_bytes": 104857600,
+    "wall_timeout_s": 60
+  },
+  "output_contract": {
+    "type": "records",
+    "mode": "exact",
+    "id": "regional_totals_v1",
+    "schema": {
+      "region": "utf8",
+      "total": "float64"
+    }
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "BOOT_ONLY public contract fixture; no real data materialized; source and content must be verified before any future freeze."
+}

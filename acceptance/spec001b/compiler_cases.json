@@ -1,0 +1,4219 @@
+{
+  "scope": "ENGINEERING_CONTRACT_CASES_ONLY",
+  "cases": [
+    {
+      "id": "F1-LEGACY-HEAP",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Original five-node source example; no rewrite."
+    },
+    {
+      "id": "F1-SORT-SAME-TASK",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "full_sort",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Derived fixture only; original sort example has F1-demo-002."
+    },
+    {
+      "id": "F1-FORWARD-REFERENCES",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Serialization is not the dependency order."
+    },
+    {
+      "id": "SEMANTICALLY-WRONG-IS-NOT-A-TYPE-ERROR",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Missing eligibility filter. Static contract valid; EXEC verifier must expose incorrect answer. Do not solve NL task in compiler."
+    },
+    {
+      "id": "SEQUENTIAL-SLOTS-NOT-SUMMED",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream",
+            "resources": {
+              "cpu_slots": 8
+            }
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream",
+            "resources": {
+              "cpu_slots": 8
+            }
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory",
+            "resources": {
+              "cpu_slots": 8
+            }
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref",
+            "resources": {
+              "cpu_slots": 8
+            }
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            },
+            "resources": {
+              "cpu_slots": 8
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Global queue handles admission; summing five 8-slot nodes would wrongly reject."
+    },
+    {
+      "id": "LOW-MEMORY-SORT-RETAINS-RUNTIME-GUARD",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 65536,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "full_sort",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "IR_VALIDATED",
+      "expected_code": null,
+      "purpose": "Predicted OOM is not a type error; dynamic memory failure remains runtime evidence."
+    },
+    {
+      "id": "TASK-ID-MISMATCH",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "different",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "TASK_ID_MISMATCH",
+      "purpose": ""
+    },
+    {
+      "id": "DUPLICATE-ID",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "read",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "DUPLICATE_NODE_ID",
+      "purpose": ""
+    },
+    {
+      "id": "DATA-CYCLE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "CYCLIC_DEPENDENCY",
+      "purpose": ""
+    },
+    {
+      "id": "AFTER-CYCLE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream",
+            "after": [
+              "answer"
+            ]
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "CYCLIC_DEPENDENCY",
+      "purpose": ""
+    },
+    {
+      "id": "MISSING-PORT",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.unknown"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "UNKNOWN_REFERENCE",
+      "purpose": ""
+    },
+    {
+      "id": "HIDDEN-SOURCE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:gold:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "EXTERNAL_INPUT_MISMATCH",
+      "purpose": ""
+    },
+    {
+      "id": "UNKNOWN-IMPL",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "magic",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "UNKNOWN_IMPLEMENTATION",
+      "purpose": ""
+    },
+    {
+      "id": "UNKNOWN-OP",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "exec_python",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "UNKNOWN_OPERATOR",
+      "purpose": ""
+    },
+    {
+      "id": "TOPK-NEGATIVE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": -1,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PARAMETER_RANGE",
+      "purpose": ""
+    },
+    {
+      "id": "TOPK-BOOL",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": true,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PARAMETER_TYPE",
+      "purpose": ""
+    },
+    {
+      "id": "UNKNOWN-PARAM",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ],
+              "secret": 1
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PARAMETER_UNKNOWN",
+      "purpose": ""
+    },
+    {
+      "id": "UNKNOWN-SORT-FIELD",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "missing",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "FIELD_NOT_FOUND",
+      "purpose": ""
+    },
+    {
+      "id": "INVALID-DIRECTION",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "sideways"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PARAMETER_ENUM",
+      "purpose": ""
+    },
+    {
+      "id": "UNKNOWN-PROJECTION",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "ghost"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "FIELD_NOT_FOUND",
+      "purpose": ""
+    },
+    {
+      "id": "BOOL-NUMERIC-PREDICATE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": 1
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "TYPE_MISMATCH",
+      "purpose": ""
+    },
+    {
+      "id": "INVENTED-OUTPUT-TYPE",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Graph[G]"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "TYPE_MISMATCH",
+      "purpose": ""
+    },
+    {
+      "id": "SOURCE-IN-PARAMS",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ],
+              "source": "dataset:records:v1"
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PARAMETER_UNKNOWN",
+      "purpose": ""
+    },
+    {
+      "id": "WRONG-INPUT-PORT",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "other": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "PORT_MISMATCH",
+      "purpose": ""
+    },
+    {
+      "id": "CPU-EXCEEDS-CAP",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory",
+            "resources": {
+              "cpu_slots": 9
+            }
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "RESOURCE_LIMIT",
+      "purpose": ""
+    },
+    {
+      "id": "RESULT-NOT-PRODUCED",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance."
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "$input.records",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "PLAN_INVALID",
+      "expected_code": "RESULT_REFERENCE",
+      "purpose": ""
+    },
+    {
+      "id": "PRIVATE-TASK-EXTRA",
+      "task": {
+        "task_id": "F1-demo-001",
+        "instruction": "Return all eligible records among the top 20 by score descending, breaking ties by id ascending. Fewer than 20 eligible records means return all eligible records. Eligibility must be applied before top-k semantics are evaluated.",
+        "datasets": [
+          {
+            "id": "dataset:records:v1",
+            "schema": {
+              "id": "int64",
+              "score": "float64",
+              "eligible": "bool"
+            },
+            "stats": {
+              "row_count": 1000000,
+              "estimated_row_bytes": 24,
+              "eligible_fraction_estimate": 0.05,
+              "estimate_source": "public_metadata"
+            }
+          }
+        ],
+        "resources": {
+          "cpu_slots": 8,
+          "worker_memory_limit_bytes": 2147483648,
+          "wall_timeout_s": 300
+        },
+        "output_contract": {
+          "type": "ordered_records",
+          "fields": [
+            "id",
+            "score"
+          ],
+          "k": 20,
+          "tie_breaker": "id",
+          "mode": "exact"
+        },
+        "tool_catalog_id": "rcwg-operators-1.0",
+        "notes": "Pedagogical example only, not a generated test instance.",
+        "gold": "synthetic-private-canary"
+      },
+      "plan": {
+        "ir_version": "1.0",
+        "task_id": "F1-demo-001",
+        "external_inputs": {
+          "records": "dataset:records:v1"
+        },
+        "nodes": [
+          {
+            "id": "read",
+            "operator": "scan",
+            "implementation": "sequential",
+            "inputs": {
+              "source": "$input.records"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score",
+                "eligible"
+              ]
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "keep",
+            "operator": "filter",
+            "implementation": "vectorized",
+            "inputs": {
+              "rows": "read.rows"
+            },
+            "params": {
+              "predicate": {
+                "op": "eq",
+                "left": {
+                  "field": "eligible"
+                },
+                "right": {
+                  "literal": true
+                }
+              }
+            },
+            "outputs": {
+              "rows": "Stream[Record]"
+            },
+            "storage": "stream"
+          },
+          {
+            "id": "best",
+            "operator": "top_k",
+            "implementation": "streaming_heap",
+            "inputs": {
+              "rows": "keep.rows"
+            },
+            "params": {
+              "k": 20,
+              "keys": [
+                {
+                  "field": "score",
+                  "direction": "desc"
+                },
+                {
+                  "field": "id",
+                  "direction": "asc"
+                }
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "memory"
+          },
+          {
+            "id": "fields",
+            "operator": "project",
+            "implementation": "column_view",
+            "inputs": {
+              "rows": "best.rows"
+            },
+            "params": {
+              "columns": [
+                "id",
+                "score"
+              ]
+            },
+            "outputs": {
+              "rows": "Table"
+            },
+            "storage": "shared_ref"
+          },
+          {
+            "id": "answer",
+            "operator": "emit",
+            "implementation": "json_artifact",
+            "inputs": {
+              "rows": "fields.rows"
+            },
+            "params": {
+              "output_contract": "exact_ordered_topk_v1"
+            },
+            "outputs": {
+              "result": "Result"
+            }
+          }
+        ],
+        "result": "answer.result",
+        "limits": {
+          "max_node_instances": 4096,
+          "max_loop_iterations": 16
+        }
+      },
+      "expected_status": "INPUT_INVALID",
+      "expected_code": "PUBLIC_FIELD_VIOLATION",
+      "purpose": "Reject private bundle before prompt assembly; never read gold."
+    }
+  ],
+  "coverage_notice": "27 public integration sentinels, not full 32-operator coverage. Mandatory operator/control suites are specified separately."
+}
