@@ -1,0 +1,69 @@
+{
+  "version": "0.1",
+  "scope": "EXECUTABLE_METRIC_CORE_SUBSET",
+  "metrics": [
+    {
+      "name": "wall_s",
+      "unit": "s",
+      "scope": "worker_exec",
+      "missing_value": null
+    },
+    {
+      "name": "cpu_s",
+      "unit": "s",
+      "scope": "worker_exec",
+      "missing_value": null
+    },
+    {
+      "name": "memory_peak_bytes",
+      "unit": "byte",
+      "scope": "worker_cgroup",
+      "missing_value": null
+    },
+    {
+      "name": "logical_read_bytes",
+      "unit": "byte",
+      "scope": "artifact_proxy",
+      "missing_value": null
+    },
+    {
+      "name": "copy_bytes",
+      "unit": "byte",
+      "scope": "artifact_proxy",
+      "missing_value": null
+    },
+    {
+      "name": "wire_bytes",
+      "unit": "byte",
+      "scope": "transport",
+      "missing_value": null
+    },
+    {
+      "name": "semantic_requests",
+      "unit": "count",
+      "scope": "semantic_service",
+      "missing_value": null
+    },
+    {
+      "name": "semantic_tokens_reference",
+      "unit": "token",
+      "scope": "semantic_service",
+      "missing_value": null
+    }
+  ],
+  "additional_design_only": [
+    "node_ready_wait",
+    "resource_wait",
+    "memory_live_byte_seconds",
+    "primitive_counts",
+    "evidence_checkpoint_coverage",
+    "batch_wait",
+    "backpressure",
+    "provider_usage",
+    "generation_latency",
+    "cloud_orchestration_latency",
+    "budget_success_surface",
+    "reference_dominance",
+    "instrumentation_overhead"
+  ]
+}

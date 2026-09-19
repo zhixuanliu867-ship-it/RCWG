@@ -1,0 +1,8 @@
+{
+  "status": "SPEC001A_CORE_PASS",
+  "reference_files_verified": 33,
+  "operator_designs": 32,
+  "task_profile": "F1_TABULAR_EXACT_0.1",
+  "full_workir_validator": "NEXT_CHECKPOINT",
+  "formal_ready": false
+}

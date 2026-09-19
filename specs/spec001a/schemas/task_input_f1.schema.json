@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rcwg:spec001a:taskinput:f1:0.1",
+  "title": "TaskInput F1 tabular exact executable profile; not full TaskInput 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "instruction",
+    "datasets",
+    "resources",
+    "output_contract",
+    "tool_catalog_id"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool_catalog_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1
+    },
+    "datasets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "schema",
+          "stats"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^dataset:.+"
+          },
+          "schema": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "enum": [
+                "int64",
+                "float64",
+                "bool",
+                "utf8",
+                "string",
+                "date32",
+                "timestamp_us"
+              ]
+            }
+          },
+          "stats": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "row_count"
+            ],
+            "properties": {
+              "row_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "estimated_row_bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "eligible_fraction_estimate": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "estimate_source": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "dependentRequired": {
+              "eligible_fraction_estimate": [
+                "estimate_source"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu_slots",
+        "worker_memory_limit_bytes",
+        "wall_timeout_s"
+      ],
+      "properties": {
+        "cpu_slots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "worker_memory_limit_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "wall_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "output_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "fields",
+        "k",
+        "tie_breaker",
+        "mode"
+      ],
+      "properties": {
+        "type": {
+          "const": "ordered_records"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tie_breaker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "const": "exact"
+        }
+      }
+    }
+  }
+}

@@ -26,3 +26,7 @@ jobs:
           python -m rcwg_boot check --formal
           status=$?
           test "$status" -eq 2
+      - name: SPEC001A contracts and metrology calculation core
+        run: python -m rcwg_spec check
+      - name: Synthetic metric fixture (no measured model results)
+        run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json

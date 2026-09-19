@@ -1,0 +1,98 @@
+{
+  "status": "METRIC_CORE_REPORT",
+  "scope": "ENGINEERING_CALCULATOR_ONLY",
+  "formal_ready": false,
+  "epsilon": 0.2,
+  "manifest_hash": "d3175bb5ce73662444892b33ac61601cbf87045ec71764bdd180e8a20effaadf",
+  "references_hash": "fa4429958a9b877fd4d48e35f4cba9ec433488c856b25569e8dcd2c01954d8c4",
+  "panels": [
+    {
+      "model_id": "MOCK_GENERATOR",
+      "protocol": "P0",
+      "expected_repeats": 3,
+      "observed_repeats": 3,
+      "semantic_success": {
+        "point": 0.6666666666666666,
+        "lower": 0.6666666666666666,
+        "upper": 0.6666666666666666,
+        "status": "COMPLETE"
+      },
+      "success_at_budget": {
+        "point": 0.6666666666666666,
+        "lower": 0.6666666666666666,
+        "upper": 0.6666666666666666,
+        "status": "COMPLETE"
+      },
+      "efficient_success_covered": {
+        "point": 0.3333333333333333,
+        "lower": 0.3333333333333333,
+        "upper": 0.3333333333333333,
+        "status": "COMPLETE"
+      },
+      "reference_coverage": {
+        "point": 1.0,
+        "lower": 1.0,
+        "upper": 1.0,
+        "status": "COMPLETE"
+      },
+      "point_scores_publishable": true
+    }
+  ],
+  "records": [
+    {
+      "record_id": "synthetic-r0",
+      "S": true,
+      "B": true,
+      "V": true,
+      "budget_checks": {
+        "wall_s": true,
+        "memory_peak_bytes": true
+      },
+      "missing_budget_metrics": [],
+      "reference_covered": true,
+      "time_ratio": 1.0,
+      "efficient_success": true,
+      "terminal_status": "COMPLETED",
+      "evidence_state": "COMPLETE_FOR_DECLARED_BUDGETS"
+    },
+    {
+      "record_id": "synthetic-r1",
+      "S": true,
+      "B": true,
+      "V": true,
+      "budget_checks": {
+        "wall_s": true,
+        "memory_peak_bytes": true
+      },
+      "missing_budget_metrics": [],
+      "reference_covered": true,
+      "time_ratio": 1.3,
+      "efficient_success": false,
+      "terminal_status": "COMPLETED",
+      "evidence_state": "COMPLETE_FOR_DECLARED_BUDGETS"
+    },
+    {
+      "record_id": "synthetic-r2",
+      "S": false,
+      "B": false,
+      "V": false,
+      "budget_checks": {
+        "wall_s": false,
+        "memory_peak_bytes": true
+      },
+      "missing_budget_metrics": [],
+      "reference_covered": true,
+      "time_ratio": null,
+      "efficient_success": false,
+      "terminal_status": "TIMEOUT",
+      "evidence_state": "COMPLETE_FOR_DECLARED_BUDGETS"
+    }
+  ],
+  "panel_case_sets_equal": true,
+  "common_reference_case_ids": [
+    "synthetic-case-0",
+    "synthetic-case-1",
+    "synthetic-case-2"
+  ],
+  "notice": "Bounds describe missing evidence, not statistical uncertainty. Formal CIs and matched panels require the full campaign analysis."
+}

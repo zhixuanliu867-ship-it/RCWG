@@ -1,0 +1,6 @@
+{
+  "status": "TASKINPUT_PROFILE_PASS",
+  "profile": "F1_TABULAR_EXACT_0.1",
+  "input_hash": "d3b952b7ea3eaffaeda07454194cc4dde1d2649bc4b496e15c7ed4aa7bff6d53",
+  "formal_ready": false
+}

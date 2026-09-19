@@ -1,0 +1,1 @@
+PASS: tracked-file credential-pattern and private-path guard (not a complete secret audit)

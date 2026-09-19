@@ -1,0 +1,147 @@
+{
+  "fixture_scope": "ENGINEERING_ONLY",
+  "manifest": [
+    {
+      "record_id": "synthetic-r0",
+      "model_id": "MOCK_GENERATOR",
+      "protocol": "P0",
+      "case_id": "synthetic-case-0",
+      "family": "F1",
+      "template_id": "ENGINEERING-T1",
+      "base_id": "b0",
+      "condition_id": "C0",
+      "generation_id": "g0",
+      "repeat_id": "r0",
+      "budget": {
+        "wall_s": 10.0,
+        "memory_peak_bytes": 1000
+      }
+    },
+    {
+      "record_id": "synthetic-r1",
+      "model_id": "MOCK_GENERATOR",
+      "protocol": "P0",
+      "case_id": "synthetic-case-1",
+      "family": "F1",
+      "template_id": "ENGINEERING-T1",
+      "base_id": "b1",
+      "condition_id": "C0",
+      "generation_id": "g0",
+      "repeat_id": "r0",
+      "budget": {
+        "wall_s": 10.0,
+        "memory_peak_bytes": 1000
+      }
+    },
+    {
+      "record_id": "synthetic-r2",
+      "model_id": "MOCK_GENERATOR",
+      "protocol": "P0",
+      "case_id": "synthetic-case-2",
+      "family": "F1",
+      "template_id": "ENGINEERING-T1",
+      "base_id": "b2",
+      "condition_id": "C0",
+      "generation_id": "g0",
+      "repeat_id": "r0",
+      "budget": {
+        "wall_s": 10.0,
+        "memory_peak_bytes": 1000
+      }
+    }
+  ],
+  "observations": [
+    {
+      "record_id": "synthetic-r0",
+      "status": "COMPLETED",
+      "semantic_pass": true,
+      "metrics": {
+        "wall_s": {
+          "value": 1.0,
+          "unit": "s",
+          "scope": "worker_exec",
+          "status": "MEASURED",
+          "reason": null
+        },
+        "memory_peak_bytes": {
+          "value": 500,
+          "unit": "byte",
+          "scope": "worker_cgroup",
+          "status": "MEASURED",
+          "reason": null
+        }
+      },
+      "evidence_id": "synthetic-evidence",
+      "reason": null
+    },
+    {
+      "record_id": "synthetic-r1",
+      "status": "COMPLETED",
+      "semantic_pass": true,
+      "metrics": {
+        "wall_s": {
+          "value": 1.3,
+          "unit": "s",
+          "scope": "worker_exec",
+          "status": "MEASURED",
+          "reason": null
+        },
+        "memory_peak_bytes": {
+          "value": 500,
+          "unit": "byte",
+          "scope": "worker_cgroup",
+          "status": "MEASURED",
+          "reason": null
+        }
+      },
+      "evidence_id": "synthetic-evidence",
+      "reason": null
+    },
+    {
+      "record_id": "synthetic-r2",
+      "status": "TIMEOUT",
+      "semantic_pass": false,
+      "metrics": {
+        "wall_s": {
+          "value": 10,
+          "unit": "s",
+          "scope": "worker_exec",
+          "status": "CENSORED",
+          "reason": "TIMEOUT_LOWER_BOUND"
+        },
+        "memory_peak_bytes": {
+          "value": 700,
+          "unit": "byte",
+          "scope": "worker_cgroup",
+          "status": "MEASURED",
+          "reason": null
+        }
+      },
+      "evidence_id": "synthetic-evidence",
+      "reason": "synthetic timeout"
+    }
+  ],
+  "references": [
+    {
+      "case_id": "synthetic-case-0",
+      "budget_hash": "8b426a3b35bc1c3b449d667e2323fac151d64e30ddc4cbf8bf29143606ac75b3",
+      "time_s": 1.0,
+      "confirmation_id": "synthetic-confirmation",
+      "frozen": true
+    },
+    {
+      "case_id": "synthetic-case-1",
+      "budget_hash": "8b426a3b35bc1c3b449d667e2323fac151d64e30ddc4cbf8bf29143606ac75b3",
+      "time_s": 1.0,
+      "confirmation_id": "synthetic-confirmation",
+      "frozen": true
+    },
+    {
+      "case_id": "synthetic-case-2",
+      "budget_hash": "8b426a3b35bc1c3b449d667e2323fac151d64e30ddc4cbf8bf29143606ac75b3",
+      "time_s": 1.0,
+      "confirmation_id": "synthetic-confirmation",
+      "frozen": true
+    }
+  ]
+}

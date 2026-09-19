@@ -51,3 +51,23 @@ The owner runs `scripts/doctor.py` in WSL and returns the sanitized JSON. Codex 
 本地 unittest：43/43 通过（doctor 与单测日志的 SHA256 见 PR #1 描述）。
 说明：本次以已验收的 3.12.14 重新采集环境证据；系统默认 Python 3.14 未用于验收。
 Issue 状态：按实际单独登记（不因 PR 已存在而推定 Issue 已创建）。
+
+## SPEC-001A 决策与实现进展 — 2026-09-19
+
+当前上游 main 已核实为 `08b1ecff33ab01098926e3dceba64ab6ab4fa02c`，PR #1 已合并。
+上述初始状态与本地收尾记录作为历史保留。本次目标3.12.14环境依据所有者验收记录；交付端代码测试环境另列。
+
+| 项目 | 状态 |
+|---|---|
+| 协议/算子/计量决策 | DESIGN_APPROVED（用户已授权核心范围内直接修订） |
+| 32算子ID与候选来源 | 保留；implementation_status=NOT_IMPLEMENTED |
+| F1 TaskInput有限profile与白名单组装 | IMPLEMENTED / 离线测试见本次报告 |
+| 三值预算评分、分层归约、buffer/字节/见证覆盖计算核 | IMPLEMENTED / synthetic及单测；不是真实模型结果 |
+| cgroup读值诊断 | READ_ONLY_PROBE；未验证正式隔离 |
+| 完整WorkIR静态验证器与全部算子端口类型 | NEXT_CHECKPOINT: SPEC-001B |
+| 云端、容器、真实API | 保持原延期/未执行状态 |
+| 正式实验 | NOT_FROZEN；formal_run_enabled=false |
+
+采用 docs/spec001a/SPEC-001_DECISIONS.md、METROLOGY-001.md 与 CLAIMS_AND_FALSIFICATION.md。
+新增接口和文件在新路径；原33个参考文件保持不变。configs/boot.json仅移除已有用户证据支持的两个本地blocker，正式运行标志保持关闭。
+本次远端写入结果与交付端实测结果见 docs/spec001a/TEST_REPORT.md；不把本地补丁生成当作远端已合并。
