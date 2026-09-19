@@ -1,4 +1,4 @@
-"""Offline SPEC acceptance entry points. WorkIR compilation is a later checkpoint."""
+"""Offline SPEC acceptance, calculation and complete static WorkIR validation."""
 import argparse
 import json
 from pathlib import Path
@@ -16,6 +16,11 @@ def main():
     a=sub.add_parser("score");a.add_argument("input");a.add_argument("--output",required=True)
     a=sub.add_parser("demo");a.add_argument("--output",required=True)
     a=sub.add_parser("cgroup-probe");a.add_argument("directory");a.add_argument("--output",required=True)
+    a=sub.add_parser("validate-workflow")
+    a.add_argument("--task",required=True);a.add_argument("--plan",required=True)
+    a.add_argument("--stage",default="primary_execution")
+    a.add_argument("--output",required=True)
+    a=sub.add_parser("validate-public-task");a.add_argument("input")
     args=p.parse_args()
     try:
         if args.command=="check":
@@ -26,6 +31,15 @@ def main():
             if any(x["implementation_status"]!="NOT_IMPLEMENTED" for x in contracts):raise ContractError("STATUS_OVERCLAIM","operators","SPEC-001A does not implement runtime kernels")
             task=validate_task(load(ROOT/"specs/reference_v1_0/examples/task_input.json"))
             report={"status":"SPEC001A_CORE_PASS","reference_files_verified":old["reference_files_verified"],"operator_designs":len(contracts),"task_profile":task["profile"],"full_workir_validator":"NEXT_CHECKPOINT","formal_ready":False}
+        elif args.command=="validate-workflow":
+            from .compiler import validate_workflow_bytes
+            report=validate_workflow_bytes(load(args.task),Path(args.plan).read_bytes(),stage=args.stage)
+        elif args.command=="validate-public-task":
+            from .public_task import validate_public_task
+            from .typesystem import type_json
+            data=validate_public_task(load(args.input))
+            report={"status":"PUBLIC_TASK_VALIDATED","task_input_hash":data["task_input_hash"],
+                    "input_types":{k:type_json(v) for k,v in data["input_types"].items()},"formal_ready":False}
         elif args.command=="validate-task":report=validate_task(load(args.input))
         elif args.command=="cgroup-probe":report=read_snapshot(args.directory)
         else:
@@ -36,7 +50,8 @@ def main():
             report=score_manifest(data["manifest"],data["observations"],data["references"])
         if getattr(args,"output",None):write_new(args.output,report)
         print(json.dumps(report,ensure_ascii=False,indent=2,allow_nan=False))
-        return 0
+        if report.get('status')=='INTERNAL_ERROR':return 1
+        return 2 if report.get('status') in {'PLAN_INVALID','INPUT_INVALID','IMPLEMENTATION_GAP'} else 0
     except (ContractError,OSError,ValueError) as exc:
         detail={"status":"SPEC_ERROR","code":getattr(exc,"code",type(exc).__name__),"path":getattr(exc,"path",None),"formal_ready":False}
         print(json.dumps(detail,ensure_ascii=False));return 2

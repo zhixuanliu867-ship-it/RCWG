@@ -35,3 +35,12 @@ Read docs/spec001a/SPEC-001_DECISIONS.md and METROLOGY-001.md before SPEC edits.
 The owner authorizes routine compatible protocol, metric, implementation and test decisions within the core RCWG research scope; implement and report without repeated per-field approval.
 Use dedicated branches and preserve original evidence. Financial/IAM/destructive operations remain separately authorized. Actual formal protocol/primary-estimand changes are explicitly versioned, not silently introduced after viewing test outcomes.
 Current checkpoint SPEC-001A includes a LIMITED F1 TaskInput profile and offline metrology reducers. It does not implement a complete WorkIR compiler or the 32 runtime operators. Continue with SPEC-001B before EXEC-001. Report unsupported implementation coverage separately from invalid generated plans.
+
+## Active follow-on: SPEC-001B
+
+Read `docs/spec001b/DECISIONS.md`, `CODEX_TASK.md`, `ACCEPTANCE.md` and `A_REVIEW.md`.
+A reviewed baseline has 131 tests. This starter adds 63 foundation tests (194 total).
+The foundation is intentionally incomplete as a full compiler; never promote its
+`STRUCTURE_PASS` to `IR_VALIDATED` without the remaining typed/parameter checks.
+Scientific scope and formal gates remain unchanged. Do not change source fixtures
+or expected sentinel outcomes to conceal implementation failures.

@@ -1,0 +1,126 @@
+{
+  "task_id": "F6-public-contract-BOOT_ONLY",
+  "instruction": "Find graph-reachable entities, join their explicit document mapping, and return supported claims.",
+  "datasets": [
+    {
+      "id": "dataset:graph:v1",
+      "kind": "graph",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "domain": "graph:BOOT_ONLY",
+      "node_schema": {
+        "id": "int64",
+        "label": "utf8"
+      },
+      "edge_schema": {
+        "source": "int64",
+        "target": "int64",
+        "weight": "float64",
+        "relation": "utf8"
+      },
+      "node_id_type": "int64",
+      "directed": true,
+      "weight_field": "weight",
+      "weight_nonnegative": true,
+      "weight_equal": false,
+      "stats": {
+        "node_count": 4,
+        "edge_count": 5
+      },
+      "indexes": [
+        {
+          "id": "adjacency",
+          "kind": "csr",
+          "fields": [
+            "source",
+            "target"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index"
+        }
+      ]
+    },
+    {
+      "id": "dataset:seeds:v1",
+      "kind": "node_set",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "domain": "graph:BOOT_ONLY",
+      "id_type": "int64",
+      "stats": {
+        "item_count": 1
+      }
+    },
+    {
+      "id": "dataset:documents:v1",
+      "kind": "document_index",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "domain": "documents:BOOT_ONLY",
+      "id_type": "utf8",
+      "schema": {
+        "id": "utf8",
+        "title": "utf8",
+        "text": "utf8",
+        "date": "date32"
+      },
+      "stats": {
+        "document_count": 3
+      },
+      "indexes": [
+        {
+          "id": "bm25",
+          "kind": "bm25",
+          "fields": [
+            "text"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index"
+        },
+        {
+          "id": "dense",
+          "kind": "dense_fixed",
+          "fields": [
+            "text"
+          ],
+          "revision": "dev-v1",
+          "source": "public:BOOT_ONLY:index",
+          "model_id": "BOOT_ONLY:fixed-embedding-v1"
+        }
+      ]
+    },
+    {
+      "id": "dataset:node_document:v1",
+      "kind": "table",
+      "revision": "dev-v1",
+      "schema_source": "public:BOOT_ONLY:contract-fixture",
+      "schema": {
+        "node_id": "int64",
+        "doc_id": "utf8"
+      },
+      "id_field": "doc_id",
+      "id_domain": "documents:BOOT_ONLY",
+      "stats": {
+        "row_count": 4
+      }
+    }
+  ],
+  "resources": {
+    "cpu_slots": 4,
+    "worker_memory_limit_bytes": 104857600,
+    "wall_timeout_s": 60
+  },
+  "output_contract": {
+    "type": "evidence",
+    "mode": "evidence_supported",
+    "id": "graph_document_evidence_v1",
+    "domain": "documents:BOOT_ONLY",
+    "revision": "dev-v1",
+    "schema": {
+      "entity": "utf8",
+      "claim": "utf8"
+    }
+  },
+  "tool_catalog_id": "rcwg-operators-1.0",
+  "notes": "BOOT_ONLY public contract fixture; no real data materialized; source and content must be verified before any future freeze."
+}

@@ -1,0 +1,568 @@
+{
+  "schema_version": "SPEC001B_COVERAGE_0.1",
+  "status": "PENDING_COMPLETE_IMPLEMENTATION",
+  "required_operators": 32,
+  "required_implementation_branches": 56,
+  "branches": [
+    {
+      "operator": "scan",
+      "implementation": "sequential",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "scan",
+      "implementation": "index_range",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "filter",
+      "implementation": "vectorized",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "filter",
+      "implementation": "scalar",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "project",
+      "implementation": "column_view",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "project",
+      "implementation": "copy",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "join",
+      "implementation": "hash",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "join",
+      "implementation": "sort_merge",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "join",
+      "implementation": "block_nested",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "aggregate",
+      "implementation": "hash_group",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "aggregate",
+      "implementation": "sorted_group",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "deduplicate",
+      "implementation": "hash",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "deduplicate",
+      "implementation": "sort_unique",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "sort",
+      "implementation": "in_memory",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "sort",
+      "implementation": "external_merge",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "full_sort",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "streaming_heap",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "set_op",
+      "implementation": "hash",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "set_op",
+      "implementation": "sorted_merge",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_neighbors",
+      "implementation": "csr",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_neighbors",
+      "implementation": "indexed_adjacency",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_reachability",
+      "implementation": "bfs",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_reachability",
+      "implementation": "dfs",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_shortest_path",
+      "implementation": "bfs",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_shortest_path",
+      "implementation": "dijkstra",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_filter",
+      "implementation": "edge_mask",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_filter",
+      "implementation": "index_filter",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_subgraph",
+      "implementation": "induced",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "graph_subgraph",
+      "implementation": "edge_selected",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "read_documents",
+      "implementation": "batched",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "read_documents",
+      "implementation": "per_document",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "text_retrieve",
+      "implementation": "bm25",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "text_retrieve",
+      "implementation": "dense_fixed",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "split_documents",
+      "implementation": "section",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "split_documents",
+      "implementation": "token_window",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "gather_context",
+      "implementation": "neighbors",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "gather_context",
+      "implementation": "section_header",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "semantic_extract",
+      "implementation": "fixed_e0",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "evidence_merge",
+      "implementation": "by_entity",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "evidence_merge",
+      "implementation": "by_document",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "evidence_validate",
+      "implementation": "span_check",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "materialize",
+      "implementation": "memory",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "materialize",
+      "implementation": "disk",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "stream_read",
+      "implementation": "arrow_batches",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "broadcast",
+      "implementation": "shared_ref",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "broadcast",
+      "implementation": "copy_each",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "release",
+      "implementation": "explicit",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "cache",
+      "implementation": "memory",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "cache",
+      "implementation": "disk",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "map",
+      "implementation": "bounded_map",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "branch",
+      "implementation": "predicate_branch",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "loop",
+      "implementation": "bounded_loop",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "collect",
+      "implementation": "bounded_collect",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "emit",
+      "implementation": "json_artifact",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "stats",
+      "implementation": "metadata",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "operator": "stats",
+      "implementation": "sample",
+      "static_validator": null,
+      "positive_test_ids": [],
+      "negative_test_ids": [],
+      "dispatch_test_ids": [],
+      "executable_contract_status": "PENDING",
+      "runtime_kernel_status": "NOT_IMPLEMENTED"
+    }
+  ]
+}

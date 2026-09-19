@@ -1,0 +1,13 @@
+{
+  "ticket": "RCWG-SPEC-001B",
+  "reviewed_pr": 2,
+  "required_parent_commit": "6afd48490094d716dc65cf84fe822e45216fcac3",
+  "required_parent_tree": "e09ee3a93b46192d3e88775fda5e24bade771f4d",
+  "main_observed": "08b1ecff33ab01098926e3dceba64ab6ab4fa02c",
+  "inherited_tests": 131,
+  "foundation_tests": 63,
+  "core_scope": "structure, scope, dependency and identity only",
+  "full_spec001b_status": "IN_PROGRESS",
+  "formal_run_enabled": false,
+  "paid_calls_allowed": false
+}

@@ -47,3 +47,22 @@ API 更改登记于 `docs/API_ENV_AMENDMENT.md`。云工作流负责外层提交
 ### 隐私与发布
 
 密钥、账号凭据、真实运行结果、隐藏测试和完整研究原稿保存在私有位置。本仓库保留机器规格、提示词草案及教学样例；推送前由研究负责人审核公开范围。暂不自动授予开源许可证。
+
+### SPEC-001B：完整静态契约与离线验收
+
+`rcwg_spec.compiler.validate_workflow(task, plan)` 校验全族公开输入、32 算子／56 实现的参数与类型、控制区域和资源／生命周期义务。`IR_VALIDATED` 表示静态契约通过；执行内核仍为 `NOT_IMPLEMENTED`，正式门禁仍关闭。
+
+在已有 WSL 环境使用固定解释器，所有输出路径必须是新的：
+
+```bash
+bash scripts/accept_spec001b.sh
+uv run --offline --frozen --python 3.12.14 python -m rcwg_spec validate-public-task specs/spec001b/examples/public_F6.json
+uv run --offline --frozen --python 3.12.14 python -m rcwg_spec validate-workflow \
+  --task specs/reference_v1_0/examples/task_input.json \
+  --plan specs/reference_v1_0/examples/workflow_topk.json \
+  --output runs/spec001b-manual/typed-report.json
+```
+
+完整验收脚本检查固定的真实测试 ID 集合、每个实现分支的合法／非法／dispatch 测试、未改动的 27 个哨兵、六项隔离源码突变、受测字节与暂存树一致，以及原件与正式门禁。通过状态为 `SPEC001B_OFFLINE_GATES_PASS`；最终交付还需独立 CI、补丁 clean apply/tree 和交付文件证明。单独 `rcwg_spec check` 保留 SPEC-001A 的历史 profile；完整 B 以新脚本为准。
+
+P0/P1 组装与私有归档接口见 `docs/spec001b/GENERATION_AND_BINDING.md`；实际契约规则见 `OPERATOR_CONTRACT_NOTES.md`。EXEC-001 对接入口见 `docs/spec001b/EXEC-001_INTERFACE.md`。`runs/` 日志和原始响应保持私有；六族示例均为 `BOOT_ONLY` 工程夹具。
