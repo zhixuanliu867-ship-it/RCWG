@@ -46,6 +46,7 @@ def prepare_manifest(task,plan,registry,recipe,*,condition_id,record_id,generati
         measurement_profile={'revision':'EXEC001_SUPERVISOR_OBSERVATION_1.0','event_source_id':'supervised-runner',
                              'clock_id':'linux-monotonic-host','isolated_cgroup':False,
                              'wall_scope':'parent_launch_cleanup_and_integrity_checks_excludes_verifier',
+                             'cpu_scope':'worker_kernel_interval_excludes_startup_compilation_and_verifier',
                              'node_intervals':'inclusive_iterator_activity_not_physical_concurrency'},
         operator_registry={'revision':PROFILE,'implementations':{k:sorted(v) for k,v in SUPPORTED.items()}},
         source_manifest={'revision':'EXEC001_OWNER_REGISTRY_1.0','public_sources':checked['source_manifest']})

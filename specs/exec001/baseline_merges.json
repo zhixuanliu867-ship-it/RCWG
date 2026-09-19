@@ -1,0 +1,63 @@
+{
+  "authorization": "EXEC001 CODEX_TASK section 0 and explicit user request",
+  "connector_merge_403": true,
+  "steps": [
+    {
+      "pr": 2,
+      "head": "6afd48490094d716dc65cf84fe822e45216fcac3",
+      "base_before": "08b1ecff33ab01098926e3dceba64ab6ab4fa02c",
+      "checks": [
+        {
+          "id": 105879895591,
+          "name": "offline-core",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 105879889734,
+          "name": "offline-core",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "merge": {
+        "merged": true,
+        "sha": "05064b27d3f14642b90bdccdbd11fd409ad005a1",
+        "message": "already merged"
+      },
+      "merged_tree": "e09ee3a93b46192d3e88775fda5e24bade771f4d",
+      "state": "closed",
+      "merged_at": "2026-09-19T13:25:13Z"
+    },
+    {
+      "pr": 3,
+      "head": "a1f65120ef0b2b8e1fb6f1c31224244d6f7ee16b",
+      "base_before": "05064b27d3f14642b90bdccdbd11fd409ad005a1",
+      "checks": [
+        {
+          "id": 105893893081,
+          "name": "offline-core",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 105893887573,
+          "name": "offline-core",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "merge": {
+        "sha": "47ea9703f8adfa5b5778aee5eaff3be802858efb",
+        "merged": true,
+        "message": "Pull Request successfully merged"
+      },
+      "merged_tree": "5b1b7cd587bbb3df54952ea24eb6841767a1e0bd",
+      "state": "closed",
+      "merged_at": "2026-09-19T13:27:12Z"
+    }
+  ],
+  "status": "REVIEWED_BASELINES_MERGED",
+  "main": "47ea9703f8adfa5b5778aee5eaff3be802858efb",
+  "credential_persisted": false
+}

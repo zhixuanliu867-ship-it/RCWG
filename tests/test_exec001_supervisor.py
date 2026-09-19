@@ -182,13 +182,24 @@ class SupervisorTests(unittest.TestCase):
         self.assertIsNone(m['budget_within']);self.assertIsNone(m['worker_peak_ram_bytes'])
         self.assertGreaterEqual(m['verifier_wall_ns_separate'],0);self.assertGreater(m['process_cpu_ns'],0)
         for field,value in [('worker_peak_ram_bytes',0),('physical_copy_bytes',0),('block_io_bytes',0),('budget_within',True),
-                            ('elapsed_ns',True),('process_cpu_ns',-1),('verifier_cpu_ns_separate',None),('formal_ready',True)]:
+                            ('elapsed_ns',True),('process_cpu_ns',-1),('verifier_cpu_ns_separate',None),('formal_ready',True),
+                            ('process_cpu_scope','whole_process'),('rss_scope','isolated_ram')]:
             bad=deepcopy(m);bad[field]=value
             with self.assertRaises(ExecFault):validate_measurements(bad,'COMPLETED')
         with self.assertRaises(ExecFault):validate_measurements(m,'TIMEOUT')
     def test_wrong_recipe_produces_unknown_not_repaired_gold(self):
         self.recipe['revision']='UNSUPPORTED_PRIVATE_RECIPE'
         r=self.run_case();self.assertEqual(r['terminal_status'],'COMPLETED');self.assertEqual(r['verification']['status'],'UNKNOWN')
+    def test_source_closure_change_during_worker_rejects_success(self):
+        original=source_closure();changed={**original,'rcwg_exec/worker.py':'0'*64}
+        with patch('rcwg_exec.supervisor.source_closure',side_effect=[original,changed]):r=self.run_case()
+        self.assertEqual(r['terminal_status'],'INFRA_FAILURE');self.assertEqual(r['failure']['code'],'SOURCE_CHANGED_DURING_EXECUTION')
+    def test_output_timestamp_cannot_predate_this_run(self):
+        self.run_case();e=self.manifest.as_dict()['expected_records'][0]
+        p=self.out/'worker/artifact.json';meta=read_json(p);meta['created_ns']=0;p.write_bytes(canonical(meta))
+        p=self.out/'worker/artifact_binding.json';binding=read_json(p);binding['artifact_metadata_sha256']=digest(meta);p.write_bytes(canonical(binding))
+        with self.assertRaises(ExecFault):validate_artifact(self.out/'worker',expected=e,task=self.task,
+            plan=self.plans['streaming_heap'],compiled=validate_workflow(self.task,self.plans['streaming_heap']),creation_window=(1,time.perf_counter_ns()))
 
 
 class JournalAndSourceTests(unittest.TestCase):
@@ -219,6 +230,17 @@ class JournalAndSourceTests(unittest.TestCase):
         t,p,r,data=prepare_fixture(self.root/'real');reg=FileRegistry(t,{t['datasets'][0]['id']:data},allowed_root=self.root)
         copy=self.root/'copy';copy.write_bytes(data.read_bytes());data.unlink();data.symlink_to(copy)
         with self.assertRaises(ExecFault):list(reg.frames(t['datasets'][0]['id'],{},lambda:None))
+    def test_source_changed_while_iterator_active_rejected(self):
+        t,p,r,data=prepare_fixture(self.root/'real',n=12);reg=FileRegistry(t,{t['datasets'][0]['id']:data},allowed_root=self.root)
+        stream=reg.frames(t['datasets'][0]['id'],{},lambda:None);next(stream)
+        with data.open('ab') as f:f.write(canonical({'id':999,'score':1.0,'eligible':True})+b'\n')
+        with self.assertRaises(ExecFault):list(stream)
+    def test_actual_registered_file_duplicate_and_bad_utf8_rejected(self):
+        t,p,r,data=prepare_fixture(self.root/'real',n=1)
+        for raw in (b'{"id":1,"id":2,"score":1.0,"eligible":true}\n',b'\xff\n'):
+            data.write_bytes(raw);t['datasets'][0]['data_sha256']=hashlib.sha256(raw).hexdigest()
+            reg=FileRegistry(t,{t['datasets'][0]['id']:data},allowed_root=self.root)
+            with self.assertRaises(ExecFault):list(reg.frames(t['datasets'][0]['id'],{},lambda:None))
     def test_private_json_rejects_duplicate_encoding_and_noncanonical(self):
         p=self.root/'value'
         for raw in (b'{"a":1,"a":2}',b'\xff',b'{"a": 1}',b'[{'):

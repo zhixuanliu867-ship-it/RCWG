@@ -42,6 +42,9 @@ def validate_artifact(directory,*,expected,task,plan,compiled,creation_window=No
 def validate_measurements(measurements,terminal):
     if measurements.get('scope')!='ENGINEERING_DIAGNOSTIC_ONLY' or measurements.get('formal_ready') is not False:
         raise ExecFault('MEASUREMENT_SCOPE')
+    if (measurements.get('process_cpu_scope')!='worker_kernel_interval_excludes_startup_compilation_and_verifier'
+            or measurements.get('rss_scope')!='worker_process_lifetime_including_startup_and_compilation_not_isolated_ram'):
+        raise ExecFault('MEASUREMENT_PROCESS_SCOPE')
     for key in ('worker_peak_ram_bytes','physical_copy_bytes','block_io_bytes','budget_within'):
         if measurements.get(key) is not None:raise ExecFault('MEASUREMENT_OVERCLAIM')
     elapsed=measurements.get('elapsed_ns');completed=measurements.get('completed_wall_ns')
