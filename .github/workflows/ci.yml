@@ -1,4 +1,4 @@
-name: RCWG bootstrap acceptance
+name: RCWG complete offline SPEC acceptance
 on:
   push:
   pull_request:
@@ -13,22 +13,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - name: Standard-library unit tests, no credentials or live requests
-        run: python -m unittest discover -s tests -v
-      - name: Reference integrity and safe config
-        run: python -m rcwg_boot check
-      - name: Mock execution
-        run: python -m rcwg_boot smoke
-      - name: Formal gate must stay closed
+          python-version: '3.12.14'
+      - name: Full SPEC001B gate including original tests and immutable sentinels
         run: |
           set +e
-          python -m rcwg_boot check --formal
+          python scripts/accept_spec001b.py --output runs/ci-spec001b
           status=$?
-          test "$status" -eq 2
-      - name: SPEC001A contracts and metrology calculation core
-        run: python -m rcwg_spec check
-      - name: Synthetic metric fixture (no measured model results)
+          cat runs/ci-spec001b/unittest.txt
+          cat runs/ci-spec001b/ACCEPTANCE.json
+          cat runs/ci-spec001b/*.stdout.txt
+          cat runs/ci-spec001b/*.stderr.txt
+          cat runs/ci-spec001b/negative-review-*-unittest.txt
+          cat runs/ci-spec001b/negative-review-*-process.txt
+          exit "$status"
+      - name: Synthetic SPEC001A metric fixture (no measured model results)
         run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json
-      - name: Public repository guard
-        run: python scripts/check_public_tree.py

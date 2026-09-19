@@ -1,0 +1,1191 @@
+{
+  "scope": "BOOT_ONLY_STATIC_CONTRACT_TESTS",
+  "branches": [
+    {
+      "operator": "scan",
+      "implementation": "sequential",
+      "static_validator": "rcwg_spec.operators.DISPATCH[scan:sequential]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_sequential_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_sequential_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_sequential_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_scan_predicate_checks_original_schema_and_indexes",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "scan",
+      "implementation": "index_range",
+      "static_validator": "rcwg_spec.operators.DISPATCH[scan:index_range]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_index_range_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_index_range_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_scan_index_range_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_scan_predicate_checks_original_schema_and_indexes",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "filter",
+      "implementation": "vectorized",
+      "static_validator": "rcwg_spec.operators.DISPATCH[filter:vectorized]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_vectorized_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_vectorized_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_vectorized_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "filter",
+      "implementation": "scalar",
+      "static_validator": "rcwg_spec.operators.DISPATCH[filter:scalar]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_scalar_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_scalar_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_filter_scalar_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "project",
+      "implementation": "column_view",
+      "static_validator": "rcwg_spec.operators.DISPATCH[project:column_view]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_column_view_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_column_view_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_column_view_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases",
+        "test_spec001b_operators.TestOperatorContracts.test_projection_schema_is_derived_and_declarations_do_not_override",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample",
+        "test_spec001b_operators.TestOperatorContracts.test_join_collision_renames_document_mapping_and_projection_drops_it"
+      ]
+    },
+    {
+      "operator": "project",
+      "implementation": "copy",
+      "static_validator": "rcwg_spec.operators.DISPATCH[project:copy]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_copy_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_copy_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_project_copy_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases",
+        "test_spec001b_operators.TestOperatorContracts.test_projection_schema_is_derived_and_declarations_do_not_override",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample",
+        "test_spec001b_operators.TestOperatorContracts.test_join_collision_renames_document_mapping_and_projection_drops_it"
+      ]
+    },
+    {
+      "operator": "join",
+      "implementation": "hash",
+      "static_validator": "rcwg_spec.operators.DISPATCH[join:hash]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_hash_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_hash_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_hash_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_outer_join_nullable_fields_and_semi_anti_schema",
+        "test_spec001b_operators.TestOperatorContracts.test_join_rejects_prefix_collision_and_unknown_build_side",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample",
+        "test_spec001b_operators.TestOperatorContracts.test_join_collision_renames_document_mapping_and_projection_drops_it"
+      ]
+    },
+    {
+      "operator": "join",
+      "implementation": "sort_merge",
+      "static_validator": "rcwg_spec.operators.DISPATCH[join:sort_merge]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_sort_merge_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_sort_merge_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_sort_merge_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_outer_join_nullable_fields_and_semi_anti_schema",
+        "test_spec001b_operators.TestOperatorContracts.test_join_rejects_prefix_collision_and_unknown_build_side",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample",
+        "test_spec001b_operators.TestOperatorContracts.test_join_collision_renames_document_mapping_and_projection_drops_it"
+      ]
+    },
+    {
+      "operator": "join",
+      "implementation": "block_nested",
+      "static_validator": "rcwg_spec.operators.DISPATCH[join:block_nested]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_block_nested_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_block_nested_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_join_block_nested_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_outer_join_nullable_fields_and_semi_anti_schema",
+        "test_spec001b_operators.TestOperatorContracts.test_join_rejects_prefix_collision_and_unknown_build_side",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample",
+        "test_spec001b_operators.TestOperatorContracts.test_join_collision_renames_document_mapping_and_projection_drops_it"
+      ]
+    },
+    {
+      "operator": "aggregate",
+      "implementation": "hash_group",
+      "static_validator": "rcwg_spec.operators.DISPATCH[aggregate:hash_group]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_hash_group_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_hash_group_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_hash_group_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_count_mean_nullability_and_alias_uniqueness",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_min_max_sum_fields_and_nulls",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_only_grouped_document_id_retains_mapping",
+        "test_spec001b_operators.TestOperatorContracts.test_keyed_aggregation_nonnullable_fields_have_nonempty_groups"
+      ]
+    },
+    {
+      "operator": "aggregate",
+      "implementation": "sorted_group",
+      "static_validator": "rcwg_spec.operators.DISPATCH[aggregate:sorted_group]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_sorted_group_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_sorted_group_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_sorted_group_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_count_mean_nullability_and_alias_uniqueness",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_min_max_sum_fields_and_nulls",
+        "test_spec001b_operators.TestOperatorContracts.test_aggregate_only_grouped_document_id_retains_mapping",
+        "test_spec001b_operators.TestOperatorContracts.test_keyed_aggregation_nonnullable_fields_have_nonempty_groups"
+      ]
+    },
+    {
+      "operator": "deduplicate",
+      "implementation": "hash",
+      "static_validator": "rcwg_spec.operators.DISPATCH[deduplicate:hash]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_hash_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_hash_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_hash_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases"
+      ]
+    },
+    {
+      "operator": "deduplicate",
+      "implementation": "sort_unique",
+      "static_validator": "rcwg_spec.operators.DISPATCH[deduplicate:sort_unique]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_sort_unique_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_sort_unique_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_deduplicate_sort_unique_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_row_overloads_preserve_representation_and_aliases"
+      ]
+    },
+    {
+      "operator": "sort",
+      "implementation": "in_memory",
+      "static_validator": "rcwg_spec.operators.DISPATCH[sort:in_memory]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_in_memory_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_in_memory_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_in_memory_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_nullable_sort_requires_null_placement_and_zero_topk_legal"
+      ]
+    },
+    {
+      "operator": "sort",
+      "implementation": "external_merge",
+      "static_validator": "rcwg_spec.operators.DISPATCH[sort:external_merge]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_external_merge_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_external_merge_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_sort_external_merge_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_nullable_sort_requires_null_placement_and_zero_topk_legal"
+      ]
+    },
+    {
+      "operator": "top_k",
+      "implementation": "full_sort",
+      "static_validator": "rcwg_spec.operators.DISPATCH[top_k:full_sort]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_full_sort_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_full_sort_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_full_sort_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_nullable_sort_requires_null_placement_and_zero_topk_legal"
+      ]
+    },
+    {
+      "operator": "top_k",
+      "implementation": "streaming_heap",
+      "static_validator": "rcwg_spec.operators.DISPATCH[top_k:streaming_heap]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_streaming_heap_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_streaming_heap_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_top_k_streaming_heap_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_nullable_sort_requires_null_placement_and_zero_topk_legal"
+      ]
+    },
+    {
+      "operator": "set_op",
+      "implementation": "hash",
+      "static_validator": "rcwg_spec.operators.DISPATCH[set_op:hash]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_hash_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_hash_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_hash_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_set_domains_revisions_and_scalar_types"
+      ]
+    },
+    {
+      "operator": "set_op",
+      "implementation": "sorted_merge",
+      "static_validator": "rcwg_spec.operators.DISPATCH[set_op:sorted_merge]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_sorted_merge_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_sorted_merge_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_set_op_sorted_merge_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_set_domains_revisions_and_scalar_types"
+      ]
+    },
+    {
+      "operator": "graph_neighbors",
+      "implementation": "csr",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_neighbors:csr]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_csr_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_csr_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_csr_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds"
+      ]
+    },
+    {
+      "operator": "graph_neighbors",
+      "implementation": "indexed_adjacency",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_neighbors:indexed_adjacency]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_indexed_adjacency_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_indexed_adjacency_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_neighbors_indexed_adjacency_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds"
+      ]
+    },
+    {
+      "operator": "graph_reachability",
+      "implementation": "bfs",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_reachability:bfs]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_bfs_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_bfs_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_bfs_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds"
+      ]
+    },
+    {
+      "operator": "graph_reachability",
+      "implementation": "dfs",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_reachability:dfs]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_dfs_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_dfs_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_reachability_dfs_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds"
+      ]
+    },
+    {
+      "operator": "graph_shortest_path",
+      "implementation": "bfs",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_shortest_path:bfs]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_bfs_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_bfs_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_bfs_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds",
+        "test_spec001b_operators.TestOperatorContracts.test_shortest_path_proven_bad_weights_rejected_unknown_guarded"
+      ]
+    },
+    {
+      "operator": "graph_shortest_path",
+      "implementation": "dijkstra",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_shortest_path:dijkstra]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_dijkstra_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_dijkstra_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_shortest_path_dijkstra_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_view_overloads_preserve_domain_and_reject_foreign_seeds",
+        "test_spec001b_operators.TestOperatorContracts.test_shortest_path_proven_bad_weights_rejected_unknown_guarded"
+      ]
+    },
+    {
+      "operator": "graph_filter",
+      "implementation": "edge_mask",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_filter:edge_mask]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_edge_mask_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_edge_mask_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_edge_mask_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_node_schema_and_view_alias",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "graph_filter",
+      "implementation": "index_filter",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_filter:index_filter]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_index_filter_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_index_filter_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_index_filter_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_graph_filter_node_schema_and_view_alias",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "graph_subgraph",
+      "implementation": "induced",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_subgraph:induced]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_induced_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_induced_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_induced_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_subgraph_modes_never_conflate_node_and_edge_selection",
+        "test_spec001b_operators.TestOperatorContracts.test_edge_subgraph_ignores_schema_json_key_order_not_field_types"
+      ]
+    },
+    {
+      "operator": "graph_subgraph",
+      "implementation": "edge_selected",
+      "static_validator": "rcwg_spec.operators.DISPATCH[graph_subgraph:edge_selected]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_edge_selected_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_edge_selected_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_graph_subgraph_edge_selected_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_subgraph_modes_never_conflate_node_and_edge_selection",
+        "test_spec001b_operators.TestOperatorContracts.test_edge_subgraph_ignores_schema_json_key_order_not_field_types"
+      ]
+    },
+    {
+      "operator": "read_documents",
+      "implementation": "batched",
+      "static_validator": "rcwg_spec.operators.DISPATCH[read_documents:batched]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_batched_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_batched_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_batched_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_document_id_selection_overloads_require_explicit_mapping",
+        "test_spec001b_operators.TestOperatorContracts.test_document_domains_revisions_and_fields",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample"
+      ]
+    },
+    {
+      "operator": "read_documents",
+      "implementation": "per_document",
+      "static_validator": "rcwg_spec.operators.DISPATCH[read_documents:per_document]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_per_document_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_per_document_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_read_documents_per_document_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_document_id_selection_overloads_require_explicit_mapping",
+        "test_spec001b_operators.TestOperatorContracts.test_document_domains_revisions_and_fields",
+        "test_spec001b_operators.TestOperatorContracts.test_join_project_document_mapping_chain_and_unmapped_counterexample"
+      ]
+    },
+    {
+      "operator": "text_retrieve",
+      "implementation": "bm25",
+      "static_validator": "rcwg_spec.operators.DISPATCH[text_retrieve:bm25]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_bm25_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_bm25_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_bm25_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_dense_binding_is_facility_readiness_not_model_type_error"
+      ]
+    },
+    {
+      "operator": "text_retrieve",
+      "implementation": "dense_fixed",
+      "static_validator": "rcwg_spec.operators.DISPATCH[text_retrieve:dense_fixed]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_dense_fixed_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_dense_fixed_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_text_retrieve_dense_fixed_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_dense_binding_is_facility_readiness_not_model_type_error"
+      ]
+    },
+    {
+      "operator": "split_documents",
+      "implementation": "section",
+      "static_validator": "rcwg_spec.operators.DISPATCH[split_documents:section]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_section_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_section_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_section_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "split_documents",
+      "implementation": "token_window",
+      "static_validator": "rcwg_spec.operators.DISPATCH[split_documents:token_window]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_token_window_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_token_window_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_split_documents_token_window_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "gather_context",
+      "implementation": "neighbors",
+      "static_validator": "rcwg_spec.operators.DISPATCH[gather_context:neighbors]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_neighbors_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_neighbors_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_neighbors_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "gather_context",
+      "implementation": "section_header",
+      "static_validator": "rcwg_spec.operators.DISPATCH[gather_context:section_header]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_section_header_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_section_header_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_gather_context_section_header_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "semantic_extract",
+      "implementation": "fixed_e0",
+      "static_validator": "rcwg_spec.operators.DISPATCH[semantic_extract:fixed_e0]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_semantic_extract_fixed_e0_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_semantic_extract_fixed_e0_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_semantic_extract_fixed_e0_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_semantic_extract_document_and_chunk_overloads_and_provenance"
+      ]
+    },
+    {
+      "operator": "evidence_merge",
+      "implementation": "by_entity",
+      "static_validator": "rcwg_spec.operators.DISPATCH[evidence_merge:by_entity]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_entity_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_entity_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_entity_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_declared_priority_is_closed_typed_public_ordering"
+      ]
+    },
+    {
+      "operator": "evidence_merge",
+      "implementation": "by_document",
+      "static_validator": "rcwg_spec.operators.DISPATCH[evidence_merge:by_document]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_document_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_document_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_merge_by_document_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_declared_priority_is_closed_typed_public_ordering"
+      ]
+    },
+    {
+      "operator": "evidence_validate",
+      "implementation": "span_check",
+      "static_validator": "rcwg_spec.operators.DISPATCH[evidence_validate:span_check]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_validate_span_check_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_validate_span_check_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_validate_span_check_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_evidence_validation_public_index_domain_required"
+      ]
+    },
+    {
+      "operator": "materialize",
+      "implementation": "memory",
+      "static_validator": "rcwg_spec.operators.DISPATCH[materialize:memory]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_memory_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_memory_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_memory_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_explicit_stream_conversion_and_materialize_storage"
+      ]
+    },
+    {
+      "operator": "materialize",
+      "implementation": "disk",
+      "static_validator": "rcwg_spec.operators.DISPATCH[materialize:disk]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_disk_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_disk_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_materialize_disk_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_explicit_stream_conversion_and_materialize_storage"
+      ]
+    },
+    {
+      "operator": "stream_read",
+      "implementation": "arrow_batches",
+      "static_validator": "rcwg_spec.operators.DISPATCH[stream_read:arrow_batches]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stream_read_arrow_batches_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stream_read_arrow_batches_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stream_read_arrow_batches_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_explicit_stream_conversion_and_materialize_storage"
+      ]
+    },
+    {
+      "operator": "broadcast",
+      "implementation": "shared_ref",
+      "static_validator": "rcwg_spec.operators.DISPATCH[broadcast:shared_ref]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_shared_ref_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_shared_ref_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_shared_ref_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_named_refs_and_copy_alias_distinction"
+      ]
+    },
+    {
+      "operator": "broadcast",
+      "implementation": "copy_each",
+      "static_validator": "rcwg_spec.operators.DISPATCH[broadcast:copy_each]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_copy_each_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_copy_each_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_copy_each_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_broadcast_named_refs_and_copy_alias_distinction"
+      ]
+    },
+    {
+      "operator": "release",
+      "implementation": "explicit",
+      "static_validator": "rcwg_spec.operators.DISPATCH[release:explicit]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_release_explicit_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_release_explicit_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_release_explicit_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "cache",
+      "implementation": "memory",
+      "static_validator": "rcwg_spec.operators.DISPATCH[cache:memory]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_memory_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_memory_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_memory_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_cache_memory_alias_disk_copy_and_same_run_identity"
+      ]
+    },
+    {
+      "operator": "cache",
+      "implementation": "disk",
+      "static_validator": "rcwg_spec.operators.DISPATCH[cache:disk]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_disk_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_disk_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_cache_disk_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_cache_memory_alias_disk_copy_and_same_run_identity"
+      ]
+    },
+    {
+      "operator": "map",
+      "implementation": "bounded_map",
+      "static_validator": "rcwg_spec.operators.DISPATCH[map:bounded_map]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_map_bounded_map_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_map_bounded_map_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_map_bounded_map_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_control_types_and_nullable_condition_obligations"
+      ]
+    },
+    {
+      "operator": "branch",
+      "implementation": "predicate_branch",
+      "static_validator": "rcwg_spec.operators.DISPATCH[branch:predicate_branch]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_branch_predicate_branch_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_branch_predicate_branch_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_branch_predicate_branch_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_control_types_and_nullable_condition_obligations",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "loop",
+      "implementation": "bounded_loop",
+      "static_validator": "rcwg_spec.operators.DISPATCH[loop:bounded_loop]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_loop_bounded_loop_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_loop_bounded_loop_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_loop_bounded_loop_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_loop_scalar_and_record_conditions_and_cap_guard",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_date_literal_context_is_typed_without_mutating_ast",
+        "test_spec001b_predicates.TestPredicateContracts.test_iso_timestamp_requires_offset_and_preserves_microseconds",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_membership_lists_and_nulls",
+        "test_spec001b_predicates.TestPredicateContracts.test_invalid_date_clock_and_ambiguous_timestamp_literals_rejected",
+        "test_spec001b_predicates.TestPredicateContracts.test_temporal_context_does_not_cast_utf8_fields_or_numeric_literals"
+      ]
+    },
+    {
+      "operator": "collect",
+      "implementation": "bounded_collect",
+      "static_validator": "rcwg_spec.operators.DISPATCH[collect:bounded_collect]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_collect_bounded_collect_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_collect_bounded_collect_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_collect_bounded_collect_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters"
+      ]
+    },
+    {
+      "operator": "emit",
+      "implementation": "json_artifact",
+      "static_validator": "rcwg_spec.operators.DISPATCH[emit:json_artifact]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_emit_json_artifact_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_emit_json_artifact_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_emit_json_artifact_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_emit_checks_actual_fields_types_and_contract",
+        "test_spec001b_operators.TestOperatorContracts.test_emit_all_public_output_tags_and_wrong_representations",
+        "test_spec001b_operators.TestOperatorContracts.test_emit_rejects_same_domain_wrong_revision_and_item_scalar"
+      ]
+    },
+    {
+      "operator": "stats",
+      "implementation": "metadata",
+      "static_validator": "rcwg_spec.operators.DISPATCH[stats:metadata]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_metadata_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_metadata_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_metadata_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_stats_stage_information_and_conditional_sample_size"
+      ]
+    },
+    {
+      "operator": "stats",
+      "implementation": "sample",
+      "static_validator": "rcwg_spec.operators.DISPATCH[stats:sample]",
+      "positive_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_sample_legal"
+      ],
+      "negative_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_sample_illegal"
+      ],
+      "dispatch_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_stats_sample_dispatch"
+      ],
+      "runtime_kernel_status": "NOT_IMPLEMENTED",
+      "additional_contract_test_ids": [
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_wrong_input_and_output_ports",
+        "test_spec001b_operators.TestOperatorContracts.test_all_branches_reject_unknown_and_missing_parameters",
+        "test_spec001b_operators.TestOperatorContracts.test_stats_stage_information_and_conditional_sample_size"
+      ]
+    }
+  ],
+  "notes": "Method IDs refer to executable branch fixtures; complete acceptance must intersect them with passed unittest results."
+}

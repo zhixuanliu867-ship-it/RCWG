@@ -82,3 +82,24 @@ Issue 状态：按实际单独登记（不因 PR 已存在而推定 Issue 已创
 新 doctor 保留 Docker 不可用、gcloud 不存在、formal_isolation_verified=false、formal_ready=false 的实测状态。
 正式门禁 `BLOCKED_NOT_FROZEN`、退出码 2；真实模型/云/IAM 动作 0。
 下一阶段 **SPEC-001B**；完整验证器与 32 算子运行时仍未实现。GitHub CI 和远端状态另行核实。
+
+## SPEC-001A review / SPEC-001B start — 2026-09-19
+
+Reviewed PR #2 head: `6afd48490094d716dc65cf84fe822e45216fcac3`; tree `e09ee3a93b46192d3e88775fda5e24bade771f4d`.
+SPEC-001A review: `ACCEPTED_OFFLINE`; actual PR #2 merge remains an owner/repository action (observed open).
+SPEC-001B decisions: approved in `docs/spec001b/DECISIONS.md`; implementation started.
+Starter implementation: structural/lexical dependency and identity modules, 63 new tests; full compiler and full task/message integration remain pending.
+`STRUCTURE_PASS` and the foundation/sentinel checks are not complete SPEC-001B acceptance.
+Follow `docs/spec001b/CODEX_TASK.md` and `ACCEPTANCE.md`; preserve A's 131 tests and four review fixes.
+Cloud/API/IAM actions remain unexecuted in this package; formal gate stays closed.
+
+## SPEC-001B 完整实现 — 2026-09-19
+
+已继承独立审查的 A 提交 `6afd48490094d716dc65cf84fe822e45216fcac3`，独立分支 `rcwg/spec-001b`。
+PR #2 最新核对仍为 open；尚未把 A 的合并写成已完成。B 的远端基线与 PR 状态以本轮交付证据为准。
+
+实现 TaskInput tagged union、schema/type 代数、完整 32/56 静态算子契约、区域控制、资源与别名生命周期义务、P0/P1 mock、不可变 expected manifest 和来源绑定。保留原 131 项及基础 63 项测试，完整验收读取固定方法清单并核对实际通过记录；27 哨兵仅是其中一项。
+
+本阶段验收结果由 `scripts/accept_spec001b.py` 输出 `SPEC001B_OFFLINE_GATES_PASS`；用户 WSL 与 GitHub CI 分开留证，最终 clean apply/tree 证明与交付状态另列。运行内核、artifact 注册器、独立语义 verifier、受控 Linux 资源计量为 EXEC-001 待实现项，不产生正式实验结果。
+
+正式门禁保持 `BLOCKED_NOT_FROZEN`（退出码 2），真实模型／云／IAM 动作 0。原 33 文件、科学主比较与规模不变。下一工作入口：`docs/spec001b/EXEC-001_INTERFACE.md`。
