@@ -103,3 +103,9 @@ PR #2 最新核对仍为 open；尚未把 A 的合并写成已完成。B 的远�
 本阶段验收结果由 `scripts/accept_spec001b.py` 输出 `SPEC001B_OFFLINE_GATES_PASS`；用户 WSL 与 GitHub CI 分开留证，最终 clean apply/tree 证明与交付状态另列。运行内核、artifact 注册器、独立语义 verifier、受控 Linux 资源计量为 EXEC-001 待实现项，不产生正式实验结果。
 
 正式门禁保持 `BLOCKED_NOT_FROZEN`（退出码 2），真实模型／云／IAM 动作 0。原 33 文件、科学主比较与规模不变。下一工作入口：`docs/spec001b/EXEC-001_INTERFACE.md`。
+
+## 2026-09-19 · 独立 B 复核与 EXEC-001 启动
+
+B head a1f65120ef0b2b8e1fb6f1c31224244d6f7ee16b 的交付/WSL/CI/源码绑定已独立复核，可进入 EXEC-001。原上文状态作为历史保留。当前远端PR2未合并、PR3 draft；连接器合并PR2实际返回403，未改main。合并精确内容授权与权限阻断回退见 docs/exec001/CODEX_TASK.md。
+
+本轮本地已实现 F1 reference 5算子/8分支和真实数据→WorkIR→artifact→独立verifier→事件绑定闭环。它是 REFERENCE_CORE，不等于完整 EXEC-001 或正式效率后端。新增77项、合计662项交付环境3.13.5测试通过；目标3.12.14与独立CI待Codex新票验收。原B正式门禁保留false，native/cgroup/云/API未执行。
