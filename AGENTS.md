@@ -29,3 +29,9 @@ python3 scripts/check_public_tree.py   # after git add, before commit/push
 ```
 
 `uv.lock` freezes a zero-third-party-dependency BOOT environment. The optional legacy jsonschema checker is a separate audit tool; any future dependencies need a reviewed lock update. The base container image is a candidate until the target digest is recorded.
+
+## 2026-09-19 delegated research decisions
+Read docs/spec001a/SPEC-001_DECISIONS.md and METROLOGY-001.md before SPEC edits.
+The owner authorizes routine compatible protocol, metric, implementation and test decisions within the core RCWG research scope; implement and report without repeated per-field approval.
+Use dedicated branches and preserve original evidence. Financial/IAM/destructive operations remain separately authorized. Actual formal protocol/primary-estimand changes are explicitly versioned, not silently introduced after viewing test outcomes.
+Current checkpoint SPEC-001A includes a LIMITED F1 TaskInput profile and offline metrology reducers. It does not implement a complete WorkIR compiler or the 32 runtime operators. Continue with SPEC-001B before EXEC-001. Report unsupported implementation coverage separately from invalid generated plans.

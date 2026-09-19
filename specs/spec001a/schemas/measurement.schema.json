@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rcwg:spec001a:measurement:0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "value",
+    "unit",
+    "scope",
+    "status",
+    "reason"
+  ],
+  "properties": {
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "unit": {
+      "enum": [
+        "s",
+        "byte",
+        "count",
+        "token"
+      ]
+    },
+    "scope": {
+      "enum": [
+        "worker_exec",
+        "worker_cgroup",
+        "artifact_proxy",
+        "transport",
+        "semantic_service"
+      ]
+    },
+    "status": {
+      "enum": [
+        "MEASURED",
+        "CENSORED",
+        "UNAVAILABLE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "UNAVAILABLE",
+              "NOT_APPLICABLE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "type": "null"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "MEASURED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "CENSORED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}

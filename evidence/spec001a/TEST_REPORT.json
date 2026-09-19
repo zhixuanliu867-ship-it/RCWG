@@ -1,0 +1,134 @@
+{
+  "ticket": "RCWG-SPEC-001A",
+  "status": "REVIEWER_OFFLINE_PASS",
+  "environment": {
+    "system": "Linux",
+    "python": "3.13.5",
+    "owner_wsl": false
+  },
+  "baseline_main": "08b1ecff33ab01098926e3dceba64ab6ab4fa02c",
+  "baseline_tree": "6d67ecfd99a1f6b6db317bcea837d866e9f1d1a8",
+  "tests_total": 117,
+  "tests_legacy": 43,
+  "tests_new": 74,
+  "steps": [
+    {
+      "name": "unittest",
+      "command": "/opt/pyvenv/bin/python -m unittest discover -s tests -v",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "unittest.txt",
+      "sha256": "0725a600bf653b206b81bc69491b2b06f75e88087e44608caf7ea328a90913ff"
+    },
+    {
+      "name": "boot-check",
+      "command": "/opt/pyvenv/bin/python -m rcwg_boot check",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "boot-check.txt",
+      "sha256": "f0ebde9feaf365215cdabf1aab75aa681656f044ab7b6d2d99eb23e9a195ca37"
+    },
+    {
+      "name": "boot-smoke",
+      "command": "/opt/pyvenv/bin/python -m rcwg_boot smoke",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "boot-smoke.txt",
+      "sha256": "f4803d4d35f0706c190a0a1ea6ba3663adf7beccafcbf3e570db2c413b2fa675"
+    },
+    {
+      "name": "mock-api",
+      "command": "/opt/pyvenv/bin/python -m rcwg_boot api-probe",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "mock-api.txt",
+      "sha256": "c2f5a0c60b67fdf83c93d7a00be8c34f2023c9a8a4b0f5709869a8f38da0da4b"
+    },
+    {
+      "name": "formal-gate",
+      "command": "/opt/pyvenv/bin/python -m rcwg_boot check --formal",
+      "expected_exit": 2,
+      "actual_exit": 2,
+      "passed": true,
+      "evidence": "formal-gate.txt",
+      "sha256": "f4806750e651301b6e62f8e5a5bacef8fc4b1b00b44fcd3eb5cac17bddd9fa61"
+    },
+    {
+      "name": "spec-check",
+      "command": "/opt/pyvenv/bin/python -m rcwg_spec check",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "spec-check.txt",
+      "sha256": "91f9b59dd11811697e704ffeb87f8451b8c896b1d31ad4ad225c101ecf293015"
+    },
+    {
+      "name": "task-check",
+      "command": "/opt/pyvenv/bin/python -m rcwg_spec validate-task specs/reference_v1_0/examples/task_input.json",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "task-check.txt",
+      "sha256": "a6f912ca90b6ebf106e63c668bca02b81f7b6813c5ca88f22783fbd8f4424a9e"
+    },
+    {
+      "name": "synthetic-score",
+      "command": "/opt/pyvenv/bin/python -m rcwg_spec demo --output runs/spec001a-final/report.json",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "synthetic-score.txt",
+      "sha256": "199090f55fe8bde0c153db61a97cf5a957ae72fc2c32565f051da17350418462"
+    },
+    {
+      "name": "public-guard",
+      "command": "/opt/pyvenv/bin/python scripts/check_public_tree.py",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "public-guard.txt",
+      "sha256": "a84748f6fe1d127e7fc30a7a9c47b789412f448aea3348b5e36702e6e1f4f460"
+    },
+    {
+      "name": "compile",
+      "command": "/opt/pyvenv/bin/python -m compileall -q rcwg_spec tests",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "compile.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "shell-syntax",
+      "command": "bash -n scripts/accept_spec001a.sh",
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "passed": true,
+      "evidence": "shell-syntax.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "supplementary_schema_check": {
+    "schema_documents_checked": 2,
+    "task_examples_checked": 1,
+    "measurement_examples_checked": 6,
+    "reviewer_jsonschema_version": "4.26.0",
+    "scope": "supplementary reviewer-only check; does not establish complete WorkIR validation"
+  },
+  "target_python312_execution": "PENDING_OWNER_OR_CI",
+  "live_model_requests": 0,
+  "cloud_deployments": 0,
+  "iam_changes": 0,
+  "formal_ready": false,
+  "github_write_attempt": {
+    "action": "create_branch rcwg/spec-001a",
+    "http_status": 403,
+    "branch_created": false,
+    "pr_created": false
+  },
+  "original_reference_files_unchanged": 33
+}

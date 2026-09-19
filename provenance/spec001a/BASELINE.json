@@ -1,0 +1,18 @@
+{
+  "ticket": "RCWG-SPEC-001A",
+  "as_of": "2026-09-19",
+  "remote_main_commit": "08b1ecff33ab01098926e3dceba64ab6ab4fa02c",
+  "remote_main_tree": "6d67ecfd99a1f6b6db317bcea837d866e9f1d1a8",
+  "base_reconstruction": "Byte-exact Git tree reconstructed from BOOT archive and two live connector file reads; no upstream Git history claimed.",
+  "owner_candidate_sha256": "dbe7f7ad0db935b9973f2722826485717df34593bea1464ced713a4fe06d0fea",
+  "owner_candidate_scope": "32-row operator candidate; references OD-04 and section 6 but does not include their text.",
+  "research_protocol": "RCWG 1.0",
+  "source_document": "02_正式实验设计书_流程详解版_v1.1.pdf",
+  "implementation_amendment": "SPEC001A 0.1.0",
+  "original_reference_paths_unchanged": [
+    "specs/reference_v1_0",
+    "prompts/v1_1"
+  ],
+  "owner_wsl_doctor_evidence": "Owner-reported hash and version in merged PR #1; new raw doctor not re-read in this review.",
+  "formal_run_enabled": false
+}

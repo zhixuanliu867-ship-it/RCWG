@@ -1,0 +1,169 @@
+{
+  "ticket": "RCWG-SPEC-001A",
+  "status": "OWNER_WSL_ACCEPTANCE_PASS",
+  "scope": "OFFLINE_ENGINEERING_ONLY",
+  "baseline_main": "08b1ecff33ab01098926e3dceba64ab6ab4fa02c",
+  "original_import_commit": "cb95a5a2ba6367509e230b531606cc1598479e19",
+  "original_delivery_tree": "408a7968efe9938a49b2a256a54232058d2b99a2",
+  "archive_matches_imported_index": true,
+  "archive_files": 121,
+  "run_directory": "runs/spec001a-owner-20260919T095950Z-3473",
+  "initial_run_directory": "runs/spec001a-owner-20260919T095453Z-2998",
+  "python_version": "3.12.14",
+  "wsl_distro": "Ubuntu 26.04 LTS",
+  "kernel": "6.6.87.2-microsoft-standard-WSL2",
+  "logical_cpu_count": 32,
+  "original_tests_passed": 117,
+  "review_regression_tests": 14,
+  "final_tests_passed": 131,
+  "original_regression_run": {
+    "methods": 14,
+    "failing_subcases": 23,
+    "exit_code": 1
+  },
+  "checks": {
+    "boot": "BOOT_CHECK_PASS",
+    "spec": "SPEC001A_CORE_PASS",
+    "smoke": "PASS",
+    "mock_api": "PASS",
+    "public_guard": "PASS",
+    "compileall": "PASS",
+    "bash_syntax": "PASS"
+  },
+  "formal_gate": {
+    "status": "BLOCKED_NOT_FROZEN",
+    "exit_code": 2,
+    "formal_ready": false
+  },
+  "formal_isolation_verified": false,
+  "docker_daemon": "UNAVAILABLE_OR_PERMISSION_DENIED",
+  "gcloud_present": false,
+  "real_model_requests": 0,
+  "cloud_resource_mutations": 0,
+  "iam_mutations": 0,
+  "system_setting_mutations": 0,
+  "protected_reference_files": 33,
+  "protected_reference_bytes_unchanged": true,
+  "private_paths_tracked": false,
+  "new_dependencies": [],
+  "tested_code_manifest_sha256": "2e9c535c7f7d6a611f4bf9d33945c64a6ad8fb0c50e6892659e1488c01b2367e",
+  "tested_code_files": {
+    ".github/workflows/ci.yml": "03abed570d72e2f06e3edfbb507652bf27e46e24bd9a81771449eb77d843ff56",
+    "configs/boot.json": "bbd6611270e4123e99d3b18e4d1d6f783dea683a6d1d6b7caff9d3aad23bc349",
+    "pyproject.toml": "c600a63e849435daecc51b17cd495aa92a5188b95cf0941fca5a494d4a8f7a6f",
+    "rcwg_boot/__init__.py": "10ca449489404c187e8530e9af0e31cc32f2f2efc8d61b22941deece8bb3e1b6",
+    "rcwg_boot/__main__.py": "61ad358c7a9caae1e2ebb5ff664bbd4820032dffe8273334970e0446ba9efbad",
+    "rcwg_boot/api_probe.py": "43c89b6c8476d793b7631aa7f50c06808de37cab92b7c72f4bbe2b70bdb3f208",
+    "rcwg_boot/budget.py": "20af600f495f5f672bb11b3e9dd0f44d754ecf7de2fe308e59ff43910ad5fdc0",
+    "rcwg_boot/checks.py": "45ab889c6af82c1519a48ef2cf2393d5a116a0d45fd43006f26251e39facbb55",
+    "rcwg_boot/cloud.py": "5195a8ab4969254657d7edcb3b67ced7fef3ad6e16ef09b26f8c872e0d4f8ff9",
+    "rcwg_boot/common.py": "610d3907c711d80e746687a018c4011a11316944d7e23306640545ad38805a87",
+    "rcwg_boot/doctor.py": "04c4519c5dad7699c06454cfebdf4f2193f1a5322c815109942e3c9db1180922",
+    "rcwg_boot/net.py": "ba7f83064e6be98b348485b67075fb07e5e1c0b3ac36716aee86f3d6a14ae08b",
+    "rcwg_boot/smoke.py": "b0929c2e87838f6b36ef30d1e7d216310c57542f0ff8e2704110689169eab6f2",
+    "rcwg_spec/__init__.py": "c52d165cdd750b89781519144ece13ea8c86c2bd1681c976effec999cc6467ba",
+    "rcwg_spec/__main__.py": "9ec77c29847f94c211ac1ca56ca3ec2a9f20dbe12f5962308f9106a574f5422b",
+    "rcwg_spec/cgroup_probe.py": "c68d05205e20a2928242cea46fd7402ab206be83295845a3342ecb79cda85722",
+    "rcwg_spec/common.py": "cd6456534a7366ced16e882bc5ea7604006308dc5016c004313e718363d8c5db",
+    "rcwg_spec/lifetimes.py": "44793404667acdffff1b92a06d655494804006b69d76aabf0d7381dc4950efe7",
+    "rcwg_spec/metrology.py": "0039710c2a1b76ac5192ae5506b1492a0929fdb15a4ecbdc11aaa6f4041d9ec7",
+    "rcwg_spec/task_input.py": "7ff9938a3350a497d5cbd606f0f90e42fbb95b1d80b0372b4b61bc0bf5c43df3",
+    "scripts/accept_spec001a.sh": "cf827aac0387298c8557eab7745f045ed14526031fdb1f669e8d18b152c30b66",
+    "scripts/check_public_tree.py": "ddc211ed7f557d1be0c0b634ccd2e2a685811406f801c9f90d41068e957d2ef3",
+    "scripts/doctor.py": "5b0705fd95a11fd3df9080a889baf0d2aca925778dcb6f62fa45b61dc8a3ae5e",
+    "tests/test_core.py": "0b86c434685a6e33fd26bf97fc1691e4da034cd000b1c2343e218a2196d1bbd3",
+    "tests/test_spec001a.py": "a8347cd23210c1cfc8f360f5176f371e06f9c243fc2d20318963380926bc1fc3",
+    "tests/test_spec001a_review.py": "659d2c75b54c259f34d21a6c1f34eb3b614b0da6991fcc1f643a1f570912b9d9",
+    "uv.lock": "3d5672e1a01569d7ce5e03380b014bff069c4f36638d197e0dd88bf16476f0b5"
+  },
+  "evidence_files": {
+    "runs/spec001a-owner-20260919T095950Z-3473/boot-check.json": {
+      "sha256": "f0ebde9feaf365215cdabf1aab75aa681656f044ab7b6d2d99eb23e9a195ca37",
+      "bytes": 557
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/boot-smoke.json": {
+      "sha256": "f66ec9bb7ea43606672a70594f7bb9bd06a8f55b7eff475f84464ac43bc6554f",
+      "bytes": 87
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/cgroup-readonly.json": {
+      "sha256": "d2ca4ec24a2bd4186165f11bafa4b0c14f9cbbce13965a70bfd5d8c5fc0d6a96",
+      "bytes": 3103
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/cgroup-stdout.json": {
+      "sha256": "d2ca4ec24a2bd4186165f11bafa4b0c14f9cbbce13965a70bfd5d8c5fc0d6a96",
+      "bytes": 3103
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/formal-gate.json": {
+      "sha256": "f4806750e651301b6e62f8e5a5bacef8fc4b1b00b44fcd3eb5cac17bddd9fa61",
+      "bytes": 560
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/git-head.txt": {
+      "sha256": "5565a1e87b17459365f255461a7d16fe3e096f24fef0882a0601be4825e734af",
+      "bytes": 41
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/mock-api.json": {
+      "sha256": "ebf88c0a9443da5ef4901cc721a17a6d4a397f406974fa01336f42ff8672034f",
+      "bytes": 93
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/public-guard.txt": {
+      "sha256": "a84748f6fe1d127e7fc30a7a9c47b789412f448aea3348b5e36702e6e1f4f460",
+      "bytes": 91
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/python.txt": {
+      "sha256": "5d367eca2ff446679dbbe26c32961d0e5952fbaa8dd6788b0e3fe7bc95249d6a",
+      "bytes": 54
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/spec-check.json": {
+      "sha256": "91f9b59dd11811697e704ffeb87f8451b8c896b1d31ad4ad225c101ecf293015",
+      "bytes": 210
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/synthetic-score.json": {
+      "sha256": "199090f55fe8bde0c153db61a97cf5a957ae72fc2c32565f051da17350418462",
+      "bytes": 2707
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/synthetic-stdout.json": {
+      "sha256": "199090f55fe8bde0c153db61a97cf5a957ae72fc2c32565f051da17350418462",
+      "bytes": 2707
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/task-check.json": {
+      "sha256": "a6f912ca90b6ebf106e63c668bca02b81f7b6813c5ca88f22783fbd8f4424a9e",
+      "bytes": 187
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/unittest.txt": {
+      "sha256": "f238a725f15b6042333bcfba83d6bd98f62dedb31598854163a99fc94d2a411c",
+      "bytes": 14005
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/worktree-diff-stat.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "runs/spec001a-owner-20260919T095950Z-3473/wsl-doctor-python312.json": {
+      "sha256": "00b73d896dc69d8e63f871ef372071906694f75af503ecf49eb579543a5fbc88",
+      "bytes": 1290
+    },
+    "runs/mock-probe-ba60d42f940f4e08a6136241055fcba4/report.json": {
+      "sha256": "42b36eb4ace6e1ee77651ab625be6373a666ae3d64d6beaf2e21f329c9a3294e",
+      "bytes": 173
+    },
+    "runs/boot-a3ff3eab5e4040cba6e3b33f68f5ba5e/report.json": {
+      "sha256": "e882b9c470e8d4819f1b821a1a374fb7dee0841e1dca51f77afd8e3a6fb2fb60",
+      "bytes": 1203
+    }
+  },
+  "historical_evidence": {
+    "runs/spec001a-owner-20260919T095453Z-2998/unittest.txt": {
+      "sha256": "f5ef5faf67d97ea2e52b183e167c4e3cf01e4767576bc7486bf82b8969de5ce3"
+    },
+    "runs/spec001a-owner-20260919T095453Z-2998/review-before-fix.txt": {
+      "sha256": "0beb4e10e19a687eaaa90bbf04bcb92e55dad61ec4f5d296ffaeae4c942b5600"
+    }
+  },
+  "github_ci": "VERIFY_SEPARATELY_AFTER_PUSH",
+  "limits": [
+    "F1 TaskInput limited profile only",
+    "Full WorkIR validator pending SPEC-001B",
+    "32 runtime kernels not implemented",
+    "Formal metrology not calibrated",
+    "Container, live API and cloud acceptance deferred"
+  ]
+}

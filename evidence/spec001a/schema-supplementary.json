@@ -1,0 +1,7 @@
+{
+  "schema_documents_checked": 2,
+  "task_examples_checked": 1,
+  "measurement_examples_checked": 6,
+  "reviewer_jsonschema_version": "4.26.0",
+  "scope": "supplementary reviewer-only check; does not establish complete WorkIR validation"
+}

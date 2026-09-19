@@ -1,0 +1,149 @@
+test_bad_json_output (test_core.Api.test_bad_json_output) ... ok
+test_cloud_live_probe_blocked (test_core.Api.test_cloud_live_probe_blocked) ... ok
+test_dashscope_one_request (test_core.Api.test_dashscope_one_request) ... ok
+test_exact_boolean_required (test_core.Api.test_exact_boolean_required) ... ok
+test_failure_not_refunded_or_retried (test_core.Api.test_failure_not_refunded_or_retried) ... ok
+test_gemini_one_request (test_core.Api.test_gemini_one_request) ... ok
+test_malformed_response_recorded (test_core.Api.test_malformed_response_recorded) ... ok
+test_missing_key_blocked_before_reserving (test_core.Api.test_missing_key_blocked_before_reserving) ... ok
+test_mock_no_network (test_core.Api.test_mock_no_network) ... ok
+test_paid_requires_opt_in (test_core.Api.test_paid_requires_opt_in) ... ok
+test_concurrent_admission_is_bounded (test_core.Budget.test_concurrent_admission_is_bounded) ... ok
+test_five_calls_then_blocked (test_core.Budget.test_five_calls_then_blocked) ... ok
+test_invalid_reservations (test_core.Budget.test_invalid_reservations) ... ok
+test_restart_preserves_gate (test_core.Budget.test_restart_preserves_gate) ... ok
+test_local_cloud_entry_blocked (test_core.Cloud.test_local_cloud_entry_blocked) ... ok
+test_missing_config_no_network (test_core.Cloud.test_missing_config_no_network) ... ok
+test_storage_upload_mocked (test_core.Cloud.test_storage_upload_mocked) ... ok
+test_bad_endpoint (test_core.Endpoints.test_bad_endpoint) ... ok
+test_bad_model_id (test_core.Endpoints.test_bad_model_id) ... ok
+test_gemini_endpoint (test_core.Endpoints.test_gemini_endpoint) ... ok
+test_legacy_endpoint (test_core.Endpoints.test_legacy_endpoint) ... ok
+test_redirect_denied (test_core.Endpoints.test_redirect_denied) ... ok
+test_workspace_endpoint (test_core.Endpoints.test_workspace_endpoint) ... ok
+test_boot_integrity (test_core.Environment.test_boot_integrity) ... ok
+test_changed_safety_config_blocked (test_core.Environment.test_changed_safety_config_blocked) ... ok
+test_formal_gate_blocked (test_core.Environment.test_formal_gate_blocked) ... ok
+test_reference_tampering_blocked (test_core.Environment.test_reference_tampering_blocked) ... ok
+test_report_sanitized (test_core.Environment.test_report_sanitized) ... ok
+test_canonical_order (test_core.Serialization.test_canonical_order) ... ok
+test_evidence_not_overwritten (test_core.Serialization.test_evidence_not_overwritten) ... ok
+test_nonfinite_rejected (test_core.Serialization.test_nonfinite_rejected) ... ok
+test_bool_k_rejected (test_core.Smoke.test_bool_k_rejected) ... ok
+test_empty (test_core.Smoke.test_empty) ... ok
+test_filter_before_topk (test_core.Smoke.test_filter_before_topk) ... ok
+test_fixed_expected (test_core.Smoke.test_fixed_expected) ... ok
+test_fixture_hash_stable_across_attempts (test_core.Smoke.test_fixture_hash_stable_across_attempts) ... ok
+test_k_large (test_core.Smoke.test_k_large) ... /mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208ccbf970>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208ccbfa60>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208ccbfc40>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208ccbfd30>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208ccbf880>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208cba0130>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208cba0310>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208cba2110>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/mnt/data/RCWG_SPEC_WORK/RCWG-BOOT-001/rcwg_boot/smoke.py:17: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f208cba0040>
+  return [{"id": r["id"], "score": r["score"]} for r in selected]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_k_zero (test_core.Smoke.test_k_zero) ... ok
+test_multiple_small_inputs (test_core.Smoke.test_multiple_small_inputs) ... ok
+test_negative_k (test_core.Smoke.test_negative_k) ... ok
+test_no_mutation (test_core.Smoke.test_no_mutation) ... ok
+test_tie_break (test_core.Smoke.test_tie_break) ... ok
+test_verifier_detects_change (test_core.Smoke.test_verifier_detects_change) ... ok
+test_alias_id_does_not_allocate_twice (test_spec001a.TestBufferAndEvidenceAccounting.test_alias_id_does_not_allocate_twice) ... ok
+test_alternative_evidence_is_accepted (test_spec001a.TestBufferAndEvidenceAccounting.test_alternative_evidence_is_accepted) ... ok
+test_byte_dimensions_are_separate (test_spec001a.TestBufferAndEvidenceAccounting.test_byte_dimensions_are_separate) ... ok
+test_duplicate_transfer_rejected (test_spec001a.TestBufferAndEvidenceAccounting.test_duplicate_transfer_rejected) ... ok
+test_duplicate_units_not_double_counted (test_spec001a.TestBufferAndEvidenceAccounting.test_duplicate_units_not_double_counted) ... ok
+test_empty_obligations_are_not_perfect_recall (test_spec001a.TestBufferAndEvidenceAccounting.test_empty_obligations_are_not_perfect_recall) ... ok
+test_empty_witness_rejected (test_spec001a.TestBufferAndEvidenceAccounting.test_empty_witness_rejected) ... ok
+test_invalid_temporal_order (test_spec001a.TestBufferAndEvidenceAccounting.test_invalid_temporal_order) ... ok
+test_overlapping_buffers_have_joint_peak (test_spec001a.TestBufferAndEvidenceAccounting.test_overlapping_buffers_have_joint_peak) ... ok
+test_qualifier_is_part_of_witness (test_spec001a.TestBufferAndEvidenceAccounting.test_qualifier_is_part_of_witness) ... ok
+test_reacquisition_can_restore_coverage (test_spec001a.TestBufferAndEvidenceAccounting.test_reacquisition_can_restore_coverage) ... ok
+test_seeded_sweep_against_discrete_reference (test_spec001a.TestBufferAndEvidenceAccounting.test_seeded_sweep_against_discrete_reference) ... ok
+test_sequential_peaks_not_summed (test_spec001a.TestBufferAndEvidenceAccounting.test_sequential_peaks_not_summed) ... ok
+test_unreleased_buffers_are_reported (test_spec001a.TestBufferAndEvidenceAccounting.test_unreleased_buffers_are_reported) ... ok
+test_zero_duration_has_no_live_peak (test_spec001a.TestBufferAndEvidenceAccounting.test_zero_duration_has_no_live_peak) ... ok
+test_counter_reset_is_an_error (test_spec001a.TestReadOnlyCgroup.test_counter_reset_is_an_error) ... ok
+test_cpu_delta_uses_microseconds (test_spec001a.TestReadOnlyCgroup.test_cpu_delta_uses_microseconds) ... ok
+test_fixture_snapshot_never_claims_isolation (test_spec001a.TestReadOnlyCgroup.test_fixture_snapshot_never_claims_isolation) ... ok
+test_missing_cpu_stat_is_error (test_spec001a.TestReadOnlyCgroup.test_missing_cpu_stat_is_error) ... ok
+test_symlink_cgroup_file_is_rejected (test_spec001a.TestReadOnlyCgroup.test_symlink_cgroup_file_is_rejected) ... ok
+test_unavailable_fields_are_null (test_spec001a.TestReadOnlyCgroup.test_unavailable_fields_are_null) ... ok
+test_available_units_cannot_be_bare_string (test_spec001a.TestReducerInputBoundaries.test_available_units_cannot_be_bare_string) ... ok
+test_available_units_cannot_contain_objects (test_spec001a.TestReducerInputBoundaries.test_available_units_cannot_contain_objects) ... ok
+test_buffers_require_array (test_spec001a.TestReducerInputBoundaries.test_buffers_require_array) ... ok
+test_byte_events_require_array (test_spec001a.TestReducerInputBoundaries.test_byte_events_require_array) ... ok
+test_duplicate_hierarchy_coordinates_rejected (test_spec001a.TestResourceScoring.test_duplicate_hierarchy_coordinates_rejected) ... ok
+test_duplicate_record_rejected (test_spec001a.TestResourceScoring.test_duplicate_record_rejected) ... ok
+test_failure_cannot_claim_success (test_spec001a.TestResourceScoring.test_failure_cannot_claim_success) ... ok
+test_faster_than_reference_ratio_not_clipped (test_spec001a.TestResourceScoring.test_faster_than_reference_ratio_not_clipped) ... ok
+test_infra_failure_is_unresolved_even_if_slow (test_spec001a.TestResourceScoring.test_infra_failure_is_unresolved_even_if_slow) ... ok
+test_invalid_plan_missing_measurements_is_zero (test_spec001a.TestResourceScoring.test_invalid_plan_missing_measurements_is_zero) ... ok
+test_just_above_near_threshold (test_spec001a.TestResourceScoring.test_just_above_near_threshold) ... ok
+test_memory_budget_fail (test_spec001a.TestResourceScoring.test_memory_budget_fail) ... ok
+test_missing_ram_is_unknown_not_zero (test_spec001a.TestResourceScoring.test_missing_ram_is_unknown_not_zero) ... ok
+test_missing_record_not_discarded (test_spec001a.TestResourceScoring.test_missing_record_not_discarded) ... ok
+test_models_remain_separate (test_spec001a.TestResourceScoring.test_models_remain_separate) ... ok
+test_monetary_budget_not_primary (test_spec001a.TestResourceScoring.test_monetary_budget_not_primary) ... ok
+test_nan_metric_rejected (test_spec001a.TestResourceScoring.test_nan_metric_rejected) ... ok
+test_oom_with_capped_peak_still_fails (test_spec001a.TestResourceScoring.test_oom_with_capped_peak_still_fails) ... ok
+test_reference_absent_changes_coverage_only (test_spec001a.TestResourceScoring.test_reference_absent_changes_coverage_only) ... ok
+test_reference_budget_scope_checked (test_spec001a.TestResourceScoring.test_reference_budget_scope_checked) ... ok
+test_reference_must_be_confirmed_frozen (test_spec001a.TestResourceScoring.test_reference_must_be_confirmed_frozen) ... ok
+test_remote_memory_not_worker_memory (test_spec001a.TestResourceScoring.test_remote_memory_not_worker_memory) ... ok
+test_repeat_count_does_not_change_family_weight (test_spec001a.TestResourceScoring.test_repeat_count_does_not_change_family_weight) ... ok
+test_seeded_budget_monotonicity (test_spec001a.TestResourceScoring.test_seeded_budget_monotonicity) ... ok
+test_semantic_failure_stays_in_denominator (test_spec001a.TestResourceScoring.test_semantic_failure_stays_in_denominator) ... ok
+test_success_and_exact_boundary (test_spec001a.TestResourceScoring.test_success_and_exact_boundary) ... ok
+test_timeout_censored_failure (test_spec001a.TestResourceScoring.test_timeout_censored_failure) ... ok
+test_unavailable_must_have_null_and_reason (test_spec001a.TestResourceScoring.test_unavailable_must_have_null_and_reason) ... ok
+test_unequal_case_sets_are_reported (test_spec001a.TestResourceScoring.test_unequal_case_sets_are_reported) ... ok
+test_unplanned_record_rejected (test_spec001a.TestResourceScoring.test_unplanned_record_rejected) ... ok
+test_wrong_unit_rejected (test_spec001a.TestResourceScoring.test_wrong_unit_rejected) ... ok
+test_bool_not_number (test_spec001a.TestStrictPrimitives.test_bool_not_number) ... ok
+test_canonical_key_order (test_spec001a.TestStrictPrimitives.test_canonical_key_order) ... ok
+test_json_duplicate_key_rejected (test_spec001a.TestStrictPrimitives.test_json_duplicate_key_rejected) ... ok
+test_json_nan_rejected (test_spec001a.TestStrictPrimitives.test_json_nan_rejected) ... ok
+test_nan_infinity_rejected (test_spec001a.TestStrictPrimitives.test_nan_infinity_rejected) ... ok
+test_three_valued_logic (test_spec001a.TestStrictPrimitives.test_three_valued_logic) ... ok
+test_write_refuses_overwrite (test_spec001a.TestStrictPrimitives.test_write_refuses_overwrite) ... ok
+test_bool_resource_rejected (test_spec001a.TestTaskProfile.test_bool_resource_rejected) ... ok
+test_canary_private_bundle_never_read (test_spec001a.TestTaskProfile.test_canary_private_bundle_never_read) ... ok
+test_cpu_above_reference_limit (test_spec001a.TestTaskProfile.test_cpu_above_reference_limit) ... ok
+test_duplicate_dataset_rejected (test_spec001a.TestTaskProfile.test_duplicate_dataset_rejected) ... ok
+test_empty_result_is_allowed_by_source_example (test_spec001a.TestTaskProfile.test_empty_result_is_allowed_by_source_example) ... ok
+test_estimate_requires_source (test_spec001a.TestTaskProfile.test_estimate_requires_source) ... ok
+test_existing_example_accepted (test_spec001a.TestTaskProfile.test_existing_example_accepted) ... ok
+test_negative_memory_rejected (test_spec001a.TestTaskProfile.test_negative_memory_rejected) ... ok
+test_nested_gold_rejected (test_spec001a.TestTaskProfile.test_nested_gold_rejected) ... ok
+test_public_assembly_is_copy (test_spec001a.TestTaskProfile.test_public_assembly_is_copy) ... ok
+test_tie_breaker_must_be_output (test_spec001a.TestTaskProfile.test_tie_breaker_must_be_output) ... ok
+test_top_level_gold_rejected (test_spec001a.TestTaskProfile.test_top_level_gold_rejected) ... ok
+test_unknown_modality_fails_explicitly (test_spec001a.TestTaskProfile.test_unknown_modality_fails_explicitly) ... ok
+test_unknown_resource_field_rejected (test_spec001a.TestTaskProfile.test_unknown_resource_field_rejected) ... ok
+test_zero_k_is_outside_current_profile (test_spec001a.TestTaskProfile.test_zero_k_is_outside_current_profile) ... ok
+
+----------------------------------------------------------------------
+Ran 117 tests in 0.052s
+
+OK

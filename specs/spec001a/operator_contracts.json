@@ -1,0 +1,688 @@
+[
+  {
+    "operator": "scan",
+    "input_type": "Table",
+    "output_type": "Stream[Record]",
+    "implementations": [
+      "sequential",
+      "index_range"
+    ],
+    "semantics": "源表、访问路径与索引版本固定；不自动下推新谓词。",
+    "parameter_fields": [
+      "source",
+      "columns",
+      "predicate"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "输入 source 端口绑定 DatasetRef[RecordSchema]；旧目录 Table 解释为数据源类型，不要求预先物化。source 不同时在 params 重复传递。索引及列路径由公开数据 manifest 解析。"
+    ]
+  },
+  {
+    "operator": "filter",
+    "input_type": "Stream[Record]",
+    "output_type": "Stream[Record]",
+    "implementations": [
+      "vectorized",
+      "scalar"
+    ],
+    "semantics": "确定性谓词AST，空值按三值逻辑；false与unknown不混为同一语义标签。",
+    "parameter_fields": [
+      "predicate"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "谓词AST类型检查；null遵循三值逻辑，保留 true，false/unknown均不保留但诊断计数分开。"
+    ]
+  },
+  {
+    "operator": "project",
+    "input_type": "Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "column_view",
+      "copy"
+    ],
+    "semantics": "输出列类型保留；view的对象存活和后续读取计费。",
+    "parameter_fields": [
+      "columns"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "Graph/表视图按底层 buffer_id 共享；新增 view 元数据单独登记。一个物理buffer仅登记一次活跃大小。"
+    ]
+  },
+  {
+    "operator": "join",
+    "input_type": "Table|Stream,Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "hash",
+      "sort_merge",
+      "block_nested"
+    ],
+    "semantics": "null/重复键/外连接语义固定；禁止暗中换算法。",
+    "parameter_fields": [
+      "keys",
+      "join_type",
+      "build_side"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "端口 left/right，键列表等长且类型兼容。sort_merge 的排序条件明确；预排序属于声明计划或计入该实现的工作。hash内部分区/spill策略随实现版本冻结。"
+    ]
+  },
+  {
+    "operator": "aggregate",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "hash_group",
+      "sorted_group"
+    ],
+    "semantics": "聚合函数和空值、浮点容差在任务契约声明。",
+    "parameter_fields": [
+      "group_by",
+      "aggregates"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "sorted_group的排序条件明确；聚合函数、空集结果、溢出/浮点容差由任务契约决定。"
+    ]
+  },
+  {
+    "operator": "deduplicate",
+    "input_type": "Table|Stream",
+    "output_type": "Table|Stream",
+    "implementations": [
+      "hash",
+      "sort_unique"
+    ],
+    "semantics": "保留规则确定；不得通过漏读去重。",
+    "parameter_fields": [
+      "keys",
+      "keep"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "keep 的取值及稳定顺序显式声明；依据输入排序定义first/last，采样去重属于不同近似语义。"
+    ]
+  },
+  {
+    "operator": "sort",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "in_memory",
+      "external_merge"
+    ],
+    "semantics": "外排的临时文件和I/O计费。",
+    "parameter_fields": [
+      "keys"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "外排临时文件创建、块读写、逻辑读写和清理均登记；两个字节口径分别统计。"
+    ]
+  },
+  {
+    "operator": "top_k",
+    "input_type": "Table|Stream",
+    "output_type": "Table",
+    "implementations": [
+      "full_sort",
+      "streaming_heap"
+    ],
+    "semantics": "精确top-k；并列规则明确，近似检索另设算子。",
+    "parameter_fields": [
+      "k",
+      "keys"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "沿用源目录语义，完整端口/参数可执行规则在SPEC-001B实现并测试。"
+    ]
+  },
+  {
+    "operator": "set_op",
+    "input_type": "Set,Set",
+    "output_type": "Set",
+    "implementations": [
+      "hash",
+      "sorted_merge"
+    ],
+    "semantics": "union/intersection/difference；重复和顺序契约独立。",
+    "parameter_fields": [
+      "mode"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "沿用源目录语义，完整端口/参数可执行规则在SPEC-001B实现并测试。"
+    ]
+  },
+  {
+    "operator": "graph_neighbors",
+    "input_type": "Graph,NodeSet",
+    "output_type": "EdgeStream",
+    "implementations": [
+      "csr",
+      "indexed_adjacency"
+    ],
+    "semantics": "方向、关系类型和时间过滤不能省略。",
+    "parameter_fields": [
+      "direction",
+      "edge_types"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "沿用源目录语义，完整端口/参数可执行规则在SPEC-001B实现并测试。"
+    ]
+  },
+  {
+    "operator": "graph_reachability",
+    "input_type": "Graph,NodeSet",
+    "output_type": "NodeSet",
+    "implementations": [
+      "bfs",
+      "dfs"
+    ],
+    "semantics": "本节点只回答可达性；DFS不得伪称最短跳数。",
+    "parameter_fields": [
+      "max_hops",
+      "direction"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "max_hops启用时dfs须按深度状态或更短已达深度重新扩展；单一visited集合不足以保证有界跳数可达性。"
+    ]
+  },
+  {
+    "operator": "graph_shortest_path",
+    "input_type": "Graph,NodeSet",
+    "output_type": "PathSet",
+    "implementations": [
+      "bfs",
+      "dijkstra"
+    ],
+    "semantics": "BFS仅合法于等权目标；Dijkstra需非负权。",
+    "parameter_fields": [
+      "target",
+      "weight_field"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "BFS权重均等；Dijkstra非负。不可达结果/单一路径或全路径/同长路径并列规则在任务契约固定。"
+    ]
+  },
+  {
+    "operator": "graph_filter",
+    "input_type": "Graph",
+    "output_type": "GraphView",
+    "implementations": [
+      "edge_mask",
+      "index_filter"
+    ],
+    "semantics": "只提供视图，扫描与物化何时发生均有日志。",
+    "parameter_fields": [
+      "predicate"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "GraphView是只读可遍历接口；保存底层Graph和mask依赖，release必须保留底层对象至最后使用者结束。"
+    ]
+  },
+  {
+    "operator": "graph_subgraph",
+    "input_type": "Graph,NodeSet",
+    "output_type": "Graph",
+    "implementations": [
+      "induced",
+      "edge_selected"
+    ],
+    "semantics": "两种子图语义不混用。",
+    "parameter_fields": [
+      "mode"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "induced按节点集合诱导边；edge_selected按显式边集合构造。默认选择不得跨语义。"
+    ]
+  },
+  {
+    "operator": "read_documents",
+    "input_type": "DocumentIndex,IDSet",
+    "output_type": "DocumentStream",
+    "implementations": [
+      "batched",
+      "per_document"
+    ],
+    "semantics": "读正文时才计实际读取；元数据不能包含隐藏答案。",
+    "parameter_fields": [
+      "fields",
+      "batch_size"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "读取正文、必要索引访问、API请求等均按实际操作计量；输入metadata不含隐藏答案。"
+    ]
+  },
+  {
+    "operator": "text_retrieve",
+    "input_type": "DocumentIndex",
+    "output_type": "RankedIDSet",
+    "implementations": [
+      "bm25",
+      "dense_fixed"
+    ],
+    "semantics": "近似候选不具有全集召回保证；exact任务不得盲目信任。",
+    "parameter_fields": [
+      "query",
+      "limit"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "BM25/dense候选结果仅按真实命中验收，不携带全集召回保证。精确结果义务通过后续完整计划履行。"
+    ]
+  },
+  {
+    "operator": "split_documents",
+    "input_type": "DocumentStream",
+    "output_type": "ChunkStream",
+    "implementations": [
+      "section",
+      "token_window"
+    ],
+    "semantics": "边界和span映射保留，空段规则固定。",
+    "parameter_fields": [
+      "size",
+      "overlap"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "span使用原始文档revision与统一字符/字节索引单位；token窗口必须记录tokenizer版本及截断/重叠。"
+    ]
+  },
+  {
+    "operator": "gather_context",
+    "input_type": "ChunkStream",
+    "output_type": "ChunkStream",
+    "implementations": [
+      "neighbors",
+      "section_header"
+    ],
+    "semantics": "额外上下文读取计费，不能调用隐藏证据定位器。",
+    "parameter_fields": [
+      "window"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "新增上下文作为新读取登记；可恢复先前未保留的证据，阶段覆盖率无需单调。"
+    ]
+  },
+  {
+    "operator": "semantic_extract",
+    "input_type": "DocumentStream|ChunkStream",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "fixed_e0"
+    ],
+    "semantics": "固定E0、模板和解码，输出true/false/unknown或带证据字段。",
+    "parameter_fields": [
+      "field_schema",
+      "context_budget"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "接口设计批准：固定字段schema、输入document/span、输出claim/value/qualifier/provenance及usage。E0真实提供商/模型/模板/地域/采样/价格仍SERVICE_BINDING_PENDING。"
+    ],
+    "service_binding_status": "PENDING"
+  },
+  {
+    "operator": "evidence_merge",
+    "input_type": "EvidenceTable",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "by_entity",
+      "by_document"
+    ],
+    "semantics": "冲突不能随意取第一条；证据来源保留。",
+    "parameter_fields": [
+      "keys",
+      "conflict_policy"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "显式冲突政策：保留全部并标冲突、拒绝冲突、或预声明证据优先规则。按偶然遍历顺序first-win不合法。"
+    ]
+  },
+  {
+    "operator": "evidence_validate",
+    "input_type": "EvidenceTable,DocumentIndex",
+    "output_type": "EvidenceTable",
+    "implementations": [
+      "span_check"
+    ],
+    "semantics": "只验证引用和公开规则，不访问gold。",
+    "parameter_fields": [
+      "strict"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "公开span与schema校验；隐藏真值比较由独立verifier完成。"
+    ]
+  },
+  {
+    "operator": "materialize",
+    "input_type": "Stream",
+    "output_type": "Table",
+    "implementations": [
+      "memory",
+      "disk"
+    ],
+    "semantics": "明确物化，持久对象按生命周期收费。",
+    "parameter_fields": [
+      "format"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "数据表示转换是显式算子；stream转table需计量分配和搬运。"
+    ]
+  },
+  {
+    "operator": "stream_read",
+    "input_type": "ArtifactRef",
+    "output_type": "Stream",
+    "implementations": [
+      "arrow_batches"
+    ],
+    "semantics": "所有读取走计量代理。",
+    "parameter_fields": [
+      "batch_size"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "访问来源、批大小、逻辑读取与底层读取分别登记；复用共享内存的读量不等于硬件DRAM流量。"
+    ]
+  },
+  {
+    "operator": "broadcast",
+    "input_type": "ArtifactRef",
+    "output_type": "ArtifactRef[]",
+    "implementations": [
+      "shared_ref",
+      "copy_each"
+    ],
+    "semantics": "零复制只降低实际复制，不能抹去后续读取。",
+    "parameter_fields": [
+      "consumers"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "shared_ref新增引用并保留buffer_id；copy_each创建独立buffer_id并计copy_bytes；每消费者实际read仍单列。"
+    ]
+  },
+  {
+    "operator": "release",
+    "input_type": "ArtifactRef",
+    "output_type": "ControlToken",
+    "implementations": [
+      "explicit"
+    ],
+    "semantics": "禁止释放仍被下游使用的共享对象。",
+    "parameter_fields": [
+      "artifact"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "只在合法消费者和别名均不再依赖底层对象时回收。逻辑release与实际buffer回收均记录。"
+    ]
+  },
+  {
+    "operator": "cache",
+    "input_type": "ArtifactRef",
+    "output_type": "ArtifactRef",
+    "implementations": [
+      "memory",
+      "disk"
+    ],
+    "semantics": "只允许同次运行内合法复用；跨运行缓存主轨关闭。",
+    "parameter_fields": [
+      "key_fields"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "按声明key和schema内容复用；同run缓存命中写事件，跨run重新计算/缓存轨另行定义。"
+    ]
+  },
+  {
+    "operator": "map",
+    "input_type": "Stream",
+    "output_type": "Stream",
+    "implementations": [
+      "bounded_map"
+    ],
+    "semantics": "有限输入，实例数上限；批次日志。",
+    "parameter_fields": [
+      "subworkflow",
+      "max_concurrency"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "subworkflow通过WorkIR regions.body承载，不在params中放可执行脚本；CPU slots和max_parallelism使用既有资源字段。"
+    ]
+  },
+  {
+    "operator": "branch",
+    "input_type": "Scalar",
+    "output_type": "Choice",
+    "implementations": [
+      "predicate_branch"
+    ],
+    "semantics": "只执行所选分支；选择是公开状态的函数。",
+    "parameter_fields": [
+      "predicate",
+      "then",
+      "else"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "then/else通过regions承载；布尔predicate为unknown时按冻结的错误政策处理；只执行选择分支并保留选择事件。"
+    ]
+  },
+  {
+    "operator": "loop",
+    "input_type": "State",
+    "output_type": "State",
+    "implementations": [
+      "bounded_loop"
+    ],
+    "semantics": "显式状态与最大次数；到达上限不是成功。",
+    "parameter_fields": [
+      "body",
+      "condition",
+      "max_iterations"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "到上限时先判终止条件：若已满足终止要求则可成功；仍需下一迭代则LOOP_LIMIT_REACHED。regions.body承载循环体。"
+    ]
+  },
+  {
+    "operator": "collect",
+    "input_type": "Stream",
+    "output_type": "Table",
+    "implementations": [
+      "bounded_collect"
+    ],
+    "semantics": "截断需任务允许；不可用limit伪造精确查询。",
+    "parameter_fields": [
+      "limit"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "limit默认是保护上限，超出返回错误；截断须输出契约显式许可并登记truncated=true。"
+    ]
+  },
+  {
+    "operator": "emit",
+    "input_type": "Table|EvidenceTable|PathSet",
+    "output_type": "Result",
+    "implementations": [
+      "json_artifact"
+    ],
+    "semantics": "最终结果必须artifact化，不能只返回完成叙述。",
+    "parameter_fields": [
+      "output_contract"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "返回完整结果artifact，结构错误或结果缺失保留状态。"
+    ]
+  },
+  {
+    "operator": "stats",
+    "input_type": "DatasetRef",
+    "output_type": "Stats",
+    "implementations": [
+      "metadata",
+      "sample"
+    ],
+    "semantics": "只在探测轨可在生成阶段调用，成本计入。",
+    "parameter_fields": [
+      "fields",
+      "sample_size"
+    ],
+    "source_contract_status": "CANDIDATE_FROM_OWNER_TABLE",
+    "contract_status": "DESIGN_APPROVED",
+    "implementation_status": "NOT_IMPLEMENTED",
+    "executable_contract_status": "PENDING_SPEC001B",
+    "decision_id": "RCWG-SPEC-001A-20260919",
+    "amendments": [
+      "仅I2探测轨的生成阶段可用；读取、样本数、时延和生成账本关联。"
+    ]
+  }
+]
