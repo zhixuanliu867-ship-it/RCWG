@@ -1,0 +1,14 @@
+{
+  "schema_version": "RCWG_SPEC001B_GENERATION_ADDENDUM_0.1",
+  "status": "ENGINEERING_ONLY",
+  "logical_contract": {
+    "additionalProperties": false,
+    "fields": ["required_outputs", "hard_constraints", "necessary_operations", "data_dependencies", "information_requirements", "permissible_alternatives", "uncertainty"],
+    "value_type": "array of nonempty strings",
+    "empty_array_allowed_only": ["permissible_alternatives", "uncertainty"]
+  },
+  "public_boundary": "Only the supplied public TASK is authoritative. A proposed logical contract cannot replace TASK. No gold, oracle, private split labels or verification feedback is supplied.",
+  "physical_contract": "Return one plain JSON WorkIR 1.0 object. Region references use explicit $bound aliases. Runtime guards do not certify actual resource use.",
+  "limits": {"input_tokens": 12288, "final_json_bytes": 65536, "P0_physical_output_tokens": 16384, "P1_logical_output_tokens": 4096, "P1_physical_output_tokens": 12288},
+  "source_policy": "This addendum is versioned separately. Original prompts and reference files remain byte-identical."
+}
