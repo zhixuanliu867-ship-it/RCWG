@@ -1,0 +1,9 @@
+{
+  "ticket": "RCWG-EXEC-001",
+  "reviewed_B_head": "a1f65120ef0b2b8e1fb6f1c31224244d6f7ee16b",
+  "reviewed_B_tree": "5b1b7cd587bbb3df54952ea24eb6841767a1e0bd",
+  "runtime_profile": "RCWG_EXEC001_F1_REFERENCE_SERIAL_PULL_0.1",
+  "checkpoint": "REFERENCE_CORE",
+  "formal_ready": false,
+  "full_exec001_accepted": false
+}

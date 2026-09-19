@@ -1,4 +1,4 @@
-name: RCWG complete offline SPEC acceptance
+name: RCWG complete offline EXEC acceptance
 on:
   push:
   pull_request:
@@ -8,23 +8,40 @@ permissions:
 jobs:
   offline-core:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12.14'
-      - name: Full SPEC001B gate including original tests and immutable sentinels
+      - name: Full EXEC001 gate including original B and reference entry points
         run: |
           set +e
-          python scripts/accept_spec001b.py --output runs/ci-spec001b
+          python scripts/accept_exec001.py --output runs/ci-exec001
           status=$?
-          cat runs/ci-spec001b/unittest.txt
-          cat runs/ci-spec001b/ACCEPTANCE.json
-          cat runs/ci-spec001b/*.stdout.txt
-          cat runs/ci-spec001b/*.stderr.txt
-          cat runs/ci-spec001b/negative-review-*-unittest.txt
-          cat runs/ci-spec001b/negative-review-*-process.txt
+          cat runs/ci-exec001/ACCEPTANCE.json
+          cat runs/ci-exec001/original-spec001b/unittest.txt
+          cat runs/ci-exec001/reference-core/unittest.txt
+          cat runs/ci-exec001/original-spec001b/negative-review-*-unittest.txt
+          cat runs/ci-exec001/original-spec001b/negative-review-*-process.txt
+          cat runs/ci-exec001/original-spec001b/*.stdout.txt
+          cat runs/ci-exec001/original-spec001b/*.stderr.txt
+          cat runs/ci-exec001/*.stderr.log
           exit "$status"
+      - name: Retain sanitized CI summaries and test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exec001-ci-evidence
+          retention-days: 14
+          path: |
+            runs/ci-exec001/ACCEPTANCE.json
+            runs/ci-exec001/runtime-coverage.json
+            runs/ci-exec001/original-spec001b/*.txt
+            runs/ci-exec001/original-spec001b/ACCEPTANCE.json
+            runs/ci-exec001/reference-core/*.txt
+            runs/ci-exec001/reference-core/ACCEPTANCE.json
       - name: Synthetic SPEC001A metric fixture (no measured model results)
         run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json

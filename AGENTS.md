@@ -44,3 +44,6 @@ The foundation is intentionally incomplete as a full compiler; never promote its
 `STRUCTURE_PASS` to `IR_VALIDATED` without the remaining typed/parameter checks.
 Scientific scope and formal gates remain unchanged. Do not change source fixtures
 or expected sentinel outcomes to conceal implementation failures.
+
+## EXEC-001 当前票
+完整目标与权限见 docs/exec001/CODEX_TASK.md、DECISIONS.md、ACCEPTANCE.md。只完成参考脚本不能宣称X00-X15完成。受测源码必须覆盖rcwg_exec和worker/verifier。合并授权只限明确审过的PR2/3 SHA，使用match-head，不绕过CI。F1 reference计量scope保留，不自动升级formal。
