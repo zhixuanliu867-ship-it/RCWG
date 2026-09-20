@@ -1,4 +1,4 @@
-name: RCWG complete offline EXEC acceptance
+name: RCWG complete offline API acceptance
 on:
   push:
   pull_request:
@@ -8,7 +8,7 @@ permissions:
 jobs:
   offline-core:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,5 +43,30 @@ jobs:
             runs/ci-exec001/original-spec001b/ACCEPTANCE.json
             runs/ci-exec001/reference-core/*.txt
             runs/ci-exec001/reference-core/ACCEPTANCE.json
+      - name: Full API001 target gate (no credentials or live requests)
+        run: |
+          set +e
+          python scripts/accept_api001.py --output runs/ci-api001
+          status=$?
+          cat runs/ci-api001/ACCEPTANCE.json
+          cat runs/ci-api001/api-tests.log
+          exit "$status"
+      - name: Retain sanitized API001 CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api001-ci-evidence
+          retention-days: 14
+          path: |
+            runs/ci-api001/ACCEPTANCE.json
+            runs/ci-api001/*.log
+            runs/ci-api001/api-unit/*.json
+            runs/ci-api001/api-unit/*.txt
+            runs/ci-api001/retained-exec/ACCEPTANCE.json
+            runs/ci-api001/retained-exec/runtime-coverage.json
+            runs/ci-api001/retained-exec/original-spec001b/*.txt
+            runs/ci-api001/retained-exec/original-spec001b/ACCEPTANCE.json
+            runs/ci-api001/retained-exec/reference-core/*.txt
+            runs/ci-api001/retained-exec/reference-core/ACCEPTANCE.json
       - name: Synthetic SPEC001A metric fixture (no measured model results)
         run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json

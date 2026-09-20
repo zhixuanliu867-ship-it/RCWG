@@ -1,0 +1,19 @@
+# OPTIONAL; NOT an automatically activated project config.
+# Verify exact npm distribution/integrity and owner approval before enabling.
+# Native package version observed in Google source: 0.5.3; npm not downloaded here.
+[mcp_servers.rcwg_gcloud]
+command = "npx"
+args = ["-y", "@google-cloud/gcloud-mcp@0.5.3"]
+enabled = false
+enabled_tools = ["run_gcloud_command"]
+default_tools_approval_mode = "prompt"
+startup_timeout_sec = 60
+tool_timeout_sec = 120
+
+[mcp_servers.rcwg_gcloud.env]
+CLOUDSDK_CORE_PROJECT = "REPLACE_WITH_APPROVED_PROJECT_ID"
+CLOUDSDK_AUTH_IMPERSONATE_SERVICE_ACCOUNT = "REPLACE_WITH_RESTRICTED_SERVICE_ACCOUNT"
+
+# A tool-name allowlist is NOT a read-only IAM boundary. run_gcloud_command can write.
+# No access token, API key or service-account JSON key belongs in this file.
+# Do not overwrite the user's existing ~/.codex/config.toml.

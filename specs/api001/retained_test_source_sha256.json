@@ -1,0 +1,23 @@
+{
+  "api_source": "API001.patch 90658b18cd20929aab43c44d5ccc11e030f41cc2968eaf64cad0110f791fb174",
+  "exec_reviewed_head": "55a9ac0b8ec062ac7ebe9f7bcf513f84b4b5b278",
+  "files_sha256": {
+    "tests/spec001b_operator_fixtures.py": "e662cd778e4e817807f214c39f1ccc7e7a5b1875ae1b076f85a2892ca1da09ec",
+    "tests/test_api001.py": "53d8b16dc41ea781a58f2fa3042ceef66e07a70ebd2ada2c48f9ac178664eb29",
+    "tests/test_core.py": "0b86c434685a6e33fd26bf97fc1691e4da034cd000b1c2343e218a2196d1bbd3",
+    "tests/test_exec001_campaign.py": "7108898c99e36825f955ee1d651c27f1a651d30cd4b94215c37ebcd46a7dcfdf",
+    "tests/test_exec001_reference.py": "a3f3ea689b730caa870eb6125335f6185fe794016c66476cc7cafe517dcfcefc",
+    "tests/test_exec001_supervisor.py": "b506487c7f700f01900dfd8e5db813b1671a5c4363526092a50addaf54660c9c",
+    "tests/test_spec001a.py": "a8347cd23210c1cfc8f360f5176f371e06f9c243fc2d20318963380926bc1fc3",
+    "tests/test_spec001a_review.py": "659d2c75b54c259f34d21a6c1f34eb3b614b0da6991fcc1f643a1f570912b9d9",
+    "tests/test_spec001b_binding.py": "6b2eb8781cd98fc924958d3fe08df2001c57ab597e56c596d85893bfeeefa435",
+    "tests/test_spec001b_composition.py": "d0091d7b01872dd48cb448d57b7e420410a72b3288266cfeee2073d311e8f98e",
+    "tests/test_spec001b_foundation.py": "a62139294f2d72379438093e11daa60ee6f1bf9172eccb1044b65caf965b5bbf",
+    "tests/test_spec001b_generation.py": "759fac9157214794512687a730bb90f707791f043b8591f31c32ffd556afa5f6",
+    "tests/test_spec001b_inputs.py": "227291080fc09280697af31607d9738321ec159c65bf62c148e800f967c91b16",
+    "tests/test_spec001b_operators.py": "37fb972c4617f6c2e12f7afab522d05ca87d13aea32237877db230eccdff7dc4",
+    "tests/test_spec001b_predicates.py": "9c71f42540599d88311409daa5e9a6664ba087618b012af9157c93598db09400",
+    "tests/test_spec001b_regions.py": "2e0b1bbb8a1fe3f1ea38b90bdb2c468c2c851bc17798e73f310e3a69cdd0e680",
+    "tests/test_spec001b_types.py": "a9ab5aee47c98a6fd3267c7673559efd0849512eda1ce48e064c143ea74391d6"
+  }
+}
