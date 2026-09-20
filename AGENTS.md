@@ -52,3 +52,8 @@ or expected sentinel outcomes to conceal implementation failures.
 ## Active ticket: RCWG-NATIVE-001
 
 Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined; historical text above retained. One independent branch and one draft stacked PR; no merges, no model/cloud/system/cgroup changes. formal_ready=false.
+
+
+## Active ticket: RCWG-NATIVE-001 / N4
+
+Base 456a30d0d242ec005bfb9e25fdc7a45c72aa9af8; branch rcwg/native-001-n4. Read docs/native001n4/START_HERE_zh.md and DECISIONS.md. Offline counter hardening, receipt-bound finite calibration implementation and independent regression gates. One draft stacked on rcwg/native-001; PR6/7 not merged. Host proposal remains approved=false; real calibration NOT_RUN pending exact owner receipt. No models/count/GCP/IAM/install/cgroup writes. Formal BLOCKED_NOT_FROZEN. Historical evidence above retained.

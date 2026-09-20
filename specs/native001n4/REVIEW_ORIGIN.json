@@ -1,0 +1,67 @@
+{
+  "original_archive": "RCWG_NATIVE001_N4_REVIEW_HANDOFF.zip",
+  "original_archive_sha256": "a971149356a5335bcafac5f1cf365c0709c0daca3ad3e529287395a8f83705ef",
+  "original_bytes_preserved": true,
+  "files": [
+    {
+      "path": "N4_COUNTER_HARDENING_CANDIDATE.patch",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/N4_COUNTER_HARDENING_CANDIDATE.patch",
+      "sha256": "c564797719f218bf670fc7d69c2ed8cc830ef028eec4fcf858be1c6ce9fe3c3c",
+      "bytes": 4321
+    },
+    {
+      "path": "tests/test_n4_counter_integrity.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/tests/test_n4_counter_integrity.py",
+      "sha256": "fe819c9f5418d7f0c2449bfe1a9f902f0e42187ee7112db41a6711411b1a1ee7",
+      "bytes": 7204
+    },
+    {
+      "path": "tools/expand_resource_slots.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/tools/expand_resource_slots.py",
+      "sha256": "0acce5a4a36ce13686d724ac5057d061eb17544bc74e65566b2d5fccce00983c",
+      "bytes": 3546
+    },
+    {
+      "path": "run_tests.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/run_tests.py",
+      "sha256": "0c31169094003d77ac88c41290a7d327421e438259c67ad6748e43a75dbc2f41",
+      "bytes": 1003
+    },
+    {
+      "path": "N4_RESOURCE_SLOTS_PROPOSED.json",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/N4_RESOURCE_SLOTS_PROPOSED.json",
+      "sha256": "02613f8c8ca91301a80fb9c45098dd406e11045fb4ad6682dc8f82c0f75f2c03",
+      "bytes": 298249
+    },
+    {
+      "path": "candidate/rcwg_native/evidence.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/candidate/rcwg_native/evidence.py",
+      "sha256": "d7e59860438e00f91c3c759413aeb4fb2aaba0a2cbea59706c18f02b05df2237",
+      "bytes": 2829
+    },
+    {
+      "path": "candidate/rcwg_native/metrology.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/candidate/rcwg_native/metrology.py",
+      "sha256": "170bf24d606885f1b10e530e4ba01b2c84902499be6f43095aec232937352830",
+      "bytes": 10961
+    },
+    {
+      "path": "candidate/rcwg_native/supervisor.py",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/candidate/rcwg_native/supervisor.py",
+      "sha256": "f7e3d7cd349f86ae2d3475dbbed10d083e1148cbd2b97fe3574582946b971a2a",
+      "bytes": 11285
+    },
+    {
+      "path": "evidence/CANDIDATE_REGRESSIONS.json",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/evidence/CANDIDATE_REGRESSIONS.json",
+      "sha256": "4a991563d5744c9e39ebe5d36d78a6ae6073305061b1455308a362ce357f937c",
+      "bytes": 337
+    },
+    {
+      "path": "evidence/CANDIDATE_REGRESSIONS.log",
+      "original_member": "RCWG_NATIVE001_N4_HANDOFF/evidence/CANDIDATE_REGRESSIONS.log",
+      "sha256": "d458c9c1de1effad4f558ae04cd00e9f3ae1978da97f0fb7e63c347c28964a8c",
+      "bytes": 2577
+    }
+  ]
+}

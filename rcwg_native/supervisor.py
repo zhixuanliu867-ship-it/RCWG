@@ -84,6 +84,12 @@ def execute(request,*,build,output,context,verify=None,driver=None,cancel=None,t
     anchor=write(out/'expected_manifest.json',expected)
     result={'run_id':ident,'expected_manifest_sha256':anchor,'expected_slots':1,'terminal_status':'INFRA_FAILURE','failure':None,'execution_started':False,'verification':{'status':'UNKNOWN','reason':'NOT_EXECUTED'},'measurements':unavailable(),'formal_ready':False,'budget_within':None,'evidence_kind':'LOCAL_NATIVE_UNISOLATED','model_requests':0,'count_requests':0,'cloud_calls':0}
     proc=None;group_state=None;report=None;entry_fd=None;reason=None;files=[]
+    if driver:
+        counter_seq=[0]
+        def persist_counter(stage,value):
+            counter_seq[0]+=1
+            write(out/('counter-%05d.json'%counter_seq[0]),{'stage':stage,'evidence':value})
+        driver.persist=persist_counter
     try:
         transition('PREPARING')
         if binding_failure:raise FacilityFault(binding_failure)
@@ -135,12 +141,9 @@ def execute(request,*,build,output,context,verify=None,driver=None,cancel=None,t
             try:
                 result['measurements']=driver.finish()
                 if (result['measurements'].get('oom_kill_delta') or 0)>0 and result['execution_started']:
-                    if (result['measurements'].get('run_memory_oom_delta') or 0)>0:
-                        result['terminal_status']='OOM';result['failure']={'code':'RUN_CGROUP_OOM_KILL','attribution':'run_memory_limit','evidence':'run memory.events oom and oom_kill deltas'}
-                    else:
-                        result['terminal_status']='INFRA_FAILURE';result['failure']={'code':'OOM_KILL_WITHOUT_RUN_LIMIT_CAUSE','attribution':'facility_or_global_unknown'}
+                    result['terminal_status']='INFRA_FAILURE';result['failure']={'code':'OOM_CAUSE_UNRESOLVED','attribution':'UNKNOWN','evidence':'Event co-occurrence does not exclude ancestor/global OOM'}
             except (FacilityFault,OSError,KeyError,ValueError) as exc:
-                result['measurements']={**unavailable(),'status':'MEASUREMENT_OR_CLEANUP_FAILED','reason':str(exc)}
+                result['measurements']={**(getattr(exc,'report',None) or getattr(exc,'partial_report',None) or driver.last_report or unavailable()),'facility_status':'MEASUREMENT_OR_CLEANUP_FAILED','reason':str(exc)}
                 result['terminal_status']='INFRA_FAILURE';result['failure']={'code':'CGROUP_CLEANUP_OR_MEASUREMENT_FAILED','attribution':'facility'}
     result['process_group_final']=group_state
     result['controller_wall_ns_before_verifier']=time.monotonic_ns()-start
