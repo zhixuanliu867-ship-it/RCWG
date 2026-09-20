@@ -1,9 +1,9 @@
 name: NATIVE001 offline native build and integration
 on:
   push:
-    branches: ['rcwg/native-001']
+    branches: ['rcwg/native-001', 'rcwg/native-001-n4']
   pull_request:
-    branches: ['rcwg/cloud-001']
+    branches: ['rcwg/cloud-001', 'rcwg/native-001']
 permissions:
   contents: read
 jobs:
@@ -22,6 +22,10 @@ jobs:
         run: python scripts/build_native001.py --output runs/native001-build
       - name: Full frozen N0-N3 native acceptance
         run: python scripts/accept_native001.py --build runs/native001-build --output runs/native001-ci
+      - name: Build finite N4 launcher and calibration source with existing compiler
+        run: python scripts/build_native001_n4.py --output runs/n4-build
+      - name: N4 offline fault, approval, denominator and binary admission gates
+        run: python scripts/accept_native001_n4.py --build runs/n4-build --output runs/n4-ci
       - name: Preserve offline build and synthetic evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -31,3 +35,5 @@ jobs:
           path: |
             runs/native001-build/
             runs/native001-ci/
+            runs/n4-build/
+            runs/n4-ci/
