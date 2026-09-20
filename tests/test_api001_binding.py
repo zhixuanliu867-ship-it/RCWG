@@ -141,3 +141,13 @@ class LiveAdmissionEvidenceTests(unittest.TestCase):
             transport=VertexTransport(config(),lambda:'UNAPPROVED TEST TOKEN')
             with self.assertRaisesRegex(ApiError,'LIVE_AUTH_TRANSPORT_BINDING'):
                 run_pilot(task,recipe,data,m,output=root/'observation',mode='LIVE',transport=transport,approval=a,offline_acceptance=offline)
+
+class GcloudBooleanRegression(unittest.TestCase):
+    def test_actual_gcloud_false_spelling_does_not_block_closed_logging(self):
+        token=GcloudToken(config())
+        def answer(cmd,**kw):
+            raw=canonical([{'account':ACCOUNT,'status':'ACTIVE'}]) if 'list' in cmd else b'False\n' if 'core/log_http' in cmd else b''
+            return subprocess.CompletedProcess(cmd,0,raw,b'')
+        with patch('rcwg_api.vertex.shutil.which',return_value='/synthetic/gcloud'),patch('rcwg_api.vertex.subprocess.run',side_effect=answer):
+            self.assertEqual(token.preflight()['status'],'BOUND_LOCAL_IDENTITY_VERIFIED')
+        self.assertEqual(token.command_invocations,0)
