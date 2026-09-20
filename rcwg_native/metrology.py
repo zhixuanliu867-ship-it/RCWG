@@ -171,10 +171,12 @@ class Driver:
         except Exception as exc:errors.append('WAIT_EMPTY:'+str(exc))
         final=self.snapshot();base=self.baseline or {'values':{}}
         cpu0=base['values'].get('cpu.stat');cpu1=final['values'].get('cpu.stat');cpu=None
+        if not cpu0:final['missing']['cpu.stat.baseline']='BASELINE_UNAVAILABLE'
         if cpu0 and cpu1 and 'usage_usec' in cpu0 and 'usage_usec' in cpu1:
             cpu=cpu1['usage_usec']-cpu0['usage_usec']
             if cpu<0:cpu=None;final['missing']['cpu.stat']='COUNTER_REGRESSION'
         events0=base['values'].get('memory.events');events1=final['values'].get('memory.events');oom_delta=None
+        if events0 is None:final['missing']['memory.events.baseline']='BASELINE_UNAVAILABLE'
         if events0 is not None and events1 is not None and 'oom_kill' in events0 and 'oom_kill' in events1:
             oom_delta=events1['oom_kill']-events0['oom_kill']
             if oom_delta<0:oom_delta=None;final['missing']['memory.events']='COUNTER_REGRESSION'

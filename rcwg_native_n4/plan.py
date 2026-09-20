@@ -50,6 +50,10 @@ def slots():
     for i,s in enumerate(result):
         s.update(sequence=i,cpu_quota_us=100000,cpu_period_us=100000,threads=1,swap_max=0,pids_max=8,
                  output_max_bytes=16777216,status='NOT_RUN',budget_within=None,formal_ready=False)
+        s['expected']={'worker':'calibration' if s['mode']!='f1' else 'f1','semantic_oracle':'independent frozen input answer' if s['mode']=='f1' else 'fixed source workload and mode/batch result',
+            'terminal':('PROCESS_FAILED_WITH_OOM_EVIDENCE_REQUIRED' if s['case']=='C05' else ('CANCELLED' if s.get('cancel_after_s') else ('TIMEOUT' if s['case']=='C06' else ('INFRA_FAILURE' if s.get('fault') else 'COMPLETED')))),
+            'empty_group':True,'measurement_scope':'fresh per-run cgroup; launcher+worker+descendants',
+            'tolerance_profile':s['case'],'repeats_in_manifest':20 if s['run_id'].startswith('n4-overhead') else (3 if s['case'] in ['C01','C02','C03','C04','C05','C06','C09','C10'] else 1)}
     return result
 
 def freeze(output,native_build,n4_build):

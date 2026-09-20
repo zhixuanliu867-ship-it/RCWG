@@ -69,6 +69,7 @@ def one(slot,plan,directory,authorization=None):
                 driver.sample();next_sample=now+0.1
             time.sleep(0.005)
         if not ack:raise FacilityFault('LAUNCH_HANDSHAKE_MISSING')
+        result['launch_ack']={'pid':proc.pid,'ack':ack.decode(),'membership':pid_membership,'group_expected':str(group)}
         if reason:driver.kill()
         proc.wait(timeout=2)
         journal.emit('WORKER_EXIT',{'returncode':proc.returncode,'reason':reason,'monotonic_ns':time.monotonic_ns()})
@@ -108,7 +109,7 @@ def one(slot,plan,directory,authorization=None):
     result['verifier_wall_ns']=time.monotonic_ns()-verify_start
     if result['measurements']:
         result['cleanup']=result['measurements'].get('cleanup');result['sample_gaps']=sample_gaps(result['measurements'].get('memory_current_samples',[]))
-    journal.emit('TERMINAL',result);write(out/'terminal.json',result)
+    anchor=journal.emit('TERMINAL',result);write(out/'JOURNAL_ANCHOR.json',{'sha256':anchor});write(out/'terminal.json',result)
     try:
         if slot.get('fault')=='seal':raise OSError('PREREGISTERED_SEAL_FAULT')
         anchor=seal(out);reread(out,anchor);write(out/'seal.anchor',anchor.encode())

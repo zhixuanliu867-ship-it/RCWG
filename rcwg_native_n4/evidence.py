@@ -36,7 +36,13 @@ def reconcile(manifest,directory):
                 if result['run_id']!=slot['run_id'] or result['slot_sha256']!=sha(__import__('rcwg_native.evidence',fromlist=['canonical']).canonical(slot)):
                     raise ValueError('SLOT_BINDING_MISMATCH')
                 status=result['terminal_status'];reason=result.get('reason')
-            except (OSError,ValueError,KeyError):pass
+                if (d/'ARCHIVE_FAILURE.json').exists():status='INFRA_FAILURE';reason='ARCHIVE_FAILED'
+                if (d/'seal.anchor').exists():
+                    from rcwg_native.evidence import reread
+                    reread(d,(d/'seal.anchor').read_text())
+                    chain=inspect_journal(d/'journal')
+                    if chain['errors'] or chain['last_sha256']!=read(d/'JOURNAL_ANCHOR.json')['sha256']:raise ValueError('JOURNAL_INTEGRITY_FAILURE')
+            except (OSError,ValueError,KeyError):status='UNKNOWN';reason='TERMINAL_OR_SEAL_INTEGRITY_UNRESOLVED'
         rows.append({'run_id':slot['run_id'],'case':slot['case'],'status':status,'reason':reason,'result':result,
                      'journal':inspect_journal(d/'journal') if (d/'journal').exists() else None})
     return {'expected':len(manifest['slots']),'slots':rows,'formal_ready':False,'budget_within':None}

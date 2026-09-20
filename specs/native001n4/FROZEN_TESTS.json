@@ -69,12 +69,21 @@
     "test_n4_protocol.StatisticsTests.test_overhead_fail_ci_above_threshold",
     "test_n4_protocol.StatisticsTests.test_overhead_noise_inconclusive",
     "test_n4_protocol.StatisticsTests.test_overhead_pass_ci_below_threshold",
-    "test_n4_protocol.StatisticsTests.test_subresolution_batch_inconclusive"
+    "test_n4_protocol.StatisticsTests.test_subresolution_batch_inconclusive",
+    "test_n4_recovery.RecoveryTests.test_collection_fault_has_partial_original_snapshots",
+    "test_n4_recovery.RecoveryTests.test_full_mock_controller_archives_before_cleanup",
+    "test_n4_recovery.RecoveryTests.test_output_failure_retains_external_claim",
+    "test_n4_recovery.RecoveryTests.test_remove_failure_retains_counter_journal",
+    "test_n4_recovery.RecoveryTests.test_seal_failure_preserves_independent_terminal",
+    "test_n4_recovery.RecoveryTests.test_spawn_failure_retains_baseline_and_final",
+    "test_n4_recovery.RecoveryTests.test_tampered_journal_not_reported_as_complete",
+    "test_n4_recovery.RecoveryTests.test_tampered_terminal_not_reported_as_complete"
   ],
   "sources": {
     "native001_n4_tests/test_counter_extended.py": "ce27d611720deba473a0a729bfe35123d43faefd5d2baae0d5f36a231aee67b6",
     "native001_n4_tests/test_n4_counter_integrity.py": "fe819c9f5418d7f0c2449bfe1a9f902f0e42187ee7112db41a6711411b1a1ee7",
-    "native001_n4_tests/test_n4_protocol.py": "7eada4a8fc4d2c319af2ad7f6dd59dcd13b20eeb78a741e2a0762046154adfd6"
+    "native001_n4_tests/test_n4_protocol.py": "7eada4a8fc4d2c319af2ad7f6dd59dcd13b20eeb78a741e2a0762046154adfd6",
+    "native001_n4_tests/test_n4_recovery.py": "40cf37edfc08d1a261ccf27ce8b1f2952cdb163e237640a44aaa61d91d20b7d0"
   },
   "reviewer_test_sha256": "fe819c9f5418d7f0c2449bfe1a9f902f0e42187ee7112db41a6711411b1a1ee7",
   "formal_ready": false
