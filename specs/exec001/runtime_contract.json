@@ -1,0 +1,13 @@
+{
+  "revision": "EXEC001_SUPERVISED_SERIAL_PULL_1.0",
+  "scope": "F1 root-chain engineering reference",
+  "operators": {"scan": ["sequential"], "filter": ["scalar", "vectorized"], "project": ["column_view", "copy"], "top_k": ["full_sort", "streaming_heap"], "emit": ["json_artifact"]},
+  "unsupported": ["regions", "general DAG", "explicit after", "fanout", "dead nodes", "disk backend", "node parallelism", "graph and document kernels", "native Arrow", "formal cgroup measurements"],
+  "worker_environment": "explicit nonsecret allowlist; no inherited API/cloud credentials",
+  "wall_scope": "parent launch through worker exit, process-group cleanup and integrity checks, excluding verifier",
+  "journal_policy": "canonical JSONL, sequence and hash chain, fsync each event, preserve incomplete tail",
+  "artifact_policy": "exclusive atomic link publication and external seal hash on reread",
+  "cancel_mapping": {"terminal_status": "UNKNOWN", "reason": "OWNER_CANCELLED", "model_failure": false},
+  "worker_peak_ram_bytes": null,
+  "formal_ready": false
+}
