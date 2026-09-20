@@ -1,0 +1,8 @@
+{
+  "includedPermissions": [
+    "run.jobs.run",
+    "run.executions.get"
+  ],
+  "stage": "GA",
+  "title": "rcwgCloud001JobRunner"
+}

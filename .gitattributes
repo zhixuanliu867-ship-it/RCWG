@@ -1,3 +1,6 @@
 * text=auto eol=lf
 *.sh text eol=lf
 *.ps1 text eol=crlf
+
+# Preserve the exact owner-approved proposal byte hash across platforms.
+configs/cloud001/change_plan.json -text whitespace=trailing-space,space-before-tab,cr-at-eol

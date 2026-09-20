@@ -1,0 +1,29 @@
+{
+  "steps": [
+    {
+      "name": "gcr.io/cloud-builders/docker@sha256:001fb4a870a84485cf198c80002f7af42f6456f2dbc261d70a0b5f0111470df4",
+      "args": [
+        "build",
+        "--platform=linux/amd64",
+        "--network=none",
+        "-f",
+        "containers/cloud001/Dockerfile",
+        "-t",
+        "us-central1-docker.pkg.dev/rcwg-509116/rcwg-cloud001/runner:${_SOURCE_ID}",
+        "."
+      ]
+    }
+  ],
+  "images": [
+    "us-central1-docker.pkg.dev/rcwg-509116/rcwg-cloud001/runner:${_SOURCE_ID}"
+  ],
+  "timeout": "900s",
+  "serviceAccount": "projects/rcwg-509116/serviceAccounts/rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+  "options": {
+    "logging": "CLOUD_LOGGING_ONLY",
+    "machineType": "E2_STANDARD_2"
+  },
+  "substitutions": {
+    "_SOURCE_ID": "PENDING_COMMITTED_SOURCE_HASH"
+  }
+}

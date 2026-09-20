@@ -1,0 +1,7 @@
+{
+  "includedPermissions": [
+    "serviceusage.services.use"
+  ],
+  "stage": "GA",
+  "title": "rcwgCloud001ProjectUse"
+}

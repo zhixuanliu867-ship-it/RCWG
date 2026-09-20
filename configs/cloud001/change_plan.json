@@ -1,0 +1,286 @@
+{
+  "version": "CLOUD001_EXACT_CHANGE_PLAN_1",
+  "approval_status": "PENDING_OWNER",
+  "approved": false,
+  "project_id": "rcwg-509116",
+  "deployer_account": "zhixuanliu867@gmail.com",
+  "region": "us-central1",
+  "valid_for_days_after_owner_approval": 7,
+  "baseline": {
+    "reviewed_head": "272950bd3dedb13d29857600e6a07f6c43cb8cc8",
+    "merged_commit": "6e5ee40984d2631be4be7ec277cb63cb31988c5d",
+    "branch": "rcwg/cloud-001"
+  },
+  "enable_apis": [
+    "artifactregistry.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "run.googleapis.com",
+    "workflows.googleapis.com"
+  ],
+  "storage": {
+    "name": "rcwg-509116-cloud001-private",
+    "location": "us-central1",
+    "class": "STANDARD",
+    "uniform_access": true,
+    "public_access_prevention": "enforced",
+    "retention_lock": false,
+    "signed_urls": false,
+    "automatic_deletion": false,
+    "retention_review_days": 30,
+    "global_name_availability": "UNVERIFIED",
+    "prefixes": [
+      "cloud001/build/source/",
+      "cloud001/manifests/",
+      "cloud001/inputs/",
+      "cloud001/approvals/",
+      "cloud001/claims/",
+      "cloud001/reservations/",
+      "cloud001/output/"
+    ]
+  },
+  "artifact_repository": {
+    "name": "rcwg-cloud001",
+    "location": "us-central1",
+    "format": "DOCKER",
+    "mode": "STANDARD_REPOSITORY",
+    "automatic_cleanup": false,
+    "vulnerability_scanning": "NOT_ENABLED_BY_THIS_PLAN"
+  },
+  "service_accounts": {
+    "runtime": "rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+    "orchestrator": "rcwg-cloud001-orchestrator@rcwg-509116.iam.gserviceaccount.com",
+    "builder": "rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com"
+  },
+  "custom_roles": [
+    {
+      "name": "projects/rcwg-509116/roles/rcwgCloud001ObjectRead",
+      "includedPermissions": [
+        "storage.objects.get"
+      ],
+      "stage": "GA"
+    },
+    {
+      "name": "projects/rcwg-509116/roles/rcwgCloud001ObjectCreate",
+      "includedPermissions": [
+        "storage.objects.create"
+      ],
+      "stage": "GA"
+    },
+    {
+      "name": "projects/rcwg-509116/roles/rcwgCloud001JobRunner",
+      "includedPermissions": [
+        "run.jobs.run",
+        "run.executions.get"
+      ],
+      "stage": "GA"
+    },
+    {
+      "name": "projects/rcwg-509116/roles/rcwgCloud001Predict",
+      "includedPermissions": [
+        "aiplatform.endpoints.predict"
+      ],
+      "stage": "GA"
+    },
+    {
+      "name": "projects/rcwg-509116/roles/rcwgCloud001ProjectUse",
+      "includedPermissions": [
+        "serviceusage.services.use"
+      ],
+      "stage": "GA"
+    }
+  ],
+  "bindings": [
+    {
+      "member": "serviceAccount:rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001Predict",
+      "scope": "projects/rcwg-509116",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001ProjectUse",
+      "scope": "projects/rcwg-509116",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001ObjectRead",
+      "scope": "projects/_/buckets/rcwg-509116-cloud001-private",
+      "condition": "resource.name.startsWith('projects/_/buckets/rcwg-509116-cloud001-private/objects/cloud001/')"
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001ObjectCreate",
+      "scope": "projects/_/buckets/rcwg-509116-cloud001-private",
+      "condition": "resource.name.startsWith('projects/_/buckets/rcwg-509116-cloud001-private/objects/cloud001/claims/') || resource.name.startsWith('projects/_/buckets/rcwg-509116-cloud001-private/objects/cloud001/reservations/') || resource.name.startsWith('projects/_/buckets/rcwg-509116-cloud001-private/objects/cloud001/output/')"
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001ObjectRead",
+      "scope": "projects/_/buckets/rcwg-509116-cloud001-private",
+      "condition": "resource.name.startsWith('projects/_/buckets/rcwg-509116-cloud001-private/objects/cloud001/build/source/')"
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001ProjectUse",
+      "scope": "projects/rcwg-509116",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+      "role": "roles/logging.logWriter",
+      "scope": "projects/rcwg-509116",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+      "role": "roles/artifactregistry.writer",
+      "scope": "projects/rcwg-509116/locations/us-central1/repositories/rcwg-cloud001",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-orchestrator@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001JobRunner",
+      "scope": "projects/rcwg-509116/locations/us-central1/jobs/rcwg-cloud001-replay",
+      "condition": null
+    },
+    {
+      "member": "serviceAccount:rcwg-cloud001-orchestrator@rcwg-509116.iam.gserviceaccount.com",
+      "role": "projects/rcwg-509116/roles/rcwgCloud001JobRunner",
+      "scope": "projects/rcwg-509116/locations/us-central1/jobs/rcwg-cloud001-live",
+      "condition": null
+    }
+  ],
+  "google_managed_service_agents": {
+    "status": "NOT_ENUMERATED_YET",
+    "expected_service_roles": [
+      "roles/cloudbuild.serviceAgent",
+      "roles/run.serviceAgent",
+      "roles/workflows.serviceAgent"
+    ],
+    "action": "Allow service-generated agents/standard automatic bindings from the four approved API activations; inventory before and after. No manual broad grant is authorized."
+  },
+  "build": {
+    "max_builds": 2,
+    "timeout_s": 900,
+    "machine_type": "E2_STANDARD_2",
+    "region": "us-central1",
+    "logging": "CLOUD_LOGGING_ONLY",
+    "service_account": "rcwg-cloud001-builder@rcwg-509116.iam.gserviceaccount.com",
+    "python_base": "python:3.12.14-slim-bookworm@sha256:1aaa65a85fda306ffb8b910824d4e93bdce61e212c7e87168123ea3073b41a1a",
+    "docker_builder": "gcr.io/cloud-builders/docker@sha256:001fb4a870a84485cf198c80002f7af42f6456f2dbc261d70a0b5f0111470df4",
+    "platform": "linux/amd64",
+    "source": "clean committed allowlist; no private input, runs, credentials, approval or delivery archives",
+    "source_staging_prefix": "gs://rcwg-509116-cloud001-private/cloud001/build/source/",
+    "image_repository": "us-central1-docker.pkg.dev/rcwg-509116/rcwg-cloud001/runner",
+    "image_digest": null
+  },
+  "jobs": {
+    "names": [
+      "rcwg-cloud001-replay",
+      "rcwg-cloud001-live"
+    ],
+    "same_image_digest_required": true,
+    "cpu": 2,
+    "memory_gib": 4,
+    "task_count": 1,
+    "parallelism": 1,
+    "max_retries": 0,
+    "timeout_s": 600,
+    "max_executions_per_job": 1,
+    "service_account": "rcwg-cloud001-runtime@rcwg-509116.iam.gserviceaccount.com",
+    "entrypoint": [
+      "python",
+      "-B",
+      "-m",
+      "rcwg_cloud"
+    ],
+    "overrides_allowed": false,
+    "create_without_execution": true,
+    "actual_task_budget_verified": false
+  },
+  "workflow": {
+    "name": "rcwg-cloud001",
+    "service_account": "rcwg-cloud001-orchestrator@rcwg-509116.iam.gserviceaccount.com",
+    "trigger": "MANUAL_ONLY",
+    "max_executions": 2,
+    "dispatch": "single http.post to fixed Cloud Run v1 job run endpoint; no retries",
+    "poll_max": 90,
+    "poll_interval_s": 10,
+    "accepted_phases": [
+      "replay",
+      "live"
+    ]
+  },
+  "new_model_batch": {
+    "count": 1,
+    "model": "gemini-3.1-flash-lite",
+    "location": "global",
+    "generateContent_max": 3,
+    "countTokens_max": 3,
+    "automatic_retries": 0,
+    "generation_slots": [
+      "P0",
+      "P1"
+    ],
+    "stage_slots": [
+      "P0.physical",
+      "P1.logical",
+      "P1.physical"
+    ],
+    "concurrent_requests": 1,
+    "old_pilot_reused": false,
+    "official_price_and_availability_recheck_max_age_h": 24,
+    "image_and_manifest_freeze_required": true,
+    "admission": "fixed ticket-wide GCS phase claim plus six fixed reservations, conditional create ifGenerationMatch=0; unknown consumes reservation; no delete/refund"
+  },
+  "cost": {
+    "working_allocation_usd": "5.00",
+    "model_ceiling_usd": "1.00",
+    "infra_allocation_usd": "4.00",
+    "within_existing_envelope_usd": "150.00",
+    "max_reserved_model_usd": "0.78",
+    "billing_hard_cap": false,
+    "free_tier_assumed": false,
+    "actual_project_invoice_usd": null,
+    "configured_job_compute_estimate_usd": "0.0528",
+    "configured_build_time_estimate_usd": "0.18",
+    "estimate_exclusions": [
+      "job startup/shutdown billable duration",
+      "Workflows steps rounded to billing units",
+      "registry/storage retention",
+      "logging",
+      "network egress",
+      "taxes",
+      "unobserved existing project usage"
+    ],
+    "cost_unknown_reason": "No billing export or invoice read; actual cost and available credit are not inferred from billingEnabled."
+  },
+  "preconditions": {
+    "owner_and_billing": "OBSERVED_VALID",
+    "region_and_quota": "UNVERIFIED_API_DISABLED; verify after API enablement before build/execution",
+    "existing_run_workflows_registry_build_resources": "NOT_QUERIED_API_DISABLED; enumerate after activation, never overwrite collision",
+    "existing_user_managed_service_accounts": 0,
+    "existing_project_buckets": 0,
+    "cloud_replay": "NOT_RUN",
+    "new_live": "NOT_RUN",
+    "required_before_live": [
+      "all offline acceptance and prompt parity pass",
+      "C1 independently reread PASS",
+      "approval valid",
+      "current pricing/model confirmed",
+      "new manifest and fixed slots frozen"
+    ]
+  },
+  "stop_and_rollback": {
+    "unexpected_identity_region_name_or_cost": "STOP; do not substitute or broaden permissions",
+    "ambiguous_model_result": "NO_RETRY; keep UNKNOWN and reservation",
+    "extra_build_or_job_execution": "NEW_EXPLICIT_APPROVAL_REQUIRED",
+    "cancel": "Owner may cancel only this ticket active build/job/workflow to prevent additional spend; preserve evidence",
+    "delete_or_revoke": "NOT_AUTHORIZED; propose exact follow-up list after evidence preservation",
+    "iam_automatic_expiration": false,
+    "system_or_billing_account_changes": false
+  },
+  "formal_ready": false,
+  "formal_gate": "BLOCKED_NOT_FROZEN"
+}

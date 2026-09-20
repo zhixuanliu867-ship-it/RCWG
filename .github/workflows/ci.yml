@@ -70,3 +70,14 @@ jobs:
             runs/ci-api001/retained-exec/reference-core/ACCEPTANCE.json
       - name: Synthetic SPEC001A metric fixture (no measured model results)
         run: python -m rcwg_spec demo --output runs/ci-spec001a/report.json
+      - name: Cloud profile offline admission, wire parity and artifact review
+        run: python scripts/accept_cloud001.py --output runs/ci-cloud001
+      - name: Retain sanitized CLOUD001 offline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud001-ci-evidence
+          retention-days: 14
+          path: |
+            runs/ci-cloud001/ACCEPTANCE.json
+            runs/ci-cloud001/unittest.log
