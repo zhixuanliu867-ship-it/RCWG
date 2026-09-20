@@ -9,6 +9,11 @@ from .evidence import no_symlink, run_id
 class FacilityFault(RuntimeError):
     pass
 
+class MeasurementFault(FacilityFault, OSError):
+    """A failed facility operation never discards already observed evidence."""
+    def __init__(self,message,report):
+        super().__init__(message);self.report=report;self.partial_report=report
+
 @dataclass(frozen=True)
 class Limits:
     memory_max: int=134217728
@@ -91,7 +96,9 @@ def pairs(raw):
 def block_io(raw):
     result={}
     for line in raw.splitlines():
-        bits=line.split();device=bits[0]
+        bits=line.split()
+        if not bits:raise ValueError('IO_EMPTY_LINE')
+        device=bits[0]
         if device in result or len(device.split(':'))!=2 or not all(p.isdigit() for p in device.split(':')):raise ValueError('IO_DEVICE_INVALID')
         fields={}
         for bit in bits[1:]:
@@ -104,14 +111,28 @@ def block_io(raw):
 class Driver:
     def __init__(self,fs,ident,limits):
         self.fs=fs;self.ident=run_id(ident);self.limits=limits;self.created=False;self.baseline=None;self.samples=[]
+        self.persist=None;self.snapshots=[];self.persistence_errors=[];self.last_report=None
+    def _persist(self,stage,value):
+        if self.persist:
+            try:self.persist(stage,value)
+            except Exception as exc:
+                self.persistence_errors.append({'stage':stage,'error':type(exc).__name__})
+                return False
+        return True
     def snapshot(self):
-        out={};missing={}
+        out={};missing={};raw={}
         for key,parser in [('cpu.stat',pairs),('memory.peak',int),('memory.current',int),('memory.events',pairs),('io.stat',block_io)]:
             try:
-                out[key]=parser(self.fs.read(self.ident,key))
+                raw[key]=self.fs.read(self.ident,key)
+                out[key]=parser(raw[key])
                 if isinstance(out[key],int) and out[key]<0:raise ValueError('NEGATIVE_COUNTER')
-            except (OSError,KeyError,ValueError) as e:out[key]=None;missing[key]=type(e).__name__
-        return {'values':out,'missing':missing}
+                required={'cpu.stat':{'usage_usec'},'memory.events':{'oom','oom_kill'}}.get(key,set())
+                if required-set(out[key] if isinstance(out[key],dict) else {}):raise ValueError('REQUIRED_KEYS_MISSING:'+','.join(sorted(required-set(out[key]))))
+            except (OSError,KeyError,ValueError) as e:out[key]=None;missing[key]=type(e).__name__+':'+str(e)
+            self._persist('counter',{'key':key,'raw':raw.get(key),'value':out.get(key),'missing':missing.get(key),'monotonic_ns':time.monotonic_ns()})
+        result={'values':out,'missing':missing,'raw':raw,'monotonic_ns':time.monotonic_ns()}
+        self.snapshots.append(result)
+        return result
     def prepare(self):
         self.limits.validate()
         self.fs.create(self.ident);self.created=True
@@ -138,10 +159,16 @@ class Driver:
     def kill(self):self.fs.write(self.ident,'cgroup.kill','1')
     def finish(self,*,wait_s=1.0):
         if not self.created:return {'status':'NOT_CREATED','formal_isolation_verified':False,'budget_within':None}
-        self.kill();deadline=time.monotonic()+wait_s
-        while not self.empty():
-            if time.monotonic()>=deadline:raise FacilityFault('DESCENDANTS_REMAIN')
-            time.sleep(0.01)
+        errors=[];cleanup={'status':'PENDING','kill':'NOT_RUN','empty':None,'remove':'NOT_RUN','group_retained':True}
+        try:self.kill();cleanup['kill']='PASS'
+        except Exception as exc:cleanup['kill']='FAILED';errors.append('KILL:'+str(exc))
+        try:
+            deadline=time.monotonic()+wait_s
+            while not self.empty():
+                if time.monotonic()>=deadline:raise FacilityFault('DESCENDANTS_REMAIN')
+                time.sleep(0.01)
+            cleanup['empty']=True
+        except Exception as exc:errors.append('WAIT_EMPTY:'+str(exc))
         final=self.snapshot();base=self.baseline or {'values':{}}
         cpu0=base['values'].get('cpu.stat');cpu1=final['values'].get('cpu.stat');cpu=None
         if cpu0 and cpu1 and 'usage_usec' in cpu0 and 'usage_usec' in cpu1:
@@ -158,8 +185,17 @@ class Driver:
         report={'status':'COUNTERS_OBSERVED' if not final['missing'] else 'MEASUREMENT_MISSING','evidence_kind':'LOCAL_CGROUP_UNCALIBRATED' if self.fs.is_real else 'SIMULATED',
                 'cpu_usage_usec':cpu,'worker_peak_ram_bytes':final['values']['memory.peak'],'oom_kill_delta':oom_delta,'run_memory_oom_delta':local_oom_delta,
                 'baseline':self.baseline,'final':final,'memory_current_samples':self.samples,'sample_interval_ms':100,
-                'library_copy_bytes':None,'dram_bytes':None,'formal_isolation_verified':False,'calibrated':False,'budget_within':None,'formal_ready':False}
-        self.fs.remove(self.ident);self.created=False
+                'library_copy_bytes':None,'dram_bytes':None,'formal_isolation_verified':False,'calibrated':False,'budget_within':None,'formal_ready':False,
+                'cleanup':cleanup,'errors':errors,'snapshots':self.snapshots,'persistence_errors':self.persistence_errors}
+        self.last_report=report
+        self._persist('final_before_remove',report)
+        if self.persistence_errors:errors.append('EVIDENCE_PERSISTENCE_FAILED')
+        if not errors and cleanup['empty']:
+            try:self.fs.remove(self.ident);self.created=False;cleanup.update(status='REMOVED',remove='PASS',group_retained=False)
+            except Exception as exc:cleanup.update(status='FAILED',remove='FAILED',group_retained=None);errors.append('REMOVE:'+str(exc))
+        if errors:cleanup['status']='FAILED'
+        self._persist('cleanup',cleanup)
+        if errors:raise MeasurementFault(';'.join(errors),report)
         return report
 
 def unavailable():
