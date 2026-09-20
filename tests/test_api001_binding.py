@@ -151,3 +151,22 @@ class GcloudBooleanRegression(unittest.TestCase):
         with patch('rcwg_api.vertex.shutil.which',return_value='/synthetic/gcloud'),patch('rcwg_api.vertex.subprocess.run',side_effect=answer):
             self.assertEqual(token.preflight()['status'],'BOUND_LOCAL_IDENTITY_VERIFIED')
         self.assertEqual(token.command_invocations,0)
+
+class GcloudQuotaRegression(unittest.TestCase):
+    def test_current_project_alias_resolves_only_to_explicit_bound_project(self):
+        token=GcloudToken(config())
+        def answer(cmd,**kw):
+            raw=canonical([{'account':ACCOUNT,'status':'ACTIVE'}]) if 'list' in cmd else b'CURRENT_PROJECT' if 'billing/quota_project' in cmd else b''
+            return subprocess.CompletedProcess(cmd,0,raw,b'')
+        with patch('rcwg_api.vertex.shutil.which',return_value='/synthetic/gcloud'),patch('rcwg_api.vertex.subprocess.run',side_effect=answer):
+            self.assertEqual(token.preflight()['project_id'],PROJECT)
+        with patch('rcwg_api.vertex.shutil.which',return_value='/synthetic/gcloud'),patch('rcwg_api.vertex.subprocess.run',return_value=subprocess.CompletedProcess([],0,TOKEN,b'')) as run:
+            token()
+        self.assertIn('--billing-project='+PROJECT,run.call_args.args[0])
+    def test_other_literal_quota_project_still_blocks_without_issuance(self):
+        token=GcloudToken(config())
+        def answer(cmd,**kw):
+            return subprocess.CompletedProcess(cmd,0,b'other-project' if 'billing/quota_project' in cmd else b'',b'')
+        with patch('rcwg_api.vertex.shutil.which',return_value='/synthetic/gcloud'),patch('rcwg_api.vertex.subprocess.run',side_effect=answer):
+            with self.assertRaisesRegex(ApiError,'AUTH_OVERRIDE_CONFIG'):token.preflight()
+        self.assertEqual(token.command_invocations,0)

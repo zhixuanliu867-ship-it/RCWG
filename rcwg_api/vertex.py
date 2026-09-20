@@ -34,7 +34,7 @@ class GcloudToken:
     def _command(self,args):
         exe=shutil.which('gcloud')
         if not exe:fail('GCLOUD_NOT_INSTALLED')
-        return [exe,*args,'--project='+self.config['project_id'],
+        return [exe,*args,*([] if args[:2]==['config','get-value'] else ['--billing-project='+self.config['project_id']]),'--project='+self.config['project_id'],
                 '--account='+self.config['login_account'],'--quiet','--verbosity=warning']
     def preflight(self):
         from .auth_binding import validate_live_binding,check_auth_environment,safe_failure
@@ -59,7 +59,7 @@ class GcloudToken:
                 record.update(safe_failure(p.returncode,p.stderr));fail('AUTH_PREFLIGHT_FAILED')
             value=p.stdout.decode('utf-8',errors='replace').strip()
             present=value not in ('','(unset)');record['present']=present
-            record['matches_authorized_value']=not present or (value.lower()==allowed if prop=='core/log_http' else value==allowed)
+            record['matches_authorized_value']=not present or (value.lower()==allowed if prop=='core/log_http' else value==allowed or (prop=='billing/quota_project' and value=='CURRENT_PROJECT'))
             if not record['matches_authorized_value']:fail('AUTH_OVERRIDE_CONFIG')
         cmd=self._command(['auth','list','--format=json(account,status)'])
         record={'operation':'LOCAL_LOGGED_IN_ACCOUNT_CHECK','argv':cmd,'started_unix_ns':time.time_ns()}
