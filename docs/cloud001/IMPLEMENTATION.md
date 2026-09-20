@@ -41,3 +41,42 @@ branches, reference CPU semantics, unverified formal memory isolation.
 Next stage interface: preserve image/source identity, raw resource scopes and
 paired generation inputs for NATIVE/METROLOGY. Do not treat this 2-slot engineering
 batch as a formal model success-rate estimate or open the benchmark gate.
+
+
+The deployed controller is `configs/cloud001/workflow_deploy.json`; the ordinary
+`workflow.json` copy has the same corrected bytes. Cloud Workflows compilation
+rejected the initial inline switch assignment / loop exit; the corrected controller
+was compiled and its replay reached SUCCEEDED. These are external orchestration
+files, not runner code. Both remote build attempts have been consumed (the first
+failed fetching a tar archive without directory headers). The successful immutable
+runner image remains built from commit 50de23f1ba6571ec500b0f207ec9cc18aec28967,
+digest sha256:6b12a38112a9b7835c0e52a32f0108992b0f40ea84b109e31be57179421c3d76.
+The image's source manifest verifies its original 145 files, including its unused
+initial workflow proposal; final repository/controller revisions are reported
+separately. No third build or regenerated model sample is implied by a code fix.
+
+
+Actual cloud closeout: replay and live each ran one Cloud Run execution on that
+same digest. C1 independently reproduced the old P0 PASS hash and unchanged P1
+REFERENCE_SYNTAX refusal. The new batch used 3 count + 3 generate requests, all
+HTTP 200, with no retries; both exact new plans completed and passed independent
+answer verification. Actual physical provider payloads share the public grammar
+and example, and P1 uses the newly returned logical contract. This is engineering
+evidence, not a formal comparison or a causal attribution for the old failure.
+
+The initial LIVE Workflow did submit its Job, but its first subsequent GET
+returned run.executions.get HTTP 403. The Job continued and archived successfully.
+The owner approved one additional read-only Workflow execution under a separate
+exact change plan (7fa01aac5258661c1c027f5ce51a2d5b1dc2b0ed4b900a70673d7b4632096581).
+It succeeded using the same orchestrator identity, with no IAM changes or new
+Job/model calls. Temporary IAM propagation is consistent with these observations
+but has not been independently established as the cause. Original FAILED remains
+in evidence; recovery does not retroactively change it to SUCCEEDED.
+
+The currently deployed Workflow revision is the fixed read-only
+`workflow_reconcile.json`, not the original dispatcher. No active jobs remain.
+Old and new claims/reservations stay consumed; no automatic deletion or further
+build/run/model attempt is authorized. Future orchestration must include an
+identity-specific read readiness check and preserve independent platform/archive
+reconciliation when the controller fails. A successful policy write alone does
+not prove immediate effective permission. Actual project invoice remains unknown.

@@ -1,0 +1,33 @@
+{
+  "main": {
+    "steps": [
+      {
+        "read_existing_execution": {
+          "call": "http.get",
+          "args": {
+            "url": "https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/rcwg-509116/executions/rcwg-cloud001-live-mfrgz",
+            "auth": {
+              "type": "OAuth2"
+            },
+            "timeout": 30
+          },
+          "result": "observed"
+        }
+      },
+      {
+        "return_observation": {
+          "return": {
+            "version": "CLOUD001_EXISTING_EXECUTION_READ_1",
+            "execution": "rcwg-cloud001-live-mfrgz",
+            "actual_name": "${observed.body.metadata.name}",
+            "platform_status": "${observed.body.status}",
+            "job_submissions": 0,
+            "model_requests": 0,
+            "original_live_workflow": "FAILED_HTTP_403_PRESERVED",
+            "formal_ready": false
+          }
+        }
+      }
+    ]
+  }
+}

@@ -133,7 +133,7 @@ WSL 默认 gcloud 账号列表为空；用户确认登录在 Windows 后，仅�
 
 User approved Windows native gcloud/HTTPS with direct USER identity; old NET-01 is SUPERSEDED_BY_WIN_01. V2 configuration and approval retain old SA semantics, fixed model/global/1-dollar/3+3/zero-retry scope and original Linux F1 executor. Original 821 methods and byte-pinned source tests are retained by explicit baseline manifest; Windows helper, runtime and deployment are independently bound. New target, native Windows and CI evidence are separate. Final LIVE, billing estimates, credential commands, cloud changes and unknown states are reported only from the private delivery evidence. PR5 stays draft. No new head merge is authorized. Formal remains BLOCKED_NOT_FROZEN.
 
-## RCWG-CLOUD-001 (active)
+## RCWG-CLOUD-001 (engineering evidence complete; independent PR review pending)
 
 Reviewed API/WIN head 272950bd3dedb13d29857600e6a07f6c43cb8cc8 was merged
 as 6e5ee40984d2631be4be7ec277cb63cb31988c5d after fresh matching-head CI
@@ -156,3 +156,12 @@ Cloud C1/C2, actual image digest, platform/GCS reconciliation and invoice cost
 remain separate gates recorded in the private delivery. Formal status stays
 BLOCKED_NOT_FROZEN; only the existing F1 reference backend is implemented.
 See docs/cloud001/CHANGE_REQUEST_zh.md and docs/cloud001/IMPLEMENTATION.md.
+
+CLOUD001 cloud C1 and new LIVE evidence have now been independently reopened:
+replay P0 PASS / old P1 static refusal; live P0 PASS / P1 PASS, 3+3 HTTP 200,
+zero model retries. The initial LIVE Workflow failed its status GET with 403;
+one separately approved read-only recovery succeeded under the same identity.
+This preserves the original controller failure and does not add a Job execution.
+The current Workflow is read-only. Draft PR #6 remains unmerged for review.
+New generation cost estimate: USD 0.00973975; invoice unknown. Formal readiness
+and memory-isolation claims remain false; stage status is engineering only.
