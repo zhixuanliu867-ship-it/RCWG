@@ -165,3 +165,8 @@ This preserves the original controller failure and does not add a Job execution.
 The current Workflow is read-only. Draft PR #6 remains unmerged for review.
 New generation cost estimate: USD 0.00973975; invoice unknown. Formal readiness
 and memory-isolation claims remain false; stage status is engineering only.
+
+
+## Active ticket: RCWG-NATIVE-001
+
+Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined; historical text above retained. One independent branch and one draft stacked PR; no merges, no model/cloud/system/cgroup changes. formal_ready=false.

@@ -1,0 +1,83 @@
+{
+  "revision": "NATIVE001_DISPATCH_V1",
+  "source": "native001/worker.cpp",
+  "binary_manifest": "SOURCE_AND_BINARY_MANIFEST.json",
+  "build_script": "scripts/build_native001.py",
+  "thread_budget": 1,
+  "scope": "native worker includes request/data parsing, source SHA256, row validation, kernels and output encoding; verifier separate",
+  "branches": [
+    {
+      "operator": "scan",
+      "implementation": "sequential",
+      "entry": "Scan::pull",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "filter",
+      "implementation": "scalar",
+      "entry": "Filter::pull",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "filter",
+      "implementation": "vectorized",
+      "entry": "Filter::pull",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "full_sort",
+      "entry": "Top::pull",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "streaming_heap",
+      "entry": "Top::pull",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "project",
+      "implementation": "column_view",
+      "entry": "Project::pull / project",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "project",
+      "implementation": "copy",
+      "entry": "Project::pull / project",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    },
+    {
+      "operator": "emit",
+      "implementation": "json_artifact",
+      "entry": "main emit branch",
+      "status": "IMPLEMENTED_NATIVE",
+      "binary_binding": "SOURCE_AND_BINARY_MANIFEST.json"
+    }
+  ],
+  "vectorized": "native bounded batch/mask, SIMD NOT_CLAIMED",
+  "representation": "immutable shared row buffer + column index view; copy owns a new buffer",
+  "memory": "streaming heap O(k + bounded upstream batch) row handles; row size and downstream materialization reported separately",
+  "unknown": [
+    "unobserved library copies",
+    "DRAM traffic",
+    "remote GPU/CPU"
+  ],
+  "source_sha256": {
+    "native001/worker.cpp": "9da88bb6d587a42b6e66905bca27e049a89a0c9a353b3e68997e43010c7d476a",
+    "native001/json.hpp": "58415eec75f47ebefb9891ec18fb90e33876ddc4ed4f299f5f97c570f058185c",
+    "native001/sha256.hpp": "9ed2082b32313f52ec95158c8ab729758fa081fb012fae6c274ca95c7e229363"
+  },
+  "validation_evidence": "Delivery ACTUAL_COVERAGE_MATRIX.json and independently sealed actual runs",
+  "compiler_baseline": "g++ 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04.1), existing GitHub Ubuntu 24.04 runner",
+  "dependencies": "C++ stdlib/static libgcc; Linux libc/loader; no third-party libraries",
+  "diagnostic_vs_performance": "Two binaries: RCWG_NATIVE_DIAGNOSTICS=1 versus 0, compile-time if constexpr removes per-row counters and buffer tracking from performance"
+}

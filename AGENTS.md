@@ -47,3 +47,8 @@ or expected sentinel outcomes to conceal implementation failures.
 
 ## EXEC-001 当前票
 完整目标与权限见 docs/exec001/CODEX_TASK.md、DECISIONS.md、ACCEPTANCE.md。只完成参考脚本不能宣称X00-X15完成。受测源码必须覆盖rcwg_exec和worker/verifier。合并授权只限明确审过的PR2/3 SHA，使用match-head，不绕过CI。F1 reference计量scope保留，不自动升级formal。
+
+
+## Active ticket: RCWG-NATIVE-001
+
+Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined; historical text above retained. One independent branch and one draft stacked PR; no merges, no model/cloud/system/cgroup changes. formal_ready=false.

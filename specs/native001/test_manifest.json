@@ -1,0 +1,102 @@
+{
+  "revision": "NATIVE001_TEST_PLAN_V1",
+  "frozen_before_execution": true,
+  "fixture_scope": "BOOT_ONLY",
+  "seeds": [
+    17,
+    29,
+    101
+  ],
+  "data_sizes": [
+    0,
+    1,
+    7,
+    129,
+    257
+  ],
+  "k_values": [
+    0,
+    1,
+    7,
+    300
+  ],
+  "dispatch_combinations": 8,
+  "properties": [
+    "all8dispatch",
+    "scalar_batch_equivalence",
+    "sort_heap_equivalence",
+    "view_copy_equivalence",
+    "node_rename",
+    "input_permutation_unique_ties",
+    "stable_duplicate_keys",
+    "nullable_null_order",
+    "empty_all_selectivity",
+    "k_boundaries",
+    "unicode",
+    "Int64_bounds",
+    "finite_float",
+    "tri_logic",
+    "overflow",
+    "division_zero",
+    "data_change",
+    "malformed_utf8_json",
+    "wrong_valid_plan",
+    "unsupported_profile"
+  ],
+  "n3_faults": [
+    "create_failure",
+    "limit_write_failure",
+    "spawn_failure",
+    "duplicate_run",
+    "truncated_events",
+    "early_exception",
+    "archive_failure",
+    "cancel",
+    "timeout",
+    "descendant_linger",
+    "missing_peak",
+    "old_peak_reuse"
+  ],
+  "tracks": [
+    "diagnostic",
+    "performance"
+  ],
+  "resource_pair_plan": {
+    "seeds": [
+      17,
+      29,
+      101
+    ],
+    "rows": [
+      1024,
+      16384,
+      65536
+    ],
+    "k": [
+      8,
+      128
+    ],
+    "memory_bytes": [
+      67108864,
+      134217728
+    ],
+    "implementation_pairs": [
+      [
+        "full_sort",
+        "streaming_heap"
+      ],
+      [
+        "scalar",
+        "vectorized"
+      ],
+      [
+        "column_view",
+        "copy"
+      ]
+    ],
+    "run_order_seed": 901,
+    "repeats": 3,
+    "target_calibration_status": "NOT_RUN_N4_APPROVAL_REQUIRED"
+  },
+  "formal_ready": false
+}
