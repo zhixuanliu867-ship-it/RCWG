@@ -118,3 +118,12 @@ B head a1f65120ef0b2b8e1fb6f1c31224244d6f7ee16b 的交付/WSL/CI/源码绑定已
 E1 独立 worker、真实父 deadline、进程组终结和 durable run 证据；E2 P0/P1 实际解析到执行、冻结多案例分母；E3 完整离线门禁、故障回归、5/8 实际 dispatch 与运行义务矩阵。保留原 585+77 方法和字节。完整入口 scripts/accept_exec001.py，原 reference 入口仍为 REFERENCE_CORE。
 
 独立 WSL/CI 和补丁应用证明以该提交交付证据为准。整票状态 EXEC001_F1_ENGINEERING_ACCEPTED 仅在全部 X00–X15 证据联合满足后使用。实现说明见 docs/exec001/IMPLEMENTATION.md，下一阶段接口见 docs/exec001/NEXT_GATE.md。受支持范围为 F1 root chain；native/DAG/cgroup/真实 API/云/IAM 未开启，正式门禁继续 BLOCKED_NOT_FROZEN，预算内判定和隔离 RAM 保持 null。
+
+
+## API-001 项目绑定与离线工程 — 2026-09-20
+
+精确 PR #4 的私有 X15 复核已完成，受审 tree 7763db9b757488e393fb4b4d8552c2daeafcecde 原样合并至 main e826100b42c6a3debd72a9ef6d157d2755e118e6；本票使用 rcwg/api-001 独立分支，API PR 保持草稿待独立审查。
+
+纯新增 API 包导入后，WSL Python 3.12.14 实跑原 708 + API 92 目标验收通过；继续补齐项目/账号/runner 子进程绑定、认证失败留证、原测试字节 pin 和 CI/配置/脚本源码清单。新增 18 项回归已在离线 API 110 项中通过，完整最终 WSL 与 CI 结果独立随本票交付，不能以此段替代机器证据。
+
+WSL 默认 gcloud 账号列表为空；用户确认登录在 Windows 后，仅本票子进程使用现有 Windows 配置，已实际核对获批账号 ACTIVE。没有重新安装/登录或全局配置改写；云权限、LIVE、凭据签发和写操作的最终实际状态分别见本票私有交付。用户已批准的 global/$1/3+3 仍有效，但实际 manifest/24h审批需满足技术前提后登记。模型输出、运行结果和审批仅私有保存。正式门禁继续 BLOCKED_NOT_FROZEN，未用通过字符串改写隔离/RAM/预算真实状态。
