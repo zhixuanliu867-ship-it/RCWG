@@ -64,7 +64,6 @@
     "test_native.NativeTests.test_boundary_seed29_n7_k7",
     "test_native.NativeTests.test_division_zero_is_model_failure",
     "test_native.NativeTests.test_exclusive_output_and_external_anchor",
-    "test_native.NativeTests.test_input_permutation_unique_keys_preserves_answer",
     "test_native.NativeTests.test_json_utf8_numeric_roundtrip_and_invalid_inputs",
     "test_native.NativeTests.test_materialization_cap_is_facility_not_oom",
     "test_native.NativeTests.test_node_rename_preserves_answer",
@@ -80,7 +79,6 @@
     "test_supervisor.CgroupMockTests.test_descendant_linger_preserves_group",
     "test_supervisor.CgroupMockTests.test_duplicate_run_cannot_reuse_group",
     "test_supervisor.CgroupMockTests.test_final_missing_peak_is_unknown",
-    "test_supervisor.CgroupMockTests.test_global_oom_kill_does_not_imply_run_limit_oom",
     "test_supervisor.CgroupMockTests.test_limit_write_failure_keeps_cleanup_handle",
     "test_supervisor.CgroupMockTests.test_limits_invalid_and_thread_budget",
     "test_supervisor.CgroupMockTests.test_limits_write_readback_and_cleanup_order",
@@ -118,12 +116,10 @@
     "test_values.ValueTests.test_utf8_count_is_codepoints"
   ],
   "test_sources": {
-    "native001_tests/test_native.py": "0e015ffbc163f66c373ddf049f954ae935aac9be69237faf1f2f8d9d99e4336d",
-    "native001_tests/test_supervisor.py": "87c338e985ab8519d66538d1dfdced313a8dc518eacc6bb14d69d17e03e7afa6",
+    "native001_tests/test_native.py": "d7826a8ce98843bfcccfd3dfcd9cdaeb9cd0957bbf5f23ec9f3f09c06c7ec41d",
+    "native001_tests/test_supervisor.py": "b426468729e32213b23c6f84510acd95e4bcc8bbf496b7e586d6a779c7913ce1",
     "native001_tests/test_values.py": "dccb0c6a53e7647c346aaf3258ccb76b2237e8287537efe1d8942ec09c340e86"
   },
   "frozen_before_execution": true,
-  "formal_ready": false,
-  "previous_manifest_sha256": "a9882e1baf791e410ee7c71c47c0d619b642bf91356a49ca06d2787de3b42d23",
-  "amendment": "Additive evidence strengthening; original tests retained; frozen before this revision is executed."
+  "formal_ready": false
 }

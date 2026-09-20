@@ -54,6 +54,9 @@ class NativeTests(unittest.TestCase):
             if filt=='vectorized':self.assertLessEqual(c['keep']['batch_frames_peak'],128);self.assertGreater(c['keep']['vector_batches'],0)
             if proj=='copy':self.assertGreater(c['fields']['application_copy_bytes'],0);self.assertEqual(c['fields']['row_buffers_copied'],7)
             else:self.assertEqual(c['fields']['row_views_created'],7);self.assertNotIn('application_copy_bytes',c['fields'])
+            witness=[w for w in r['worker']['ownership_witness'] if w['node_id']=='fields'];self.assertTrue(witness)
+            for w in witness:self.assertEqual(w['source_buffer_id']==w['result_buffer_id'],proj=='column_view')
+            life=r['worker']['buffer_lifecycle'];self.assertEqual(life['registered_created'],life['registered_released']);self.assertEqual(life['registered_live_bytes_final'],0)
         self.assertEqual(len(seen),8);self.assertEqual(len(answers),1)
     def test_performance_has_same_answer_without_diagnostic_counters(self):
         t,p,r,d=self.fixture();result,out,_=self.call(t,p['streaming_heap'],d,r,mode='performance');self.assert_success(result,out)
@@ -68,6 +71,11 @@ class NativeTests(unittest.TestCase):
             n['inputs']={port:('.'.join([names[ref.split('.')[0]],ref.split('.')[1]]) if not ref.startswith('$') else ref) for port,ref in n['inputs'].items()}
         n,port=p['result'].split('.');p['result']=names[n]+'.'+port
         result,out,_=self.call(t,p,d,r);self.assert_success(result,out)
+    def test_input_permutation_unique_keys_preserves_answer(self):
+        t,p,r,d=self.fixture();first,out,_=self.call(t,p['streaming_heap'],d,r);self.assert_success(first,out);original=read(out/'result.json')
+        rows=[json.loads(line) for line in d.read_bytes().splitlines()];random.Random(901).shuffle(rows)
+        shuffled=self.base/'permuted.jsonl';write(shuffled,b''.join(canonical(row)+b'\n' for row in rows));t=deepcopy(t);t['datasets'][0]['data_sha256']=sha(shuffled.read_bytes())
+        second,out,_=self.call(t,p['full_sort'],shuffled,r);self.assert_success(second,out);self.assertEqual(canonical(original),canonical(read(out/'result.json')))
     def test_valid_unsupported_after_is_facility_gap(self):
         t,p,r,d=self.fixture();p=deepcopy(p['streaming_heap']);p['nodes'][2]['after']=['read']
         ready=lower(t,p,locations={t['datasets'][0]['id']:d},allowed_root=self.base,ident='unsupported')

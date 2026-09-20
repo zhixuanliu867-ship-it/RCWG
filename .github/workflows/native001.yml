@@ -20,11 +20,8 @@ jobs:
           python-version: '3.12.14'
       - name: Build existing runner compiler, no installations or cloud calls
         run: python scripts/build_native001.py --output runs/native001-build
-      - name: Native acceptance when implementation is present
-        run: |
-          if test -f scripts/accept_native001.py; then
-            python scripts/accept_native001.py --build runs/native001-build --output runs/native001-ci
-          fi
+      - name: Full frozen N0-N3 native acceptance
+        run: python scripts/accept_native001.py --build runs/native001-build --output runs/native001-ci
       - name: Preserve offline build and synthetic evidence
         if: always()
         uses: actions/upload-artifact@v4

@@ -95,7 +95,7 @@ def execute(request,*,build,output,context,verify=None,driver=None,cancel=None,t
             driver.prepare();entry_fd=driver.fs.child_entry_fd(ident)
         def enter_group():
             # Only async-safe OS actions occur between fork and exec; data/native loads follow exec.
-            os.write(entry_fd,str(os.getpid()).encode());os.sched_setaffinity(0,driver.limits.affinity)
+            os.write(entry_fd,str(os.getpid()).encode());os.close(entry_fd);os.sched_setaffinity(0,driver.limits.affinity)
         request_file=(out/'request.json').open('rb');files.append(request_file)
         for name in ['worker.report.json','worker.stderr.log']:
             fd=os.open(out/name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600);files.append(os.fdopen(fd,'wb'))
@@ -134,8 +134,11 @@ def execute(request,*,build,output,context,verify=None,driver=None,cancel=None,t
         if driver:
             try:
                 result['measurements']=driver.finish()
-                if result['measurements'].get('oom_kill_delta',0) and result['execution_started']:
-                    result['terminal_status']='OOM';result['failure']={'code':'RUN_CGROUP_OOM_KILL','attribution':'run_memory_limit','evidence':'memory.events delta'}
+                if (result['measurements'].get('oom_kill_delta') or 0)>0 and result['execution_started']:
+                    if (result['measurements'].get('run_memory_oom_delta') or 0)>0:
+                        result['terminal_status']='OOM';result['failure']={'code':'RUN_CGROUP_OOM_KILL','attribution':'run_memory_limit','evidence':'run memory.events oom and oom_kill deltas'}
+                    else:
+                        result['terminal_status']='INFRA_FAILURE';result['failure']={'code':'OOM_KILL_WITHOUT_RUN_LIMIT_CAUSE','attribution':'facility_or_global_unknown'}
             except (FacilityFault,OSError,KeyError,ValueError) as exc:
                 result['measurements']={**unavailable(),'status':'MEASUREMENT_OR_CLEANUP_FAILED','reason':str(exc)}
                 result['terminal_status']='INFRA_FAILURE';result['failure']={'code':'CGROUP_CLEANUP_OR_MEASUREMENT_FAILED','attribution':'facility'}

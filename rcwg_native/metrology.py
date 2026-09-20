@@ -129,7 +129,9 @@ class Driver:
         self.baseline=self.snapshot()
         if self.baseline['missing']:raise FacilityFault('INITIAL_COUNTERS_REQUIRED')
     def sample(self):
-        try:value=int(self.fs.read(self.ident,'memory.current'))
+        try:
+            value=int(self.fs.read(self.ident,'memory.current'))
+            if value<0:raise ValueError('NEGATIVE_COUNTER')
         except (OSError,KeyError,ValueError):value=None
         self.samples.append({'monotonic_ns':time.monotonic_ns(),'memory_current_bytes':value})
     def empty(self):return pairs(self.fs.read(self.ident,'cgroup.events')).get('populated')==0
@@ -149,8 +151,12 @@ class Driver:
         if events0 is not None and events1 is not None and 'oom_kill' in events0 and 'oom_kill' in events1:
             oom_delta=events1['oom_kill']-events0['oom_kill']
             if oom_delta<0:oom_delta=None;final['missing']['memory.events']='COUNTER_REGRESSION'
+        local_oom_delta=None
+        if events0 is not None and events1 is not None and 'oom' in events0 and 'oom' in events1:
+            local_oom_delta=events1['oom']-events0['oom']
+            if local_oom_delta<0:local_oom_delta=None;final['missing']['memory.events']='COUNTER_REGRESSION'
         report={'status':'COUNTERS_OBSERVED' if not final['missing'] else 'MEASUREMENT_MISSING','evidence_kind':'LOCAL_CGROUP_UNCALIBRATED' if self.fs.is_real else 'SIMULATED',
-                'cpu_usage_usec':cpu,'worker_peak_ram_bytes':final['values']['memory.peak'],'oom_kill_delta':oom_delta,
+                'cpu_usage_usec':cpu,'worker_peak_ram_bytes':final['values']['memory.peak'],'oom_kill_delta':oom_delta,'run_memory_oom_delta':local_oom_delta,
                 'baseline':self.baseline,'final':final,'memory_current_samples':self.samples,'sample_interval_ms':100,
                 'library_copy_bytes':None,'dram_bytes':None,'formal_isolation_verified':False,'calibrated':False,'budget_within':None,'formal_ready':False}
         self.fs.remove(self.ident);self.created=False

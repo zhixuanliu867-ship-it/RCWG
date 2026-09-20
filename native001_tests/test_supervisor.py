@@ -53,6 +53,10 @@ class CgroupMockTests(unittest.TestCase):
     def test_oom_causal_delta_is_simulated_only(self):
         d=self.driver();d.prepare();d.fs.groups[d.ident]['memory.events']='oom 1\noom_kill 1\n';r=d.finish()
         self.assertEqual(r['oom_kill_delta'],1);self.assertEqual(r['evidence_kind'],'SIMULATED');self.assertFalse(r['calibrated'])
+        self.assertEqual(r['run_memory_oom_delta'],1)
+    def test_global_oom_kill_does_not_imply_run_limit_oom(self):
+        d=self.driver();d.prepare();d.fs.groups[d.ident]['memory.events']='oom 0\noom_kill 1\n';r=d.finish()
+        self.assertEqual(r['oom_kill_delta'],1);self.assertEqual(r['run_memory_oom_delta'],0);self.assertIsNone(r['budget_within'])
     def test_cpu_counter_regression_is_unknown(self):
         d=self.driver();d.prepare();d.baseline['values']['cpu.stat']['usage_usec']=10;r=d.finish();self.assertIsNone(r['cpu_usage_usec']);self.assertEqual(r['status'],'MEASUREMENT_MISSING')
     def test_descendant_linger_preserves_group(self):
