@@ -14,6 +14,32 @@ def verify_membership(pid,group,affinity):
     if actual!=expected or observed!=list(affinity):raise FacilityFault('PRE_EXEC_MEMBERSHIP_OR_AFFINITY_MISMATCH')
     return {'membership':actual,'affinity':observed}
 
+def process_evidence(directory,group,affinity,leader,offspring):
+    records=[];errors=[];expected='0::/'+str(Path(group).relative_to('/sys/fs/cgroup'))
+    for path in sorted(Path(directory).glob('process-*.txt')):
+        raw=path.read_text()
+        try:
+            lines=raw.splitlines();pid=int(lines[0]);parent=int(lines[1]);cpus=[int(x) for x in lines[3].split(',') if x]
+            if lines[2]!=expected or cpus!=list(affinity) or path.name!=f'process-{pid}.txt':raise ValueError('PROCESS_BINDING_MISMATCH')
+            if pid!=leader and parent!=leader:raise ValueError('UNEXPECTED_PARENT')
+            records.append({'pid':pid,'ppid':parent,'membership':lines[2],'affinity':cpus,'raw':raw})
+        except (ValueError,IndexError) as e:errors.append({'file':path.name,'raw':raw,'error':str(e)})
+    pids=[r['pid'] for r in records]
+    if len(set(pids))!=len(pids) or leader not in pids or len(pids)!=offspring+1:errors.append({'error':'PROCESS_DENOMINATOR_INCOMPLETE'})
+    return {'status':'PASS' if not errors else 'INCONCLUSIVE','expected_processes':offspring+1,'records':records,'errors':errors}
+
+def host_event_evidence(service):
+    result={}
+    for path in ['/proc/vmstat','/proc/pressure/memory','/proc/meminfo']:
+        try:result[path]={'raw':Path(path).read_text(),'missing':None}
+        except OSError as e:result[path]={'raw':None,'missing':type(e).__name__}
+    for name,args in [('service',['systemctl','show',service,'--property=Result,ExecMainCode,ExecMainStatus,ActiveState,SubState,ControlGroup']),('kernel_oom',['journalctl','-k','-b','-n','50','--no-pager','--output=json','--grep=oom-kill|Killed process|Out of memory'])]:
+        try:
+            p=subprocess.run(args,capture_output=True,timeout=2)
+            result[name]={'command':args,'exit_code':p.returncode,'stdout':p.stdout[:262144].decode(errors='replace'),'stderr':p.stderr[:8192].decode(errors='replace'),'truncated':len(p.stdout)>262144,'privilege_escalation':False}
+        except (OSError,subprocess.SubprocessError) as e:result[name]={'missing':type(e).__name__,'privilege_escalation':False}
+    return result
+
 def context_snapshot(root):
     """Accessible run, local/hierarchical and ancestor raw counters; no log privilege."""
     keys=['memory.events','memory.events.local','memory.max','memory.current','memory.peak','memory.stat','memory.pressure','cpu.stat','cpu.pressure','io.stat','io.pressure','pids.current','pids.max','cgroup.events','cgroup.procs']
@@ -44,6 +70,7 @@ def one(slot,plan,directory,authorization=None):
         driver.prepare();fs.write(slot['run_id'],'pids.max',str(slot['pids_max']))
         if fs.read(slot['run_id'],'pids.max').strip()!=str(slot['pids_max']):raise FacilityFault('PIDS_READBACK_MISMATCH')
         before=context_snapshot(group);journal.emit('BEFORE',before)
+        result['host_events_before']=host_event_evidence(plan['service']);journal.emit('HOST_BEFORE',result['host_events_before'])
         for name in ['worker.stdout.json','worker.stderr.log']:
             f=(out/name).open('xb');handles.append(f)
         cmd=[plan['binaries']['calibration']['path'],slot['mode'],str(slot['batch'])];stdin=subprocess.DEVNULL
@@ -100,6 +127,8 @@ def one(slot,plan,directory,authorization=None):
     result['controller_wall_ns_before_verifier']=time.monotonic_ns()-start
     result['worker_observed_ns']=None if worker_start is None else time.monotonic_ns()-worker_start
     result['context_before']=before;result['context_after']=after
+    result['host_events_after']=host_event_evidence(plan['service']);journal.emit('HOST_AFTER',result['host_events_after'])
+    if proc and slot['mode']!='f1':result['process_evidence']=process_evidence(out,group,limits.affinity,proc.pid,slot['offspring_total_max'])
     result['kernel_oom_cause']={'status':'UNKNOWN','reason':'No uniquely bound kernel victim record; event coincidence insufficient; no privileged journal access requested'}
     verify_start=time.monotonic_ns()
     try:

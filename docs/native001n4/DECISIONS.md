@@ -15,6 +15,8 @@
    原生退出、限制读回和控制动作。无法取得绑定 victim/group 的独立证据时 UNKNOWN；
    本轮不请求特权日志，不主动制造祖先或全局 OOM。
    因此 C05 即使发生局部事件，若仍缺唯一因果证据也输出 INCONCLUSIVE，不保证通过。
+   校准程序独占保存每个父/子PID、PPID、组归属和affinity；C04不再仅凭大peak推断后代测量。
+   收集无提权权限内的/proc、精确service状态和最多50条OOM内核日志；拒绝权限时保存缺测。
 4. C01–C10 工程计划固定 888 workload 槽：230 校准、10 预热、648 资源。
    资源原网格 324 对完全保留；seed901 固定顺序，相邻配对，非比较分支固定
    scalar/streaming_heap/column_view。行数据沿原合成生成器，非正式数据。
@@ -25,7 +27,8 @@
    INCONCLUSIVE。不扣猜测开销，不更改正式重复规则，不把整批峰值拆成单任务峰值。
 6. 专用临时systemd服务覆盖整批：cpu/memory/io/pids；1GiB、200%CPU、TasksMax64、
    7200秒全局截止、run单线程/固定affinity/64或128MiB/swap0/pids8/最长20秒。
-   不修改共享root/user@，不复用旧60秒只读hostcheck批准。就绪失败即停。
+   不手工修改共享root/user@，不复用旧60秒只读hostcheck批准。就绪失败即停。
+   systemd按精确服务请求可能层级启用祖先controller；此PID1管理效果在主机计划中明示。
 7. 单一 proposal 在最终精确head和CI二进制冻结后生成，始终approved=false。
    独立私有owner receipt绑定proposal SHA、host/boot/uid、源码/二进制/输入/命令、
    manifest、1次service use、最长24h有效范围。运行器不生成批准，claim独占落盘。

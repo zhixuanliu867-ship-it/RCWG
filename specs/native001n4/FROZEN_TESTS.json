@@ -35,6 +35,11 @@
     "test_n4_counter_integrity.CounterIntegrityTests.test_valid_counters_and_empty_io_are_observed",
     "test_n4_counter_integrity.CounterIntegrityTests.test_valid_device_io_retained",
     "test_n4_counter_integrity.CounterIntegrityTests.test_whitespace_io_is_typed_missing_not_indexerror",
+    "test_n4_membership.MembershipTests.test_c04_requires_process_proof_even_with_large_peak",
+    "test_n4_membership.MembershipTests.test_child_wrong_group_not_accepted",
+    "test_n4_membership.MembershipTests.test_missing_child_not_inferred_from_peak",
+    "test_n4_membership.MembershipTests.test_parent_and_both_children_bound",
+    "test_n4_membership.MembershipTests.test_unprivileged_host_log_denial_preserved",
     "test_n4_protocol.BinaryAdmissionTests.test_calibration_refuses_no_isolation_marker",
     "test_n4_protocol.BinaryAdmissionTests.test_calibration_rejects_unbounded_batch",
     "test_n4_protocol.BinaryAdmissionTests.test_launcher_refuses_missing_arguments",
@@ -82,8 +87,9 @@
   "sources": {
     "native001_n4_tests/test_counter_extended.py": "ce27d611720deba473a0a729bfe35123d43faefd5d2baae0d5f36a231aee67b6",
     "native001_n4_tests/test_n4_counter_integrity.py": "fe819c9f5418d7f0c2449bfe1a9f902f0e42187ee7112db41a6711411b1a1ee7",
+    "native001_n4_tests/test_n4_membership.py": "29ddd88156313dc40cf8352dbc48744514dee260e6a0e0a96686d3dad3f492c4",
     "native001_n4_tests/test_n4_protocol.py": "7eada4a8fc4d2c319af2ad7f6dd59dcd13b20eeb78a741e2a0762046154adfd6",
-    "native001_n4_tests/test_n4_recovery.py": "62b98e7aae34a7e0a6692218b565bdaa9a66fd006d97000be3562a9db9969a2b"
+    "native001_n4_tests/test_n4_recovery.py": "8f9d04027488dabbe89eff365c317790ec9cc75c08832923c1b77d3830d053d1"
   },
   "reviewer_test_sha256": "fe819c9f5418d7f0c2449bfe1a9f902f0e42187ee7112db41a6711411b1a1ee7",
   "formal_ready": false

@@ -4,7 +4,7 @@ import argparse,json,os,signal,sys,threading,time
 from rcwg_native.evidence import ROOT,write,read,sha,canonical,no_symlink
 from .approval import validate,claim
 from .plan import freeze,CONTROLLERS
-from .runtime import one,context_snapshot
+from .runtime import one,context_snapshot,host_event_evidence
 from .evidence import reconcile
 
 def readiness(plan):
@@ -94,7 +94,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--plan',type=Path);p.add_argument('--receipt',type=Path);p.add_argument('--output',type=Path);p.add_argument('--reconcile',type=Path);p.add_argument('--freeze',type=Path);p.add_argument('--native-build',type=Path);p.add_argument('--n4-build',type=Path);a=p.parse_args()
     if a.freeze:return freeze(a.freeze,a.native_build,a.n4_build) and 0
     if a.reconcile:
-        plan=read(a.plan);manifest=read(plan['manifest_path']);print(json.dumps(reconcile(manifest,a.reconcile),indent=2));return 0
+        plan=read(a.plan);manifest=read(plan['manifest_path']);r=reconcile(manifest,a.reconcile);r['external_host_service_observation']=host_event_evidence(plan['service']);print(json.dumps(r,indent=2));return 0
     if not all([a.plan,a.receipt,a.output]):p.error('plan, receipt and exact output required')
     return run(a.plan,a.receipt,a.output)
 if __name__=='__main__':raise SystemExit(main())

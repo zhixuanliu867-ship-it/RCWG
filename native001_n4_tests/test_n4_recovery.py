@@ -12,7 +12,7 @@ class RecoveryTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.base=Path(self.tmp.name)
         self.slot=slots()[0];self.out=self.base/self.slot['run_id'];self.out.mkdir()
-        self.plan={'delegated_root':str(self.base/'fakegroup'),'host':{'affinity':sorted(os.sched_getaffinity(0))},'binaries':{'launcher':{'path':'mock-launcher'},'calibration':{'path':'mock-calibration'}}}
+        self.plan={'service':'SIMULATED.service','delegated_root':str(self.base/'fakegroup'),'host':{'affinity':sorted(os.sched_getaffinity(0))},'binaries':{'launcher':{'path':'mock-launcher'},'calibration':{'path':'mock-calibration'}}}
         self.fs=FakeFS();target=self.base/'entry';target.write_text('')
         self.fs.child_entry_fd=lambda _:os.open(target,os.O_WRONLY)
     def run_case(self,fail_archive=False,fail_spawn=False):
@@ -25,7 +25,7 @@ class RecoveryTests(unittest.TestCase):
             owner.assertNotIn('preexec_fn',kw)
             if fail_spawn:raise OSError('MOCK_SPAWN_FAILED')
             kw['stdout'].write(json.dumps({'mode':owner.slot['mode'],'batch':owner.slot['batch'],'wall_ns':1000000,'process_cpu_ns':900000}).encode());return Proc()
-        with patch('rcwg_native_n4.approval.validate',return_value=(self.plan,{}, {'slots':[self.slot]})),patch('rcwg_native_n4.runtime.LinuxFS',return_value=self.fs),patch('rcwg_native_n4.runtime.context_snapshot',return_value={'scope':'SIMULATED'}),patch('rcwg_native_n4.runtime.subprocess.Popen',side_effect=spawn),patch('rcwg_native_n4.runtime.os.read',return_value=str(os.getpid()).encode()),patch('rcwg_native_n4.runtime.verify_membership',return_value={'membership':'SIMULATED','affinity':self.plan['host']['affinity'][:1]}):
+        with patch('rcwg_native_n4.approval.validate',return_value=(self.plan,{}, {'slots':[self.slot]})),patch('rcwg_native_n4.runtime.LinuxFS',return_value=self.fs),patch('rcwg_native_n4.runtime.context_snapshot',return_value={'scope':'SIMULATED'}),patch('rcwg_native_n4.runtime.subprocess.Popen',side_effect=spawn),patch('rcwg_native_n4.runtime.os.read',return_value=str(os.getpid()).encode()),patch('rcwg_native_n4.runtime.verify_membership',return_value={'membership':'SIMULATED','affinity':self.plan['host']['affinity'][:1]}),patch('rcwg_native_n4.runtime.host_event_evidence',return_value={'scope':'SIMULATED'}),patch('rcwg_native_n4.runtime.process_evidence',return_value={'status':'SIMULATED'}):
             return one(self.slot,self.plan,self.out,('mockplan','mockreceipt'))
     def test_full_mock_controller_archives_before_cleanup(self):
         r=self.run_case();self.assertEqual(r['terminal_status'],'COMPLETED');self.assertEqual(r['measurements']['evidence_kind'],'SIMULATED')

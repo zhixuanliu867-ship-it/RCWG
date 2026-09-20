@@ -15,7 +15,9 @@ def assess(manifest,reconciled):
                 if cpu and independent:status='PASS' if abs(cpu*1000/independent-1)<=manifest['tolerances']['cpu_relative_error'] else 'FAIL'
                 else:reasons.append('INDEPENDENT_CPU_MISSING')
             elif case=='C03':status='PASS' if 16777216<=(m.get('worker_peak_ram_bytes') or 0)<=33554432 else 'FAIL'
-            elif case=='C04':status='PASS' if (m.get('worker_peak_ram_bytes') or 0)>=16777216 and r['terminal_status']=='COMPLETED' else 'FAIL'
+            elif case=='C04':
+                if (r.get('process_evidence') or {}).get('status')!='PASS':reasons.append('DESCENDANT_MEMBERSHIP_INCOMPLETE')
+                else:status='PASS' if (m.get('worker_peak_ram_bytes') or 0)>=16777216 and r['terminal_status']=='COMPLETED' else 'FAIL'
             elif case=='C05':reasons.append('OOM_CAUSE_REQUIRES_UNAMBIGUOUS_INDEPENDENT_RECORD')
             elif case=='C06':status='PASS' if r['terminal_status'] in ['CANCELLED','TIMEOUT'] else 'FAIL'
             elif case in ['C09','C10']:status='PASS' if r['terminal_status']=='COMPLETED' and r['verification']=='PASS' else 'FAIL'
