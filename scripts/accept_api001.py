@@ -43,6 +43,10 @@ if not failures:
             existing=json.loads((out/'retained-exec/ACCEPTANCE.json').read_text())
             required=json.loads((ROOT/'specs/api001/retained_test_ids.json').read_text())['required_methods']
             if not set(required).issubset(existing['tests']['passed_ids']):failures.append('RETAINED_708_IDS')
+            win_base=json.loads((ROOT/'specs/api001/win01_retained_baseline.json').read_text())
+            if not set(win_base['required_methods']).issubset(existing['tests']['passed_ids']):failures.append('RETAINED_821_IDS')
+            for name,h in win_base['files_sha256'].items():
+                if sha((ROOT/name).read_bytes())!=h:failures.append('WIN01_BASELINE_TEST_BYTES:'+name)
     run('api-tests',[sys.executable,'acceptance/api001/run_tests.py','--output',str(out/'api-unit')])
     cmd=[sys.executable,'-m','rcwg_api','demo','--output',str(out/'mock-wire-execution')]
     if args.review:cmd.append('--review-reference')
@@ -62,6 +66,7 @@ if not args.review:
 result={'status':('API001_REVIEW_OFFLINE_PASS' if args.review else 'API001_TARGET_OFFLINE_PASS') if not failures else 'API001_OFFLINE_BLOCKED',
         'python':sys.version.split()[0],'review_only':args.review,'commands':commands,'failures':failures,
         'source_sha256':before,'source_after_sha256':source_snapshot(),
+        'windows_native_test_status':'SEPARATE_WINDOWS_ACCEPTANCE_REQUIRED','win01_retained_methods':821,
         'index_verified':not args.review and not failures,'retained_test_source_files':retained_source_count,'actual_live_model_requests':0,'formal_ready':False,
         'full_api001_accepted':False,'live_acceptance':'NOT_EXECUTED','invoice_cost_usd':None}
 store.json('ACCEPTANCE.json',result)

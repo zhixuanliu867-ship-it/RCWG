@@ -18,15 +18,21 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);sub=parser.add_subparsers(dest='cmd',required=True)
     p=sub.add_parser('prepare');p.add_argument('--project',required=True);p.add_argument('--service-account',required=True)
     p.add_argument('--output',required=True);p.add_argument('--allow-environment-proxy',action='store_true')
+    p=sub.add_parser('prepare-windows-user');p.add_argument('--host-binding',required=True);p.add_argument('--output',required=True)
     p=sub.add_parser('demo');p.add_argument('--output',required=True);p.add_argument('--review-reference',action='store_true')
     p=sub.add_parser('live');p.add_argument('--prepared',required=True);p.add_argument('--approval',required=True)
-    p.add_argument('--offline-acceptance',required=True);p.add_argument('--ack-paid-model-requests',action='store_true')
+    p.add_argument('--windows-acceptance');p.add_argument('--offline-acceptance',required=True);p.add_argument('--ack-paid-model-requests',action='store_true')
     p=sub.add_parser('audit');p.add_argument('--output',required=True);p.add_argument('--manifest-sha256',required=True);p.add_argument('--seal-sha256',required=True)
     args=parser.parse_args()
     try:
         if args.cmd=='prepare':
             cfg=default_config(args.project);cfg['service_account']=args.service_account;cfg['allow_environment_proxy']=args.allow_environment_proxy
             result=prepare(_private_output(args.output),cfg)
+        elif args.cmd=='prepare-windows-user':
+            from .policy import windows_config
+            from .windows_bridge import validate_host
+            binding=read(_private_output(args.host_binding));validate_host(binding,files=True)
+            result=prepare(_private_output(args.output),windows_config(binding))
         elif args.cmd=='demo':
             from rcwg_exec.demo import prepare_fixture
             from .common import Archive
@@ -50,8 +56,13 @@ def main():
             root=_private_output(args.prepared);manifest=read(root/'expected_generations.json')
             task=read(root/'fixture/task.json');recipe=read(root/'fixture/verification_recipe.json')
             approval=read(_private_output(args.approval));config=manifest['config']
+            if config.get('auth_mode')=='GCLOUD_USER':
+                from .windows_bridge import WindowsUserTransport
+                transport=WindowsUserTransport(config,digest(manifest))
+            else:transport=VertexTransport(config,GcloudToken(config))
             result0=run_pilot(task,recipe,root/'fixture/records.jsonl',manifest,output=root/'observations',mode='LIVE',
-                       transport=VertexTransport(config,GcloudToken(config)),approval=approval,offline_acceptance=_private_output(args.offline_acceptance))
+                       transport=transport,approval=approval,offline_acceptance=_private_output(args.offline_acceptance),
+                       windows_acceptance=_private_output(args.windows_acceptance) if args.windows_acceptance else None)
             r=result0['report'];result={'status':r['status'],'real_model_service_dispatches':r['real_model_service_dispatches'],
                     'stop_reason':r['stop_reason'],'seal_sha256':result0['seal_sha256'],
                     'live_acceptance':'INDEPENDENT_REVIEW_REQUIRED','formal_ready':False}

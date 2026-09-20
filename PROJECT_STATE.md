@@ -127,3 +127,8 @@ E1 独立 worker、真实父 deadline、进程组终结和 durable run 证据；
 纯新增 API 包导入后，WSL Python 3.12.14 实跑原 708 + API 92 目标验收通过；继续补齐项目/账号/runner 子进程绑定、认证失败留证、原测试字节 pin 和 CI/配置/脚本源码清单。新增 21 项回归已在离线 API 113 项中通过，完整最终 WSL 与 CI 结果独立随本票交付，不能以此段替代机器证据。
 
 WSL 默认 gcloud 账号列表为空；用户确认登录在 Windows 后，仅本票子进程使用现有 Windows 配置，已实际核对获批账号 ACTIVE。没有重新安装/登录或全局配置改写；云权限、LIVE、凭据签发和写操作的最终实际状态分别见本票私有交付。用户已批准的 global/$1/3+3 仍有效，但实际 manifest/24h审批需满足技术前提后登记。模型输出、运行结果和审批仅私有保存。正式门禁继续 BLOCKED_NOT_FROZEN，未用通过字符串改写隔离/RAM/预算真实状态。
+
+
+## API-001 WIN-01 recovery — 2026-09-20
+
+User approved Windows native gcloud/HTTPS with direct USER identity; old NET-01 is SUPERSEDED_BY_WIN_01. V2 configuration and approval retain old SA semantics, fixed model/global/1-dollar/3+3/zero-retry scope and original Linux F1 executor. Original 821 methods and byte-pinned source tests are retained by explicit baseline manifest; Windows helper, runtime and deployment are independently bound. New target, native Windows and CI evidence are separate. Final LIVE, billing estimates, credential commands, cloud changes and unknown states are reported only from the private delivery evidence. PR5 stays draft. No new head merge is authorized. Formal remains BLOCKED_NOT_FROZEN.

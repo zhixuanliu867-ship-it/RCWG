@@ -8,6 +8,12 @@ ACCOUNT='zhixuanliu867@gmail.com'
 RUNNER='rcwg-api-runner@rcwg-509116.iam.gserviceaccount.com'
 
 def validate_live_binding(config):
+    if config.get('auth_mode')=='GCLOUD_USER':
+        from .policy import validate_config
+        validate_config(config)
+        if (config['project_id'],config['login_account'],config['principal'],config['quota_project'],config['service_account'])!=(PROJECT,ACCOUNT,ACCOUNT,PROJECT,None):
+            fail('LIVE_IDENTITY_OUTSIDE_AUTHORIZATION')
+        return
     if (config['project_id'],config['login_account'],config['service_account'])!=(PROJECT,ACCOUNT,RUNNER):
         fail('LIVE_IDENTITY_OUTSIDE_AUTHORIZATION')
 

@@ -29,7 +29,16 @@ def make_manifest(task,config,source_hashes,*,recipe_sha256=None):
             'scope':'F1_API_ENGINEERING_NOT_FROZEN_BENCHMARK'}
 
 def prepare(output,config):
-    check_exec_sources()
+    check_exec_sources();validate_config(config)
+    if config.get('auth_mode')=='GCLOUD_USER':
+        # Exactly one preparation for this authorized ticket, independent of the
+        # caller's chosen output directory. Linux-only durable exclusive marker.
+        if not ROOT.is_relative_to(Path('/home')):fail('WSL_PREPARATION_REQUIRED')
+        lock=ROOT/'runs/api001-win01-one-pilot.json'
+        lock.parent.mkdir(exist_ok=True,mode=0o700)
+        fd=os.open(lock,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600)
+        with os.fdopen(fd,'wb') as stream:
+            stream.write(canonical({'config_sha256':digest(config),'output':str(Path(output).absolute()),'status':'PREPARATION_CLAIMED'}));stream.flush();os.fsync(stream.fileno())
     from rcwg_exec.demo import prepare_fixture
     store=Archive(Path(output))
     task,plans,recipe,data=prepare_fixture(store.path/'fixture',n=257,k=20)
@@ -48,13 +57,16 @@ def supervised_execution(task,plan,recipe,data_path,output,generation_id):
                              record_id=generation_id,generation_id=generation_id,repeat_id='r0')
 
 def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',approval=None,
-              offline_acceptance=None,executor=None):
+              offline_acceptance=None,executor=None,windows_acceptance=None):
     if mode not in {'MOCK','LIVE'}:fail('MODE_INVALID')
     task=deepcopy(task);recipe=deepcopy(recipe);manifest=deepcopy(manifest)
     if manifest!=make_manifest(task,manifest['config'],manifest['source_sha256'],recipe_sha256=manifest.get('verifier_recipe_sha256')):fail('EXPECTED_MANIFEST_INVALID')
     config=validate_config(manifest['config'])
+    windows=config.get('auth_mode')=='GCLOUD_USER'
+    from .windows_bridge import WindowsUserTransport
     if mode=='LIVE':
-        if type(transport) is not VertexTransport or executor is not None:fail('LIVE_TRANSPORT_OR_EXECUTOR')
+        expected_type=WindowsUserTransport if windows else VertexTransport
+        if type(transport) is not expected_type or executor is not None or (windows and any(callable(v) for v in vars(transport).values())):fail('LIVE_TRANSPORT_OR_EXECUTOR')
         check_exec_sources()
         if manifest.get('verifier_recipe_sha256')!=digest(recipe):fail('VERIFIER_RECIPE_NOT_PREFROZEN')
         if sha(Path(data_path).read_bytes())!=task['datasets'][0]['data_sha256']:fail('DATA_CHANGED_BEFORE_API')
@@ -66,7 +78,15 @@ def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',appr
         if passed.get('source_sha256')!=manifest['source_sha256']:fail('OFFLINE_SOURCE_MISMATCH')
         from .auth_binding import validate_live_binding
         validate_live_binding(config)
-        if transport.config!=config or type(transport.token_source) is not GcloudToken or transport.token_source.config!=config:
+        if windows:
+            transport.validate_live(config,digest(manifest))
+            if windows_acceptance is None:fail('WINDOWS_ACCEPTANCE_REQUIRED')
+            win_raw=Path(windows_acceptance).read_bytes();win_passed=strict(win_raw)
+            if sha(win_raw)!=approval['windows_acceptance_sha256'] or win_passed.get('status')!='API001_WINDOWS_OFFLINE_PASS':fail('WINDOWS_ACCEPTANCE_MISMATCH')
+            if win_passed.get('source_sha256')!=manifest['source_sha256'] or win_passed.get('windows_host')!=config['windows_host']:fail('WINDOWS_ACCEPTANCE_SOURCE')
+            claim=read(ROOT/'runs/api001-win01-one-pilot.json')
+            if claim['config_sha256']!=digest(config) or Path(claim['output'])!=Path(output).absolute().parent:fail('ONE_PILOT_PREPARATION_BINDING')
+        elif transport.config!=config or type(transport.token_source) is not GcloudToken or transport.token_source.config!=config:
             fail('LIVE_AUTH_TRANSPORT_BINDING')
     elif getattr(transport,'mode',None)!='MOCK':fail('MOCK_CANNOT_USE_LIVE_TRANSPORT')
     executor=supervised_execution if executor is None else executor
@@ -76,15 +96,17 @@ def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',appr
     # One persistent binding for this prepared pilot; new output paths cannot reset
     # this budget or reuse the same request IDs. A different manifest requires a
     # newly approved preparation, not an automatic retry.
-    budget=Budget(store.path.parent/'api001-budget.sqlite',manifest_hash,config)
+    budget=Budget(ROOT/'runs/api001-win01-budget.sqlite' if windows and mode=='LIVE' else store.path.parent/'api001-budget.sqlite',manifest_hash,config)
     source_at_start=source_snapshot();rows=[];stop_reason=None;versions=[];physical_calls=[]
     transport_counter_before=getattr(transport,'dispatch_count',0)
     store.json('source_at_start.json',source_at_start)
     if mode=='LIVE':
         # Archive authentication failures with zero paid reservations and both slots.
         try:
-            transport.token_source.preflight()
-            transport.token_source()
+            if windows:transport.preflight()
+            else:
+                transport.token_source.preflight()
+                transport.token_source()
         except ApiError as error:
             stop_reason=error.code
 
@@ -96,20 +118,23 @@ def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',appr
         if len(encoded)>131072:fail('REQUEST_BYTE_LIMIT')
         stage_store.put(kind+'.request.json',encoded)
         amount=budget.reserve(request_id,kind)
-        stage_store.json(kind+'.reservation.json',{'request_id':request_id,'kind':kind,'amount_microusd':amount,
-                       'reserved_before_io':True,'manifest_sha256':manifest_hash,'mode':mode})
+        reservation={'request_id':request_id,'kind':kind,'amount_microusd':amount,
+                     'reserved_before_io':True,'manifest_sha256':manifest_hash,'mode':mode}
+        stage_store.json(kind+'.reservation.json',reservation)
         before=getattr(transport,'dispatch_count',0)
         started=time.time_ns();monotonic=time.perf_counter_ns()
         try:
-            response=transport.send(kind,encoded,request_id)
+            response=transport.send_reserved(kind,encoded,request_id,reservation) if windows and mode=='LIVE' else transport.send(kind,encoded,request_id)
         except Exception as error:
             # No request contents, credentials, URL queries or exception strings
             # enter public diagnostics. Interrupted reservations stay consumed.
             code=error.code if isinstance(error,ApiError) else 'TRANSPORT_UNCERTAIN_NO_RETRY'
             record={'request_id':request_id,'kind':kind,'endpoint':endpoint(config,kind),'mode':mode,'status':code,'started_unix_ns':started,
                     'client_elapsed_ns':time.perf_counter_ns()-monotonic,'provider_receipt':'UNKNOWN',
-                    'dispatch_attempted':getattr(transport,'dispatch_count',0)>before,'request_sha256':sha(encoded),
+                    'dispatch_attempted':transport.last_dispatch if windows and mode=='LIVE' else getattr(transport,'dispatch_count',0)>before,'request_sha256':sha(encoded),
                     'transport_retry_index':0,'regeneration_index':0}
+            if windows and mode=='LIVE':
+                record['windows_bridge_receipt_sha256']=stage_store.json(kind+'.windows_receipt.json',transport.last_receipt)
             physical_calls.append(record)
             h=stage_store.json(kind+'.observation.json',record);budget.observe(request_id,code,h)
             raise ApiError(code) from None
@@ -118,6 +143,11 @@ def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',appr
                 'started_unix_ns':started,'client_elapsed_ns':response.elapsed_ns,'provider_receipt':'HTTP_RESPONSE_OBSERVED',
                 'dispatch_attempted':True,'request_sha256':sha(encoded),'response_sha256':sha(response.body),
                 'safe_response_headers':safe_headers,'transport_retry_index':0,'regeneration_index':0}
+        if windows and mode=='LIVE':
+            record.update(windows_bridge_receipt_sha256=stage_store.json(kind+'.windows_receipt.json',transport.last_receipt),
+                          windows_http_elapsed_ns=response.elapsed_ns,wsl_bridge_elapsed_ns=transport.last_receipt['wsl_bridge_elapsed_ns'],
+                          client_elapsed_ns=time.perf_counter_ns()-monotonic,
+                          timing_scope='WSL_BRIDGE_AND_WINDOWS_HTTP_SEPARATE_FROM_F1_KERNEL')
         physical_calls.append(record)
         stage_store.put(kind+'.response.bin',response.body)
         h=stage_store.json(kind+'.observation.json',record);budget.observe(request_id,'HTTP_'+str(response.status),h)
@@ -183,24 +213,31 @@ def run_pilot(task,recipe,data_path,manifest,*,output,transport,mode='MOCK',appr
             row['status']='API_PIPELINE_FACILITY_ERROR';row['error_code']='PIPELINE_'+type(error).__name__
             stop_reason=row['error_code']
         attempt.json('generation.json',row);rows.append(row)
-    if mode=='LIVE':store.json('credential_audit.json',transport.token_source.audit)
+    auth_source=transport if windows else getattr(transport,'token_source',None)
+    if mode=='LIVE':
+        store.json('credential_audit.json',auth_source.audit)
+        if windows:store.json('windows_receipts.json',transport.receipts)
     store.json('physical_requests.json',physical_calls)
     store.json('budget_snapshot.json',budget.summary())
     source_unchanged=source_snapshot()==source_at_start
+    unknown_dispatches=sum(x['dispatch_attempted'] is None for x in physical_calls)
     report={'version':'API001_REPORT_1','mode':mode,'status':'API001_MOCK_RECORDED' if mode=='MOCK' else 'API001_LIVE_RECORDED',
             'manifest_sha256':manifest_hash,'fixed_generation_denominator':2,'generations':rows,
             'planned_generate_requests':3,'planned_count_requests':3,
-            'actual_generate_dispatches':sum(x['kind']=='generateContent' and x['dispatch_attempted'] for x in physical_calls),
-            'actual_count_dispatches':sum(x['kind']=='countTokens' and x['dispatch_attempted'] for x in physical_calls),
-            'real_model_service_dispatches':getattr(transport,'dispatch_count',0)-transport_counter_before if mode=='LIVE' else 0,
+            'actual_generate_dispatches':sum(x['kind']=='generateContent' and x['dispatch_attempted'] is True for x in physical_calls),
+            'actual_count_dispatches':sum(x['kind']=='countTokens' and x['dispatch_attempted'] is True for x in physical_calls),
+            'real_model_service_dispatches':None if unknown_dispatches else (getattr(transport,'dispatch_count',0)-transport_counter_before if mode=='LIVE' else 0),
+            'unknown_model_dispatches':unknown_dispatches,
             'observed_transport_dispatches':getattr(transport,'dispatch_count',0)-transport_counter_before,
-            'transport_and_ledger_counts_match':getattr(transport,'dispatch_count',0)-transport_counter_before==sum(x['dispatch_attempted'] for x in physical_calls),
+            'transport_and_ledger_counts_match':None if unknown_dispatches else getattr(transport,'dispatch_count',0)-transport_counter_before==sum(x['dispatch_attempted'] is True for x in physical_calls),
             'provider_received_request_count':None,'provider_received_request_count_reason':'DISPATCH_IS_NOT_SERVER_RECEIPT',
             'reported_model_versions':sorted(set(versions)),'stop_reason':stop_reason,'source_unchanged':source_unchanged,
             'real_model_quality_statistics':'NOT_A_FORMAL_BENCHMARK','live_acceptance':'INDEPENDENT_REVIEW_REQUIRED' if mode=='LIVE' else 'NOT_EXECUTED',
             'cloud_resource_mutations':0,'iam_policy_mutations':0,
-            'credential_command_invocations':getattr(getattr(transport,'token_source',None),'command_invocations',None),
-            'credential_metadata_command_invocations':getattr(getattr(transport,'token_source',None),'metadata_command_invocations',None),
+            'credential_command_invocations':getattr(auth_source,'command_invocations',None),
+            'credential_metadata_command_invocations':getattr(auth_source,'metadata_command_invocations',None),
+            'auth_mode':config.get('auth_mode','GCLOUD_SERVICE_ACCOUNT'),
+            'principal':config.get('principal',config['service_account']) if mode=='LIVE' else None,
             'login_account':config['login_account'] if mode=='LIVE' else None,
             'service_account':config['service_account'] if mode=='LIVE' else None,
             'credential_service_http_requests':None,'credential_scope':'SHORT_LIVED_AUTHENTICATION_SEPARATE_FROM_MODEL_DISPATCHES',

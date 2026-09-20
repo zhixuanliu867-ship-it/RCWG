@@ -7,6 +7,8 @@ import re
 import time
 from .common import ROOT,ApiError,fail,read,digest,sha,integer,SHA,ID,private_path
 
+from .common import canonical as canonical_config
+
 MODEL='gemini-3.1-flash-lite'
 BASE='55a9ac0b8ec062ac7ebe9f7bcf513f84b4b5b278'
 PROJECT=re.compile(r'[a-z][a-z0-9-]{4,28}[a-z0-9]\Z')
@@ -30,7 +32,22 @@ def default_config(project_id: str):
       'ceiling_microusd':1000000,'max_requests':{'countTokens':3,'generateContent':3},
       'pilot_profile':'F1_ROOT_CHAIN_PUBLIC_RUNTIME_PROFILE_1'}
 
+def windows_config(host_binding):
+    config=default_config('rcwg-509116')
+    config.update(version='API001_CONFIG_2_WINDOWS_USER',auth_mode='GCLOUD_USER',principal_type='USER',
+                  principal='zhixuanliu867@gmail.com',quota_project='rcwg-509116',transport_host='WINDOWS',
+                  transport_backend='NATIVE_PYTHON_HTTPS_PIPE_1',windows_host=deepcopy(host_binding))
+    return config
+
 def validate_config(config):
+    if type(config) is dict and config.get('version')=='API001_CONFIG_2_WINDOWS_USER':
+        extra={'auth_mode','principal_type','principal','quota_project','transport_host','transport_backend','windows_host'}
+        if set(config)!=CONFIG_KEYS|extra:fail('CONFIG_FIELDS')
+        from .windows_bridge import validate_host
+        validate_host(config['windows_host'])
+        expected=windows_config(config['windows_host'])
+        if canonical_config(config)!=canonical_config(expected):fail('WINDOWS_CONFIG_POLICY_CHANGED')
+        return deepcopy(config)
     if type(config) is not dict or set(config)!=CONFIG_KEYS:fail('CONFIG_FIELDS')
     project=config['project_id']
     if type(project) is not str or not PROJECT.fullmatch(project):fail('PROJECT_INVALID')
@@ -52,12 +69,18 @@ def endpoint(config,kind):
 
 def validate_approval(approval,manifest,*,now=None):
     now=int(time.time()) if now is None else now
-    if type(approval) is not dict or set(approval)!=APPROVAL_KEYS:fail('APPROVAL_FIELDS')
+    user=manifest.get('config',{}).get('auth_mode')=='GCLOUD_USER'
+    keys=APPROVAL_KEYS|({'version','auth_mode','principal','windows_host_sha256','windows_acceptance_sha256'} if user else set())
+    if type(approval) is not dict or set(approval)!=keys:fail('APPROVAL_FIELDS')
+    if user:
+        if approval['version']!='API001_APPROVAL_2_WINDOWS_USER' or approval['auth_mode']!='GCLOUD_USER' or approval['principal']!='zhixuanliu867@gmail.com':fail('APPROVAL_PRINCIPAL')
+        if approval['windows_host_sha256']!=digest(manifest['config']['windows_host']):fail('APPROVAL_WINDOWS_HOST')
+        if type(approval['windows_acceptance_sha256']) is not str or not SHA.fullmatch(approval['windows_acceptance_sha256']):fail('WINDOWS_ACCEPTANCE_REQUIRED')
     config=validate_config(manifest['config'])
     for name in ('approved','data_location_approved','pr4_delivery_proof_verified'):
         if approval[name] is not True:fail('OWNER_APPROVAL_REQUIRED')
     if approval['manifest_sha256']!=digest(manifest):fail('APPROVAL_MANIFEST')
-    if approval['project_id']!=config['project_id'] or approval['service_account']!=config['service_account'] or config['service_account'] is None:
+    if approval['project_id']!=config['project_id'] or approval['service_account']!=config['service_account'] or (config['service_account'] is None and not user):
         fail('APPROVAL_PRINCIPAL')
     if type(approval['ceiling_microusd']) is not int or approval['ceiling_microusd']!=config['ceiling_microusd']:fail('APPROVAL_BUDGET')
     if not integer(approval['expires_unix'],now+1,now+86400):fail('APPROVAL_EXPIRED_OR_TOO_LONG')
@@ -68,10 +91,14 @@ def validate_approval(approval,manifest,*,now=None):
     return deepcopy(approval)
 
 def approval_template(manifest):
-    return {'approved':False,'manifest_sha256':digest(manifest),'expires_unix':int(time.time())+86400,
+    result={'approved':False,'manifest_sha256':digest(manifest),'expires_unix':int(time.time())+86400,
         'project_id':manifest['config']['project_id'],'service_account':manifest['config']['service_account'],
         'ceiling_microusd':1000000,'data_location_approved':False,'pricing_rechecked_unix':0,
         'pr4_delivery_proof_verified':False,'offline_api_acceptance_sha256':'','owner_note':''}
+    if manifest['config'].get('auth_mode')=='GCLOUD_USER':
+        result.update(version='API001_APPROVAL_2_WINDOWS_USER',auth_mode='GCLOUD_USER',principal=manifest['config']['principal'],
+                      windows_host_sha256=digest(manifest['config']['windows_host']),windows_acceptance_sha256='')
+    return result
 
 def check_exec_sources(root=ROOT):
     pins=read(root/'specs/api001/exec_source_pins.json')
