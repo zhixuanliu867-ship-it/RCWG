@@ -7,12 +7,14 @@
    兼容扩展保留必需键、raw 文本和异常部分报告，并在每次读取后持久化。
    MeasurementFault 同时属于 FacilityFault/OSError，保持原删除失败回归契约。
    kill、wait、remove、计量完整、答案、预算、校准状态分别记录。
-2. N4 专用 libc launcher 先写 cgroup.procs、设 affinity，再 exec 原性能二进制。
+2. N4 专用 libc launcher 先写 cgroup.procs、设 affinity，等待父进程独立重读
+   PID/组归属/affinity 并发送 GO 后，再 exec 原性能二进制；短任务不会抢先退出丢失归属证据。
    不用 Python preexec_fn；外层单线程 fork watchdog 覆盖内层 Popen 与整个 run。
    原 N0–N3 无批准本地执行接口保留；批准后的校准只经 N4 receipt runner。
 3. 同窗口 oom/oom_kill 不能唯一确定原因。记录 run/祖先 local/hierarchical 事件，
    原生退出、限制读回和控制动作。无法取得绑定 victim/group 的独立证据时 UNKNOWN；
    本轮不请求特权日志，不主动制造祖先或全局 OOM。
+   因此 C05 即使发生局部事件，若仍缺唯一因果证据也输出 INCONCLUSIVE，不保证通过。
 4. C01–C10 工程计划固定 888 workload 槽：230 校准、10 预热、648 资源。
    资源原网格 324 对完全保留；seed901 固定顺序，相邻配对，非比较分支固定
    scalar/streaming_heap/column_view。行数据沿原合成生成器，非正式数据。

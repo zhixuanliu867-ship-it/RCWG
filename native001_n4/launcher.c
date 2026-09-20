@@ -9,9 +9,9 @@
 #include <unistd.h>
 #include <string.h>
 int main(int argc,char **argv) {
-    if(argc<7 || strcmp(argv[1],"--n4-launch")) return 64;
-    int group=atoi(argv[2]),ack=atoi(argv[3]),cpu=atoi(argv[4]);
-    if(group<3 || ack<3 || group==ack || cpu<0 || cpu>=CPU_SETSIZE) return 65;
+    if(argc<8 || strcmp(argv[1],"--n4-launch")) return 64;
+    int group=atoi(argv[2]),ack=atoi(argv[3]),go=atoi(argv[4]),cpu=atoi(argv[5]);
+    if(group<3 || ack<3 || go<3 || group==ack || group==go || ack==go || cpu<0 || cpu>=CPU_SETSIZE) return 65;
     if(prctl(PR_SET_PDEATHSIG,SIGKILL)<0 || getppid()==1) return 66;
     char pid[32];int n=snprintf(pid,sizeof(pid),"%ld",(long)getpid());
     if(write(group,pid,n)!=n || close(group))return 67;
@@ -21,6 +21,7 @@ int main(int argc,char **argv) {
     lim.rlim_cur=lim.rlim_max=60;if(setrlimit(RLIMIT_CPU,&lim))return 70;
     lim.rlim_cur=lim.rlim_max=0;if(setrlimit(RLIMIT_CORE,&lim))return 71;
     if(write(ack,pid,n)!=n || close(ack))return 72;
-    if(strcmp(argv[5],"--"))return 73;
-    execv(argv[6],argv+6);return 74;
+    char ready=0;if(read(go,&ready,1)!=1 || ready!='1' || close(go))return 75;
+    if(strcmp(argv[6],"--"))return 73;
+    execv(argv[7],argv+7);return 74;
 }

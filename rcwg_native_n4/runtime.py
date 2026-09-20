@@ -7,6 +7,13 @@ from rcwg_native.supervisor import audit_worker
 from .evidence import Journal
 from .statistics import classify_oom,sample_gaps
 
+def verify_membership(pid,group,affinity):
+    actual=Path(f'/proc/{pid}/cgroup').read_text().strip()
+    expected='0::/'+str(Path(group).relative_to('/sys/fs/cgroup'))
+    observed=sorted(os.sched_getaffinity(pid))
+    if actual!=expected or observed!=list(affinity):raise FacilityFault('PRE_EXEC_MEMBERSHIP_OR_AFFINITY_MISMATCH')
+    return {'membership':actual,'affinity':observed}
+
 def context_snapshot(root):
     """Accessible run, local/hierarchical and ancestor raw counters; no log privilege."""
     keys=['memory.events','memory.events.local','memory.max','memory.current','memory.peak','memory.stat','memory.pressure','cpu.stat','cpu.pressure','io.stat','io.pressure','pids.current','pids.max','cgroup.events','cgroup.procs']
@@ -44,11 +51,11 @@ def one(slot,plan,directory,authorization=None):
             bundle=read(slot['input_path']);raw=canonical(bundle['request'])+b'\n';write(out/'request.json',raw)
             f=(out/'request.json').open('rb');handles.append(f);stdin=f;cmd=[plan['binaries']['f1']['path']]
             write(out/'expected_manifest.json',{'run_id':slot['run_id'],'request_sha256':sha(raw),'input_sha256':slot['input_sha256'],'slot_sha256':result['slot_sha256']})
-        entry=fs.child_entry_fd(slot['run_id']);ack_r,ack_w=os.pipe();fds=[entry,ack_r,ack_w];os.set_blocking(ack_r,False)
+        entry=fs.child_entry_fd(slot['run_id']);ack_r,ack_w=os.pipe();go_r,go_w=os.pipe();fds=[entry,ack_r,ack_w,go_r,go_w];os.set_blocking(ack_r,False)
         env={'PATH':'/usr/bin:/bin','LANG':'C.UTF-8','LC_ALL':'C.UTF-8','OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','RCWG_N4_ISOLATED':'receipt-gated-v1'}
-        args=[plan['binaries']['launcher']['path'],'--n4-launch',str(entry),str(ack_w),str(limits.affinity[0]),'--',*cmd]
+        args=[plan['binaries']['launcher']['path'],'--n4-launch',str(entry),str(ack_w),str(go_r),str(limits.affinity[0]),'--',*cmd]
         journal.emit('SPAWNING',{'argv':args,'monotonic_ns':time.monotonic_ns()})
-        proc=subprocess.Popen(args,cwd=out,env=env,stdin=stdin,stdout=handles[0],stderr=handles[1],pass_fds=(entry,ack_w),start_new_session=True,close_fds=True)
+        proc=subprocess.Popen(args,cwd=out,env=env,stdin=stdin,stdout=handles[0],stderr=handles[1],pass_fds=(entry,ack_w,go_r),start_new_session=True,close_fds=True)
         os.close(entry);fds.remove(entry);os.close(ack_w);fds.remove(ack_w)
         deadline=time.monotonic()+slot['timeout_s'];next_sample=time.monotonic();ack=b'';pid_membership=None;cancel_at=time.monotonic()+(slot.get('cancel_after_s') or 100000)
         while True:
@@ -58,9 +65,10 @@ def one(slot,plan,directory,authorization=None):
             except BlockingIOError:pass
             if ack and worker_start is None:
                 worker_start=time.monotonic_ns()
-                try:pid_membership=Path(f'/proc/{proc.pid}/cgroup').read_text()
-                except OSError:pid_membership=None
-                journal.emit('LAUNCH_ACK',{'pid':proc.pid,'ack':ack.decode(),'membership':pid_membership,'affinity':sorted(os.sched_getaffinity(proc.pid)) if proc.poll() is None else None})
+                if ack.decode()!=str(proc.pid):raise FacilityFault('LAUNCH_ACK_PID_MISMATCH')
+                observed=verify_membership(proc.pid,group,limits.affinity);pid_membership=observed['membership']
+                journal.emit('LAUNCH_ACK',{'pid':proc.pid,'ack':ack.decode(),**observed})
+                if os.write(go_w,b'1')!=1:raise FacilityFault('LAUNCH_GO_FAILED')
             if proc.poll() is not None:break
             now=time.monotonic()
             if now>=deadline:reason='TIMEOUT';break
