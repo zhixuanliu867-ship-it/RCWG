@@ -1,0 +1,79 @@
+{
+  "schema": "NATIVE001_HOST_CHANGE_PLAN_V1",
+  "approved": false,
+  "status": "PROPOSAL_NOT_EXECUTED",
+  "scope": "ONE_LOCAL_TRANSIENT_DELEGATION_READINESS_CHECK_ONLY",
+  "target": {
+    "host": "Existing WSL Ubuntu 26.04",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "systemd": "259.5-0ubuntu3.4",
+    "user": "zhixuan",
+    "uid": 1000,
+    "gid": 1000,
+    "python": "3.12.14",
+    "service": "rcwg-native001-hostcheck.service",
+    "delegated_root": "/sys/fs/cgroup/system.slice/rcwg-native001-hostcheck.service"
+  },
+  "permission_delta": "Only this transient service requests cpu/memory/io delegation. No shared root/user service edits, persistent unit installation, package installation or account/IAM changes.",
+  "commands": [
+    [
+      "sudo",
+      "systemd-run",
+      "--unit=rcwg-native001-hostcheck",
+      "--collect",
+      "--wait",
+      "--service-type=exec",
+      "--property=User=zhixuan",
+      "--property=Group=zhixuan",
+      "--property=Delegate=cpu memory io",
+      "--property=DelegateSubgroup=controller",
+      "--property=RuntimeMaxSec=60",
+      "--property=MemoryMax=1G",
+      "--property=MemorySwapMax=0",
+      "--property=CPUQuota=200%",
+      "--working-directory=/home/zhixuan/projects/RCWG",
+      "/home/zhixuan/projects/RCWG/.venv/bin/python",
+      "scripts/probe_native001_host.py",
+      "--output",
+      "runs/native001-hostcheck-n4"
+    ]
+  ],
+  "stop_command": [
+    "sudo",
+    "systemctl",
+    "stop",
+    "rcwg-native001-hostcheck.service"
+  ],
+  "max_service_starts": 1,
+  "automatic_retries": 0,
+  "wall_limit_s": 60,
+  "outer_memory_max_bytes": 1073741824,
+  "outer_cpu_quota_percent": 200,
+  "workload_executions": 0,
+  "model_generate": 0,
+  "model_count": 0,
+  "cloud_builds": 0,
+  "cloud_jobs": 0,
+  "cloud_workflows": 0,
+  "system_installs": 0,
+  "cgroup_run_creation": 0,
+  "cost": {
+    "currency": "USD",
+    "new_cloud_or_api_charge_estimate": 0,
+    "basis": "Existing local host; no cloud or model service; electricity not estimated",
+    "as_of": "2026-09-20"
+  },
+  "failure_policy": "If authority/controllers are unavailable, retain output and stop. Do not change root cgroup, user@ service or WSL settings.",
+  "rollback": "Transient service exits within 60s and is collected; preserve runs evidence; no persistent installation to undo.",
+  "n4_calibration": {
+    "status": "NOT_AUTHORIZED_BY_THIS_HOSTCHECK_PLAN",
+    "required_before_approval": [
+      "exact calibration workload source/binary hashes",
+      "expected run denominator",
+      "bounded CPU/peak/descendant/OOM/timeout/cancel loads",
+      "100ms paired on/off overhead plan",
+      "resource pairs from frozen test_manifest"
+    ]
+  },
+  "formal_ready": false
+}
