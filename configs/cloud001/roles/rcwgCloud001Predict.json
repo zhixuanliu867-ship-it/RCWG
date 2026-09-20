@@ -1,0 +1,7 @@
+{
+  "includedPermissions": [
+    "aiplatform.endpoints.predict"
+  ],
+  "stage": "GA",
+  "title": "rcwgCloud001Predict"
+}

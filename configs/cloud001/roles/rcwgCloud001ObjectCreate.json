@@ -1,0 +1,7 @@
+{
+  "includedPermissions": [
+    "storage.objects.create"
+  ],
+  "stage": "GA",
+  "title": "rcwgCloud001ObjectCreate"
+}

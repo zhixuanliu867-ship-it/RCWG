@@ -132,3 +132,27 @@ WSL 默认 gcloud 账号列表为空；用户确认登录在 Windows 后，仅�
 ## API-001 WIN-01 recovery — 2026-09-20
 
 User approved Windows native gcloud/HTTPS with direct USER identity; old NET-01 is SUPERSEDED_BY_WIN_01. V2 configuration and approval retain old SA semantics, fixed model/global/1-dollar/3+3/zero-retry scope and original Linux F1 executor. Original 821 methods and byte-pinned source tests are retained by explicit baseline manifest; Windows helper, runtime and deployment are independently bound. New target, native Windows and CI evidence are separate. Final LIVE, billing estimates, credential commands, cloud changes and unknown states are reported only from the private delivery evidence. PR5 stays draft. No new head merge is authorized. Formal remains BLOCKED_NOT_FROZEN.
+
+## RCWG-CLOUD-001 (active)
+
+Reviewed API/WIN head 272950bd3dedb13d29857600e6a07f6c43cb8cc8 was merged
+as 6e5ee40984d2631be4be7ec277cb63cb31988c5d after fresh matching-head CI
+and conflict checks. Development branch: rcwg/cloud-001.
+
+AUDIT-F01 is addressed by the new cloud001_v1 public grammar/example profile;
+the protected prompts/reference and all previous raw results remain unchanged.
+The old pilot is consumed. This ticket uses separate fixed GCS claims/slots.
+The owner approved change plan SHA256
+68f11740c7242475c2926025cf4bef22495a9877a49bc9503abb069ccf7ffd0c:
+us-central1, USD 5 working allocation (USD 1 model / USD 4 infrastructure),
+at most two builds, one replay and one live execution, one new 3+3 model batch.
+The public change plan remains an immutable proposal; the actual approval
+receipt is private and separate from measured acceptance evidence.
+
+New modules preserve USER/WSL profiles and use explicit cloud service identity,
+append-only conditional GCS admission, same-image replay/live and independent
+artifact reread. Runtime and local simulation labels are not cloud acceptance.
+Cloud C1/C2, actual image digest, platform/GCS reconciliation and invoice cost
+remain separate gates recorded in the private delivery. Formal status stays
+BLOCKED_NOT_FROZEN; only the existing F1 reference backend is implemented.
+See docs/cloud001/CHANGE_REQUEST_zh.md and docs/cloud001/IMPLEMENTATION.md.

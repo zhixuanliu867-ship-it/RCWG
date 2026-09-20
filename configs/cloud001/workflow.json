@@ -1,0 +1,172 @@
+{
+  "main": {
+    "params": [
+      "input"
+    ],
+    "steps": [
+      {
+        "select": {
+          "switch": [
+            {
+              "condition": "${input.phase == \"replay\"}",
+              "assign": [
+                {
+                  "job": "rcwg-cloud001-replay"
+                }
+              ],
+              "next": "dispatch"
+            },
+            {
+              "condition": "${input.phase == \"live\"}",
+              "assign": [
+                {
+                  "job": "rcwg-cloud001-live"
+                }
+              ],
+              "next": "dispatch"
+            }
+          ],
+          "next": "reject"
+        }
+      },
+      {
+        "reject": {
+          "raise": "CLOUD001_PHASE_NOT_ALLOWED"
+        }
+      },
+      {
+        "dispatch": {
+          "call": "http.post",
+          "args": {
+            "url": "${\"https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/rcwg-509116/jobs/\" + job + \":run\"}",
+            "auth": {
+              "type": "OAuth2"
+            },
+            "body": {},
+            "timeout": 60
+          },
+          "result": "submitted"
+        }
+      },
+      {
+        "bind_execution": {
+          "assign": [
+            {
+              "execution": "${submitted.body.metadata.name}"
+            },
+            {
+              "polls": 0
+            }
+          ]
+        }
+      },
+      {
+        "check_name": {
+          "switch": [
+            {
+              "condition": "${text.match_regex(execution, \"^\" + job + \"-[a-z0-9-]+$\")}",
+              "next": "read_execution"
+            }
+          ],
+          "next": "reject_execution"
+        }
+      },
+      {
+        "reject_execution": {
+          "raise": "CLOUD001_UNEXPECTED_EXECUTION_NAME"
+        }
+      },
+      {
+        "read_execution": {
+          "call": "http.get",
+          "args": {
+            "url": "${\"https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/rcwg-509116/executions/\" + execution}",
+            "auth": {
+              "type": "OAuth2"
+            },
+            "timeout": 30
+          },
+          "result": "observed"
+        }
+      },
+      {
+        "inspect_conditions": {
+          "for": {
+            "value": "condition",
+            "in": "${default(map.get(observed.body, [\"status\", \"conditions\"]), [])}",
+            "steps": [
+              {
+                "terminal": {
+                  "switch": [
+                    {
+                      "condition": "${condition.type == \"Completed\" and condition.status == \"True\"}",
+                      "next": "done"
+                    },
+                    {
+                      "condition": "${condition.type == \"Completed\" and condition.status == \"False\"}",
+                      "next": "failed"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "count_poll": {
+          "assign": [
+            {
+              "polls": "${polls + 1}"
+            }
+          ]
+        }
+      },
+      {
+        "limit_poll": {
+          "switch": [
+            {
+              "condition": "${polls >= 90}",
+              "next": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "wait": {
+          "call": "sys.sleep",
+          "args": {
+            "seconds": 10
+          },
+          "next": "read_execution"
+        }
+      },
+      {
+        "done": {
+          "return": {
+            "platform_status": "COMPLETED",
+            "execution": "${execution}",
+            "independent_gcs_review": "REQUIRED_NOT_ASSUMED"
+          }
+        }
+      },
+      {
+        "failed": {
+          "raise": {
+            "message": "CLOUD001_PLATFORM_EXECUTION_FAILED",
+            "execution": "${execution}",
+            "status": "${observed.body.status}"
+          }
+        }
+      },
+      {
+        "unknown": {
+          "raise": {
+            "message": "CLOUD001_PLATFORM_STATUS_UNKNOWN_NO_RESUBMIT",
+            "execution": "${execution}"
+          }
+        }
+      }
+    ]
+  }
+}

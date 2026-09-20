@@ -1,0 +1,7 @@
+{
+  "includedPermissions": [
+    "storage.objects.get"
+  ],
+  "stage": "GA",
+  "title": "rcwgCloud001ObjectRead"
+}
