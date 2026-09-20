@@ -31,6 +31,14 @@ def build_context(repo,output):
     entries['IMAGE_SOURCE.json']=canonical(closure)
     buffer=io.BytesIO()
     with gzip.GzipFile(fileobj=buffer,mode='wb',mtime=0,filename='') as compressed,tarfile.open(fileobj=compressed,mode='w') as tar:
+        # GCS_FETCHER does not create missing parent directories for regular
+        # members. Explicit directory headers must precede nested file entries.
+        directories=set()
+        for name in entries:
+            directories.update(p.as_posix() for p in Path(name).parents if p.as_posix()!='.')
+        for name in sorted(directories,key=lambda n:(n.count('/'),n)):
+            info=tarfile.TarInfo(name+'/');info.type=tarfile.DIRTYPE;info.mode=0o755;info.mtime=0;info.uid=info.gid=0
+            tar.addfile(info)
         for name,raw in sorted(entries.items()):
             info=tarfile.TarInfo(name);info.size=len(raw);info.mode=0o644;info.mtime=0;info.uid=info.gid=0
             tar.addfile(info,io.BytesIO(raw))
