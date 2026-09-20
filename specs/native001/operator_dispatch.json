@@ -1,0 +1,66 @@
+{
+  "revision": "NATIVE001_DISPATCH_V1",
+  "source": "native001/worker.cpp",
+  "binary_manifest": "SOURCE_AND_BINARY_MANIFEST.json",
+  "build_script": "scripts/build_native001.py",
+  "thread_budget": 1,
+  "scope": "native worker includes request/data parsing, source SHA256, row validation, kernels and output encoding; verifier separate",
+  "branches": [
+    {
+      "operator": "scan",
+      "implementation": "sequential",
+      "entry": "scan_sequential",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "filter",
+      "implementation": "scalar",
+      "entry": "filter_scalar",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "filter",
+      "implementation": "vectorized",
+      "entry": "filter_vectorized",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "full_sort",
+      "entry": "top_k_full_sort",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "top_k",
+      "implementation": "streaming_heap",
+      "entry": "top_k_streaming_heap",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "project",
+      "implementation": "column_view",
+      "entry": "project_column_view",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "project",
+      "implementation": "copy",
+      "entry": "project_copy",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    },
+    {
+      "operator": "emit",
+      "implementation": "json_artifact",
+      "entry": "emit_json_artifact",
+      "status": "IMPLEMENTATION_PENDING_AT_CONTRACT_FREEZE"
+    }
+  ],
+  "vectorized": "native bounded batch/mask, SIMD NOT_CLAIMED",
+  "representation": "immutable shared row buffer + column index view; copy owns a new buffer",
+  "memory": "streaming heap O(k + bounded upstream batch) row handles; row size and downstream materialization reported separately",
+  "unknown": [
+    "unobserved library copies",
+    "DRAM traffic",
+    "remote GPU/CPU"
+  ]
+}

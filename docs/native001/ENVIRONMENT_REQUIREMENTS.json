@@ -1,0 +1,21 @@
+{
+  "python": "3.12.14",
+  "target": "Linux x86_64",
+  "language": "C++17",
+  "compiler": "existing g++ or clang++ only",
+  "dependencies": "C++ standard library + Linux/POSIX OS adapter; no third-party libraries",
+  "build_flags": [
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-pedantic",
+    "-fno-fast-math",
+    "-ffp-contract=off"
+  ],
+  "threads": 1,
+  "installation_authorized": false,
+  "local_compiler_observed": false,
+  "cgroup_delegation_observed": false,
+  "ci": "offline synthetic tests; existing runner compiler; no cloud provider calls"
+}

@@ -1,0 +1,37 @@
+{
+  "revision": "NATIVE001_V1",
+  "scope": "BOOT_ONLY_ENGINEERING_F1_ROOT_CHAIN",
+  "stages": [
+    "N0",
+    "N1",
+    "N2",
+    "N3"
+  ],
+  "branch": "rcwg/native-001",
+  "stacked_base": "rcwg/cloud-001",
+  "base_head": "9739bf229843a333f29ce6f166e52e7e12fdd8db",
+  "draft_required": true,
+  "merge_authorized": false,
+  "formal_ready": false,
+  "formal_status": "BLOCKED_NOT_FROZEN",
+  "authorization": {
+    "model_generate": 0,
+    "model_count": 0,
+    "cloud_build": 0,
+    "cloud_job": 0,
+    "cloud_workflow": 0,
+    "iam_changes": 0,
+    "system_installs": 0,
+    "cgroup_writes": 0
+  },
+  "not_implemented": [
+    "general DAG",
+    "regions",
+    "fanout",
+    "disk storage",
+    "graph/document kernels",
+    "native node parallelism"
+  ],
+  "budget_within": null,
+  "N4": "REQUIRES_SEPARATE_HOST_APPROVAL"
+}
