@@ -194,6 +194,16 @@ class ArtifactStore:
         from rcwg_full.runtime.batching import arrow_batches
         self.check(item)
         if type(batch_size) is not int or batch_size<1:raise ValueError('BATCH_SIZE')
+        if isinstance(item.value,list):
+            from rcwg_full.runtime.values import arrow_schema
+            schema=arrow_schema(item.type)
+            for start in range(0,len(item.value),batch_size):
+                table=pa.Table.from_pylist(item.value[start:start+batch_size],schema=schema)
+                for batch in arrow_batches(table,max_rows=batch_size):
+                    self.read_bytes+=batch.nbytes
+                    self._emit('typed_records_to_arrow',{'artifact_id':item.artifact_id,'rows':batch.num_rows,'bytes':batch.nbytes})
+                    yield batch
+            return
         if item.value is not None:
             table=pa.Table.from_batches([item.value]) if isinstance(item.value,pa.RecordBatch) else item.value
             for b in arrow_batches(table,max_rows=batch_size):

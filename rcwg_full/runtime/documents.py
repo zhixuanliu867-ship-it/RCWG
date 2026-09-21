@@ -271,6 +271,9 @@ class Documents:
                         if x<=covered:covered=max(covered,y)
                     if covered<b:raise ValueError('CITATION_NOT_PRESENTED')
                 except (ValueError,KeyError,TypeError,ExecutionFault) as exc:raise ExecutionFault('SEMANTIC_CITATION_NOT_IN_CONTEXT','service') from exc
+        self.event('semantic_response',{'request_hash':digest(request),'question':request['question'],
+            'node_instance':instance,'origin':semantic.mode,'rows':result,'response_sha256':digest(result),
+            'visibility':'PRIVATE_EXECUTION_EVIDENCE'})
         return result
 
     def task_question(self):return 'explicit engineering extraction'

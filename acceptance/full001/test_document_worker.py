@@ -20,7 +20,7 @@ class DocumentWorker(unittest.TestCase):
         self.doc=canonical_document('paper1','v1','Title',[{'heading':'结果','text':'对象甲的剂量为 5 mg。🙂'}])
         self.fields={'query_id':'Utf8','dose':'Int64'}
         self.task={'task_id':'full001-document-worker','instruction':'对 paper1 的问题 q1 返回 dose=以mg为单位的剂量，保留证据。','resources':{'cpu_slots':2,'worker_memory_limit_bytes':64*1024**2,'wall_timeout_s':20},'tool_catalog_id':'full001-compat1',
-          'datasets':[{'id':'dataset:docs','kind':'document_index','domain':'papers','revision':'v1','schema_source':'generated','schema':{'document_id':'Utf8','revision':'Utf8','canonical_text':'Utf8'},'id_type':'Utf8','id_field':'document_id','stats':{'document_count':1}},
+          'datasets':[{'id':'dataset:docs','kind':'document_index','domain':'papers','revision':'v1','schema_source':'generated','schema':{'document_id':'Utf8','revision':'Utf8','canonical_text':'Utf8'},'id_type':'Utf8','id_field':'document_id','stats':{'document_count':1},'indexes':[]},
                       {'id':'dataset:ids','kind':'id_selection','domain':'papers','revision':'v1','schema_source':'generated','id_type':'Utf8','ranked':False,'stats':{'item_count':1}}],
           'output_contract':{'id':'result','type':'evidence','mode':'evidence_supported','domain':'papers','revision':'v1','fields':list(self.fields),'schema':self.fields}}
         self.plan={'ir_version':'1.0','task_id':self.task['task_id'],'external_inputs':{'docs':'dataset:docs','ids':'dataset:ids'},'nodes':[

@@ -62,11 +62,11 @@
     }
   },
   "next_actions": [
-    "Verify native BM25, nested citation buffers and supervised document replay in exact-head CI",
-    "Implement F5-F6 actual TaskBuilders and independent semantic/graph recipes",
-    "Verify F4 allocation-baseline repair and finish actual buffer lifetime accounting",
-    "Complete formal candidate builders, campaign/auth/control, analysis views and unified CLI",
-    "Preserve closed formal gates and all historical evidence"
+    "Run immutable F5 all instances plus eight actual candidates per template",
+    "Implement and verify F6 graph/text template family",
+    "Finish physical allocation accounting and formal capacity builders",
+    "Complete campaign/auth/control/analysis CLI integration and full inherited regression",
+    "Retain all six readiness flags false until their own evidence supports change"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -79,17 +79,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T13:46:35.115475+00:00",
-  "checkpoint_commit": "5ee72c940baf96ec8dfc60880e1688bf8d8dda6b",
+  "updated_utc": "2026-09-21T14:23:49.767133+00:00",
+  "checkpoint_commit": "17752c3f554c17ffa2bf8b6c2b8323d58161ed7a",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35605078685,
-    "ci_build_status": "BUILD_PASS_ONE_TEST_BASELINE_FAILURE_PENDING_RERUN",
-    "ci_legacy_api_run": 35605078922,
+    "ci_build_run": 35607917609,
+    "ci_build_status": "BUILD_PASS_FOUR_FIXTURE_SETUP_ERRORS_REPAIRED_LOCALLY",
+    "ci_legacy_api_run": 35607917639,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1319,
+    "ci_full001_tests": 1333,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -286,6 +286,35 @@
       "platform": "Windows Python 3.13.4",
       "formal_ready": false,
       "evidence_note": "unittest console; rerun in full source-frozen CI required"
+    },
+    {
+      "scope": "latest_native_document_integration",
+      "tests_executed": 1333,
+      "passed": 1329,
+      "errors": 4,
+      "ci_run": 35607917609,
+      "report": "runs/ci-full001-17752c3/full001-tests/TEST_RESULTS.json",
+      "artifact_sha256": "675935126b40092f1c84831874d031ed9a1dc95c07f21006b5c5299c91062bc9",
+      "failure": "Four worker tests failed setup because document_index fixture omitted required indexes; corrected"
+    },
+    {
+      "scope": "supervised_document_worker_repair",
+      "passed": 4,
+      "report": "runs/full001-document-worker-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F5_first_all_engineering_instances",
+      "tests_executed": 243,
+      "passed": 238,
+      "errors": 5,
+      "report": "runs/full001-f5-wsl-001/TEST_RESULTS.json",
+      "failure": "C1 boundary chunks redundantly restored neutral background and hit context limit; explicit public section block selection added"
+    },
+    {
+      "scope": "F5_five_boundary_C1_repairs",
+      "passed": 5,
+      "report": "runs/full001-f5-boundary-smoke-002/unittest.log",
+      "evidence_note": "Actual native smoke; full immutable rerun pending"
     }
   ]
 }

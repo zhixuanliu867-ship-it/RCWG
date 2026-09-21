@@ -138,6 +138,15 @@ class Backend:
                     if hasattr(iterator,'close'):iterator.close()
             return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['source']]),parents=[inputs['source']])
         if op in {'filter','project'}:
+            source_type=node['inputs'].get('rows',{})
+            while source_type.get('kind') in {'ArtifactRef','DatasetRef'}:source_type=source_type['item']
+            if op=='filter' and source_type.get('kind') in {'DocumentStream','ChunkStream'}:
+                records=await self.value(inputs['rows'])
+                table=self.pa.Table.from_pylist(records,schema=arrow_schema(source_type));ordinal='_full001_source_ordinal'
+                while ordinal in table.column_names:ordinal+='x'
+                table=table.append_column(ordinal,self.pa.array(range(table.num_rows),type=self.pa.int64()))
+                result,c=await scheduler.compute(instance,node,self.native.relational,'filter',impl,table,p);observed(c)
+                return output('rows',[records[i] for i in result.column(ordinal).to_pylist()],parents=[inputs['rows']])
             if op=='project' and 'field_map' in p:
                 record={k:(await self.value(inputs[v]) if node['inputs'][v]['kind'] in {'Int64','Float64','Bool','Utf8','Nullable','Record','List'} else inputs[v]) for k,v in p['field_map'].items()}
                 if impl=='copy':

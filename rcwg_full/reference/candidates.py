@@ -90,17 +90,37 @@ def graph_prefix(plan,task,storage,sharing):
     plan['nodes'][:0]=prefix;return plan
 
 
+def document_prefix(plan,storage,sharing):
+    plan=deepcopy(plan);nodes=plan['nodes'];read=next((n for n in nodes if n['operator']=='read_documents'),None)
+    if read is None:return None
+    original=read['id']+'.documents';ref=original;prefix=[];names={n['id'] for n in nodes};name='candidate_documents'
+    while name in names or name+'_fan' in names:name+='x'
+    if storage!='stream':
+        prefix.append({'id':name,'operator':'cache','implementation':storage,'inputs':{'artifact':ref},'params':{'key_fields':read['params']['fields']},'outputs':{'artifact':'ArtifactRef'},'storage':storage});ref=name+'.artifact'
+    if sharing!='direct':
+        prefix.append({'id':name+'_fan','operator':'broadcast','implementation':sharing,'inputs':{'artifact':ref},'params':{'consumers':['value']},'outputs':{'value':'ArtifactRef'}});ref=name+'_fan.value'
+    def substitute(node):
+        node['inputs']={k:ref if v==original else v for k,v in node['inputs'].items()}
+        for region in node.get('regions',{}).values():
+            region['bindings']={k:ref if v==original else v for k,v in region['bindings'].items()}
+            for child in region['nodes']:substitute(child)
+    for node in nodes:substitute(node)
+    if plan['result']==original:plan['result']=ref
+    nodes[nodes.index(read)+1:nodes.index(read)+1]=prefix;return plan
+
+
 def candidates(task,baseline,*,max_candidates=32):
     if not 8<=max_candidates<=32:raise ValueError('CANDIDATE_LIMIT')
     # Frozen axis order is chosen before any measurements; vary entire registered
     # operator classes and explicit stream/memory/disk, not names or hidden data.
-    present={n['operator'] for n in baseline['nodes']}
+    present={n['operator'] for n in baseline['nodes']};original_ids={n['id'] for n in baseline['nodes']}
     axes=[op for op in ['top_k','aggregate','join','project','filter','deduplicate','sort','set_op','graph_neighbors','graph_reachability','graph_shortest_path','graph_filter','broadcast','read_documents'] if op in present]
     axes=axes[:4];result=[];seen=set();rejected=[]
     graph_task=any(d.get('kind')=='graph' for d in task['datasets'])
-    for batch_rows in ([None] if graph_task else [None,16,31]):
-        for choices,storage,sharing in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk'],['direct','shared_ref','copy_each'] if graph_task else ['direct']):
-            variant=graph_prefix(baseline,task,storage,sharing) if graph_task else materialized_scan(baseline,storage)
+    document_task='read_documents' in present and 'scan' not in present
+    for batch_rows in ([None] if graph_task or document_task else [None,16,31]):
+        for choices,storage,sharing in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk'],['direct','shared_ref','copy_each'] if graph_task or document_task else ['direct']):
+            variant=graph_prefix(baseline,task,storage,sharing) if graph_task else document_prefix(baseline,storage,sharing) if document_task else materialized_scan(baseline,storage)
             if variant is None:continue
             if batch_rows is not None:
                 for node in variant['nodes']:
@@ -108,7 +128,7 @@ def candidates(task,baseline,*,max_candidates=32):
             decisions=dict(zip(axes,choices))
             if batch_rows is not None:decisions['scan_batch_rows']=batch_rows
             for node in variant['nodes']:
-                if node['operator'] in decisions:node['implementation']=decisions[node['operator']]
+                if node['id'] in original_ids and node['operator'] in decisions:node['implementation']=decisions[node['operator']]
             report=FullCompiler().compile(task,variant)
             if report['status']!='IR_VALIDATED':rejected.append({'decisions':{**decisions,'storage':storage},'diagnostics':report['diagnostics']});continue
             identity=decision_identity(variant)
@@ -117,7 +137,7 @@ def candidates(task,baseline,*,max_candidates=32):
             if len(result)==max_candidates:break
         if len(result)>=max_candidates:break
     if len(result)<8:raise ValueError('INSUFFICIENT_DISTINCT_EXECUTABLE_GRAMMAR')
-    return {'profile':'FULL001_REFERENCE_GRAMMAR_2','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
+    return {'profile':'FULL001_REFERENCE_GRAMMAR_3','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
         'candidates':result,'statically_rejected':rejected,'data_used':'PUBLIC_TASK_ONLY','measurement_used':False,'formal_frozen':False}
 
 

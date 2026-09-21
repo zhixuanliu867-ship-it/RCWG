@@ -143,6 +143,19 @@ def validate_operator(node, inputs, *, task, stage, path):
             if typ.kind in {'Nullable','List'}:return json_field(typ.item)
             return typ.kind=='Record' and all(json_field(t) for _,t in typ.schema)
         if not all(json_field(t) for t in parse_schema(p['field_schema'],path+'/params/field_schema').values()):fail('SEMANTIC_FIELD_TYPE',path+'/params/field_schema')
+    if op=='split_documents':
+        adapted=deepcopy(node);adapted['outputs']={'chunks':'ChunkStream'}
+        result=legacy(adapted,inputs,task=task,stage=stage,path=path);source=inputs['documents']
+        ident=source.metadata['id_type'];integer=Type('Int64');string=Type('Utf8')
+        segment=Type('Record',schema=(('document_id',ident),('revision',string),('source_start_cp',integer),('source_end_cp',integer),('presented_start_cp',integer),('presented_end_cp',integer)))
+        schema=(('document_id',ident),('revision',string),('section_id',Type('Nullable',item=string)),('chunk_ordinal',integer),('text',string),('text_sha256',string),('segments',Type('List',item=segment,metadata={'max_length':4096})))
+        result['outputs']['chunks']=replace(source,kind='ChunkStream',schema=schema)
+        check_declared(result['outputs']['chunks'],node['outputs']['chunks'],path+'/outputs/chunks');return result
+    if op=='filter' and unwrap_ref(inputs['rows']).kind in {'DocumentStream','ChunkStream'}:
+        source=unwrap_ref(inputs['rows']);adapted=deepcopy(node);adapted['outputs']={'rows':'Table'}
+        result=legacy(adapted,{'rows':replace(source,kind='Table')},task=task,stage=stage,path=path)
+        result['outputs']['rows']=source;check_declared(source,node['outputs']['rows'],path+'/outputs/rows')
+        result['runtime_obligations'].append({'code':'DOCUMENT_METADATA_PRESERVATION','path':path});return result
     if op.startswith('graph_'):
         result=legacy(node,{k:unwrap_ref(t) for k,t in inputs.items()},task=task,stage=stage,path=path)
         if op=='graph_shortest_path':
