@@ -121,7 +121,7 @@ inline std::vector<int> columns(const Table&t,const J& names){
     std::vector<int> r;for(auto& n:names.arr()){int i=t->schema()->GetFieldIndex(n.str());if(i<0)throw Fault("FIELD_NOT_FOUND","plan");r.push_back(i);}return r;
 }
 inline std::string key(const Table&t,int64_t i,const std::vector<int>&cols,bool* null=nullptr){
-    J::A values;for(auto c:cols){auto v=cell(t,c,i);if(v.null()&&null)*null=true;values.push_back(v);}return dump(values);
+    J::A values;for(auto c:cols){auto v=cell(t,c,i);if(v.null()&&null)*null=true;if(v.number()&&!v.integer()&&v.d()==0)v=J(0.0);values.push_back(v);}return dump(values);
 }
 inline J row(const Table&t,int64_t i){J::O r;for(int c=0;c<t->num_columns();++c)r[t->field(c)->name()]=cell(t,c,i);return r;}
 inline Table from_rows(const J::A& rows,const std::shared_ptr<arrow::Schema>& schema){

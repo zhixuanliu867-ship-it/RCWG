@@ -50,3 +50,25 @@ def arrow_schema(typ):
     import pyarrow as pa
     if typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
     return pa.schema([pa.field(k,arrow_type(v),nullable=kind(v)=='Nullable') for k,v in typ['schema'].items()])
+
+
+def validate_arrow(value,typ):
+    """Validate actual buffers, not a nullable flag or a manifest assertion."""
+    import pyarrow as pa
+    import pyarrow.compute as pc
+    while typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
+    schema=typ['schema']
+    if len(value.column_names)!=len(schema) or set(value.column_names)!=set(schema):raise ValueError('DATA_SCHEMA_FIELDS')
+    def column(array,descriptor,path):
+        tag=kind(descriptor)
+        if not array.type.equals(arrow_type(descriptor)):raise ValueError('DATA_SCHEMA_TYPE:'+path)
+        if tag=='Nullable':
+            return column(pc.drop_null(array),descriptor['item'],path)
+        if array.null_count:raise ValueError('DATA_NON_NULLABLE:'+path)
+        if tag=='Float64' and len(array) and not pc.all(pc.is_finite(array)).as_py():raise ValueError('DATA_NONFINITE:'+path)
+        if tag=='List':
+            if len(array) and pc.max(pc.list_value_length(array)).as_py()>descriptor['max_length']:raise ValueError('LIST_LIMIT:'+path)
+            column(pc.list_flatten(array),descriptor['item'],path+'[]')
+        elif tag=='Record':
+            for name,child in descriptor['schema'].items():column(pc.struct_field(array,name),child,path+'.'+name)
+    for name,descriptor in schema.items():column(value.column(name),descriptor,name)

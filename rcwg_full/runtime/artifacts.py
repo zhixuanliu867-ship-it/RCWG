@@ -141,31 +141,34 @@ class ArtifactStore:
                             writer.write_table(item.value) if isinstance(item.value,pa.Table) else writer.write_batch(item.value)
                     f.flush();os.fsync(f.fileno())
             else:write(temporary,item.value)
-            with temporary.open('rb') as f:item.content_sha256=hashlib.file_digest(f,'sha256').hexdigest()
-            item.serialized_bytes=temporary.stat().st_size
-            path=self.directory/(item.content_sha256+'.'+item.artifact_id+'.'+extension)
-            if path.exists():raise ValueError('ARTIFACT_ALREADY_EXISTS')
-            os.rename(temporary,path);item.path=path
-            if item.storage=='disk':
-                self._detach_buffers(item);item.value=None
-                bid=str(uuid.uuid4());now=time.monotonic_ns()
-                self.buffers[bid]={'buffer_id':bid,'run_id':self.run_id,'allocation_instance':item.producer_instance,
-                    'storage_kind':'disk','parent_buffer_id':None,'view_ranges':[],
-                    'backing_file_id':path.name,'replica_id':bid,'key':None,'value':None,
-                    'capacity_bytes':item.serialized_bytes,'created_ns':now,'released_ns':None,
-                    'leases':set(),'artifacts':{item.artifact_id}}
-                item.buffer_ids={bid}
-                self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':item.serialized_bytes,'storage_kind':'disk'})
-            committed_ns=time.monotonic_ns()
-            metadata={k:v for k,v in vars(item).items() if k not in {'value','buffer_ids','path'}}
-            metadata.update(buffer_ids=sorted(item.buffer_ids),filename=path.name,sealed_ns=committed_ns)
-            write(self.directory/(item.artifact_id+'.metadata.json'),metadata)
-            self._emit('artifact_sealed',metadata)
-            item.sealed_ns=committed_ns
+            self._commit_file(item,temporary,extension)
         except BaseException as exc:
             self._emit('artifact_commit_failed',{'artifact_id':item.artifact_id,'cause':type(exc).__name__})
             raise
         return item
+
+    def _commit_file(self,item,temporary,extension):
+        with temporary.open('rb') as f:item.content_sha256=hashlib.file_digest(f,'sha256').hexdigest()
+        item.serialized_bytes=temporary.stat().st_size
+        path=self.directory/(item.content_sha256+'.'+item.artifact_id+'.'+extension)
+        if path.exists():raise ValueError('ARTIFACT_ALREADY_EXISTS')
+        os.rename(temporary,path);item.path=path
+        if item.storage=='disk':
+            self._detach_buffers(item);item.value=None
+            bid=str(uuid.uuid4());now=time.monotonic_ns()
+            self.buffers[bid]={'buffer_id':bid,'run_id':self.run_id,'allocation_instance':item.producer_instance,
+                'storage_kind':'disk','parent_buffer_id':None,'view_ranges':[],
+                'backing_file_id':path.name,'replica_id':bid,'key':None,'value':None,
+                'capacity_bytes':item.serialized_bytes,'created_ns':now,'released_ns':None,
+                'leases':set(),'artifacts':{item.artifact_id}}
+            item.buffer_ids={bid}
+            self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':item.serialized_bytes,'storage_kind':'disk'})
+        committed_ns=time.monotonic_ns()
+        metadata={k:v for k,v in vars(item).items() if k not in {'value','buffer_ids','path'}}
+        metadata.update(buffer_ids=sorted(item.buffer_ids),filename=path.name,sealed_ns=committed_ns)
+        write(self.directory/(item.artifact_id+'.metadata.json'),metadata)
+        self._emit('artifact_sealed',metadata)
+        item.sealed_ns=committed_ns
 
     def verify_file(self,item):
         self.check(item)
@@ -188,11 +191,12 @@ class ArtifactStore:
     def batches(self,item,batch_size=1024):
         import pyarrow as pa
         import pyarrow.parquet as pq
+        from rcwg_full.runtime.batching import arrow_batches
         self.check(item)
         if type(batch_size) is not int or batch_size<1:raise ValueError('BATCH_SIZE')
         if item.value is not None:
             table=pa.Table.from_batches([item.value]) if isinstance(item.value,pa.RecordBatch) else item.value
-            for b in table.to_batches(max_chunksize=batch_size):
+            for b in arrow_batches(table,max_rows=batch_size):
                 self.read_bytes+=b.nbytes;yield b
         elif item.path is not None:
             self.verify_file(item)
@@ -203,8 +207,8 @@ class ArtifactStore:
                     reader=pa.ipc.open_file(f)
                     for i in range(reader.num_record_batches):
                         b=reader.get_batch(i)
-                        for j in range(0,b.num_rows,batch_size):
-                            part=b.slice(j,batch_size);self.read_bytes+=part.nbytes;yield part
+                        for part in arrow_batches(b,max_rows=batch_size):
+                            self.read_bytes+=part.nbytes;yield part
         else:raise ValueError('ARTIFACT_UNAVAILABLE')
 
     def lifetime_metrics(self,at_ns=None):

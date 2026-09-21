@@ -30,3 +30,7 @@ Reference candidates vary actual algorithm choices and explicit stream/memory/di
 ## Graph closure and automatic retirement
 
 F3 supplies graph-domain-preserving projections and explicit PathSet node/edge flattening with target and ordinal. Bellman-Ford and edge-scan oracles are independent of the execution kernels. C2/C3 audits reread the physical files for all F1-F3 siblings. Automatic retirement defers sealed owners while child views or leases exist; explicit release still rejects live aliases. The failed immutable 803-test run is retained, and all 24 affected candidate cases have separate successful rerun evidence. Formal gates remain closed.
+
+## Streaming physical closure
+
+Hash aggregation now owns per-group scalar accumulators rather than input Tables or ordinal vectors. Source scanning verifies bytes incrementally on the same open file before reading Arrow batches. Narrow projections record the full integrity-read bytes separately; no claim hides those reads. Actual Arrow types, nullability values and bounded nested values are checked before preparation, and the worker binds the public registry to manifest identities. Incremental disk materialization writes bounded IPC or Parquet batches and commits through the existing artifact seal path. Partial files remain evidence on failure. Group-state growth and other collecting algorithms still require resource tests; this checkpoint is not full software acceptance or formal capacity validation.

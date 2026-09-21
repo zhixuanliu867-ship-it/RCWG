@@ -4,7 +4,8 @@ from pathlib import Path
 import json
 from rcwg_full.evidence import exclusive_directory,write,sha,digest,canonical
 from rcwg_full.compiler.public_task import validate_public_task
-from rcwg_full.runtime.values import arrow_schema
+from rcwg_full.runtime.values import arrow_schema,validate_arrow
+from rcwg_full.runtime.batching import arrow_batches
 
 
 def prepare(task,values,directory,*,profile='engineering_tiny_v1',layout='contiguous',provenance=None):
@@ -16,10 +17,12 @@ def prepare(task,values,directory,*,profile='engineering_tiny_v1',layout='contig
         public.setdefault('kind','table');files=[]
         if isinstance(value,(pa.Table,pa.RecordBatch)):
             table=pa.Table.from_batches([value]) if isinstance(value,pa.RecordBatch) else value
+            validate_arrow(table,{'kind':'Table','schema':public['schema']})
             pieces=[table] if layout=='contiguous' else [table.slice(i,7) for i in range(0,table.num_rows,7)] or [table]
             for part,chunk in enumerate(pieces):
                 name='source-%d-part-%04d.arrow'%(index,part);sink=pa.BufferOutputStream()
-                with pa.ipc.new_file(sink,chunk.schema) as writer:writer.write_table(chunk,max_chunksize=1024)
+                with pa.ipc.new_file(sink,chunk.schema) as writer:
+                    for batch in arrow_batches(chunk):writer.write_batch(batch)
                 raw=sink.getvalue().to_pybytes();write(out/name,raw);files.append({'path':name,'sha256':sha(raw),'bytes':len(raw)})
             logical_hash=digest(table.to_pylist());logical_rows=table.num_rows;format='arrow_ipc'
         else:

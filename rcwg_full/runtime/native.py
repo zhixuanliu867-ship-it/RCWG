@@ -49,6 +49,15 @@ class Native:
 
     def expression(self,ast,record):return json.loads(self.module.expression(canonical(ast).decode(),canonical(record).decode()))
 
+    def aggregate_begin(self,schema,params):
+        import pyarrow as pa
+        return self.module.StreamAggregate(pa.Table.from_batches([],schema=schema),canonical(params).decode())
+
+    def aggregate_consume(self,state,batch):state.consume(batch)
+
+    def aggregate_finish(self,state):
+        result,counts=state.finish();return result,json.loads(counts)
+
     def dense(self,docs,query,params):
         result,counts=self.module.dense(canonical(docs).decode(),canonical(query).decode(),canonical(params).decode())
         return json.loads(result),json.loads(counts)

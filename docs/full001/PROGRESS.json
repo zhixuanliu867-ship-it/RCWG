@@ -78,17 +78,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T12:51:27.954098+00:00",
-  "checkpoint_commit": "c273c542a5d42b29254847e4a8eb4a6866db2f33",
+  "updated_utc": "2026-09-21T13:05:30.957375+00:00",
+  "checkpoint_commit": "f464d7620b9646adfe6d2b957a28504840a4c5ba",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35599264121,
-    "ci_build_status": "FAIL_24_CANDIDATE_RETIREMENT_ERRORS_FIXED_PENDING_INTEGRATION",
-    "ci_legacy_api_run": 35599264059,
+    "ci_build_run": 35602068673,
+    "ci_build_status": "PASS",
+    "ci_legacy_api_run": 35602068642,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 803,
+    "ci_full001_tests": 1057,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -247,6 +247,14 @@
       "passed_groups": 180,
       "actual_instances": 720,
       "report": "runs/full001-condition-audit-001/CONDITION_AUDIT.json"
+    },
+    {
+      "scope": "immutable_complete_current_f464d76",
+      "passed": 1057,
+      "source_commit": "f464d7620b9646adfe6d2b957a28504840a4c5ba",
+      "platform": "WSL Python 3.12.14",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-f464d76/runs/full001-integrated-linux-f464d76/TEST_RESULTS.json",
+      "ci_run": 35602068673
     }
   ]
 }

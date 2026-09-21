@@ -12,7 +12,7 @@
     "End-to-end unified CLI and full acceptance matrix; Windows baseline evidence and final deliverable/PR"
   ],
   "known_implementation_limits": [
-    "Some streaming aggregate/sort adapters currently collect input before native kernel; no formal capacity claim",
+    "Incremental native hash aggregation, bounded IPC scanning and incremental disk materialization implemented; new native build and full regression pending. Sorted-group/sort/join still collect inputs.",
     "Document BM25 preparation and scoring currently Python; CPU-dominant native integration remains",
     "Registered Arrow buffer accounting is partial for transformed stream batches and graph/JSON objects",
     "Real cgroup metrology, formal data labels/licenses, service bindings and formal freeze remain external prerequisites distinct from software gaps"

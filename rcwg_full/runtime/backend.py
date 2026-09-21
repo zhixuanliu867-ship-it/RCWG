@@ -8,6 +8,7 @@ from rcwg_full.runtime.artifacts import Artifact,ArtifactStore
 from rcwg_full.runtime.streams import BoundedStream,StreamClosed,tee
 from rcwg_full.runtime.scheduler import ExecutionFault
 from rcwg_full.runtime.values import arrow_schema,validate
+from rcwg_full.runtime.batching import arrow_batches
 
 
 class Backend:
@@ -105,21 +106,37 @@ class Backend:
         def observed(c):scheduler.event('kernel_observation',{'mode':self.native.mode,'counts':c,'physical_backend_id':'arrow-cpp20-full001'},instance)
         if op=='scan':
             source=await self.value(inputs['source'])
-            table=source.table() if hasattr(source,'table') else source
-            if not isinstance(table,self.pa.Table):raise ExecutionFault('DATASET_TABLE_REQUIRED','facility')
-            if impl=='index_range':
-                if not hasattr(source,'indexed_rows'):raise ExecutionFault('INDEX_UNAVAILABLE','facility')
-                indices=source.indexed_rows(p.get('predicate'));table=table.take(self.pa.array(indices,type=self.pa.int64()))
-                scheduler.event('index_read',{'rows_selected':len(indices),'index_id':source.index_id},instance)
-            if 'predicate' in p:
-                table,c=await scheduler.compute(instance,node,self.native.relational,'filter','scalar',table,{'predicate':p['predicate']});observed(c)
-            table=table.select(p['columns'])
             async def producer(stream):
-                for batch in table.to_batches(max_chunksize=1024):await stream.put(batch,batch.nbytes)
-            payload=self.wrap(table,node['inputs']['source']['item'],instance+':arrow-source')
-            scheduler.retirement_candidates[payload.artifact_id]=payload
-            stream=scheduler.spawn_stream(producer,instance,holds=[inputs['source'],payload])
-            return output('rows',stream,parents=[payload])
+                if impl=='index_range':
+                    if not hasattr(source,'indexed_rows'):raise ExecutionFault('INDEX_UNAVAILABLE','facility')
+                    table=await scheduler.compute(instance,node,source.table)
+                    indices=source.indexed_rows(p.get('predicate'));table=table.take(self.pa.array(indices,type=self.pa.int64()))
+                    scheduler.event('index_read',{'rows_selected':len(indices),'index_id':source.index_id,'source_materialized':True},instance)
+                    iterator=iter(table.to_batches(max_chunksize=1024))
+                elif hasattr(source,'batches'):
+                    selected=list(p['columns'])
+                    def fields(ast):
+                        if isinstance(ast,dict):
+                            if 'field' in ast and ast['field'] not in selected:selected.append(ast['field'])
+                            for value in ast.values():fields(value)
+                        elif isinstance(ast,list):
+                            for value in ast:fields(value)
+                    fields(p.get('predicate'))
+                    iterator=iter(source.batches(selected,expected_type=node['inputs']['source'],on_event=lambda k,v:scheduler.event(k,v,instance)))
+                elif isinstance(source,self.pa.Table):iterator=iter(source.to_batches(max_chunksize=1024))
+                else:raise ExecutionFault('DATASET_TABLE_REQUIRED','facility')
+                def advance():
+                    try:return next(iterator)
+                    except StopIteration:return None
+                try:
+                    while (batch:=await scheduler.compute(instance,node,advance)) is not None:
+                        table=self.pa.Table.from_batches([batch])
+                        if 'predicate' in p:
+                            table,c=await scheduler.compute(instance,node,self.native.relational,'filter','scalar',table,{'predicate':p['predicate']});observed(c)
+                        for selected in arrow_batches(table.select(p['columns']),max_object_bytes=min(64*1024**2,self.task['resources']['worker_memory_limit_bytes'])):await stream.put(selected,selected.nbytes)
+                finally:
+                    if hasattr(iterator,'close'):iterator.close()
+            return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['source']]),parents=[inputs['source']])
         if op in {'filter','project'}:
             if op=='project' and 'field_map' in p:
                 record={k:(await self.value(inputs[v]) if node['inputs'][v]['kind'] in {'Int64','Float64','Bool','Utf8','Nullable','Record','List'} else inputs[v]) for k,v in p['field_map'].items()}
@@ -164,13 +181,31 @@ class Backend:
                         async for batch in source:
                             table=self.pa.Table.from_batches([batch]) if isinstance(batch,self.pa.RecordBatch) else batch
                             result=await operation(table)
-                            for b in result.to_batches(max_chunksize=1024):await stream.put(b,b.nbytes)
+                            for b in arrow_batches(result):await stream.put(b,b.nbytes)
                     finally:await source.cancel()
                 return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['rows']]),parents=[inputs['rows']] if impl=='column_view' else [])
             table=await self.table(inputs['rows'],node['inputs']['rows']);result=await operation(table)
             if p.get('representation') in {'record','set'}:result=self._representation(result.to_pylist(),p,node['outputs']['rows'])
             return output('rows',result,parents=[inputs['rows']] if impl=='column_view' else [])
         if op in {'join','aggregate','deduplicate','sort','top_k'}:
+            if op=='aggregate' and impl=='hash_group':
+                schema=arrow_schema(node['inputs']['rows']);state=await scheduler.compute(instance,node,self.native.aggregate_begin,schema,p)
+                source=await self.value(inputs['rows'])
+                async def consume(batch):
+                    raw=await self.value(batch)
+                    table=self.pa.Table.from_batches([raw]) if isinstance(raw,self.pa.RecordBatch) else raw
+                    if not isinstance(table,self.pa.Table):table=self.pa.Table.from_pylist(raw if isinstance(raw,list) else [raw],schema=schema)
+                    await scheduler.compute(instance,node,self.native.aggregate_consume,state,table.select(schema.names))
+                    scheduler.event('aggregate_batch_consumed',{'rows':table.num_rows,'bytes':table.nbytes},instance)
+                if isinstance(source,BoundedStream):
+                    try:
+                        async for batch in source:await consume(batch)
+                    finally:await source.cancel()
+                elif isinstance(source,self.pa.Table):
+                    for batch in source.to_batches(max_chunksize=1024):await consume(batch)
+                else:await consume(source)
+                result,c=await scheduler.compute(instance,node,self.native.aggregate_finish,state);observed(c)
+                return output('rows',result)
             port='left' if op=='join' else 'rows';left=await self.table(inputs[port],node['inputs'][port])
             right=await self.table(inputs['right'],node['inputs']['right']) if op=='join' else None
             directory=self.store.directory/('scratch-'+str(uuid.uuid4()));directory.mkdir()
@@ -179,7 +214,7 @@ class Backend:
                 payload=self.wrap(result,{'kind':'Table','schema':node['outputs']['rows']['item']['schema']},instance+':arrow-payload')
                 scheduler.retirement_candidates[payload.artifact_id]=payload
                 async def producer(stream):
-                    for b in result.to_batches(max_chunksize=1024):await stream.put(b,b.nbytes)
+                    for b in arrow_batches(result):await stream.put(b,b.nbytes)
                 return output('rows',scheduler.spawn_stream(producer,instance,holds=[payload]),parents=[payload])
             return output('rows',result)
         if op=='set_op':
@@ -194,6 +229,24 @@ class Backend:
             port=next(iter(node['outputs']))
             return output(port,result,parents=[inputs['graph']] if op=='graph_filter' else [])
         if op in {'materialize','collect'}:
+            if op=='materialize' and impl=='disk':
+                from rcwg_full.runtime.disk_sink import DiskSink
+                sink=DiskSink(self.store,node['outputs']['rows'],arrow_schema(node['inputs']['rows']),instance,p['format'])
+                source=await self.value(inputs['rows'])
+                async def append(value):
+                    raw=await self.value(value)
+                    if not isinstance(raw,(self.pa.RecordBatch,self.pa.Table)):
+                        raw=self.pa.Table.from_pylist(raw if isinstance(raw,list) else [raw],schema=sink.schema)
+                    await scheduler.compute(instance,node,sink.append,raw)
+                try:
+                    if isinstance(source,BoundedStream):
+                        try:
+                            async for batch in source:await append(batch)
+                        finally:await source.cancel()
+                    else:await append(source)
+                    result=await scheduler.compute(instance,node,sink.finish)
+                    return {'rows':result}
+                except BaseException:sink.abort();raise
             result=await self.table(inputs['rows'],node['inputs']['rows'],p['limit'] if op=='collect' else None)
             out=output('rows',result,storage=impl if op=='materialize' else 'memory',format=p.get('format','arrow_ipc'))
             if op=='materialize' and impl=='disk':self.store.seal(out['rows'])

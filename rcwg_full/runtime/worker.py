@@ -23,7 +23,7 @@ async def execute(request,build,output):
     try:
         if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
         if sha(read(request['data_manifest']))!=request['data_manifest_sha256']:raise ExecutionFault('DATA_MANIFEST_CHANGED','facility')
-        native=Native(build,request.get('native_mode','performance'));catalog=DataCatalog(request['data_manifest'])
+        native=Native(build,request.get('native_mode','performance'));catalog=DataCatalog(request['data_manifest']).bind(request['task'])
         report=FullCompiler().compile(request['task'],request['plan']);write(out/'compiler.json',report)
         if report['status']!='IR_VALIDATED':raise ExecutionFault(report['status'],'plan' if report['status']=='PLAN_INVALID' else 'facility')
         store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task']);externals={}

@@ -1,5 +1,6 @@
 #include "relational.hpp"
 #include "graph.hpp"
+#include "stream_aggregate.hpp"
 namespace py=pybind11;
 using namespace full;
 
@@ -9,6 +10,10 @@ static py::object wrap(const Table&t){auto p=arrow::py::wrap_table(t);if(!p)thro
 PYBIND11_MODULE(RCWG_MODULE_NAME,m){
     if(arrow::py::import_pyarrow()!=0)throw py::error_already_set();
     m.attr("diagnostic")=bool(RCWG_FULL_DIAGNOSTICS);
+    py::class_<StreamAggregate,std::shared_ptr<StreamAggregate>>(m,"StreamAggregate")
+        .def(py::init([](py::object empty,const std::string&params){return std::make_shared<StreamAggregate>(unwrap(empty),Parser(params).parse());}))
+        .def("consume",[](StreamAggregate&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})
+        .def("finish",[](StreamAggregate&state){std::pair<Table,Counts> result;{py::gil_scoped_release release;result=state.finish();}return py::make_tuple(wrap(result.first),dump(counts_json(result.second)));});
     m.def("relational",[](const std::string&op,const std::string&impl,py::object data,py::object right,const std::string&params,const std::string&directory){
         auto t=unwrap(data);Table r=right.is_none()?nullptr:unwrap(right);auto p=Parser(params).parse();Counts c;Table out;
         {py::gil_scoped_release release;
