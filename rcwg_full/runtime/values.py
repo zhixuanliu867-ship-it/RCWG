@@ -38,7 +38,9 @@ def validate(value,typ,store,path='value'):
 
 def arrow_type(typ):
     import pyarrow as pa
-    if isinstance(typ,str):typ={'kind':typ}
+    if isinstance(typ,str):
+        from rcwg_full.compiler.typesystem import parse_type,type_json
+        typ=type_json(parse_type(typ,'/runtime/arrow_type'))
     tag=typ['kind']
     if tag=='Nullable':return arrow_type(typ['item'])
     if tag=='List':return pa.list_(arrow_type(typ['item']))
@@ -60,6 +62,9 @@ def validate_arrow(value,typ):
     schema=typ['schema']
     if len(value.column_names)!=len(schema) or set(value.column_names)!=set(schema):raise ValueError('DATA_SCHEMA_FIELDS')
     def column(array,descriptor,path):
+        if isinstance(descriptor,str):
+            from rcwg_full.compiler.typesystem import parse_type,type_json
+            descriptor=type_json(parse_type(descriptor,'/runtime/arrow_type'))
         tag=kind(descriptor)
         if not array.type.equals(arrow_type(descriptor)):raise ValueError('DATA_SCHEMA_TYPE:'+path)
         if tag=='Nullable':

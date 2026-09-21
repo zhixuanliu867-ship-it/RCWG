@@ -141,6 +141,13 @@ def validate_operator(node, inputs, *, task, stage, path):
             graph=unwrap_ref(inputs['graph']);edge_id=dict(graph.schema).get('edge_id')
             if edge_id is not None:result['outputs']['paths']=replace(result['outputs']['paths'],metadata={**graph.metadata,'edge_id_type':edge_id})
         return result
+    if op=='broadcast' and inputs['artifact'].kind=='Stream':
+        adapted=deepcopy(node);adapted['outputs']={k:'ArtifactRef' for k in node['outputs']}
+        result=legacy(adapted,inputs,task=task,stage=stage,path=path)
+        result['outputs']={k:inputs['artifact'] for k in result['outputs']}
+        for k,typ in result['outputs'].items():check_declared(typ,node['outputs'][k],path+'/outputs/'+k)
+        result['runtime_obligations'].append({'code':'BOUNDED_STREAM_FANOUT','path':path})
+        return result
     if op=='project' and set(p)-{'columns'}:
         return _project(node,inputs,path)
     extra={'top_k':{'partition_by'},'text_retrieve':{'offset'},'semantic_extract':{'question'}}.get(op,set())

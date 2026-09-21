@@ -62,7 +62,7 @@
     }
   },
   "next_actions": [
-    "Implement F4-F6 actual TaskBuilders and independent oracles, genuine streaming aggregation, and formal candidate capacity profiles",
+    "Verify all 240 F4 instances and candidate variants after native rebuild; implement F5-F6 and formal candidate capacities",
     "Validate candidate variants and independent confirmation, close document/native contracts",
     "Complete authorization/control, campaign sealing, CLI and offline analysis views",
     "Keep external host/data/service/formal gates distinct and closed"
@@ -78,17 +78,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T13:05:30.957375+00:00",
-  "checkpoint_commit": "f464d7620b9646adfe6d2b957a28504840a4c5ba",
+  "updated_utc": "2026-09-21T13:20:40.810772+00:00",
+  "checkpoint_commit": "a132905a35d62fed97abdd75595d59b0ebbf9a0e",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35602068673,
-    "ci_build_status": "PASS",
-    "ci_legacy_api_run": 35602068642,
+    "ci_build_run": 35603454061,
+    "ci_build_status": "BUILD_PASS_TEST_FAILURE_PENDING_FIX_VERIFICATION",
+    "ci_legacy_api_run": 35603454058,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1057,
+    "ci_full001_tests": 1052,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -255,6 +255,20 @@
       "platform": "WSL Python 3.12.14",
       "report": "/home/zhixuan/projects/RCWG-full001-integration-f464d76/runs/full001-integrated-linux-f464d76/TEST_RESULTS.json",
       "ci_run": 35602068673
+    },
+    {
+      "scope": "incremental_native_first_integration",
+      "tests_executed": 1052,
+      "errors": 7,
+      "report": "runs/ci-full001-a132905/full001-tests/TEST_RESULTS.json",
+      "failure": "pybind global state class registration conflict between perf/diagnostic and lowercase schema aliases; fixes pending rebuild"
+    },
+    {
+      "scope": "F4_first_actual_native_smoke",
+      "passed": 12,
+      "platform": "WSL Python 3.12.14",
+      "report": "runs/full001-f4-smoke-001/unittest.log",
+      "coverage": "all 12 templates, base 0, C0 only"
     }
   ]
 }

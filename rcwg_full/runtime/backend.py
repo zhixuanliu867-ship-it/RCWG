@@ -122,7 +122,7 @@ class Backend:
                         elif isinstance(ast,list):
                             for value in ast:fields(value)
                     fields(p.get('predicate'))
-                    iterator=iter(source.batches(selected,expected_type=node['inputs']['source'],on_event=lambda k,v:scheduler.event(k,v,instance)))
+                    iterator=iter(source.batches(selected,expected_type=node['inputs']['source'],batch_size=min(1024,node.get('resources',{}).get('batch_rows',1024)),on_event=lambda k,v:scheduler.event(k,v,instance)))
                 elif isinstance(source,self.pa.Table):iterator=iter(source.to_batches(max_chunksize=1024))
                 else:raise ExecutionFault('DATASET_TABLE_REQUIRED','facility')
                 def advance():

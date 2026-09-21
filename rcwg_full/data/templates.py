@@ -142,6 +142,10 @@ def build(template,base,condition,directory):
         from .graph_templates import f3
         from rcwg_full.verification.graph_oracle import f3_expected
         definition=f3(template,base,condition);oracle=None
+    elif template.startswith('F4-'):
+        from .stream_templates import f4
+        from rcwg_full.verification.stream_oracle import f4_expected
+        definition=f4(template,base,condition);oracle=lambda number,sources:f4_expected(number,sources,base)
     else:raise ValueError('TEMPLATE_BUILDER_NOT_YET_REGISTERED')
     values={'dataset:'+alias:(pa.Table.from_pylist(rows,schema=arrow_schema({'kind':'Table','schema':definition['schemas'][alias]})) if alias in definition['schemas'] else deepcopy(rows)) for alias,rows in definition['rows'].items()}
     task,manifest,path=prepare(definition['task'],values,directory,layout='fragmented' if condition=='C3' else 'contiguous')
@@ -200,3 +204,16 @@ def f3_09(base,condition,directory):return build('F3-09',base,condition,director
 def f3_10(base,condition,directory):return build('F3-10',base,condition,directory)
 def f3_11(base,condition,directory):return build('F3-11',base,condition,directory)
 def f3_12(base,condition,directory):return build('F3-12',base,condition,directory)
+
+def f4_01(base,condition,directory):return build('F4-01',base,condition,directory)
+def f4_02(base,condition,directory):return build('F4-02',base,condition,directory)
+def f4_03(base,condition,directory):return build('F4-03',base,condition,directory)
+def f4_04(base,condition,directory):return build('F4-04',base,condition,directory)
+def f4_05(base,condition,directory):return build('F4-05',base,condition,directory)
+def f4_06(base,condition,directory):return build('F4-06',base,condition,directory)
+def f4_07(base,condition,directory):return build('F4-07',base,condition,directory)
+def f4_08(base,condition,directory):return build('F4-08',base,condition,directory)
+def f4_09(base,condition,directory):return build('F4-09',base,condition,directory)
+def f4_10(base,condition,directory):return build('F4-10',base,condition,directory)
+def f4_11(base,condition,directory):return build('F4-11',base,condition,directory)
+def f4_12(base,condition,directory):return build('F4-12',base,condition,directory)

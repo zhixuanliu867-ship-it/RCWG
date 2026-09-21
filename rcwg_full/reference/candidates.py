@@ -98,20 +98,26 @@ def candidates(task,baseline,*,max_candidates=32):
     axes=[op for op in ['top_k','aggregate','join','project','filter','deduplicate','sort','set_op','graph_neighbors','graph_reachability','graph_shortest_path','graph_filter','broadcast','read_documents'] if op in present]
     axes=axes[:4];result=[];seen=set();rejected=[]
     graph_task=any(d.get('kind')=='graph' for d in task['datasets'])
-    for choices,storage,sharing in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk'],['direct','shared_ref','copy_each'] if graph_task else ['direct']):
-        variant=graph_prefix(baseline,task,storage,sharing) if graph_task else materialized_scan(baseline,storage)
-        if variant is None:continue
-        decisions=dict(zip(axes,choices))
-        for node in variant['nodes']:
-            if node['operator'] in decisions:node['implementation']=decisions[node['operator']]
-        report=FullCompiler().compile(task,variant)
-        if report['status']!='IR_VALIDATED':rejected.append({'decisions':{**decisions,'storage':storage},'diagnostics':report['diagnostics']});continue
-        identity=decision_identity(variant)
-        if identity in seen:continue
-        seen.add(identity);result.append({'candidate_id':identity,'plan_hash':digest(variant),'plan':variant,'decisions':{**decisions,'storage':storage,'sharing':sharing},'feasibility':'STATIC_PASS_REQUIRES_EXECUTION_AND_BUDGET'})
-        if len(result)==max_candidates:break
+    for batch_rows in ([None] if graph_task else [None,16,31]):
+        for choices,storage,sharing in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk'],['direct','shared_ref','copy_each'] if graph_task else ['direct']):
+            variant=graph_prefix(baseline,task,storage,sharing) if graph_task else materialized_scan(baseline,storage)
+            if variant is None:continue
+            if batch_rows is not None:
+                for node in variant['nodes']:
+                    if node['operator']=='scan':node.setdefault('resources',{})['batch_rows']=batch_rows
+            decisions=dict(zip(axes,choices))
+            if batch_rows is not None:decisions['scan_batch_rows']=batch_rows
+            for node in variant['nodes']:
+                if node['operator'] in decisions:node['implementation']=decisions[node['operator']]
+            report=FullCompiler().compile(task,variant)
+            if report['status']!='IR_VALIDATED':rejected.append({'decisions':{**decisions,'storage':storage},'diagnostics':report['diagnostics']});continue
+            identity=decision_identity(variant)
+            if identity in seen:continue
+            seen.add(identity);result.append({'candidate_id':identity,'plan_hash':digest(variant),'plan':variant,'decisions':{**decisions,'storage':storage,'sharing':sharing},'feasibility':'STATIC_PASS_REQUIRES_EXECUTION_AND_BUDGET'})
+            if len(result)==max_candidates:break
+        if len(result)>=max_candidates:break
     if len(result)<8:raise ValueError('INSUFFICIENT_DISTINCT_EXECUTABLE_GRAMMAR')
-    return {'profile':'FULL001_REFERENCE_GRAMMAR_1','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
+    return {'profile':'FULL001_REFERENCE_GRAMMAR_2','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
         'candidates':result,'statically_rejected':rejected,'data_used':'PUBLIC_TASK_ONLY','measurement_used':False,'formal_frozen':False}
 
 
