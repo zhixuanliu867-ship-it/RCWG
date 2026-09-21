@@ -1,0 +1,20 @@
+{
+  "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
+  "remaining_work": [
+    "All 72 actual TaskBuilders, 5 distinct seeds and C0-C3 condition proofs with typed reference plans",
+    "Compiler bounded List state and Graph/Path/Document representation closure; formal compatible catalog/schema supplement",
+    "Remaining native branch coverage (scan index/BM25/date-time/project nested types) and genuine pipeline resource accounting",
+    "Complete document adapters including worker replay wiring, real upstream provenance and human review tools",
+    "Independent per-template oracle and semantic gold recipes; real sharing/copy and alternate implementation equivalence coverage",
+    "Reference 8-32 distinct executable candidates, public rule selector, NNLS estimator and independent confirmations",
+    "Paid transport/auth/budget adapters using existing ledger; no paid authorization inferred",
+    "Campaign finite diagnostics, lock/seal/unseal and frozen eligibility; analyze/statistics plus nine read-only views",
+    "End-to-end unified CLI and full acceptance matrix; Windows baseline evidence and final deliverable/PR"
+  ],
+  "known_implementation_limits": [
+    "Some streaming aggregate/sort adapters currently collect input before native kernel; no formal capacity claim",
+    "Document BM25 preparation and scoring currently Python; CPU-dominant native integration remains",
+    "Registered Arrow buffer accounting is partial for transformed stream batches and graph/JSON objects",
+    "Real cgroup metrology, formal data labels/licenses, service bindings and formal freeze remain external prerequisites distinct from software gaps"
+  ]
+}

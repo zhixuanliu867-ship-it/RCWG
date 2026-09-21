@@ -3,6 +3,7 @@ import asyncio
 from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 import time
+from collections import Counter
 from rcwg_full.runtime.streams import CpuAdmission,BoundedStream,bounded_map
 from rcwg_full.runtime.artifacts import Artifact
 
@@ -19,7 +20,29 @@ class Scheduler:
         for n in self.nodes:self.scopes.setdefault(n['scope'],[]).append(n)
         self.admission=CpuAdmission(task['resources']['cpu_slots'],report['original_plan'].get('limits',{}).get('max_node_instances',4096))
         self.pool=ThreadPoolExecutor(max_workers=self.admission.slots,thread_name_prefix='full001-cpu')
-        self.background=set();self.live_streams=[];self.timings=[]
+        self.background=set();self.live_streams=[];self.timings=[];self.reference_roots={};self.retirement_candidates={}
+
+    def retire(self):
+        """Destroy unreachable wrappers, retaining explicit captures, cache and streams."""
+        store=self.backend.store
+        def nested(value,seen=None):
+            seen=set() if seen is None else seen
+            if id(value) in seen:return set()
+            seen.add(id(value))
+            if isinstance(value,Artifact):return {value.artifact_id}
+            if isinstance(value,dict):return set().union(*(nested(v,seen) for v in value.values())) if value else set()
+            if isinstance(value,list):return set().union(*(nested(v,seen) for v in value)) if value else set()
+            return set()
+        protected={v.artifact_id for v in self.reference_roots.values() if isinstance(v,Artifact)}
+        changed=True
+        while changed:
+            changed=False
+            captured=set().union(*(nested(v.value) for v in store.artifacts.values() if v.release_status=='LIVE')) if store.artifacts else set()
+            for aid,value in list(self.retirement_candidates.items()):
+                if value.release_status!='LIVE':del self.retirement_candidates[aid];continue
+                stream=value.value if isinstance(value.value,BoundedStream) else None
+                if aid in protected or aid in captured or store.leases[aid] or (stream is not None and (not stream.closed or stream.queue)):continue
+                store.drop_view(value);del self.retirement_candidates[aid];changed=True
 
     def event(self,kind,payload,instance=None,status='OBSERVED'):
         return self.journal.append(kind,payload,node_instance=instance,status=status)
@@ -36,13 +59,19 @@ class Scheduler:
                 await asyncio.shield(future);raise
             finally:self.event('cpu_permit_released',{},instance)
 
-    def spawn_stream(self,producer,instance):
+    def spawn_stream(self,producer,instance,holds=()):
         stream=BoundedStream(max_object_bytes=min(64*1024*1024,self.task['resources']['worker_memory_limit_bytes']),on_event=lambda k,p:self.event(k,p,instance))
         self.live_streams.append(stream)
+        holder=instance+':producer:'+str(len(self.live_streams))
+        held={v.artifact_id:v for v in holds if isinstance(v,Artifact)}
+        for value in held.values():self.backend.store.acquire(value,holder)
         async def run():
             try:await producer(stream)
             except BaseException as exc:await stream.finish(exc);raise
             else:await stream.finish()
+            finally:
+                for value in held.values():self.backend.store.drop_lease(value,holder)
+                self.retire()
         task=asyncio.create_task(run());self.background.add(task)
         return stream
 
@@ -73,6 +102,9 @@ class Scheduler:
             for region in node['regions'].values():refs|={r for r in region['bindings'].values() if r not in {'$item','$state'}}
             return refs
         dependencies={n['logical_id']:{r.split('.')[0] for r in references(n) if not r.startswith('$')}|set(n['after']) for n in nodes}
+        remaining=Counter(ref for n in nodes for ref in references(n));remaining.update(yields.values())
+        for ref in remaining:
+            if ref.startswith('$'):self.reference_roots[(instance_prefix,ref)]=resolve(ref)
         try:
             while pending or running:
                 ready=sorted((n for k,n in pending.items() if dependencies[k]<=completed),key=lambda n:n['serialization_position'])
@@ -109,10 +141,22 @@ class Scheduler:
                 done,_=await asyncio.wait(running,return_when=asyncio.FIRST_COMPLETED)
                 for future in sorted(done,key=lambda t:next(n['serialization_position'] for n in nodes if n['logical_id']==running[t])):
                     name=running.pop(future);values[name]=future.result();completed.add(name)
+                    for port,value in values[name].items():
+                        ref=name+'.'+port
+                        if remaining[ref]:self.reference_roots[(instance_prefix,ref)]=value
+                        elif isinstance(value,Artifact):self.retirement_candidates[value.artifact_id]=value
+                    for ref in references(next(n for n in nodes if n['logical_id']==name)):
+                        remaining[ref]-=1
+                        if not remaining[ref]:
+                            value=resolve(ref);self.reference_roots.pop((instance_prefix,ref),None)
+                            if isinstance(value,Artifact):self.retirement_candidates[value.artifact_id]=value
+                    self.retire()
             return {port:resolve(ref) for port,ref in yields.items()}
         finally:
             for future in running:future.cancel()
             await asyncio.gather(*running,return_exceptions=True)
+            for key in list(self.reference_roots):
+                if key[0]==instance_prefix:self.reference_roots.pop(key)
 
     async def control(self,node,inputs,params,captured,instance):
         async def region(label,special,suffix):
@@ -125,7 +169,7 @@ class Scheduler:
             if type(selected) is not bool:raise ExecutionFault('BRANCH_PREDICATE_UNKNOWN')
             label='then' if selected else 'else';other='else' if selected else 'then'
             self.event('region_selection',{'selected':label,'not_selected':other},instance)
-            for skipped in self.scopes[node['regions'][other]['scope']]:self.event('node_not_selected',{'logical_node':skipped['id']},instance,'NOT_SELECTED')
+            for skipped in self.scopes.get(node['regions'][other]['scope'],[]):self.event('node_not_selected',{'logical_node':skipped['id']},instance,'NOT_SELECTED')
             return await region(label,{},label)
         if op=='loop':
             state=inputs['state'];iterations=0
@@ -148,5 +192,5 @@ class Scheduler:
                 return (await region('body',{'$item':wrapped},'item-'+str(ordinal)))['rows']
             async for result in bounded_map(source,item_body,parallelism=node.get('resources',{}).get('max_parallelism',1),admission=self.admission):
                 await stream.put(result,self.backend.size(result))
-        stream=self.spawn_stream(producer,instance)
+        stream=self.spawn_stream(producer,instance,holds=list(captured.values()))
         return {'rows':self.backend.wrap(stream,node['outputs']['rows'],instance,parents=list(inputs.values()))}

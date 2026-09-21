@@ -92,7 +92,8 @@ class Backend:
         value=await self.value(item)
         if isinstance(value,BoundedStream):return [await self.finalize(x,scheduler) if isinstance(x,Artifact) else x async for x in await self.records(item)]
         if isinstance(value,(self.pa.Table,self.pa.RecordBatch)):return value.to_pylist()
-        if isinstance(value,dict):return {k:await self.finalize(v,scheduler) if isinstance(v,Artifact) else v for k,v in value.items()}
+        if isinstance(value,dict):return {k:await self.finalize(v,scheduler) for k,v in value.items()}
+        if isinstance(value,list):return [await self.finalize(v,scheduler) for v in value]
         return value
 
     async def dispatch(self,node,inputs,p,instance,scheduler):
@@ -112,13 +113,24 @@ class Backend:
             table=table.select(p['columns'])
             async def producer(stream):
                 for batch in table.to_batches(max_chunksize=1024):await stream.put(batch,batch.nbytes)
-            stream=scheduler.spawn_stream(producer,instance)
-            return output('rows',stream,parents=[inputs['source']])
+            payload=self.wrap(table,node['inputs']['source']['item'],instance+':arrow-source')
+            scheduler.retirement_candidates[payload.artifact_id]=payload
+            stream=scheduler.spawn_stream(producer,instance,holds=[inputs['source'],payload])
+            return output('rows',stream,parents=[payload])
         if op in {'filter','project'}:
             if op=='project' and 'field_map' in p:
                 record={k:(await self.value(inputs[v]) if node['inputs'][v]['kind'] in {'Int64','Float64','Bool','Utf8','Nullable','Record','List'} else inputs[v]) for k,v in p['field_map'].items()}
                 if impl=='copy':
-                    record={k:self.wrap(await self._copy(v,node,instance,scheduler),v.type,instance) for k,v in record.items()}
+                    # Copy a capability wrapper, never silently copy its referenced payload.
+                    def clone(v):
+                        if isinstance(v,Artifact):
+                            raw=canonical({'artifact_id':v.artifact_id,'run_id':v.run_id,'type':v.type})
+                            scheduler.event('handle_wrapper_copy',{'handle_serialized_bytes':len(raw),'payload_copy_bytes':0},instance)
+                            return self.wrap(v.value,v.type,instance+':handle-copy',parents=[v])
+                        if isinstance(v,dict):return {k:clone(x) for k,x in v.items()}
+                        if isinstance(v,list):return [clone(x) for x in v]
+                        return deepcopy(v)
+                    record=clone(record)
                 return output('rows',record,parents=list(inputs.values()))
             source=await self.value(inputs['rows'])
             if op=='project' and (p.get('source_view','rows')!='rows' or isinstance(source,dict)):
@@ -146,7 +158,7 @@ class Backend:
                             result=await operation(table)
                             for b in result.to_batches(max_chunksize=1024):await stream.put(b,b.nbytes)
                     finally:await source.cancel()
-                return output('rows',scheduler.spawn_stream(producer,instance),parents=[inputs['rows']] if impl=='column_view' else [])
+                return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['rows']]),parents=[inputs['rows']] if impl=='column_view' else [])
             table=await self.table(inputs['rows'],node['inputs']['rows']);result=await operation(table)
             if p.get('representation') in {'record','set'}:result=self._representation(result.to_pylist(),p,node['outputs']['rows'])
             return output('rows',result,parents=[inputs['rows']] if impl=='column_view' else [])
@@ -156,9 +168,11 @@ class Backend:
             directory=self.store.directory/('scratch-'+str(uuid.uuid4()));directory.mkdir()
             result,c=await scheduler.compute(instance,node,self.native.relational,op,impl,left,p,right,directory);observed(c)
             if node['outputs']['rows']['kind']=='Stream':
+                payload=self.wrap(result,{'kind':'Table','schema':node['outputs']['rows']['item']['schema']},instance+':arrow-payload')
+                scheduler.retirement_candidates[payload.artifact_id]=payload
                 async def producer(stream):
                     for b in result.to_batches(max_chunksize=1024):await stream.put(b,b.nbytes)
-                result=scheduler.spawn_stream(producer,instance)
+                return output('rows',scheduler.spawn_stream(producer,instance,holds=[payload]),parents=[payload])
             return output('rows',result)
         if op=='set_op':
             result,c=await scheduler.compute(instance,node,self.native.set_op,await self.value(inputs['left']),await self.value(inputs['right']),p['mode'],impl);observed(c)
@@ -183,7 +197,7 @@ class Backend:
                 try:
                     for batch in self.store.batches(artifact,p['batch_size']):await stream.put(batch,batch.nbytes)
                 finally:self.store.drop_lease(artifact,holder)
-            return output('rows',scheduler.spawn_stream(producer,instance),parents=[artifact])
+            return output('rows',scheduler.spawn_stream(producer,instance,holds=[artifact]),parents=[artifact])
         if op=='broadcast':
             artifact=inputs['artifact'];value=await self.value(artifact)
             if isinstance(value,BoundedStream):

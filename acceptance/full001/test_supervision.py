@@ -9,6 +9,7 @@ from rcwg_full.data.prepare import prepare
 from rcwg_full.runtime.catalog import DataCatalog
 from rcwg_full.runtime.supervisor import execute
 from support import EvidenceDirectory
+from rcwg_full.verification.layers import verify_layers
 
 
 class Supervision(unittest.TestCase):
@@ -33,6 +34,9 @@ class Supervision(unittest.TestCase):
         self.assertEqual(report['binding_validation']['expected_count'],1)
         self.assertTrue((self.root/'run'/'sidecar.json').exists());self.assertTrue((self.root/'run'/'seal.json').exists())
         self.assertNotIn('private_verifier_recipe',json.loads(read(self.root/'run'/'request.json')))
+        verdict=verify_layers(self.root/'run',{'kind':'relational','expected':expected,'contract':{'comparison':'ordered'}})
+        self.assertEqual(verdict['software_result'],'PASS',verdict);self.assertEqual(verdict['status'],'UNKNOWN')
+        self.assertEqual(verdict['layers']['L4']['status'],'UNKNOWN')
 
     def test_external_deadline_has_observed_cause_and_no_oom_guess(self):
         report=execute(self.task,self.plan,self.manifest_path,build=os.environ['RCWG_FULL_BUILD'],output=self.root/'deadline',timeout_s=.001)

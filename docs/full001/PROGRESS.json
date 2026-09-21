@@ -41,7 +41,7 @@
       "evidence": []
     },
     "M06": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M07": {
@@ -62,7 +62,7 @@
     }
   },
   "next_actions": [
-    "Run all current FULL001 tests and untouched inherited 936/115/82 test identities",
+    "Complete compiler representation closure and actual 72 template builders with independent micro integration",
     "Complete lifecycle retirement, compiler representations, 72 template builders and independent verifier",
     "Integrate all text/native dispatches, reference candidate search, campaign authorization, analysis and nine views",
     "Keep N4 original proposal approved=false and formal gate closed; collect external approval prerequisites only"
@@ -78,17 +78,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T11:23:48.755566+00:00",
-  "checkpoint_commit": "86c89f175c23e233f1bf5366864df642da4bdd47",
+  "updated_utc": "2026-09-21T11:49:51.132149+00:00",
+  "checkpoint_commit": "17b5b293ba36d876112958081fe417e3317d00cb",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35592821248,
+    "ci_build_run": 35593978630,
     "ci_build_status": "PASS",
-    "ci_legacy_api_run": 35589365820,
+    "ci_legacy_api_run": 35593978636,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 39,
+    "ci_full001_tests": 51,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -141,6 +141,54 @@
       "platform": "WSL",
       "passed": 51,
       "report": "runs/full001-integrated-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_full_software",
+      "platform": "WSL Linux immutable checkout",
+      "source_commit": "17b5b293ba36d876112958081fe417e3317d00cb",
+      "passed": 936,
+      "exact_historical_ids": true,
+      "report": "runs/full001-inherited-linux-17b5b29-r2/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_native_N0_N3",
+      "platform": "GitHub Ubuntu 24.04",
+      "passed": 115,
+      "report": "runs/ci-inherited-17b5b29/inherited-native-tests/ACCEPTANCE.json"
+    },
+    {
+      "scope": "inherited_N4_offline",
+      "platform": "GitHub Ubuntu 24.04",
+      "passed": 82,
+      "report": "runs/ci-inherited-17b5b29/inherited-n4-tests/ACCEPTANCE.json"
+    },
+    {
+      "scope": "runtime_last_consumer",
+      "platform": "WSL",
+      "passed": 7,
+      "report": "runs/full001-runtime-lifetime-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "independent_verifier_mutations_equivalences_boundaries",
+      "platform": "Windows",
+      "passed": 208,
+      "wrong_variants": 105,
+      "legal_variants": 100,
+      "boundary_cases": 3,
+      "report": "runs/full001-verifier-win-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "all_current_full001_modules",
+      "platform": "WSL",
+      "passed": 260,
+      "report": "runs/full001-integrated-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_Windows_native_helper",
+      "platform": "Windows Python 3.13.4",
+      "passed": 12,
+      "exact_historical_ids": true,
+      "report": "runs/full001-windows-001/ACCEPTANCE.json"
     }
   ]
 }

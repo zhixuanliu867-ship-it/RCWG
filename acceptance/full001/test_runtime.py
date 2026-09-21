@@ -91,3 +91,22 @@ class Runtime(unittest.IsolatedAsyncioTestCase):
         top=next(n for n in plan['nodes'] if n['operator']=='top_k');top['params'].pop('k');top['param_bindings']=[{'parameter':'k','ref':'$input.k'}]
         with self.assertRaisesRegex(ExecutionFault,'PARAMETER_RANGE'):
             await self.execute(plan,{'dataset:records:v1':pa.table({'id':[1],'score':[1.0],'eligible':[True]}),'dataset:k':-1})
+
+    async def test_last_consumer_retires_views_before_explicit_release(self):
+        import pyarrow as pa
+        self.task['datasets']=[{'id':'dataset:rows','kind':'table','revision':'tiny-1','schema_source':'engineering','schema':{'n':'Int64'},'stats':{'row_count':9}}]
+        aggregate_type={'kind':'Table','schema':{'count':{'kind':'Int64'}}}
+        self.task['output_contract']={'id':'result','type':'record','mode':'exact','fields':['a','b'],'schema':{'a':aggregate_type,'b':aggregate_type}}
+        nodes=[node('scan','scan','sequential',{'source':'$input.rows'},{'columns':['n']},{'rows':'Stream[Record]'}),
+            node('mat','materialize','memory',{'rows':'scan.rows'},{'format':'arrow_ipc'},{'rows':'Table'},storage='memory'),
+            node('fan','broadcast','shared_ref',{'artifact':'mat.rows'},{'consumers':['a','b']},{'a':'ArtifactRef','b':'ArtifactRef'})]
+        for name in ['a','b']:
+            nodes.extend([node('read_'+name,'stream_read','arrow_batches',{'artifact':'fan.'+name},{'batch_size':3},{'rows':'Stream[Record]'}),
+                node('count_'+name,'aggregate','hash_group',{'rows':'read_'+name+'.rows'},{'group_by':[],'aggregates':[{'function':'count','field':None,'as':'count'}]},{'rows':'Table'})])
+        nodes.extend([node('free','release','explicit',{'artifact':'mat.rows'},{},{'done':'ControlToken'},after=['count_a','count_b']),
+            node('combine','project','column_view',{'a':'count_a.rows','b':'count_b.rows'},{'representation':'record','field_map':{'a':'a','b':'b'}},{'rows':'Record'},after=['free'])])
+        plan={'ir_version':'1.0','task_id':self.task['task_id'],'external_inputs':{'rows':'dataset:rows'},'nodes':nodes,'result':'combine.rows'}
+        result=await self.execute(plan,{'dataset:rows':pa.table({'n':list(range(9))})})
+        self.assertEqual(result,{'a':[{'count':9}],'b':[{'count':9}]})
+        events=verify_journal(self.journal.path)
+        self.assertTrue(any(e['event_kind']=='artifact_released' for e in events))
