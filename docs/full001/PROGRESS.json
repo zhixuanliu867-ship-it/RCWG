@@ -45,7 +45,7 @@
       "evidence": []
     },
     "M07": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M08": {
@@ -57,15 +57,15 @@
       "evidence": []
     },
     "M10": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     }
   },
   "next_actions": [
-    "Complete compiler representation closure and actual 72 template builders with independent micro integration",
-    "Complete lifecycle retirement, compiler representations, 72 template builders and independent verifier",
-    "Integrate all text/native dispatches, reference candidate search, campaign authorization, analysis and nine views",
-    "Keep N4 original proposal approved=false and formal gate closed; collect external approval prerequisites only"
+    "Finish and verify F2-F6 actual TaskBuilders with independent per-template oracles",
+    "Validate candidate variants and independent confirmation, close document/native contracts",
+    "Complete authorization/control, campaign sealing, CLI and offline analysis views",
+    "Keep external host/data/service/formal gates distinct and closed"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -78,8 +78,8 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T11:49:51.132149+00:00",
-  "checkpoint_commit": "17b5b293ba36d876112958081fe417e3317d00cb",
+  "updated_utc": "2026-09-21T12:22:36.292269+00:00",
+  "checkpoint_commit": "33e1af322eebcb73e39f2e4894ba0591725ec2c7",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
@@ -189,6 +189,33 @@
       "passed": 12,
       "exact_historical_ids": true,
       "report": "runs/full001-windows-001/ACCEPTANCE.json"
+    },
+    {
+      "platform": "WSL Python 3.12.14",
+      "passed": 289,
+      "scope": "bounded_state_and_analysis_integrated",
+      "report": "runs/full001-integrated-wsl-003/TEST_RESULTS.json"
+    },
+    {
+      "template_instances": 240,
+      "platform": "WSL Python 3.12.14",
+      "passed": 242,
+      "scope": "F1_full_tiny_template_closure",
+      "report": "runs/full001-f1-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "reference_grammar_nnls_confirmation_golden",
+      "platform": "Windows",
+      "passed": 6,
+      "report": "runs/full001-reference-win-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F2_first_pass",
+      "platform": "WSL",
+      "passed": 222,
+      "errors": 20,
+      "report": "runs/full001-f2-wsl-001/TEST_RESULTS.json",
+      "failure": "F2-12 Table-to-materialize bridge absent; explicit stream_read inserted, pending rerun"
     }
   ]
 }

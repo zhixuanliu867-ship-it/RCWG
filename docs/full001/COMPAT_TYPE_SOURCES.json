@@ -1,0 +1,10 @@
+{
+  "profile": "RCWG_FULL001_COMPAT1",
+  "inherited_sources": {
+    "rcwg_spec/typesystem.py": "71cded62166d005c28e486b57f58960d07aaaf917b417e95039d9bd1467b50f9",
+    "rcwg_spec/public_task.py": "e52d74698d1f9b1bea9783b2176b9e6f25d17cf03d1180f69a197f33fd3ed82f",
+    "rcwg_spec/operators.py": "27605ed7006bd5b4f50e2b83ea7cb793ef5024c7b35c4641ed8957ad3c32dafa",
+    "rcwg_spec/predicates.py": "ad61c92226091520c59d7c87d8c4478e9c88b2213b06c6fd703db23f4c546e7d"
+  },
+  "choice": "Versioned contract modules preserve legacy source and Type identity; new concrete List descriptors require explicit max_length. No global monkey patch and no legacy parser widening."
+}

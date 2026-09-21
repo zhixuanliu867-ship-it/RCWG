@@ -18,3 +18,11 @@ This document records implementation choices, not experimental observations.
    calibration is authorized by this decision.
 5. All six completion states start false. Each requirement remains pending until
    its complete scope has actual evidence. Partial tests never pass a larger gate.
+
+## COMPAT1 bounded state and relational template closure
+
+The new profile uses versioned copies of the baseline static contracts and the original immutable Type class; source hashes are recorded in COMPAT_TYPE_SOURCES.json. Legacy files and tests remain unchanged. List requires an explicit max_length <= 4096, encoded in the typed graph and enforced on runtime values.
+
+F1-08 uses explicit scalar ID-set union, a public canonical records lookup by semi-join, and source-ordinal deduplication before ranking. It does not equate arbitrary entity or document domains. F2-12 explicitly stream_reads the joined Table before materialization, preserving the registered Stream-to-materialize contract and metering that bridge.
+
+Reference candidates vary actual algorithm choices and explicit stream/memory/disk nodes; alpha-renaming is deduplicated. Screening times do not enter T_ref. Formal cost coefficients remain untrained. Statistical hypotheses are a candidate version with 18 Holm-family tests, never a declaration of formal freeze.

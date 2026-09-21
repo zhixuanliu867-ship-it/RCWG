@@ -12,8 +12,8 @@ from typing import Any
 
 from rcwg_spec.common import ContractError, canonical, digest
 from .structure import analyze_structure, parse_ir_bytes, _json_value
-from rcwg_spec.public_task import validate_public_task
-from rcwg_spec.typesystem import Type, check_declared, merge_types, same_type, type_json
+from .public_task import validate_public_task
+from .typesystem import Type, check_declared, merge_types, same_type, type_json
 from .operators import validate_operator, bind_parameters
 
 PROFILE = "RCWG_FULL001_COMPAT1"
@@ -41,7 +41,7 @@ def _base_report(status):
     return {"status": status, "profile": PROFILE, "diagnostics": [],
             "typed_graph": {}, "runtime_obligations": [],
             "static_implementation_gaps": [],
-            "readiness": {"runtime_kernels": "NOT_IMPLEMENTED"}, "formal_ready": False}
+            "readiness": {"runtime_kernels": "REQUIRES_SOURCE_BOUND_DISPATCH_EVIDENCE"}, "formal_ready": False}
 
 
 def _capabilities(typ):
@@ -237,7 +237,7 @@ def _compile(task, plan, public, structure, stage):
                                 'output_capabilities': {p: _capabilities(t) for p, t in outputs.items()},
                                 'buffer_aliases': {p: sorted(b) for p, b in output_buffers.items()},
                                 'resources': dict(node.get('resources', {})),
-                                'storage': node.get('storage'), 'runtime_kernel_status': 'NOT_IMPLEMENTED'})
+                                'storage': node.get('storage'), 'runtime_kernel_status': 'REQUIRES_SOURCE_BOUND_DISPATCH_EVIDENCE'})
         yielded = {p: resolve(r) for p, r in yield_map.items()} if yield_map is not None else {}
         for release_scope, _, buffers, release_path in releases:
             if release_scope == scope and any(buffers & value.buffers for value in yielded.values()):

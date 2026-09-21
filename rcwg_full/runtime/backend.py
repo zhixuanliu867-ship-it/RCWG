@@ -28,6 +28,7 @@ class Backend:
         if node['operator']=='split_documents' and not 0<=params['overlap']<params['size']:raise ExecutionFault('PARAMETER_RANGE')
 
     def wrap(self,value,typ,producer,parents=(),**kwargs):
+        validate(value,typ,self.store)
         parents=[p for p in parents if isinstance(p,Artifact) and p.release_status=='LIVE']
         return self.store.register(value,typ,producer,parents=parents,**kwargs)
 
@@ -37,7 +38,9 @@ class Backend:
 
     async def value(self,item):
         if not isinstance(item,Artifact):return item
-        self.store.check(item);return self.store.load(item)
+        self.store.check(item);value=self.store.load(item)
+        validate(value,item.type,self.store)
+        return value
 
     def size(self,item):
         value=item.value if isinstance(item,Artifact) else item
@@ -246,7 +249,7 @@ class Backend:
     def _representation(self,rows,params,typ):
         representation=params.get('representation','same')
         if representation=='record' or typ['kind']=='Record':
-            if len(rows)!=1:raise ExecutionFault('CARDINALITY_EXACTLY_ONE')
+            if len(rows)!=1:raise ExecutionFault('CARDINALITY_VIOLATION')
             return rows[0]
         if representation=='set':
             result=[];seen=set()

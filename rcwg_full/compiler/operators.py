@@ -2,9 +2,9 @@
 from copy import deepcopy
 from dataclasses import replace
 from rcwg_spec.common import ContractError
-from rcwg_spec.typesystem import Type, row_schema, with_rows, unwrap_ref, type_json, check_declared
-from rcwg_spec.predicates import analyze_predicate
-from rcwg_spec.operators import (validate_operator as legacy, REGISTRY, _object, _fields,
+from .typesystem import Type, row_schema, with_rows, unwrap_ref, type_json, check_declared
+from .predicates import analyze_predicate
+from .contracts import (validate_operator as legacy, REGISTRY, _object, _fields,
     _integer, _string, _enum, _mapped, _id_mappings, _ref, IDENT)
 
 
@@ -96,8 +96,8 @@ def _project(node, inputs, path):
             if not IDENT.fullmatch(name) or name in selected: fail('PARAMETER_RANGE',path+'/params/expressions')
             typ, guards = analyze_predicate(ast,schema,path+'/params/expressions/'+name,require_bool=False)
             if typ.kind=='List':
-                if 'literal' not in ast or len(ast['literal'])>4096: fail('PARAMETER_RANGE',path)
-                typ=replace(typ,metadata={'max_length':len(ast['literal'])})
+                if not 0<=typ.metadata.get('max_length',4097)<=4096:fail('PARAMETER_RANGE',path)
+                if typ.item.kind in {'Empty','Null'}:fail('TYPE_MISMATCH',path)
             selected[name]=typ
             obligations.extend(guards)
         if not selected: fail('PARAMETER_REQUIRED',path+'/params/columns')

@@ -3,7 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 import json
 from rcwg_full.evidence import exclusive_directory,write,sha,digest,canonical
-from rcwg_spec.public_task import validate_public_task
+from rcwg_full.compiler.public_task import validate_public_task
 from rcwg_full.runtime.values import arrow_schema
 
 
