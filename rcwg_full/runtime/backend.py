@@ -1,5 +1,6 @@
 """Concrete offline dispatch adapters; native CPU kernels remain source-bound."""
 import asyncio
+import json
 from copy import deepcopy
 from pathlib import Path
 import uuid
@@ -7,7 +8,7 @@ from rcwg_full.evidence import canonical,digest
 from rcwg_full.runtime.artifacts import Artifact,ArtifactStore
 from rcwg_full.runtime.streams import BoundedStream,StreamClosed,tee
 from rcwg_full.runtime.scheduler import ExecutionFault
-from rcwg_full.runtime.values import arrow_schema,validate
+from rcwg_full.runtime.values import arrow_schema,arrow_rows,validate
 from rcwg_full.runtime.batching import arrow_batches
 
 
@@ -62,13 +63,13 @@ class Backend:
                     async for batch in value:
                         raw=await self.value(batch)
                         if isinstance(raw,(self.pa.Table,self.pa.RecordBatch)):
-                            for row in raw.to_pylist():yield row
+                            for row in raw.to_pylist():yield json.loads(canonical(row))
                         elif type(raw) is list:
                             for row in raw:yield row
                         else:yield raw
                 finally:await value.cancel()
             elif isinstance(value,(self.pa.Table,self.pa.RecordBatch)):
-                for row in value.to_pylist():yield row
+                for row in value.to_pylist():yield json.loads(canonical(row))
             elif type(value) is list:
                 for row in value:yield row
             else:yield value
@@ -85,17 +86,24 @@ class Backend:
             size+=len(canonical(row))
             if size>self.task['resources']['worker_memory_limit_bytes']:raise ExecutionFault('DECLARED_OBJECT_LIMIT_EXCEEDED')
             rows.append(row)
-            if len(rows)>=1024:batches.extend(self.pa.Table.from_pylist(rows,schema=arrow_schema(typ)).to_batches());rows=[]
-        if rows:batches.extend(self.pa.Table.from_pylist(rows,schema=arrow_schema(typ)).to_batches())
+            if len(rows)>=1024:batches.extend(self.pa.Table.from_pylist(arrow_rows(rows,typ),schema=arrow_schema(typ)).to_batches());rows=[]
+        if rows:batches.extend(self.pa.Table.from_pylist(arrow_rows(rows,typ),schema=arrow_schema(typ)).to_batches())
         return self.pa.Table.from_batches(batches,schema=arrow_schema(typ))
 
     async def predicate(self,ast,record,instance,node,scheduler):
-        return await scheduler.compute(instance,node,self.native.expression,ast,record)
+        schema={}
+        for port,t in node.get('inputs',{}).items():
+            while t['kind'] in {'ArtifactRef','DatasetRef','Stream'}:t=t['item']
+            if t['kind']=='Record':schema.update({k:v for k,v in t['schema'].items() if k in record})
+            if port in record:schema[port]=t
+        args=(ast,record,schema) if schema else (ast,record)
+        return await scheduler.compute(instance,node,self.native.expression,*args)
 
     async def finalize(self,item,scheduler):
         value=await self.value(item)
         if isinstance(value,BoundedStream):return [await self.finalize(x,scheduler) if isinstance(x,Artifact) else x async for x in await self.records(item)]
-        if isinstance(value,(self.pa.Table,self.pa.RecordBatch)):return value.to_pylist()
+        if isinstance(value,(self.pa.Table,self.pa.RecordBatch)):
+            return json.loads(canonical(value.to_pylist()))
         if isinstance(value,dict):return {k:await self.finalize(v,scheduler) for k,v in value.items()}
         if isinstance(value,list):return [await self.finalize(v,scheduler) for v in value]
         return value
@@ -142,13 +150,13 @@ class Backend:
             while source_type.get('kind') in {'ArtifactRef','DatasetRef'}:source_type=source_type['item']
             if op=='filter' and source_type.get('kind') in {'DocumentStream','ChunkStream'}:
                 records=await self.value(inputs['rows'])
-                table=self.pa.Table.from_pylist(records,schema=arrow_schema(source_type));ordinal='_full001_source_ordinal'
+                table=self.pa.Table.from_pylist(arrow_rows(records,source_type),schema=arrow_schema(source_type));ordinal='_full001_source_ordinal'
                 while ordinal in table.column_names:ordinal+='x'
                 table=table.append_column(ordinal,self.pa.array(range(table.num_rows),type=self.pa.int64()))
                 result,c=await scheduler.compute(instance,node,self.native.relational,'filter',impl,table,p);observed(c)
                 return output('rows',[records[i] for i in result.column(ordinal).to_pylist()],parents=[inputs['rows']])
             if op=='project' and 'field_map' in p:
-                record={k:(await self.value(inputs[v]) if node['inputs'][v]['kind'] in {'Int64','Float64','Bool','Utf8','Nullable','Record','List'} else inputs[v]) for k,v in p['field_map'].items()}
+                record={k:(await self.value(inputs[v]) if node['inputs'][v]['kind'] in {'Int64','Float64','Bool','Utf8','Date','Timestamp','Nullable','Record','List'} else inputs[v]) for k,v in p['field_map'].items()}
                 if impl=='copy':
                     # Copy a capability wrapper, never silently copy its referenced payload.
                     def clone(v):
@@ -194,7 +202,7 @@ class Backend:
                     finally:await source.cancel()
                 return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['rows']]),parents=[inputs['rows']] if impl=='column_view' else [])
             table=await self.table(inputs['rows'],node['inputs']['rows']);result=await operation(table)
-            if p.get('representation') in {'record','set'}:result=self._representation(result.to_pylist(),p,node['outputs']['rows'])
+            if p.get('representation') in {'record','set'}:result=self._representation(json.loads(canonical(result.to_pylist())),p,node['outputs']['rows'])
             return output('rows',result,parents=[inputs['rows']] if impl=='column_view' else [])
         if op in {'join','aggregate','deduplicate','sort','top_k'}:
             if op=='aggregate' and impl=='hash_group':
@@ -203,7 +211,7 @@ class Backend:
                 async def consume(batch):
                     raw=await self.value(batch)
                     table=self.pa.Table.from_batches([raw]) if isinstance(raw,self.pa.RecordBatch) else raw
-                    if not isinstance(table,self.pa.Table):table=self.pa.Table.from_pylist(raw if isinstance(raw,list) else [raw],schema=schema)
+                    if not isinstance(table,self.pa.Table):table=self.pa.Table.from_pylist(arrow_rows(raw if isinstance(raw,list) else [raw],node['inputs']['rows']),schema=schema)
                     await scheduler.compute(instance,node,self.native.aggregate_consume,state,table.select(schema.names))
                     scheduler.event('aggregate_batch_consumed',{'rows':table.num_rows,'bytes':table.nbytes},instance)
                 if isinstance(source,BoundedStream):
@@ -227,7 +235,9 @@ class Backend:
                 return output('rows',scheduler.spawn_stream(producer,instance,holds=[payload]),parents=[payload])
             return output('rows',result)
         if op=='set_op':
-            result,c=await scheduler.compute(instance,node,self.native.set_op,await self.value(inputs['left']),await self.value(inputs['right']),p['mode'],impl);observed(c)
+            typ=node['inputs']['left']
+            while typ['kind'] in {'ArtifactRef','DatasetRef'}:typ=typ['item']
+            result,c=await scheduler.compute(instance,node,self.native.set_op,await self.value(inputs['left']),await self.value(inputs['right']),p['mode'],impl,typ.get('item'));observed(c)
             return output('items',result)
         if op.startswith('graph_'):
             graph=await self.value(inputs['graph']);seeds=[]
@@ -245,7 +255,7 @@ class Backend:
                 async def append(value):
                     raw=await self.value(value)
                     if not isinstance(raw,(self.pa.RecordBatch,self.pa.Table)):
-                        raw=self.pa.Table.from_pylist(raw if isinstance(raw,list) else [raw],schema=sink.schema)
+                        raw=self.pa.Table.from_pylist(arrow_rows(raw if isinstance(raw,list) else [raw],node['inputs']['rows']),schema=sink.schema)
                     await scheduler.compute(instance,node,sink.append,raw)
                 try:
                     if isinstance(source,BoundedStream):
@@ -324,7 +334,7 @@ class Backend:
                 value=next(iter(row.values()));key=digest(value)
                 if key not in seen:seen.add(key);result.append(value)
             return result
-        return self.pa.Table.from_pylist(rows,schema=arrow_schema(typ))
+        return self.pa.Table.from_pylist(arrow_rows(rows,typ),schema=arrow_schema(typ))
 
     async def _copy(self,item,node,instance,scheduler):
         value=await self.value(item)

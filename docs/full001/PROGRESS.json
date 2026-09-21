@@ -62,11 +62,11 @@
     }
   },
   "next_actions": [
-    "Run all 240 F6 source-frozen instances and complete integration",
+    "Build and test Date/Timestamp native support at new exact source",
+    "Validate actual JSON sources and independently recompute logical condition hashes",
     "Complete campaign diagnostics/auth/control/analysis CLI integration",
     "Finish physical allocation accounting and formal capacity builders",
-    "Re-run all inherited gates on final source and produce unified public/private delivery",
-    "Retain all six readiness flags false until their own evidence supports change"
+    "Re-run inherited gates on final source and produce unified delivery and draft PR"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -79,17 +79,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T14:35:49.655566+00:00",
-  "checkpoint_commit": "e1aa305fe739534dcaa2fd166f4c70fa8e1f12d4",
+  "updated_utc": "2026-09-21T14:57:19.429810+00:00",
+  "checkpoint_commit": "cbd55f6f49ba4780a66a819a4fd2b6eb561bb597",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35612125606,
+    "ci_build_run": 35613332065,
     "ci_build_status": "PASS",
-    "ci_legacy_api_run": 35612126440,
+    "ci_legacy_api_run": 35613331778,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1588,
+    "ci_full001_tests": 1855,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -334,6 +334,34 @@
       "passed": 12,
       "actual_plan_executions": 96,
       "report": "runs/full001-f6-candidates-smoke-001/unittest.log"
+    },
+    {
+      "scope": "F1_F6_all_current_CI",
+      "tests_executed": 1855,
+      "passed": 1855,
+      "ci_run": 35613332065,
+      "ci_job": 106377669702,
+      "artifact_sha256": "af672a6618bf3bff749ce9abf21575c2edf5f02625599261d1f5388134e668d3",
+      "artifact_id": 10645661235,
+      "artifact_download_status": "IN_PROGRESS"
+    },
+    {
+      "scope": "F6_all_instances_and_independent_conditions",
+      "passed": 255,
+      "template_instances": 240,
+      "source_commit": "cbd55f6f49ba4780a66a819a4fd2b6eb561bb597",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-cbd55f6/runs/full001-f6-cbd55f6/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F1_F5_all_current_WSL",
+      "passed": 1588,
+      "source_commit": "e1aa305fe739534dcaa2fd166f4c70fa8e1f12d4",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-e1aa305/runs/full001-integrated-e1aa305/TEST_RESULTS.json"
+    },
+    {
+      "scope": "typed_temporal_conversion_pure_tests",
+      "passed": 2,
+      "evidence_note": "WSL unittest console; actual native build and integration pending"
     }
   ]
 }

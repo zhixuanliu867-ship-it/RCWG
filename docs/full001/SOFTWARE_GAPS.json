@@ -1,20 +1,21 @@
 {
   "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
+  "verified_template_scope": "All 72 templates x 5 bases x 4 conditions = 1440 engineering instances passed at cbd55f6 CI; all 12 templates per family have eight actual candidate executions.",
   "remaining_work": [
-    "F1-F4 960 tiny instance executions passed; complete F5-F6 and formal candidate capacity profiles",
-    "Graph/Path/List bridges implemented; supervised document replay and versioned binding adapter awaiting integration evidence",
-    "Remaining native branch coverage (scan index/BM25/date-time/project nested types) and genuine pipeline resource accounting",
-    "Complete document adapters including worker replay wiring, real upstream provenance and human review tools",
-    "Independent per-template oracle and semantic gold recipes; real sharing/copy and alternate implementation equivalence coverage",
-    "Reference candidates executed for F1-F3; extend text/control candidates and bind real development measurements",
-    "Paid transport/auth/budget adapters using existing ledger; no paid authorization inferred",
-    "Campaign diagnostics/lock/seal/unseal, complete analysis/rebuild and nine read-only views (fixed-denominator/statistics golden core implemented)",
-    "End-to-end unified CLI and full acceptance matrix; Windows baseline evidence and final deliverable/PR"
+    "Date/Timestamp actual native build and independent integration (implementation added, not yet accepted)",
+    "Actual JSON source schema/identity validation and independent logical-hash recomputation",
+    "Graph public endpoint fields and predicate capabilities",
+    "Physical accounting of transformed streams and genuine external-sort streaming path",
+    "Formal capacity generator implementation and upstream provenance/review tooling",
+    "Reference dispatch development measurements and external benchmark adapters",
+    "Versioned existing-auth transport and durable budget/generation adapters",
+    "Campaign E3/E4/E5/E8 complete planning, controller, sealing, Auditor unsealing and nine views",
+    "Unified CLI, all 78 software evidence mappings, full inherited gates and final delivery/PR"
   ],
   "known_implementation_limits": [
-    "Incremental hash aggregation, IPC scanning and disk materialization implemented; one integration test baseline corrected after actual allocation fell to zero. Sorted-group/sort/join still collect inputs.",
-    "Native BM25 postings and nested Arrow payload reconstruction implemented; pending source-bound build and independent tests",
-    "Registered Arrow buffer accounting is partial for transformed stream batches and graph/JSON objects",
-    "Real cgroup metrology, formal data labels/licenses, service bindings and formal freeze remain external prerequisites distinct from software gaps"
+    "Incremental hash aggregation, bounded IPC scanning and disk materialization are implemented and tested. Sorted-group/sort/join currently collect inputs.",
+    "Native BM25, nested Arrow values, supervised document replay, F5 and F6 candidates have actual source-bound execution evidence.",
+    "Registered Arrow buffer accounting is incomplete for transformed stream batches and graph/JSON allocations.",
+    "Host calibration, approved model/service bindings, private human gold, license/data freeze and formal admission remain external prerequisites. All six readiness flags remain false."
   ]
 }

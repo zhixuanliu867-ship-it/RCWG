@@ -52,3 +52,7 @@ F5 now has twelve distinct executable plans: typed multi-field extraction, cross
 ## F6 graph-text closure
 
 All twelve mixed template plans now execute through actual graph kernels, explicit domain/revision ID mapping, document reads, fixed engineering semantic responses and independent verification. The first 96 candidate executions passed. Node-domain capabilities are preserved through supported join projections and checked during branch type merging; ordinary integer fields do not acquire graph membership. Shared mapping streams are explicitly materialized before reuse. The all-source CI at e1aa305 passed 1588 tests, including every F5 tiny case and eight actual candidates per template. The final 240 F6 instances and broader integration remain pending. No formal readiness state changed.
+
+## Native temporal values
+
+Date uses Arrow date32 and Timestamp uses UTC microseconds. Internal scalar tags preserve these types through equality, ordering, joins, grouping, projection and bounded region evaluation; Utf8 remains literal text. JSON boundaries emit ISO dates and explicit UTC timestamps. Equivalent timestamp offsets share a native key. Native changes and new differential tests require a new source-bound build. The prior immutable cbd55f6 CI passed all 1855 existing tests, including 1440 tiny template instances. This does not close remaining software or formal gates.

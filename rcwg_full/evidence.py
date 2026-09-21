@@ -5,12 +5,19 @@ import json
 import os
 import stat
 import tempfile
+from datetime import date,datetime,timezone
 
 ROOT=Path(__file__).resolve().parents[1]
 
 
 def canonical(value):
-    return json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode('utf-8')
+    def temporal(item):
+        if isinstance(item,datetime):
+            if item.tzinfo is None:raise ValueError('TIMESTAMP_TIMEZONE')
+            return item.astimezone(timezone.utc).isoformat(timespec='microseconds').replace('+00:00','Z')
+        if isinstance(item,date):return item.isoformat()
+        raise TypeError('CANONICAL_JSON_TYPE')
+    return json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False,default=temporal).encode('utf-8')
 
 
 def sha(value):

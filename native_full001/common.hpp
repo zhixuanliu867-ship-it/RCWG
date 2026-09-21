@@ -33,6 +33,8 @@ inline J scalar_value(const std::shared_ptr<arrow::Scalar>& s){
         case arrow::Type::DOUBLE:{double v=std::static_pointer_cast<arrow::DoubleScalar>(s)->value;if(!std::isfinite(v))throw Fault("NONFINITE");return v;}
         case arrow::Type::BOOL:return std::static_pointer_cast<arrow::BooleanScalar>(s)->value;
         case arrow::Type::STRING:return std::static_pointer_cast<arrow::StringScalar>(s)->value->ToString();
+        case arrow::Type::DATE32:return J::O{{"$date32",int64_t(std::static_pointer_cast<arrow::Date32Scalar>(s)->value)}};
+        case arrow::Type::TIMESTAMP:{auto type=std::static_pointer_cast<arrow::TimestampType>(s->type);if(type->unit()!=arrow::TimeUnit::MICRO)throw Fault("TIMESTAMP_MICROSECONDS_REQUIRED");return J::O{{"$timestamp_us",std::static_pointer_cast<arrow::TimestampScalar>(s)->value}};}
         case arrow::Type::LIST:{J::A values;auto array=std::static_pointer_cast<arrow::ListScalar>(s)->value;for(int64_t i=0;i<array->length();++i)values.push_back(scalar_value(take(array->GetScalar(i))));return values;}
         case arrow::Type::STRUCT:{J::O values;auto scalar=std::static_pointer_cast<arrow::StructScalar>(s);auto type=std::static_pointer_cast<arrow::StructType>(s->type);for(int i=0;i<type->num_fields();++i)values[type->field(i)->name()]=scalar_value(scalar->value[i]);return values;}
         case arrow::Type::NA:return nullptr;
@@ -46,6 +48,17 @@ inline J cell(const Table& t,int col,int64_t i){
 inline J field(const Table&t,int64_t i,const std::string& n){return cell(t,t->schema()->GetFieldIndex(n),i);}
 inline int compare(const J&a,const J&b){
     if(a.null()||b.null())return a.null()?(b.null()?0:-1):1;
+    auto temporal=[](const J&v){return v.object()&&v.obj().size()==1&&(v.has("$date32")||v.has("$timestamp_us"));};
+    if(temporal(a)||temporal(b)){
+        const J&typed=temporal(a)?a:b;auto name=typed.has("$date32")?"$date32":"$timestamp_us";
+        auto value=[&](const J&v)->int64_t{
+            if(temporal(v)){if(!v.has(name))throw Fault("TEMPORAL_TYPE_MISMATCH","plan");return v.at(name).i();}
+            if(!v.string())throw Fault("TEMPORAL_LITERAL_TYPE","plan");
+            auto type=typed.has("$date32")?std::shared_ptr<arrow::DataType>(arrow::date32()):arrow::timestamp(arrow::TimeUnit::MICRO,"UTC");
+            return scalar_value(take(arrow::Scalar::Parse(type,v.str()))).at(name).i();
+        };
+        auto x=value(a),y=value(b);return x<y?-1:x>y?1:0;
+    }
     if(a.number()&&b.number()){
         long double x=a.integer()?static_cast<long double>(a.i()):a.d(),y=b.integer()?static_cast<long double>(b.i()):b.d();
         return x<y?-1:x>y?1:0;
@@ -135,6 +148,8 @@ inline void append_value(arrow::ArrayBuilder* b,const std::shared_ptr<arrow::Dat
         case arrow::Type::DOUBLE:ok(static_cast<arrow::DoubleBuilder*>(b)->Append(v.d()));break;
         case arrow::Type::BOOL:ok(static_cast<arrow::BooleanBuilder*>(b)->Append(v.b()));break;
         case arrow::Type::STRING:rcwg::utf8_count(v.str());ok(static_cast<arrow::StringBuilder*>(b)->Append(v.str()));break;
+        case arrow::Type::DATE32:{auto value=v.object()?v.at("$date32").i():scalar_value(take(arrow::Scalar::Parse(type,v.str()))).at("$date32").i();if(value<INT32_MIN||value>INT32_MAX)throw Fault("DATE_RANGE");ok(static_cast<arrow::Date32Builder*>(b)->Append(int32_t(value)));break;}
+        case arrow::Type::TIMESTAMP:{auto value=v.object()?v.at("$timestamp_us").i():scalar_value(take(arrow::Scalar::Parse(type,v.str()))).at("$timestamp_us").i();ok(static_cast<arrow::TimestampBuilder*>(b)->Append(value));break;}
         case arrow::Type::LIST:{auto builder=static_cast<arrow::ListBuilder*>(b);auto list=std::static_pointer_cast<arrow::ListType>(type);ok(builder->Append());for(auto&item:v.arr())append_value(builder->value_builder(),list->value_type(),item);break;}
         case arrow::Type::STRUCT:{auto builder=static_cast<arrow::StructBuilder*>(b);auto structure=std::static_pointer_cast<arrow::StructType>(type);ok(builder->Append());for(int i=0;i<structure->num_fields();++i){auto f=structure->field(i);append_value(builder->field_builder(i),f->type(),v.at(f->name()));}break;}
         default:throw Fault("UNSUPPORTED_ARROW_TYPE");

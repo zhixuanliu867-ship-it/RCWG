@@ -1,13 +1,21 @@
 """Runtime scalar, record and capability checks; never infer authorization."""
 import math
-from datetime import date,datetime
+from datetime import date,datetime,timezone,timedelta
 from rcwg_full.runtime.artifacts import Artifact
 
 
 def kind(typ):return typ if isinstance(typ,str) else typ['kind']
 
 
+def descriptor(typ):
+    if isinstance(typ,str):
+        from rcwg_full.compiler.typesystem import parse_type,type_json
+        return type_json(parse_type(typ,'/runtime/value'))
+    return typ
+
+
 def validate(value,typ,store,path='value'):
+    typ=descriptor(typ)
     tag=kind(typ)
     if isinstance(value,Artifact):
         store.check(value)
@@ -60,8 +68,59 @@ def arrow_type(typ):
 
 def arrow_schema(typ):
     import pyarrow as pa
-    if typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
+    while typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
     return pa.schema([pa.field(k,arrow_type(v),nullable=kind(v)=='Nullable') for k,v in typ['schema'].items()])
+
+
+def arrow_rows(rows,typ):
+    """Convert declared ISO values at the Arrow boundary, without changing Utf8."""
+    while typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
+    def convert(value,descriptor):
+        if isinstance(descriptor,str):
+            from rcwg_full.compiler.typesystem import parse_type,type_json
+            descriptor=type_json(parse_type(descriptor,'/runtime/arrow_rows'))
+        tag=kind(descriptor)
+        if value is None:return None
+        if tag=='Nullable':return convert(value,descriptor['item'])
+        if tag=='Date':return date.fromisoformat(value) if type(value) is str else value
+        if tag=='Timestamp':
+            value=datetime.fromisoformat(value) if type(value) is str else value
+            if value.tzinfo is None:raise ValueError('TIMESTAMP_TIMEZONE')
+            return value.astimezone(timezone.utc)
+        if tag=='List':return [convert(v,descriptor['item']) for v in value]
+        if tag=='Record':return {k:convert(value[k],t) for k,t in descriptor['schema'].items()}
+        return value
+    return [{k:convert(row[k],t) for k,t in typ['schema'].items()} for row in rows]
+
+
+def native_temporal(value,typ):
+    """Reserved native scalar tags keep temporal equality distinct from Utf8."""
+    typ=descriptor(typ)
+    tag=kind(typ)
+    if value is None:return None
+    if tag=='Nullable':return native_temporal(value,typ['item'])
+    if tag=='Date':
+        parsed=date.fromisoformat(value) if isinstance(value,str) else value
+        if type(parsed) is not date:raise ValueError('DATE_TYPE')
+        return {'$date32':(parsed-date(1970,1,1)).days}
+    if tag=='Timestamp':
+        parsed=datetime.fromisoformat(value) if isinstance(value,str) else value
+        if type(parsed) is not datetime:raise ValueError('TIMESTAMP_TYPE')
+        if parsed.tzinfo is None:raise ValueError('TIMESTAMP_TIMEZONE')
+        delta=parsed.astimezone(timezone.utc)-datetime(1970,1,1,tzinfo=timezone.utc)
+        return {'$timestamp_us':(delta.days*86400+delta.seconds)*1000000+delta.microseconds}
+    if tag=='Record':return {k:native_temporal(v,typ['schema'][k]) if k in typ['schema'] else v for k,v in value.items()}
+    if tag=='List':return [native_temporal(v,typ['item']) for v in value]
+    return value
+
+
+def temporal_json(value):
+    if isinstance(value,dict):
+        if set(value)=={'$date32'}:return (date(1970,1,1)+timedelta(days=value['$date32'])).isoformat()
+        if set(value)=={'$timestamp_us'}:return (datetime(1970,1,1,tzinfo=timezone.utc)+timedelta(microseconds=value['$timestamp_us'])).isoformat(timespec='microseconds').replace('+00:00','Z')
+        return {k:temporal_json(v) for k,v in value.items()}
+    if isinstance(value,list):return [temporal_json(v) for v in value]
+    return value
 
 
 def validate_arrow(value,typ):

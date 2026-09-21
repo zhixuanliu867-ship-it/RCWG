@@ -6,6 +6,7 @@ inline std::shared_ptr<arrow::DataType> scalar_type(const J&descriptor){
     if(kind=="Nullable")return scalar_type(descriptor.at("item"));
     if(kind=="Int64")return arrow::int64();if(kind=="Float64")return arrow::float64();
     if(kind=="Bool")return arrow::boolean();if(kind=="Utf8")return arrow::utf8();
+    if(kind=="Date")return arrow::date32();if(kind=="Timestamp")return arrow::timestamp(arrow::TimeUnit::MICRO,"UTC");
     if(kind=="List")return arrow::list(scalar_type(descriptor.at("item")));
     if(kind=="Record"){
         std::vector<std::shared_ptr<arrow::Field>> fields;

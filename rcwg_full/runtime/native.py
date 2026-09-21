@@ -43,11 +43,17 @@ class Native:
         result,counts=self.module.graph(op,impl,canonical(graph).decode(),canonical(seeds).decode(),canonical(params).decode())
         return json.loads(result),json.loads(counts)
 
-    def set_op(self,left,right,mode,impl):
+    def set_op(self,left,right,mode,impl,item_type=None):
+        from rcwg_full.runtime.values import native_temporal,temporal_json
+        if item_type:
+            left=[native_temporal(v,item_type) for v in left];right=[native_temporal(v,item_type) for v in right]
         result,counts=self.module.set_op(canonical(left).decode(),canonical(right).decode(),mode,impl)
-        return json.loads(result),json.loads(counts)
+        return temporal_json(json.loads(result)),json.loads(counts)
 
-    def expression(self,ast,record):return json.loads(self.module.expression(canonical(ast).decode(),canonical(record).decode()))
+    def expression(self,ast,record,schema=None):
+        from rcwg_full.runtime.values import native_temporal,temporal_json
+        if schema:record=native_temporal(record,{'kind':'Record','schema':schema})
+        return temporal_json(json.loads(self.module.expression(canonical(ast).decode(),canonical(record).decode())))
 
     def aggregate_begin(self,schema,params):
         import pyarrow as pa
