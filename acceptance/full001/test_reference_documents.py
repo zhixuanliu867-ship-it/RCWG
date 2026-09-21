@@ -29,3 +29,12 @@ def case(template):
 
 
 for number in range(1,13):setattr(DocumentCandidates,f'test_F5_{number:02d}_eight_candidates',case(f'F5-{number:02d}'))
+
+
+class MixedCandidates(unittest.TestCase):
+    setUpClass=classmethod(fixture.F5Templates.setUpClass.__func__)
+    execute_plan=fixture.F5Templates.execute_plan
+    run_variants=DocumentCandidates.run_variants
+
+
+for number in range(1,13):setattr(MixedCandidates,f'test_F6_{number:02d}_eight_candidates',case(f'F6-{number:02d}'))

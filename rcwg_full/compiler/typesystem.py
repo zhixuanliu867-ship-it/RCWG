@@ -216,7 +216,8 @@ def _mapping_identity(t):
                          "revision": t.metadata.get("id_revision", t.revision)}]
         else:
             mappings = []
-    return frozenset((m.get("field"), m.get("domain"), m.get("revision")) for m in mappings)
+    return (frozenset((m.get("field"), m.get("domain"), m.get("revision")) for m in mappings),
+            frozenset((field,identity.get('domain'),identity.get('revision')) for field,identity in t.metadata.get('node_id_mappings',{}).items()))
 
 
 def merge_types(a: Type, b: Type, path="/type") -> Type:

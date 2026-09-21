@@ -127,6 +127,11 @@ def _project(node, inputs, path):
             typ=Type(kind,item=item,domain=domain,revision=revision)
         if typ.kind in {'Table','Record','Stream'}:
             typ=_mapped(typ,[m for m in _id_mappings(source) if m['field'] in selected])
+            node_mappings={k:v for k,v in source.metadata.get('node_id_mappings',{}).items() if k in params.get('columns',[])}
+            for name,expression in expressions.items():
+                if set(expression)=={'field'} and expression['field'] in source.metadata.get('node_id_mappings',{}):
+                    node_mappings[name]=source.metadata['node_id_mappings'][expression['field']]
+            typ=replace(typ,metadata={**typ.metadata,'node_id_mappings':node_mappings})
         if impl=='column_view':aliases={'rows':['rows']}
     if set(node['outputs'])!={'rows'}: fail('PORT_MISMATCH',path+'/outputs')
     check_declared(typ,node['outputs']['rows'],path+'/outputs/rows')
@@ -156,6 +161,16 @@ def validate_operator(node, inputs, *, task, stage, path):
         result=legacy(adapted,{'rows':replace(source,kind='Table')},task=task,stage=stage,path=path)
         result['outputs']['rows']=source;check_declared(source,node['outputs']['rows'],path+'/outputs/rows')
         result['runtime_obligations'].append({'code':'DOCUMENT_METADATA_PRESERVATION','path':path});return result
+    if op=='join':
+        result=legacy(node,inputs,task=task,stage=stage,path=path)
+        mappings={};mode=p['join_type'];overlap=set(row_schema(inputs['left']))&set(row_schema(inputs['right']))
+        for side,source in inputs.items():
+            if mode in {'semi','anti'} and side=='right':continue
+            for field,identity in source.metadata.get('node_id_mappings',{}).items():
+                name=side+'.'+field if mode not in {'semi','anti'} and field in overlap else field
+                if name in dict(result['outputs']['rows'].schema):mappings[name]=identity
+        output=result['outputs']['rows'];result['outputs']['rows']=replace(output,metadata={**output.metadata,'node_id_mappings':mappings})
+        return result
     if op.startswith('graph_'):
         result=legacy(node,{k:unwrap_ref(t) for k,t in inputs.items()},task=task,stage=stage,path=path)
         if op=='graph_shortest_path':

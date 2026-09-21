@@ -62,10 +62,10 @@
     }
   },
   "next_actions": [
-    "Run immutable F5 all instances plus eight actual candidates per template",
-    "Implement and verify F6 graph/text template family",
+    "Run all 240 F6 source-frozen instances and complete integration",
+    "Complete campaign diagnostics/auth/control/analysis CLI integration",
     "Finish physical allocation accounting and formal capacity builders",
-    "Complete campaign/auth/control/analysis CLI integration and full inherited regression",
+    "Re-run all inherited gates on final source and produce unified public/private delivery",
     "Retain all six readiness flags false until their own evidence supports change"
   ],
   "commands": [],
@@ -79,17 +79,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T14:23:49.767133+00:00",
-  "checkpoint_commit": "17752c3f554c17ffa2bf8b6c2b8323d58161ed7a",
+  "updated_utc": "2026-09-21T14:35:49.655566+00:00",
+  "checkpoint_commit": "e1aa305fe739534dcaa2fd166f4c70fa8e1f12d4",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35607917609,
-    "ci_build_status": "BUILD_PASS_FOUR_FIXTURE_SETUP_ERRORS_REPAIRED_LOCALLY",
-    "ci_legacy_api_run": 35607917639,
+    "ci_build_run": 35612125606,
+    "ci_build_status": "PASS",
+    "ci_legacy_api_run": 35612126440,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1333,
+    "ci_full001_tests": 1588,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -315,6 +315,25 @@
       "passed": 5,
       "report": "runs/full001-f5-boundary-smoke-002/unittest.log",
       "evidence_note": "Actual native smoke; full immutable rerun pending"
+    },
+    {
+      "scope": "F1_F5_full_current_CI",
+      "tests_executed": 1588,
+      "passed": 1588,
+      "ci_run": 35612125606,
+      "report": "runs/ci-full001-e1aa305-job.log",
+      "artifact_sha256": "83c7b84a1858cf1e3e3143298ffdb9a569aaa5cb6a5b8a5b5f38c28fde5e4d56"
+    },
+    {
+      "scope": "F6_first_actual_twelve_templates",
+      "passed": 12,
+      "report": "runs/full001-f6-smoke-002/unittest.log"
+    },
+    {
+      "scope": "F6_actual_reference_candidates",
+      "passed": 12,
+      "actual_plan_executions": 96,
+      "report": "runs/full001-f6-candidates-smoke-001/unittest.log"
     }
   ]
 }

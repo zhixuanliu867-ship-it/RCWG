@@ -16,6 +16,7 @@ from rcwg_full.runtime.events import Journal,verify_journal
 from rcwg_full.runtime.native import Native
 from rcwg_full.runtime.scheduler import Scheduler
 from rcwg_full.verification.document_oracle import f5_expected,verify_document_result,verify_rows
+from rcwg_full.verification.mixed_oracle import verify_mixed_result
 from support import EvidenceDirectory
 
 
@@ -34,7 +35,8 @@ class F5Templates(unittest.TestCase):
             scheduler=Scheduler(compiled,built['task'],external,backend,journal)
             actual=asyncio.run(asyncio.wait_for(scheduler.run(),20));write(directory/'actual.json',actual)
             journal.seal(directory/'journal-seal.json');events=verify_journal(journal.path)
-            verified=verify_document_result(actual,built['recipe']['expected'],built['rows']['documents'],events=events)
+            verifier=verify_mixed_result if built['template_id'].startswith('F6-') else verify_document_result
+            verified=verifier(actual,built['recipe']['expected'],built['rows']['documents'],events=events)
             write(directory/'verification.json',verified);write(directory/'service_calls.json',replay.calls)
             self.assertEqual(verified['status'],'PASS',(built['template_id'],verified,actual))
             self.assertTrue(replay.calls);self.assertTrue(all(c['paid_calls']==0 for c in replay.calls))

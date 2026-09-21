@@ -150,6 +150,10 @@ def build(template,base,condition,directory):
         from .document_templates import f5
         from rcwg_full.verification.document_oracle import f5_expected
         definition=f5(template,base,condition);oracle=lambda number,sources:f5_expected(definition['expected_args'])
+    elif template.startswith('F6-'):
+        from .mixed_templates import f6
+        from rcwg_full.verification.mixed_oracle import f6_expected
+        definition=f6(template,base,condition);oracle=lambda number,sources:f6_expected(definition['expected_args'])
     else:raise ValueError('TEMPLATE_BUILDER_NOT_YET_REGISTERED')
     values={'dataset:'+alias:(pa.Table.from_pylist(rows,schema=arrow_schema({'kind':'Table','schema':definition['schemas'][alias]})) if alias in definition['schemas'] else deepcopy(rows)) for alias,rows in definition['rows'].items()}
     task,manifest,path=prepare(definition['task'],values,directory,layout='fragmented' if condition=='C3' else 'contiguous')
@@ -161,7 +165,7 @@ def build(template,base,condition,directory):
     from rcwg_full.reference.candidates import candidates
     write(path.parent/'candidate_definitions.json',candidates(task,definition['plan']))
     recipe={'role':'PRIVATE_ENGINEERING_ORACLE','template_id':template,'seed':definition['seed'],'comparison':definition['comparison'],
-            'expected':expected,'implementation':'independent source-language oracle' if template.startswith('F5-') else 'independent Python contract; no runtime kernels','formal_gold_reviewed':False}
+            'expected':expected,'implementation':'independent source-language oracle' if template.startswith(('F5-','F6-')) else 'independent Python contract; no runtime kernels','formal_gold_reviewed':False}
     if 'replay' in definition:
         write(path.parent/'engineering_service_replay.json',definition['replay'])
         write(path.parent/'semantic_stage_definitions.json',definition['semantic_stages'])
@@ -240,3 +244,16 @@ def f5_09(base,condition,directory):return build('F5-09',base,condition,director
 def f5_10(base,condition,directory):return build('F5-10',base,condition,directory)
 def f5_11(base,condition,directory):return build('F5-11',base,condition,directory)
 def f5_12(base,condition,directory):return build('F5-12',base,condition,directory)
+
+def f6_01(base,condition,directory):return build('F6-01',base,condition,directory)
+def f6_02(base,condition,directory):return build('F6-02',base,condition,directory)
+def f6_03(base,condition,directory):return build('F6-03',base,condition,directory)
+def f6_04(base,condition,directory):return build('F6-04',base,condition,directory)
+def f6_05(base,condition,directory):return build('F6-05',base,condition,directory)
+def f6_06(base,condition,directory):return build('F6-06',base,condition,directory)
+def f6_07(base,condition,directory):return build('F6-07',base,condition,directory)
+def f6_08(base,condition,directory):return build('F6-08',base,condition,directory)
+def f6_09(base,condition,directory):return build('F6-09',base,condition,directory)
+def f6_10(base,condition,directory):return build('F6-10',base,condition,directory)
+def f6_11(base,condition,directory):return build('F6-11',base,condition,directory)
+def f6_12(base,condition,directory):return build('F6-12',base,condition,directory)
