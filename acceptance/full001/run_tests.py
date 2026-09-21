@@ -6,6 +6,7 @@ import platform
 import sys
 import time
 import unittest
+import os
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
 from rcwg_full.evidence import exclusive_directory,write,source_hashes
 
@@ -20,7 +21,10 @@ class Result(unittest.TextTestResult):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--pattern',default='test_*.py')
-    a=p.parse_args();out=exclusive_directory(a.output);sources=source_hashes()
+    p.add_argument('--native-build',type=Path)
+    a=p.parse_args()
+    if a.native_build:os.environ['RCWG_FULL_BUILD']=str(a.native_build.absolute())
+    out=exclusive_directory(a.output);sources=source_hashes()
     suite=unittest.defaultTestLoader.discover(str(Path(__file__).parent),pattern=a.pattern)
     with (out/'unittest.log').open('x',encoding='utf-8') as stream:
         result=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=Result).run(suite)

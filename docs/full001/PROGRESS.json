@@ -21,15 +21,15 @@
       "evidence": []
     },
     "M01": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M02": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M03": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M04": {
@@ -37,7 +37,7 @@
       "evidence": []
     },
     "M05": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M06": {
@@ -53,7 +53,7 @@
       "evidence": []
     },
     "M09": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M10": {
@@ -62,9 +62,10 @@
     }
   },
   "next_actions": [
-    "Implement COMPAT1 compiler without changing the legacy profile",
-    "Prepare isolated dependency lock and CI native build",
-    "Implement actual kernels, runtime, builders and independent verification"
+    "Build and independently retest exact Int64 division and bounded multi-pass Arrow payload external sort",
+    "Complete runtime scheduler and all dispatch adapters",
+    "Complete 72 distinct template builders and independent verification, reference search, analysis and CLI",
+    "Rerun inherited exact test IDs, integrate acceptance, preserve formal gate closed"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -76,5 +77,44 @@
     "cgroup_write": 0,
     "calibration_load": 0,
     "merge": 0
-  }
+  },
+  "updated_utc": "2026-09-21T10:48:18.237081+00:00",
+  "checkpoint_commit": "3dec77ea19b043dcce23e2b6b0eafcdbb4f82bed",
+  "publication": {
+    "authorized": true,
+    "branch_pushed": true,
+    "draft_pr_created": false,
+    "ci_build_run": 35589365986,
+    "ci_build_status": "PASS",
+    "ci_legacy_api_run": 35589365820,
+    "ci_legacy_api_status": "PASS"
+  },
+  "verified_scopes": [
+    {
+      "scope": "foundations",
+      "platform": "Windows",
+      "passed": 16,
+      "report": "runs/full001-foundations-win-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "foundations",
+      "platform": "WSL",
+      "passed": 16,
+      "report": "runs/full001-foundations-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "artifact_lifetimes",
+      "platform": "WSL",
+      "passed": 7,
+      "report": "runs/full001-artifacts-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "native_independent_first_pass",
+      "platform": "WSL",
+      "passed": 8,
+      "failed": 1,
+      "report": "runs/full001-native-wsl-001/TEST_RESULTS.json",
+      "failure": "Int64 division double rounding; exact integer rounding fix awaiting new build"
+    }
+  ]
 }

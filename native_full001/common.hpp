@@ -55,9 +55,24 @@ inline J arithmetic(const std::string& op,const J&a,const J&b){
     if(!a.number()||!b.number())throw Fault("TYPE_MISMATCH","plan");
     if(op=="div"){
         if(b.d()==0)throw Fault("DIVISION_BY_ZERO","plan");
-        // Integer operands are divided in extended precision before one Float64 rounding.
-        long double x=a.integer()?static_cast<long double>(a.i()):a.d(),y=b.integer()?static_cast<long double>(b.i()):b.d();
-        double result=static_cast<double>(x/y);if(!std::isfinite(result))throw Fault("ARITHMETIC_OVERFLOW","plan");return result;
+        double result;
+        if(a.integer()&&b.integer()){
+            // Exact integer quotient, rounded once to nearest binary64, ties to even.
+            // The scaled numerator needs at most 117 bits for any Int64 operands.
+            auto magnitude=[](int64_t v)->uint64_t{return v<0?uint64_t(-(v+1))+1:uint64_t(v);};
+            uint64_t n=magnitude(a.i()),d=magnitude(b.i());
+            if(n==0)return 0.0;
+            int e=(64-__builtin_clzll(n))-(64-__builtin_clzll(d));
+            using U=unsigned __int128;
+            if(e>=0?U(n)<(U(d)<<e):(U(n)<<(-e))<U(d))--e;
+            int scale=52-e;U num=n,den=d;
+            if(scale>=0)num<<=scale;else den<<=-scale;
+            U q=num/den,r=num%den;
+            if(r*2>den||(r*2==den&&(q&1)))++q;
+            result=std::ldexp(double(uint64_t(q)),e-52);
+            if((a.i()<0)!=(b.i()<0))result=-result;
+        }else result=a.d()/b.d();
+        if(!std::isfinite(result))throw Fault("ARITHMETIC_OVERFLOW","plan");return result;
     }
     if(a.integer()&&b.integer()){
         int64_t v;bool overflow;

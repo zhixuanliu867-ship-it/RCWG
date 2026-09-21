@@ -1,5 +1,5 @@
 #pragma once
-#include "common.hpp"
+#include "external_sort.hpp"
 namespace full {
 inline Table filtering(Table t,const J&p,bool vectorized,Counts&c){
     std::vector<int64_t> rows;
@@ -29,30 +29,8 @@ inline Table topk(Table t,const J&p,bool heap,Counts&c){
     return select(t,result);
 }
 inline Table sorting(Table t,const J&p,bool external,const std::string& directory,Counts&c){
-    Order order{t,p.at("keys"),&c};std::vector<int64_t> output;
-    if(!external){output=ordinals(t->num_rows());std::sort(output.begin(),output.end(),order);}
-    else {
-        // Fixed 1024-row ordinal runs; referenced Arrow input remains explicit.
-        // Subsequent runtime spill uses Arrow IPC for the source payload itself.
-        std::vector<std::filesystem::path> paths;
-        struct Cleanup {std::vector<std::filesystem::path>& p;~Cleanup(){for(auto&f:p){std::error_code ec;std::filesystem::remove(f,ec);}}} cleanup{paths};
-        for(int64_t base=0;base<t->num_rows();base+=1024){
-            std::vector<int64_t> run;for(auto i=base;i<std::min(base+1024,t->num_rows());++i)run.push_back(i);
-            std::sort(run.begin(),run.end(),order);auto f=std::filesystem::path(directory)/("sort-"+std::to_string(paths.size())+".run");
-            if(std::filesystem::exists(f))throw Fault("EXCLUSIVE_PATH_REQUIRED");paths.push_back(f);
-            std::ofstream stream(f,std::ios::binary);stream.write(reinterpret_cast<const char*>(run.data()),run.size()*sizeof(int64_t));stream.close();if(!stream)throw Fault("SPILL_WRITE_FAILED");
-            count(c,"sort_runs");count(c,"spill_write_bytes",run.size()*8);
-        }
-        // The bounded fan-in policy is enforced by the caller's pass scheduler.
-        if(paths.size()>64)throw Fault("EXTERNAL_SORT_FANIN_LIMIT");
-        std::vector<std::ifstream> files;for(auto&p:paths)files.emplace_back(p,std::ios::binary);
-        using Entry=std::pair<int64_t,size_t>;
-        auto later=[&](const Entry&a,const Entry&b){return order(b.first,a.first);};
-        std::priority_queue<Entry,std::vector<Entry>,decltype(later)> q(later);
-        for(size_t i=0;i<files.size();++i){int64_t v;if(files[i].read(reinterpret_cast<char*>(&v),8))q.push({v,i});}
-        while(!q.empty()){auto [v,i]=q.top();q.pop();output.push_back(v);count(c,"spill_read_bytes",8);if(files[i].read(reinterpret_cast<char*>(&v),8))q.push({v,i});else if(!files[i].eof())throw Fault("SPILL_READ_FAILED");}
-        count(c,"merge_passes");
-    }return select(t,output);
+    if(external)return external_sort(t,p,directory,c);
+    auto output=ordinals(t->num_rows());std::sort(output.begin(),output.end(),Order{t,p.at("keys"),&c});return select(t,output);
 }
 inline Table dedup(Table t,const J&p,bool hash,Counts&c){
     auto cols=columns(t,p.at("keys"));bool last=p.at("keep").str()=="last";std::vector<int64_t> indices;

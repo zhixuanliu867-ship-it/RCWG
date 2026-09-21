@@ -24,10 +24,14 @@ jobs:
           environments/full001/.venv/bin/python -m pip install --require-hashes -r environments/full001/requirements.lock
       - name: Build actual Arrow C++20 kernels with existing compiler
         run: environments/full001/.venv/bin/python scripts/build_full001.py --output runs/full001-build
+      - name: Execute independent software tests against this build
+        run: environments/full001/.venv/bin/python acceptance/full001/run_tests.py --native-build runs/full001-build --output runs/full001-tests
       - name: Preserve build evidence including failures
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: full001-offline-evidence
           retention-days: 14
-          path: runs/full001-build/
+          path: |
+            runs/full001-build/
+            runs/full001-tests/

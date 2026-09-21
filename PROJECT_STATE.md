@@ -175,3 +175,8 @@ Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined;
 ## Active ticket: RCWG-NATIVE-001 / N4
 
 Base 456a30d0d242ec005bfb9e25fdc7a45c72aa9af8; branch rcwg/native-001-n4. Read docs/native001n4/START_HERE_zh.md and DECISIONS.md. Offline counter hardening, receipt-bound finite calibration implementation and independent regression gates. One draft stacked on rcwg/native-001; PR6/7 not merged. Host proposal remains approved=false; real calibration NOT_RUN pending exact owner receipt. No models/count/GCP/IAM/install/cgroup writes. Formal BLOCKED_NOT_FROZEN. Historical evidence above retained.
+
+
+## RCWG-FULL-001 checkpoint
+
+Baseline 2824ee8e7678a39b3bff2ac701ffececd50d1e81, isolated branch rcwg/full-001. Continue from docs/full001/PROGRESS.json, REQUIREMENT_TO_EVIDENCE.json and OWNER_ACTIONS_REQUIRED.json. Software implementation and acceptance remain incomplete. Native CI build passed; the first independent native run found integer-division rounding failure; failed evidence is retained. N4 plan and history unchanged. All six readiness flags remain false; formal BLOCKED_NOT_FROZEN. Owner directly authorized new-branch pushes, offline CI and a draft PR based on rcwg/native-001-n4; no merge or force push. No host, paid API or cloud approvals inferred.
