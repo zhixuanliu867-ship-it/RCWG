@@ -10,6 +10,10 @@ def check_group(directories):
     cases={};errors=[]
     for condition,directory in directories.items():
         directory=safe_path(directory);task=json.loads(read(directory/'task_public.json'));manifest=json.loads(read(directory/'data_manifest.json'))
+        from rcwg_full.runtime.catalog import DataCatalog
+        try:logical=DataCatalog(directory/'data_manifest.json').bind(task).audit()
+        except (ValueError,KeyError,TypeError) as exc:
+            errors.append(condition+':SOURCE_VALIDATION:'+str(exc));logical={}
         rows={}
         for entry in manifest['sources']:
             physical=[]
@@ -19,7 +23,7 @@ def check_group(directories):
                 actual=sha(read(directory/rel))
                 if actual!=record['sha256']:errors.append(condition+':PHYSICAL_HASH:'+entry['source_id'])
                 physical.append(actual)
-            rows[entry['source_id']]={'logical':entry['logical_content_sha256'],'physical':physical,'schema':entry['schema_hash']}
+            rows[entry['source_id']]={'logical':logical.get(entry['source_id']),'physical':physical,'schema':entry['schema_hash']}
         cases[condition]={'task':task,'sources':rows}
     a,b=deepcopy(cases['C0']['task']),deepcopy(cases['C2']['task'])
     for task in [a,b]:task.pop('task_id',None)

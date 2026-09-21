@@ -5,12 +5,14 @@ struct Graph {
     J source;std::vector<J> nodes,edges;std::unordered_map<std::string,size_t> lookup;
     std::vector<std::vector<std::pair<size_t,size_t>>> adjacency;
     std::vector<size_t> offsets,targets,edge_indices;
-    explicit Graph(const J&g,const std::string& direction="out",bool csr=false):source(g),nodes(g.at("nodes").arr()),edges(g.at("edges").arr()){
-        for(size_t i=0;i<nodes.size();++i){auto k=dump(nodes[i].at("node_id"));if(lookup.count(k))throw Fault("DUPLICATE_NODE");lookup[k]=i;}
+    std::string node_field,source_field,target_field;
+    explicit Graph(const J&g,const std::string& direction="out",bool csr=false,const J&fields=J::O{}):source(g),nodes(g.at("nodes").arr()),edges(g.at("edges").arr()),
+        node_field(fields.has("node_id_field")?fields.at("node_id_field").str():"node_id"),source_field(fields.has("source_field")?fields.at("source_field").str():"src"),target_field(fields.has("target_field")?fields.at("target_field").str():"dst"){
+        for(size_t i=0;i<nodes.size();++i){auto k=dump(nodes[i].at(node_field));if(lookup.count(k))throw Fault("DUPLICATE_NODE");lookup[k]=i;}
         adjacency.resize(nodes.size());std::unordered_set<std::string> ids;
         bool directed=g.has("directed")?g.at("directed").b():true;
-        for(size_t i=0;i<edges.size();++i){auto&e=edges[i];auto a=lookup.find(dump(e.at("src"))),b=lookup.find(dump(e.at("dst")));
-            if(a==lookup.end()||b==lookup.end())throw Fault("UNKNOWN_ENDPOINT");if(!ids.insert(dump(e.at("edge_id"))).second)throw Fault("DUPLICATE_EDGE_ID");
+        for(size_t i=0;i<edges.size();++i){auto&e=edges[i];auto a=lookup.find(dump(e.at(source_field))),b=lookup.find(dump(e.at(target_field)));
+            if(a==lookup.end()||b==lookup.end())throw Fault("UNKNOWN_ENDPOINT");if(e.has("edge_id")&&!ids.insert(dump(e.at("edge_id"))).second)throw Fault("DUPLICATE_EDGE_ID");
             if(direction!="in"||!directed)adjacency[a->second].push_back({b->second,i});
             if(direction!="out"||!directed)if(a->second!=b->second||direction=="in")adjacency[b->second].push_back({a->second,i});
         }
@@ -24,7 +26,7 @@ struct Graph {
 };
 inline J graph_kernel(const std::string&op,const std::string&impl,const J&g,const J&seeds,const J&p,Counts&c){
     auto direction=p.has("direction")?p.at("direction").str():"out";
-    Graph graph(g,direction,impl=="csr");J::A out;
+    Graph graph(g,direction,impl=="csr",p.has("_graph_fields")?p.at("_graph_fields"):J(J::O{}));J::A out;
     if(op=="graph_neighbors"){
         std::unordered_set<size_t> found;
         for(auto&s:seeds.arr()){auto n=graph.id(s);count(c,"adjacency_lookups");graph.neighbors(n,[&](size_t,size_t e){count(c,"edge_visits");auto&edge=graph.edges[e];bool allowed=p.at("edge_types").arr().empty();for(auto&t:p.at("edge_types").arr())if(compare(t,edge.at("type"))==0)allowed=true;if(allowed&&found.insert(e).second)out.push_back(edge);});}return out;
@@ -37,11 +39,11 @@ inline J graph_kernel(const std::string&op,const std::string&impl,const J&g,cons
             auto[n,d]=item;if(d!=depth[n])continue;count(c,"state_expansions");if(d>=hops)continue;
             graph.neighbors(n,[&](size_t v,size_t){count(c,"edge_visits");if(d+1<depth[v]){depth[v]=d+1;pending.push_back({v,d+1});}});
         }
-        for(size_t i=0;i<depth.size();++i)if(depth[i]!=INT64_MAX)out.push_back(graph.nodes[i].at("node_id"));return out;
+        for(size_t i=0;i<depth.size();++i)if(depth[i]!=INT64_MAX)out.push_back(graph.nodes[i].at(graph.node_field));return out;
     }
     if(op=="graph_shortest_path"){
         auto weight=p.at("weight_field");double equal=-1;
-        for(auto&e:graph.edges){double w=weight.null()?1:e.at(weight.str()).d();if(w<0||!std::isfinite(w))throw Fault("NEGATIVE_WEIGHT","plan");if(equal<0)equal=w;else if(impl=="bfs"&&w!=equal)throw Fault("BFS_REQUIRES_EQUAL_WEIGHTS","plan");}
+        for(auto&e:graph.edges){if(!e.has("edge_id"))throw Fault("STABLE_EDGE_ID_REQUIRED","plan");double w=weight.null()?1:e.at(weight.str()).d();if(w<0||!std::isfinite(w))throw Fault("NEGATIVE_WEIGHT","plan");if(equal<0)equal=w;else if(impl=="bfs"&&w!=equal)throw Fault("BFS_REQUIRES_EQUAL_WEIGHTS","plan");}
         std::vector<double> dist(graph.nodes.size(),std::numeric_limits<double>::infinity());std::vector<int64_t> parent(graph.nodes.size(),-1),parent_edge(graph.nodes.size(),-1);
         using Item=std::pair<double,size_t>;std::priority_queue<Item,std::vector<Item>,std::greater<Item>> heap;std::deque<size_t> queue;
         for(auto&s:seeds.arr()){auto n=graph.id(s);dist[n]=0;heap.push({0,n});queue.push_back(n);}
@@ -53,25 +55,37 @@ inline J graph_kernel(const std::string&op,const std::string&impl,const J&g,cons
         }
         J::A target=p.at("target").array()?p.at("target").arr():J::A{p.at("target")};
         for(auto&t:target){auto v=graph.id(t);J::A ns,es;bool reachable=std::isfinite(dist[v]);
-            if(reachable){for(int64_t n=int64_t(v);n>=0;n=parent[n]){ns.push_back(graph.nodes[n].at("node_id"));if(parent_edge[n]>=0)es.push_back(graph.edges[parent_edge[n]].at("edge_id"));if(ns.size()>graph.nodes.size())throw Fault("PATH_CYCLE_INTERNAL");}std::reverse(ns.begin(),ns.end());std::reverse(es.begin(),es.end());}
+            if(reachable){for(int64_t n=int64_t(v);n>=0;n=parent[n]){ns.push_back(graph.nodes[n].at(graph.node_field));if(parent_edge[n]>=0)es.push_back(graph.edges[parent_edge[n]].at("edge_id"));if(ns.size()>graph.nodes.size())throw Fault("PATH_CYCLE_INTERNAL");}std::reverse(ns.begin(),ns.end());std::reverse(es.begin(),es.end());}
             out.push_back(J::O{{"target",t},{"reachable",reachable},{"distance",reachable?J(dist[v]):J(nullptr)},{"nodes",ns},{"edges",es}});
         }return out;
     }
     if(op=="graph_filter"){
+        std::function<bool(const J&)> node_reference=[&](const J&v){
+            if(v.object()){if(v.has("field")&&v.at("field").str().rfind("node.",0)==0)return true;for(auto&[_,child]:v.obj())if(node_reference(child))return true;}
+            if(v.array())for(auto&child:v.arr())if(node_reference(child))return true;
+            return false;
+        };bool has_node=node_reference(p.at("predicate"));
         std::vector<size_t> candidates(graph.edges.size());std::iota(candidates.begin(),candidates.end(),0);
         if(impl=="index_filter"){
             // Traverse the supplied, preparation-built index; never substitute an edge mask.
             candidates.clear();if(!g.has("edge_index"))throw Fault("INDEX_UNAVAILABLE");
             std::unordered_set<size_t> seen;for(auto&i:g.at("edge_index").arr()){auto n=size_t(i.i());if(n>=graph.edges.size()||!seen.insert(n).second)throw Fault("INDEX_INVALID");candidates.push_back(n);}if(seen.size()!=graph.edges.size())throw Fault("INDEX_INCOMPLETE");
         }
-        std::vector<bool> keep(graph.edges.size());for(auto i:candidates){count(c,impl=="index_filter"?"index_entries_visited":"predicate_evaluations");auto v=eval(p.at("predicate"),[&](const std::string&n){return graph.edges[i].at(n);});keep[i]=!v.null()&&v.b();}
+        std::vector<bool> keep(graph.edges.size());for(auto i:candidates){
+            if(impl=="index_filter")count(c,"index_entries_visited");auto&edge=graph.edges[i];
+            auto matches=[&](const J&endpoint){count(c,"predicate_evaluations");auto v=eval(p.at("predicate"),[&](const std::string&n){
+                if(n.rfind("node.",0)==0)return graph.nodes[graph.id(endpoint)].at(n.substr(5));
+                return edge.at(n.rfind("edge.",0)==0?n.substr(5):n);
+            });return !v.null()&&v.b();};
+            keep[i]=matches(edge.at(graph.source_field))&&(!has_node||matches(edge.at(graph.target_field)));
+        }
         auto obj=g.obj();for(size_t i=0;i<keep.size();++i)if(keep[i])out.push_back(graph.edges[i]);obj["edges"]=out;obj.erase("edge_index");return obj;
     }
     if(op=="graph_subgraph"){
         std::unordered_set<std::string> chosen,ends;for(auto&s:seeds.arr())chosen.insert(dump(s));
-        if(impl=="induced"){for(auto&s:seeds.arr())graph.id(s);ends=chosen;for(auto&e:graph.edges)if(chosen.count(dump(e.at("src")))&&chosen.count(dump(e.at("dst"))))out.push_back(e);}
-        else {for(auto&e:graph.edges)if(chosen.erase(dump(e.at("edge_id")))){out.push_back(e);ends.insert(dump(e.at("src")));ends.insert(dump(e.at("dst")));}if(!chosen.empty())throw Fault("FOREIGN_EDGE_ID","plan");}
-        J::A nodes;for(auto&n:graph.nodes)if(ends.count(dump(n.at("node_id"))))nodes.push_back(n);auto obj=g.obj();obj["nodes"]=nodes;obj["edges"]=out;obj.erase("edge_index");return obj;
+        if(impl=="induced"){for(auto&s:seeds.arr())graph.id(s);ends=chosen;for(auto&e:graph.edges)if(chosen.count(dump(e.at(graph.source_field)))&&chosen.count(dump(e.at(graph.target_field))))out.push_back(e);}
+        else {for(auto&e:graph.edges){if(!e.has("edge_id"))throw Fault("STABLE_EDGE_ID_REQUIRED","plan");if(chosen.erase(dump(e.at("edge_id")))){out.push_back(e);ends.insert(dump(e.at(graph.source_field)));ends.insert(dump(e.at(graph.target_field)));}}if(!chosen.empty())throw Fault("FOREIGN_EDGE_ID","plan");}
+        J::A nodes;for(auto&n:graph.nodes)if(ends.count(dump(n.at(graph.node_field))))nodes.push_back(n);auto obj=g.obj();obj["nodes"]=nodes;obj["edges"]=out;obj.erase("edge_index");return obj;
     }
     throw Fault("UNSUPPORTED_IMPLEMENTATION");
 }

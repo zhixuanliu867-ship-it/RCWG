@@ -5,7 +5,7 @@ import json
 import hashlib
 import os
 import stat
-from rcwg_full.evidence import read,sha,digest,safe_path
+from rcwg_full.evidence import read,sha,digest,safe_path,canonical
 
 
 class DataSource:
@@ -18,13 +18,29 @@ class DataSource:
         return path
     def file(self,record):
         raw=read(self.path(record))
-        if sha(raw)!=record['sha256']:raise ValueError('DATA_FILE_HASH')
+        if sha(raw)!=record['sha256'] or len(raw)!=record.get('bytes',len(raw)):raise ValueError('DATA_FILE_HASH')
         return raw
     def value(self):
         if self.entry['format'] in {'arrow_ipc','parquet'}:return self.table()
         files=self.entry['physical_files']
         if len(files)!=1:raise ValueError('JSON_SOURCE_FILES')
-        return json.loads(self.file(files[0]))
+        value=json.loads(self.file(files[0]))
+        if digest(value)!=self.entry['logical_content_sha256']:raise ValueError('DATA_LOGICAL_HASH')
+        if self.entry['logical_rows']!=(len(value) if isinstance(value,list) else None):raise ValueError('DATA_LOGICAL_ROWS')
+        if hasattr(self,'public'):
+            from rcwg_full.runtime.source_validation import validate_source
+            validate_source(value,self.public,self.expected_type)
+        return value
+    def logical_digest(self):
+        if self.entry['format']=='json':return digest(self.value())
+        checksum=hashlib.sha256();checksum.update(b'[');first=True
+        for batch in self.batches():
+            for row in batch.to_pylist():
+                if not first:checksum.update(b',')
+                checksum.update(canonical(row));first=False
+        checksum.update(b']');actual=checksum.hexdigest()
+        if actual!=self.entry['logical_content_sha256']:raise ValueError('DATA_LOGICAL_HASH')
+        return actual
     def table(self):
         import pyarrow as pa
         return pa.Table.from_batches(list(self.batches()))
@@ -116,7 +132,13 @@ class DataCatalog:
             if physical!=actual['content_sha256']:raise ValueError('DATA_CONTENT_MANIFEST_MISMATCH')
             source.expected_type=type_json(checked['input_types'][ident])
             source.public=public_descriptors[ident]
+            if actual.get('domain')!=source.public.get('domain'):raise ValueError('DATA_DOMAIN_BINDING_MISMATCH')
+            count_key={'table':'row_count','document_index':'document_count','node_set':'item_count','id_selection':'item_count','set':'item_count','edge_stream':'edge_count'}.get(actual['kind'])
+            if count_key and actual['logical_rows']!=source.public['stats'][count_key]:raise ValueError('DATA_PUBLIC_COUNT_MISMATCH')
         return self
+    def audit(self):
+        if any(not hasattr(source,'public') for source in self.sources.values()):raise ValueError('DATA_PUBLIC_BINDING_REQUIRED')
+        return {ident:source.logical_digest() for ident,source in self.sources.items()}
     def resolve(self,ident):
         if ident not in self.sources:raise ValueError('DATA_SOURCE_UNREGISTERED')
         return self.sources[ident]

@@ -62,9 +62,9 @@
     }
   },
   "next_actions": [
-    "Build and test Date/Timestamp native support at new exact source",
-    "Validate actual JSON sources and independently recompute logical condition hashes",
-    "Complete campaign diagnostics/auth/control/analysis CLI integration",
+    "Build and test public graph field and endpoint predicate support",
+    "Complete diagnostic transforms and E5 controlled plan definitions",
+    "Complete campaign auth/control/analysis CLI integration",
     "Finish physical allocation accounting and formal capacity builders",
     "Re-run inherited gates on final source and produce unified delivery and draft PR"
   ],
@@ -79,17 +79,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T14:57:19.429810+00:00",
-  "checkpoint_commit": "cbd55f6f49ba4780a66a819a4fd2b6eb561bb597",
+  "updated_utc": "2026-09-21T15:18:02.761981+00:00",
+  "checkpoint_commit": "00d5acab74c874fd140fa0955904673a8d053290",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35613332065,
+    "ci_build_run": 35615748615,
     "ci_build_status": "PASS",
-    "ci_legacy_api_run": 35613331778,
+    "ci_legacy_api_run": 35615748906,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1855,
+    "ci_full001_tests": 1863,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -343,7 +343,8 @@
       "ci_job": 106377669702,
       "artifact_sha256": "af672a6618bf3bff749ce9abf21575c2edf5f02625599261d1f5388134e668d3",
       "artifact_id": 10645661235,
-      "artifact_download_status": "IN_PROGRESS"
+      "artifact_download_status": "VERIFIED_SHA256_AND_ALL_CRC",
+      "report": "runs/ci-full001-cbd55f6/full001-tests/TEST_RESULTS.json"
     },
     {
       "scope": "F6_all_instances_and_independent_conditions",
@@ -362,6 +363,27 @@
       "scope": "typed_temporal_conversion_pure_tests",
       "passed": 2,
       "evidence_note": "WSL unittest console; actual native build and integration pending"
+    },
+    {
+      "scope": "Temporal_actual_native_and_all_prior_CI",
+      "tests_executed": 1863,
+      "passed": 1863,
+      "ci_run": 35615748615,
+      "ci_job": 106385884665,
+      "artifact_sha256": "ab6f5e5da0f519bf69b98c79cccf12df74d5cade4c004d6f4048e7e8170a7c49",
+      "artifact_id": 10646029115
+    },
+    {
+      "scope": "Actual_source_tamper_and_schema_validation",
+      "passed": 14,
+      "report": "runs/full001-source-validation-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "Actual_all_source_schema_and_C2_C3_identity_base0",
+      "passed_groups": 72,
+      "instances": 288,
+      "source_unchanged": true,
+      "report": "runs/full001-all-family-source-audit-001/SOURCE_AUDIT.json"
     }
   ]
 }

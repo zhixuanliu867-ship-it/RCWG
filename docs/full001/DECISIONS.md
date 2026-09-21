@@ -56,3 +56,11 @@ All twelve mixed template plans now execute through actual graph kernels, explic
 ## Native temporal values
 
 Date uses Arrow date32 and Timestamp uses UTC microseconds. Internal scalar tags preserve these types through equality, ordering, joins, grouping, projection and bounded region evaluation; Utf8 remains literal text. JSON boundaries emit ISO dates and explicit UTC timestamps. Equivalent timestamp offsets share a native key. Native changes and new differential tests require a new source-bound build. The prior immutable cbd55f6 CI passed all 1855 existing tests, including 1440 tiny template instances. This does not close remaining software or formal gates.
+
+## Actual source validation and graph field bindings
+
+Source validation recomputes canonical logical content from actual JSON or incremental Arrow batches. A physical rehash cannot legitimize a stale logical-content claim. Public counts, actual scalar/record types, graph endpoint membership, identities, weight facts, index permutation/order and duplicate set IDs are checked independently. All 72 base-zero four-condition groups passed this audit (288 instances); the exact source remained unchanged.
+
+Graph native kernels bind public node_id_field/source_field/target_field rather than assuming physical column names. For graph_filter, bare and edge-prefixed fields name the current edge. The complete predicate is evaluated with node-prefixed fields bound to each endpoint, and must be true at both endpoints; null fails. This is a vertex-preserving edge view, including depth-zero vertices. Explicit node removal uses graph_subgraph induced. The compiler records these endpoint bindings as an obligation. Filtered edge constraints flow to subsequent kernels. Historical graphs without edge IDs may traverse, but path witnesses and explicit edge selection require stable edge_id instead of inventing IDs. New native tests await the next build.
+
+The previous 00d5aca CI passed all 1863 tests, including typed temporal offset equivalence, native joins and aggregates, nested projection and scan-map-disk JSON roundtrip. Formal readiness is unchanged.

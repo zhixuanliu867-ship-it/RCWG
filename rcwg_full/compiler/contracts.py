@@ -456,6 +456,7 @@ def validate_operator(node, inputs: dict[str, Type], *, task: dict, stage: str, 
             schema.update({"edge." + k: v for k, v in edge_schema.items()})
             schema.update({"node." + k: v for k, v in graph.metadata.get("node_schema", {}).items()})
             pred(params["predicate"], schema, p + "/predicate")
+            obligation("GRAPH_FILTER_ENDPOINT_BINDINGS", node_prefix="predicate_true_at_both_endpoints", edge_prefix="current_edge", vertex_set="preserved")
             outputs["graph"] = replace(graph, kind="GraphView")
             aliases["graph"] = ["graph"]
             if impl == "index_filter":

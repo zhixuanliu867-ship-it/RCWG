@@ -8,7 +8,7 @@ def kind(typ):return typ if isinstance(typ,str) else typ['kind']
 
 
 def descriptor(typ):
-    if isinstance(typ,str):
+    if isinstance(typ,str) or 'type' in typ or typ.get('kind') in {'bool','int64','float64','utf8','string','date32','timestamp_us'}:
         from rcwg_full.compiler.typesystem import parse_type,type_json
         return type_json(parse_type(typ,'/runtime/value'))
     return typ
@@ -56,9 +56,7 @@ def validate(value,typ,store,path='value'):
 
 def arrow_type(typ):
     import pyarrow as pa
-    if isinstance(typ,str):
-        from rcwg_full.compiler.typesystem import parse_type,type_json
-        typ=type_json(parse_type(typ,'/runtime/arrow_type'))
+    typ=descriptor(typ)
     tag=typ['kind']
     if tag=='Nullable':return arrow_type(typ['item'])
     if tag=='List':return pa.list_(arrow_type(typ['item']))
@@ -76,7 +74,7 @@ def arrow_rows(rows,typ):
     """Convert declared ISO values at the Arrow boundary, without changing Utf8."""
     while typ['kind'] in {'Stream','ArtifactRef','DatasetRef'}:typ=typ['item']
     def convert(value,descriptor):
-        if isinstance(descriptor,str):
+        if isinstance(descriptor,str) or 'type' in descriptor or descriptor.get('kind') in {'bool','int64','float64','utf8','string','date32','timestamp_us'}:
             from rcwg_full.compiler.typesystem import parse_type,type_json
             descriptor=type_json(parse_type(descriptor,'/runtime/arrow_rows'))
         tag=kind(descriptor)

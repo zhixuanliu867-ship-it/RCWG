@@ -244,7 +244,14 @@ class Backend:
             for port in ['seeds','nodes','edges']:
                 if port in inputs:seeds=await self.value(inputs[port])
             if op=='graph_subgraph' and impl=='edge_selected':seeds=[e['edge_id'] for e in seeds]
-            result,c=await scheduler.compute(instance,node,self.native.graph,op,impl,graph,seeds,p);observed(c)
+            caps=node.get('input_capabilities',{}).get('graph',{});params=dict(p)
+            params['_graph_fields']={k:caps[k] for k in ['node_id_field','source_field','target_field'] if k in caps}
+            from rcwg_full.runtime.values import native_temporal,temporal_json
+            typ=node['inputs']['graph']
+            while typ['kind'] in {'ArtifactRef','DatasetRef'}:typ=typ['item']
+            graph={**graph,'nodes':[native_temporal(row,{'kind':'Record','schema':caps.get('node_schema',{})}) for row in graph['nodes']],
+                   'edges':[native_temporal(row,{'kind':'Record','schema':typ['schema']}) for row in graph['edges']]}
+            result,c=await scheduler.compute(instance,node,self.native.graph,op,impl,graph,seeds,params);result=temporal_json(result);observed(c)
             port=next(iter(node['outputs']))
             return output(port,result,parents=[inputs['graph']] if op=='graph_filter' else [])
         if op in {'materialize','collect'}:
