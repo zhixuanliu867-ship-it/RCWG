@@ -6,5 +6,13 @@
     "rcwg_spec/operators.py": "27605ed7006bd5b4f50e2b83ea7cb793ef5024c7b35c4641ed8957ad3c32dafa",
     "rcwg_spec/predicates.py": "ad61c92226091520c59d7c87d8c4478e9c88b2213b06c6fd703db23f4c546e7d"
   },
-  "choice": "Versioned contract modules preserve legacy source and Type identity; new concrete List descriptors require explicit max_length. No global monkey patch and no legacy parser widening."
+  "choice": "Versioned contract modules preserve legacy source and Type identity; new concrete List descriptors require explicit max_length. No global monkey patch and no legacy parser widening.",
+  "binding_adapter": {
+    "source": "rcwg_spec/binding.py",
+    "source_sha256": "738acf63d58211439cffdc9f96781ac8843a898c5ffcd4d05dc59310fe5739fb",
+    "function": "build_context",
+    "body_sha256": "a830bdc12daaefa9b91487225c9ee58936611a7132054e20d84c42ba01c78833",
+    "adapter": "rcwg_full/runtime/binding.py",
+    "remaining_binding_types_and_functions": "unchanged rcwg_spec.binding"
+  }
 }

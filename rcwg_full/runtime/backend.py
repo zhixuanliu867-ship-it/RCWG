@@ -161,7 +161,7 @@ class Backend:
                     field='node_id' if view=='nodes' else 'edge_id'
                     rows=[{'target':p['target'],field:v,'ordinal':i} for p in source for i,v in enumerate(p[view])]
                 else:rows=source.get(view) if isinstance(source,dict) and view in {'nodes','edges'} else source
-                if view=='ids':rows=[{'id':x} for x in source]
+                if view=='ids':rows=[{'id':x['document_id'] if isinstance(x,dict) else x} for x in source]
                 if isinstance(rows,dict):rows=[rows]
                 projected=[]
                 for row in rows:

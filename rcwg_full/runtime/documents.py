@@ -82,7 +82,11 @@ class Documents:
             validate_document(doc);key=canonical(doc['document_id'])
             if key in self.by_id:raise ValueError('DUPLICATE_DOCUMENT_ID')
             self.by_id[key]=deepcopy(doc)
-        self.tf={k:Counter(t['token'].casefold() for t in tokens(v['canonical_text'])) for k,v in self.by_id.items()}
+        self.native_bm25=None
+        if self.native is not None:
+            self.native_bm25=self.native.bm25_prepare([{'document_id':v['document_id'],'tokens':[t['token'].casefold() for t in tokens(v['canonical_text'])]} for v in self.by_id.values()])
+            self.event('bm25_index_built',{'backend':'native_cpp20','counts':__import__('json').loads(self.native_bm25.construction())})
+        self.tf={k:Counter(t['token'].casefold() for t in tokens(v['canonical_text'])) for k,v in self.by_id.items()} if self.native is None else {}
         self.length={k:sum(v.values()) for k,v in self.tf.items()}
         self.df=Counter(term for tf in self.tf.values() for term in tf)
         self.index_hash=digest({'documents':[(k.decode(),d['canonical_text_sha256']) for k,d in self.by_id.items()],'profile':BM25})
@@ -97,6 +101,9 @@ class Documents:
         self.event('document_read',{'document_id':doc['document_id'],'revision':doc['revision'],'start_cp':start,'end_cp':end,'logical_read_bytes':size,'operation_id':operation,'kind':kind})
 
     def retrieve(self,query,limit,offset=0):
+        if self.native_bm25 is not None:
+            result,counts=self.native.bm25_query(self.native_bm25,[t['token'].casefold() for t in tokens(query)],limit,offset)
+            self.event('bm25_query',{'backend':'native_cpp20','counts':counts,'index_hash':self.index_hash});return result
         terms=Counter(t['token'].casefold() for t in tokens(query));N=len(self.by_id);avg=sum(self.length.values())/N if N else 0;ranked=[]
         for key,tf in self.tf.items():
             score=0.0
@@ -109,10 +116,10 @@ class Documents:
         ranked.sort(key=lambda x:(-x[0],x[1]))
         return [{'document_id':ident,'score':score} for score,ident in ranked[offset:offset+limit]]
 
-    def read_documents(self,ids,fields,batch_size,impl,operation):
+    def read_documents(self,ids,fields,batch_size,impl,operation,id_field='document_id'):
         rows=[];group=[]
         for item in ids:
-            ident=item['document_id'] if isinstance(item,dict) else item;doc=self.document(ident)
+            ident=item[id_field] if isinstance(item,dict) else item;doc=self.document(ident)
             self.record_read(doc,0,len(doc['canonical_text']),operation,impl)
             selected={k:deepcopy(doc[k]) for k in fields}
             # Provenance travels beside selected public fields, never as hidden labels.
@@ -122,10 +129,33 @@ class Documents:
         if group:rows.extend(group);self.event('document_batch',{'count':len(group),'implementation':impl,'operation_id':operation})
         return rows
 
+    def selected_context(self,source):
+        meta=source.get('_source',source);doc=self.document(meta['document_id'])
+        if meta['revision']!=doc['revision']:raise ExecutionFault('DOCUMENT_REVISION_MISMATCH')
+        if 'canonical_text' in source:
+            if source['canonical_text']!=doc['canonical_text']:raise ExecutionFault('DOCUMENT_SELECTED_TEXT_MISMATCH')
+            return compose([piece(doc,0,len(doc['canonical_text']))])
+        if 'sections' in source:
+            if source['sections']!=doc['sections']:raise ExecutionFault('DOCUMENT_SELECTED_SECTIONS_MISMATCH')
+            return compose([piece(doc,s['start_cp'],s['end_cp']) for s in source['sections']])
+        raise ExecutionFault('DOCUMENT_TEXT_NOT_SELECTED')
+
+    def validate_context(self,context):
+        if sha(context['text'].encode('utf8'))!=context['text_sha256']:raise ExecutionFault('CONTEXT_TEXT_HASH')
+        prior=0
+        for segment in context['segments']:
+            doc=self.document(segment['document_id']);a,b=segment['source_start_cp'],segment['source_end_cp'];x,y=segment['presented_start_cp'],segment['presented_end_cp']
+            if any(type(v) is not int for v in [a,b,x,y]) or not 0<=a<=b<=len(doc['canonical_text']) or not prior<=x<=y<=len(context['text']):raise ExecutionFault('CONTEXT_SEGMENT_RANGE')
+            if segment['revision']!=doc['revision'] or context['text'][x:y]!=doc['canonical_text'][a:b]:raise ExecutionFault('CONTEXT_SEGMENT_MISMATCH')
+            if context['text'][prior:x] not in {'','\n\n'}:raise ExecutionFault('CONTEXT_INSERTED_TEXT')
+            prior=y
+        if prior!=len(context['text']):raise ExecutionFault('CONTEXT_UNMAPPED_SUFFIX')
+
     def split(self,documents,size,overlap,impl):
         result=[]
         for source in documents:
             meta=source.get('_source',source);doc=self.document(meta['document_id'])
+            self.selected_context(source)
             if meta['revision']!=doc['revision']:raise ExecutionFault('DOCUMENT_REVISION_MISMATCH')
             ranges=[(s['start_cp'],s['end_cp'],s['section_id']) for s in doc['sections']] if impl=='section' else [(0,len(doc['canonical_text']),None)]
             for a,b,section in ranges:
@@ -139,6 +169,7 @@ class Documents:
     def gather(self,chunks,window,impl,operation):
         result=[]
         for chunk in chunks:
+            self.validate_context(chunk)
             segments=[]
             for segment in chunk['segments']:
                 doc=self.document(segment['document_id'])
@@ -184,7 +215,16 @@ class Documents:
                 items=list(items)
                 for rule in reversed(priority):items.sort(key=lambda x:(x[rule['field']] is None,x[rule['field']]),reverse=rule['direction']=='desc')
                 selected=deepcopy(items[0]);selected['discarded_alternatives']=deepcopy(items[1:]);output.append(selected)
-            else:output.extend(deepcopy(items))
+            else:
+                claims={}
+                for item in items:
+                    key=digest({k:v for k,v in item.items() if k not in {'evidence','provenance','public_span_check'}})
+                    if key not in claims:claims[key]=deepcopy(item)
+                    else:
+                        evidence=claims[key].setdefault('evidence',[]);seen={digest(c) for c in evidence}
+                        for citation in item.get('evidence',[]):
+                            if digest(citation) not in seen:evidence.append(deepcopy(citation));seen.add(digest(citation))
+                output.extend(claims.values())
         return output
 
     async def dispatch(self,op,impl,inputs,p,*,semantic,instance,scheduler,node):
@@ -193,7 +233,7 @@ class Documents:
             if self.query_encoder is None:raise ExecutionFault('DENSE_ENCODER_UNAVAILABLE','facility')
             vector=self.query_encoder.encode(p['query']);docs=[{'document_id':d['document_id'],'vector':d['vector']} for d in self.by_id.values()]
             result,c=await scheduler.compute(instance,node,self.native.dense,docs,vector,p);self.event('dense_query',{'encoder_hash':self.query_encoder.identity,'counts':c,'origin':self.query_encoder.origin});return result
-        if op=='read_documents':return self.read_documents(inputs['ids'].to_pylist() if hasattr(inputs['ids'],'to_pylist') else inputs['ids'],p['fields'],p['batch_size'],impl,instance)
+        if op=='read_documents':return self.read_documents(inputs['ids'].to_pylist() if hasattr(inputs['ids'],'to_pylist') else inputs['ids'],p['fields'],p['batch_size'],impl,instance,p.get('id_field','document_id'))
         if op=='split_documents':return self.split(inputs['documents'],p['size'],p['overlap'],impl)
         if op=='gather_context':return self.gather(inputs['chunks'],p['window'],impl,instance)
         if op=='evidence_validate':return self.span_check(inputs['evidence'],p['strict'])
@@ -201,14 +241,36 @@ class Documents:
         if semantic is None:raise ExecutionFault('SEMANTIC_SERVICE_NOT_READY','facility')
         documents=inputs['documents'];contexts=[]
         for item in documents:
-            if 'segments' in item:contexts.append(item)
-            else:
-                doc=self.document(item.get('_source',item)['document_id']);contexts.append(compose([piece(doc,0,len(doc['canonical_text']))]))
+            if 'segments' in item:self.validate_context(item);contexts.append(item)
+            else:contexts.append(self.selected_context(item))
         if sum(len(tokens(c['text'])) for c in contexts)>p['context_budget']:raise ExecutionFault('CONTEXT_LIMIT_EXCEEDED')
         request={'service_id':semantic.service_id,'question':p.get('question',self.task_question()),'field_schema':p['field_schema'],'contexts':contexts}
         self.event('semantic_request',{'request_hash':digest(request),'origin':semantic.mode,'context_tokens':sum(len(tokens(c['text'])) for c in contexts)})
         result=await semantic.extract(request)
         if not isinstance(result,list):raise ExecutionFault('SEMANTIC_RESPONSE_SCHEMA','service')
+        from rcwg_full.runtime.values import validate
+        for row in result:
+            if type(row) is not dict or set(row)-set(p['field_schema'])-{'evidence'} or set(p['field_schema'])-set(row):raise ExecutionFault('SEMANTIC_RESPONSE_SCHEMA','service')
+            try:
+                from rcwg_full.compiler.typesystem import parse_schema,type_json
+                schema={k:type_json(t) for k,t in parse_schema(p['field_schema'],'/semantic/field_schema').items()}
+                validate({k:row[k] for k in schema},{'kind':'Record','schema':schema},None)
+            except (ValueError,TypeError,KeyError) as exc:raise ExecutionFault('SEMANTIC_RESPONSE_SCHEMA','service') from exc
+            citations=row.get('evidence',[])
+            if type(citations) is not list:raise ExecutionFault('SEMANTIC_RESPONSE_SCHEMA','service')
+            for citation in citations:
+                try:
+                    if set(citation)!={'document_id','revision','start_cp','end_cp','quote'}:raise ValueError('CITATION_FIELDS')
+                    a,b=citation['start_cp'],citation['end_cp']
+                    if type(a) is not int or type(b) is not int or a>=b:raise ValueError('CITATION_RANGE')
+                    doc=self.document(citation['document_id'])
+                    if citation['revision']!=doc['revision'] or doc['canonical_text'][a:b]!=citation['quote']:raise ValueError('CITATION_CONTENT')
+                    ranges=sorted((s['source_start_cp'],s['source_end_cp']) for c in contexts for s in c['segments'] if s['document_id']==citation['document_id'] and s['revision']==citation['revision'])
+                    covered=a
+                    for x,y in ranges:
+                        if x<=covered:covered=max(covered,y)
+                    if covered<b:raise ValueError('CITATION_NOT_PRESENTED')
+                except (ValueError,KeyError,TypeError,ExecutionFault) as exc:raise ExecutionFault('SEMANTIC_CITATION_NOT_IN_CONTEXT','service') from exc
         return result
 
     def task_question(self):return 'explicit engineering extraction'

@@ -6,6 +6,12 @@ inline std::shared_ptr<arrow::DataType> scalar_type(const J&descriptor){
     if(kind=="Nullable")return scalar_type(descriptor.at("item"));
     if(kind=="Int64")return arrow::int64();if(kind=="Float64")return arrow::float64();
     if(kind=="Bool")return arrow::boolean();if(kind=="Utf8")return arrow::utf8();
+    if(kind=="List")return arrow::list(scalar_type(descriptor.at("item")));
+    if(kind=="Record"){
+        std::vector<std::shared_ptr<arrow::Field>> fields;
+        for(auto&[name,t]:descriptor.at("schema").obj())fields.push_back(arrow::field(name,scalar_type(t),t.has("kind")&&t.at("kind").str()=="Nullable"));
+        return arrow::struct_(fields);
+    }
     throw Fault("UNSUPPORTED_PROJECT_TYPE");
 }
 inline Table projecting(Table input,const J&p,bool copy,Counts&c){

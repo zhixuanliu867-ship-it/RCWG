@@ -1,8 +1,8 @@
 {
   "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
   "remaining_work": [
-    "F1-F3 720 actual tiny instances and 288 candidate executions passed; implement F4-F6 and formal candidate capacities",
-    "Graph and Path explicit representation bridges implemented; remaining document representations and catalog/schema binding",
+    "F1-F4 960 tiny instance executions passed; complete F5-F6 and formal candidate capacity profiles",
+    "Graph/Path/List bridges implemented; supervised document replay and versioned binding adapter awaiting integration evidence",
     "Remaining native branch coverage (scan index/BM25/date-time/project nested types) and genuine pipeline resource accounting",
     "Complete document adapters including worker replay wiring, real upstream provenance and human review tools",
     "Independent per-template oracle and semantic gold recipes; real sharing/copy and alternate implementation equivalence coverage",
@@ -12,8 +12,8 @@
     "End-to-end unified CLI and full acceptance matrix; Windows baseline evidence and final deliverable/PR"
   ],
   "known_implementation_limits": [
-    "Incremental native hash aggregation, bounded IPC scanning and incremental disk materialization implemented; new native build and full regression pending. Sorted-group/sort/join still collect inputs.",
-    "Document BM25 preparation and scoring currently Python; CPU-dominant native integration remains",
+    "Incremental hash aggregation, IPC scanning and disk materialization implemented; one integration test baseline corrected after actual allocation fell to zero. Sorted-group/sort/join still collect inputs.",
+    "Native BM25 postings and nested Arrow payload reconstruction implemented; pending source-bound build and independent tests",
     "Registered Arrow buffer accounting is partial for transformed stream batches and graph/JSON objects",
     "Real cgroup metrology, formal data labels/licenses, service bindings and formal freeze remain external prerequisites distinct from software gaps"
   ]

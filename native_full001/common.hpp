@@ -26,18 +26,22 @@ inline void count(Counts& c,const std::string& key,int64_t n=1) {
 }
 inline void ok(const arrow::Status& s){if(!s.ok())throw Fault("ARROW:"+s.ToString());}
 template<class T>T take(arrow::Result<T> r){if(!r.ok())throw Fault("ARROW:"+r.status().ToString());return std::move(r).ValueOrDie();}
-inline J cell(const Table& t,int col,int64_t i){
-    if(col<0)throw Fault("FIELD_NOT_FOUND","plan");
-    auto s=take(t->column(col)->GetScalar(i));
+inline J scalar_value(const std::shared_ptr<arrow::Scalar>& s){
     if(!s->is_valid)return nullptr;
     switch(s->type->id()){
         case arrow::Type::INT64:return std::static_pointer_cast<arrow::Int64Scalar>(s)->value;
         case arrow::Type::DOUBLE:{double v=std::static_pointer_cast<arrow::DoubleScalar>(s)->value;if(!std::isfinite(v))throw Fault("NONFINITE");return v;}
         case arrow::Type::BOOL:return std::static_pointer_cast<arrow::BooleanScalar>(s)->value;
         case arrow::Type::STRING:return std::static_pointer_cast<arrow::StringScalar>(s)->value->ToString();
+        case arrow::Type::LIST:{J::A values;auto array=std::static_pointer_cast<arrow::ListScalar>(s)->value;for(int64_t i=0;i<array->length();++i)values.push_back(scalar_value(take(array->GetScalar(i))));return values;}
+        case arrow::Type::STRUCT:{J::O values;auto scalar=std::static_pointer_cast<arrow::StructScalar>(s);auto type=std::static_pointer_cast<arrow::StructType>(s->type);for(int i=0;i<type->num_fields();++i)values[type->field(i)->name()]=scalar_value(scalar->value[i]);return values;}
         case arrow::Type::NA:return nullptr;
         default:throw Fault("UNSUPPORTED_ARROW_TYPE");
     }
+}
+inline J cell(const Table& t,int col,int64_t i){
+    if(col<0)throw Fault("FIELD_NOT_FOUND","plan");
+    return scalar_value(take(t->column(col)->GetScalar(i)));
 }
 inline J field(const Table&t,int64_t i,const std::string& n){return cell(t,t->schema()->GetFieldIndex(n),i);}
 inline int compare(const J&a,const J&b){
@@ -124,19 +128,24 @@ inline std::string key(const Table&t,int64_t i,const std::vector<int>&cols,bool*
     J::A values;for(auto c:cols){auto v=cell(t,c,i);if(v.null()&&null)*null=true;if(v.number()&&!v.integer()&&v.d()==0)v=J(0.0);values.push_back(v);}return dump(values);
 }
 inline J row(const Table&t,int64_t i){J::O r;for(int c=0;c<t->num_columns();++c)r[t->field(c)->name()]=cell(t,c,i);return r;}
+inline void append_value(arrow::ArrayBuilder* b,const std::shared_ptr<arrow::DataType>&type,const J&v){
+    if(v.null()){ok(b->AppendNull());return;}
+    switch(type->id()){
+        case arrow::Type::INT64:ok(static_cast<arrow::Int64Builder*>(b)->Append(v.i()));break;
+        case arrow::Type::DOUBLE:ok(static_cast<arrow::DoubleBuilder*>(b)->Append(v.d()));break;
+        case arrow::Type::BOOL:ok(static_cast<arrow::BooleanBuilder*>(b)->Append(v.b()));break;
+        case arrow::Type::STRING:rcwg::utf8_count(v.str());ok(static_cast<arrow::StringBuilder*>(b)->Append(v.str()));break;
+        case arrow::Type::LIST:{auto builder=static_cast<arrow::ListBuilder*>(b);auto list=std::static_pointer_cast<arrow::ListType>(type);ok(builder->Append());for(auto&item:v.arr())append_value(builder->value_builder(),list->value_type(),item);break;}
+        case arrow::Type::STRUCT:{auto builder=static_cast<arrow::StructBuilder*>(b);auto structure=std::static_pointer_cast<arrow::StructType>(type);ok(builder->Append());for(int i=0;i<structure->num_fields();++i){auto f=structure->field(i);append_value(builder->field_builder(i),f->type(),v.at(f->name()));}break;}
+        default:throw Fault("UNSUPPORTED_ARROW_TYPE");
+    }
+}
 inline Table from_rows(const J::A& rows,const std::shared_ptr<arrow::Schema>& schema){
     std::vector<std::shared_ptr<arrow::Array>> arrays;
     for(auto& f:schema->fields()){
         auto b=take(arrow::MakeBuilder(f->type()));
-        for(auto& r:rows){auto v=r.at(f->name());if(v.null()){ok(b->AppendNull());continue;}
-            switch(f->type()->id()){
-                case arrow::Type::INT64:ok(static_cast<arrow::Int64Builder*>(b.get())->Append(v.i()));break;
-                case arrow::Type::DOUBLE:ok(static_cast<arrow::DoubleBuilder*>(b.get())->Append(v.d()));break;
-                case arrow::Type::BOOL:ok(static_cast<arrow::BooleanBuilder*>(b.get())->Append(v.b()));break;
-                case arrow::Type::STRING:rcwg::utf8_count(v.str());ok(static_cast<arrow::StringBuilder*>(b.get())->Append(v.str()));break;
-                default:throw Fault("UNSUPPORTED_ARROW_TYPE");
-            }
-        }arrays.push_back(take(b->Finish()));
+        for(auto& r:rows)append_value(b.get(),f->type(),r.at(f->name()));
+        arrays.push_back(take(b->Finish()));
     }return arrow::Table::Make(schema,arrays,int64_t(rows.size()));
 }
 struct Order {

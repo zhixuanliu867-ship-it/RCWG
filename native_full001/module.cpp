@@ -1,6 +1,7 @@
 #include "relational.hpp"
 #include "graph.hpp"
 #include "stream_aggregate.hpp"
+#include "text.hpp"
 namespace py=pybind11;
 using namespace full;
 
@@ -10,6 +11,10 @@ static py::object wrap(const Table&t){auto p=arrow::py::wrap_table(t);if(!p)thro
 PYBIND11_MODULE(RCWG_MODULE_NAME,m){
     if(arrow::py::import_pyarrow()!=0)throw py::error_already_set();
     m.attr("diagnostic")=bool(RCWG_FULL_DIAGNOSTICS);
+    py::class_<Bm25Index,std::shared_ptr<Bm25Index>>(m,"Bm25Index",py::module_local())
+        .def(py::init([](const std::string&documents){auto docs=Parser(documents).parse();py::gil_scoped_release release;return std::make_shared<Bm25Index>(docs);}))
+        .def("query",[](const Bm25Index&index,const std::string&tokens,int64_t limit,int64_t offset){auto terms=Parser(tokens).parse();std::pair<J,Counts> result;{py::gil_scoped_release release;result=index.query(terms,limit,offset);}return py::make_tuple(dump(result.first),dump(counts_json(result.second)));})
+        .def("construction",[](const Bm25Index&index){return dump(counts_json(index.construction()));});
     py::class_<StreamAggregate,std::shared_ptr<StreamAggregate>>(m,"StreamAggregate",py::module_local())
         .def(py::init([](py::object empty,const std::string&params){return std::make_shared<StreamAggregate>(unwrap(empty),Parser(params).parse());}))
         .def("consume",[](StreamAggregate&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})

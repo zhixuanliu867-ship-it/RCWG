@@ -11,31 +11,35 @@ from rcwg_full.runtime.catalog import DataCatalog
 from rcwg_full.runtime.events import verify_journal
 from rcwg_native.supervisor import stop_group,live_group
 from rcwg_native.metrology import unavailable
-from rcwg_spec.public_task import validate_public_task
-from rcwg_spec.binding import build_context,freeze_expected,seal_events,make_sidecar,validate_evidence,EVENT_TYPES
+from rcwg_full.compiler.public_task import validate_public_task
+from rcwg_full.runtime.binding import build_context
+from rcwg_spec.binding import freeze_expected,seal_events,make_sidecar,validate_evidence,EVENT_TYPES
 
 
-def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1'):
+def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None):
     checked=validate_public_task(task);manifest=json.loads(read(Path(build)/'BUILD.json'));source=source_hashes()
     return build_context(task,condition_id=condition_id,data_manifest=catalog.bindings(),
-        runtime={'revision':'full001-runtime-1','mode':mode,'data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024},
+        runtime={'revision':'full001-runtime-1','mode':mode,'semantic_replay_sha256':replay_sha256 or 'NOT_CONFIGURED','data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024},
         cache_policy={'revision':'full001-cache-1','cross_run':False},verifier={'revision':verifier_identity},
         metric_spec={'revision':'full001-metric-1'},measurement_profile={'revision':'full001-engineering-uncalibrated-1','event_source_id':'full001-worker','clock_id':'monotonic_ns','host_calibrated':False},
         operator_registry={'revision':'full001-operators-1','sha256':sha(read(ROOT/'specs/full001/operators.json'))},
         source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
 
 
-def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None):
+def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None):
     if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
+    if semantic_replay is not None and mode!='ENGINEERING_REPLAY':raise ValueError('REPLAY_MODE_FORBIDDEN')
+    replay=None if semantic_replay is None else {'path':str(Path(semantic_replay).absolute()),'sha256':sha(read(semantic_replay))}
     out=exclusive_directory(output);ident=driver.ident if driver else 'r'+uuid.uuid4().hex;states=[];cleanup=[]
     def transition(state,**detail):
         record={'sequence':len(states),'state':state,'monotonic_ns':time.monotonic_ns(),**detail};states.append(record);write(out/('lifecycle-%03d.json'%len(states)),record)
     transition('DECLARED');catalog=DataCatalog(data_manifest)
-    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode)
+    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None)
     compiler_source=b''.join(read(p) for p in sorted((ROOT/'rcwg_full/compiler').glob('*.py')))
     expected=freeze_expected(context,[{'record_id':ident,'record_role':'MODEL','plan':plan,'compiler_source':compiler_source,'generation_id':ident,'repeat_id':'r1','repeat_role':'PRIMARY_REPEAT'}])
     write(out/'expected.json',expected.as_dict())
     request={'run_id':ident,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance'}
+    if replay is not None:request['semantic_replay']=replay
     write(out/'request.json',request);worker=out/'worker';worker.mkdir()
     report={'run_id':ident,'mode':mode,'expected_manifest_sha256':expected.manifest_hash,'terminal_status':'UNKNOWN','execution_started':False,
         'failure':None,'verification':{'status':'UNKNOWN','reason':'NOT_EXECUTED'},'measurements':unavailable(),'formal_ready':False,'paid_calls':0}

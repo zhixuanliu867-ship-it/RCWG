@@ -58,6 +58,11 @@ class Native:
     def aggregate_finish(self,state):
         result,counts=state.finish();return result,json.loads(counts)
 
+    def bm25_prepare(self,documents):return self.module.Bm25Index(canonical(documents).decode())
+
+    def bm25_query(self,index,terms,limit,offset=0):
+        result,counts=index.query(canonical(terms).decode(),limit,offset);return json.loads(result),json.loads(counts)
+
     def dense(self,docs,query,params):
         result,counts=self.module.dense(canonical(docs).decode(),canonical(query).decode(),canonical(params).decode())
         return json.loads(result),json.loads(counts)

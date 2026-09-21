@@ -2,7 +2,7 @@
 from copy import deepcopy
 from dataclasses import replace
 from rcwg_spec.common import ContractError
-from .typesystem import Type, row_schema, with_rows, unwrap_ref, type_json, check_declared
+from .typesystem import Type, row_schema, with_rows, unwrap_ref, type_json, check_declared,parse_schema
 from .predicates import analyze_predicate
 from .contracts import (validate_operator as legacy, REGISTRY, _object, _fields,
     _integer, _string, _enum, _mapped, _id_mappings, _ref, IDENT)
@@ -135,6 +135,14 @@ def _project(node, inputs, path):
 
 def validate_operator(node, inputs, *, task, stage, path):
     op, p = node['operator'], node['params']
+    if op in {'read_documents','text_retrieve','split_documents','gather_context','semantic_extract','evidence_merge','evidence_validate'}:
+        inputs={k:unwrap_ref(t) for k,t in inputs.items()}
+    if op=='semantic_extract':
+        def json_field(typ):
+            if typ.kind in {'Int64','Float64','Bool','Utf8','Date','Timestamp'}:return True
+            if typ.kind in {'Nullable','List'}:return json_field(typ.item)
+            return typ.kind=='Record' and all(json_field(t) for _,t in typ.schema)
+        if not all(json_field(t) for t in parse_schema(p['field_schema'],path+'/params/field_schema').values()):fail('SEMANTIC_FIELD_TYPE',path+'/params/field_schema')
     if op.startswith('graph_'):
         result=legacy(node,{k:unwrap_ref(t) for k,t in inputs.items()},task=task,stage=stage,path=path)
         if op=='graph_shortest_path':

@@ -26,7 +26,18 @@ async def execute(request,build,output):
         native=Native(build,request.get('native_mode','performance'));catalog=DataCatalog(request['data_manifest']).bind(request['task'])
         report=FullCompiler().compile(request['task'],request['plan']);write(out/'compiler.json',report)
         if report['status']!='IR_VALIDATED':raise ExecutionFault(report['status'],'plan' if report['status']=='PLAN_INVALID' else 'facility')
-        store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task']);externals={}
+        from rcwg_full.runtime.document_registry import DocumentRegistry
+        from rcwg_full.runtime.documents import ReplaySemantic
+        semantic=None
+        if request.get('semantic_replay'):
+            if request['mode']!='ENGINEERING_REPLAY':raise ExecutionFault('REPLAY_MODE_FORBIDDEN','facility')
+            replay=request['semantic_replay'];raw=read(replay['path'])
+            if sha(raw)!=replay['sha256']:raise ExecutionFault('REPLAY_MANIFEST_CHANGED','facility')
+            payload=json.loads(raw)
+            if payload.get('revision')!='full001-engineering-replay-1':raise ExecutionFault('REPLAY_MANIFEST_VERSION','facility')
+            semantic=ReplaySemantic(payload['responses'],mode=request['mode'],service_id=payload['service_id'])
+        documents=DocumentRegistry(catalog,native=native,event=lambda k,v:journal.append(k,v))
+        store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task'],documents=documents,semantic=semantic);externals={}
         for alias,meta in report['typed_graph']['input_bindings'].items():
             source=catalog.resolve(meta['source_id']);value=source if meta['type']['kind']=='DatasetRef' else source.value()
             externals[alias]=store.register(value,meta['type'],'external:'+alias,source_refs=[meta['source_id']])

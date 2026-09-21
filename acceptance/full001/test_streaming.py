@@ -31,7 +31,9 @@ class StreamingNative(unittest.TestCase):
         schema=self.pa.schema([('g',self.pa.int64()),('v',self.pa.int64())])
         params={'group_by':['g'],'aggregates':[{'function':fn,'field':'v','as':fn} for fn in ['sum','min','max','count','mean']]}
         state=self.native.aggregate_begin(schema,params);expected={i:[] for i in range(7)}
-        baseline=self.pa.total_allocated_bytes()
+        # Earlier tests may leave unreachable Arrow objects in Python cycles.
+        # Collect those before measuring this state's unchanged allocation floor.
+        gc.collect();baseline=self.pa.total_allocated_bytes()
         for base in range(53):
             rows=[{'g':i%7,'v':None if i%13==0 else i-1000} for i in range(base*173,(base+1)*173)]
             for row in rows:

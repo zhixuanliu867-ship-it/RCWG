@@ -107,7 +107,7 @@ class DataCatalog:
     def bind(self,task):
         from rcwg_full.compiler.public_task import validate_public_task
         from rcwg_full.compiler.typesystem import type_json
-        checked=validate_public_task(task);expected={e['id']:e for e in checked['source_manifest']}
+        checked=validate_public_task(task);expected={e['id']:e for e in checked['source_manifest']};public_descriptors={d['id']:d for d in checked['normalized_task']['datasets']}
         if set(expected)!=set(self.sources):raise ValueError('DATA_SOURCE_SET_MISMATCH')
         for ident,source in self.sources.items():
             actual=source.entry;public=expected[ident]
@@ -115,6 +115,7 @@ class DataCatalog:
             physical=digest([{k:r[k] for k in ['sha256','bytes']} for r in actual['physical_files']])
             if physical!=actual['content_sha256']:raise ValueError('DATA_CONTENT_MANIFEST_MISMATCH')
             source.expected_type=type_json(checked['input_types'][ident])
+            source.public=public_descriptors[ident]
         return self
     def resolve(self,ident):
         if ident not in self.sources:raise ValueError('DATA_SOURCE_UNREGISTERED')

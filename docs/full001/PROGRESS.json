@@ -62,10 +62,11 @@
     }
   },
   "next_actions": [
-    "Verify all 240 F4 instances and candidate variants after native rebuild; implement F5-F6 and formal candidate capacities",
-    "Validate candidate variants and independent confirmation, close document/native contracts",
-    "Complete authorization/control, campaign sealing, CLI and offline analysis views",
-    "Keep external host/data/service/formal gates distinct and closed"
+    "Verify native BM25, nested citation buffers and supervised document replay in exact-head CI",
+    "Implement F5-F6 actual TaskBuilders and independent semantic/graph recipes",
+    "Verify F4 allocation-baseline repair and finish actual buffer lifetime accounting",
+    "Complete formal candidate builders, campaign/auth/control, analysis views and unified CLI",
+    "Preserve closed formal gates and all historical evidence"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -78,17 +79,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T13:20:40.810772+00:00",
-  "checkpoint_commit": "a132905a35d62fed97abdd75595d59b0ebbf9a0e",
+  "updated_utc": "2026-09-21T13:46:35.115475+00:00",
+  "checkpoint_commit": "5ee72c940baf96ec8dfc60880e1688bf8d8dda6b",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35603454061,
-    "ci_build_status": "BUILD_PASS_TEST_FAILURE_PENDING_FIX_VERIFICATION",
-    "ci_legacy_api_run": 35603454058,
+    "ci_build_run": 35605078685,
+    "ci_build_status": "BUILD_PASS_ONE_TEST_BASELINE_FAILURE_PENDING_RERUN",
+    "ci_legacy_api_run": 35605078922,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 1052,
+    "ci_full001_tests": 1319,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -269,6 +270,22 @@
       "platform": "WSL Python 3.12.14",
       "report": "runs/full001-f4-smoke-001/unittest.log",
       "coverage": "all 12 templates, base 0, C0 only"
+    },
+    {
+      "scope": "F4_integrated_with_all_prior_full001",
+      "tests_executed": 1319,
+      "passed": 1318,
+      "failed": 1,
+      "ci_run": 35605078685,
+      "report": "runs/ci-full001-5ee72c9-log-only.txt",
+      "failure": "Arrow pool actual bytes returned to 0 but baseline included 110720 bytes of unreachable prior-test objects; collect before baseline, retain exact equality assertion"
+    },
+    {
+      "scope": "document_context_response_boundaries",
+      "passed": 6,
+      "platform": "Windows Python 3.13.4",
+      "formal_ready": false,
+      "evidence_note": "unittest console; rerun in full source-frozen CI required"
     }
   ]
 }

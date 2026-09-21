@@ -32,7 +32,17 @@ def validate(value,typ,store,path='value'):
     elif tag in {'List','Set','NodeSet','IDSet','RankedIDSet'}:
         if type(value) is not list:raise ValueError('COLLECTION_TYPE:'+path)
         if tag=='List' and len(value)>typ.get('max_length',4096):raise ValueError('LIST_LIMIT')
-        for i,item in enumerate(value):validate(item,typ['item'],store,path+'.'+str(i))
+        seen=set()
+        for i,item in enumerate(value):
+            ident=item
+            if tag=='RankedIDSet' and isinstance(item,dict):
+                if set(item)!={'document_id','score'} or type(item['score']) is not float or not math.isfinite(item['score']):raise ValueError('RANKED_ID_FORMAT')
+                ident=item['document_id']
+            validate(ident,typ['item'],store,path+'.'+str(i))
+            if tag=='RankedIDSet':
+                identity=(type(ident).__name__,ident)
+                if identity in seen:raise ValueError('RANKED_ID_DUPLICATE')
+                seen.add(identity)
     # Arrow schemas and specialized domain types are checked by their adapters.
 
 
