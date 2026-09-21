@@ -1,6 +1,27 @@
 #pragma once
 #include "external_sort.hpp"
 namespace full {
+inline std::shared_ptr<arrow::DataType> scalar_type(const J&descriptor){
+    auto kind=descriptor.string()?descriptor.str():descriptor.at("kind").str();
+    if(kind=="Nullable")return scalar_type(descriptor.at("item"));
+    if(kind=="Int64")return arrow::int64();if(kind=="Float64")return arrow::float64();
+    if(kind=="Bool")return arrow::boolean();if(kind=="Utf8")return arrow::utf8();
+    throw Fault("UNSUPPORTED_PROJECT_TYPE");
+}
+inline Table projecting(Table input,const J&p,bool copy,Counts&c){
+    std::vector<std::shared_ptr<arrow::Field>> fields;std::vector<std::shared_ptr<arrow::ChunkedArray>> cols;
+    if(p.has("columns"))for(auto&name:p.at("columns").arr()){int i=input->schema()->GetFieldIndex(name.str());if(i<0)throw Fault("FIELD_NOT_FOUND","plan");fields.push_back(input->field(i));cols.push_back(input->column(i));}
+    if(p.has("expressions"))for(auto&[name,ast]:p.at("expressions").obj()){
+        if(!p.has("_field_types")||!p.at("_field_types").has(name))throw Fault("PROJECT_RUNTIME_SCHEMA_REQUIRED");
+        auto descriptor=p.at("_field_types").at(name);auto type=scalar_type(descriptor);J::A rows;
+        for(int64_t i=0;i<input->num_rows();++i){rows.push_back(J::O{{name,eval(ast,[&](const std::string&n){return field(input,i,n);})}});count(c,"expression_evaluations");}
+        auto f=arrow::field(name,type,descriptor.has("kind")&&descriptor.at("kind").str()=="Nullable");
+        auto computed=from_rows(rows,arrow::schema({f}));fields.push_back(f);cols.push_back(computed->column(0));
+    }
+    auto out=arrow::Table::Make(arrow::schema(fields),cols,input->num_rows());
+    if(copy){out=select(out,ordinals(out->num_rows()));count(c,"copy_bytes",arrow::util::TotalBufferSize(*out));}
+    return out;
+}
 inline Table filtering(Table t,const J&p,bool vectorized,Counts&c){
     std::vector<int64_t> rows;
     if(vectorized){
@@ -67,8 +88,10 @@ inline Table joining(Table l,Table r,const J&p,const std::string& impl,Counts&c)
     if(mode=="left"||mode=="full")for(int64_t i=0;i<l->num_rows();++i)if(!lm[i])pairs.emplace_back(i,-1);
     if(mode=="right"||mode=="full")for(int64_t j=0;j<r->num_rows();++j)if(!rm[j])pairs.emplace_back(-1,j);
     std::sort(pairs.begin(),pairs.end());std::vector<std::shared_ptr<arrow::Field>> fields;
-    for(auto&f:l->schema()->fields())fields.push_back(f->WithName("left."+f->name()));for(auto&f:r->schema()->fields())fields.push_back(f->WithName("right."+f->name()));
-    J::A rows;for(auto[i,j]:pairs){J::O v;for(int z=0;z<l->num_columns();++z)v["left."+l->field(z)->name()]=i<0?J(nullptr):cell(l,z,i);for(int z=0;z<r->num_columns();++z)v["right."+r->field(z)->name()]=j<0?J(nullptr):cell(r,z,j);rows.push_back(v);}
+    auto name=[&](const std::string&side,const std::string&field){bool overlap=l->schema()->GetFieldIndex(field)>=0&&r->schema()->GetFieldIndex(field)>=0;return overlap?side+"."+field:field;};
+    for(auto&f:l->schema()->fields())fields.push_back(f->WithName(name("left",f->name()))->WithNullable(f->nullable()||mode=="right"||mode=="full"));
+    for(auto&f:r->schema()->fields())fields.push_back(f->WithName(name("right",f->name()))->WithNullable(f->nullable()||mode=="left"||mode=="full"));
+    J::A rows;for(auto[i,j]:pairs){J::O v;for(int z=0;z<l->num_columns();++z)v[name("left",l->field(z)->name())]=i<0?J(nullptr):cell(l,z,i);for(int z=0;z<r->num_columns();++z)v[name("right",r->field(z)->name())]=j<0?J(nullptr):cell(r,z,j);rows.push_back(v);}
     count(c,"rows_out",rows.size());return from_rows(rows,arrow::schema(fields));
 }
 inline Table aggregate(Table t,const J&p,bool hash,Counts&c){

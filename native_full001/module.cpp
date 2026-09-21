@@ -18,10 +18,8 @@ PYBIND11_MODULE(RCWG_MODULE_NAME,m){
             else if(op=="deduplicate")out=dedup(t,p,impl=="hash",c);
             else if(op=="join")out=joining(t,r,p,impl,c);
             else if(op=="aggregate")out=aggregate(t,p,impl=="hash_group",c);
-            else if(op=="project"){
-                out=take(t->SelectColumns(columns(t,p.at("columns"))));
-                if(impl=="copy"){out=select(out,ordinals(out->num_rows()));count(c,"copy_bytes",arrow::util::TotalBufferSize(*out));}
-            }else throw Fault("UNSUPPORTED_IMPLEMENTATION");
+            else if(op=="project")out=projecting(t,p,impl=="copy",c);
+            else throw Fault("UNSUPPORTED_IMPLEMENTATION");
         }
         return py::make_tuple(wrap(out),dump(counts_json(c)));
     });

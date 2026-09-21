@@ -69,7 +69,7 @@ class NativeKernels(unittest.TestCase):
                 pairs=list(matches)
                 if mode in ['left','full']:pairs.extend((l,{'rid':None,'k':None}) for l in left if l['id'] not in ml)
                 if mode in ['right','full']:pairs.extend(({'id':None,'k':None},r) for r in right if r['rid'] not in mr)
-                expected=[{**{'left.'+k:v for k,v in l.items()},**{'right.'+k:v for k,v in r.items()}} for l,r in pairs]
+                expected=[{**{('left.'+k if k=='k' else k):v for k,v in l.items()},**{('right.'+k if k=='k' else k):v for k,v in r.items()}} for l,r in pairs]
             for impl,side in [('hash','left'),('hash','right'),('sort_merge','left'),('block_nested','left')]:
                 out,c=self.diag.relational('join',impl,self.table(left),{'keys':[{'left':'k','right':'k'}],'join_type':mode,'build_side':side},self.table(right))
                 self.assertEqual(Counter(tuple(sorted(r.items())) for r in out.to_pylist()),Counter(tuple(sorted(r.items())) for r in expected))
