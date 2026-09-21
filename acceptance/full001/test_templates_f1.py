@@ -27,7 +27,7 @@ class F1Templates(unittest.TestCase):
             compiled=FullCompiler().compile(built['task'],built['plan']);catalog=DataCatalog(built['manifest_path'])
             journal=Journal(directory/'events.jsonl',self.id());journal.append('run_started',{'mode':'ENGINEERING_NATIVE'},status='RUNNING')
             store=ArtifactStore(directory/'artifacts',self.id(),journal);backend=Backend(self.native,store,built['task'])
-            external={alias:store.register(catalog.resolve(meta['source_id']),meta['type'],'source:'+alias) for alias,meta in compiled['typed_graph']['input_bindings'].items()}
+            external={alias:store.register(catalog.resolve(meta['source_id']) if meta['type']['kind']=='DatasetRef' else catalog.resolve(meta['source_id']).value(),meta['type'],'source:'+alias) for alias,meta in compiled['typed_graph']['input_bindings'].items()}
             scheduler=Scheduler(compiled,built['task'],external,backend,journal)
             try:
                 actual=asyncio.run(asyncio.wait_for(scheduler.run(),20));write(directory/'actual.json',actual)

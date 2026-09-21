@@ -23,7 +23,9 @@ def prepare(task,values,directory,*,profile='engineering_tiny_v1',layout='contig
                 raw=sink.getvalue().to_pybytes();write(out/name,raw);files.append({'path':name,'sha256':sha(raw),'bytes':len(raw)})
             logical_hash=digest(table.to_pylist());logical_rows=table.num_rows;format='arrow_ipc'
         else:
-            name='source-%d.json'%index;raw=canonical(value)+b'\n';write(out/name,raw);files=[{'path':name,'sha256':sha(raw),'bytes':len(raw)}]
+            name='source-%d.json'%index
+            raw=(canonical(value) if layout=='contiguous' else json.dumps(value,ensure_ascii=False,sort_keys=True,indent=1,allow_nan=False).encode('utf8'))+b'\n'
+            write(out/name,raw);files=[{'path':name,'sha256':sha(raw),'bytes':len(raw)}]
             logical_hash=digest(value);logical_rows=len(value) if isinstance(value,list) else None;format='json'
         content=digest([{k:f[k] for k in ['sha256','bytes']} for f in files]);public['data_sha256']=content
         entry={'source_id':source_id,'kind':public['kind'],'domain':public.get('domain'),'revision':public['revision'],'content_sha256':content,
@@ -31,6 +33,7 @@ def prepare(task,values,directory,*,profile='engineering_tiny_v1',layout='contig
             'source':provenance or {'kind':'generated_engineering_fixture'},'license':{'status':'GENERATED_RECIPE_ONLY_NO_UPSTREAM_TEXT'},'provenance':{'profile':profile,'layout':layout}}
         for j,declared in enumerate(public.get('indexes',[])):
             if declared['kind'] not in {'range','sorted'}:continue
+            if not isinstance(value,(pa.Table,pa.RecordBatch)):continue  # Graph indexes live in the hashed graph payload.
             field=declared['fields'][0];rows=value.to_pylist();pairs=sorted((r[field],i) for i,r in enumerate(rows) if r[field] is not None)
             payload={'revision':'full001-sorted-index-1','source_content_sha256':content,'field':field,'values':[v for v,i in pairs],'ordinals':[i for v,i in pairs],'null_ordinals':[i for i,r in enumerate(rows) if r[field] is None]}
             name='source-%d-index-%d.json'%(index,j);h=write(out/name,payload)

@@ -138,7 +138,12 @@ class Backend:
             source=await self.value(inputs['rows'])
             if op=='project' and (p.get('source_view','rows')!='rows' or isinstance(source,dict)):
                 view=p.get('source_view','rows')
-                rows=source.get(view) if view in {'nodes','edges'} else source
+                input_type=node['inputs']['rows']
+                while input_type['kind'] in {'ArtifactRef','DatasetRef'}:input_type=input_type['item']
+                if input_type['kind']=='PathSet' and view in {'nodes','edges'}:
+                    field='node_id' if view=='nodes' else 'edge_id'
+                    rows=[{'target':p['target'],field:v,'ordinal':i} for p in source for i,v in enumerate(p[view])]
+                else:rows=source.get(view) if isinstance(source,dict) and view in {'nodes','edges'} else source
                 if view=='ids':rows=[{'id':x} for x in source]
                 if isinstance(rows,dict):rows=[rows]
                 projected=[]

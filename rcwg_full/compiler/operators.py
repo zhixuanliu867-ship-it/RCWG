@@ -51,6 +51,11 @@ def bind_parameters(node, resolve, path):
 
 def _view(source, view, path):
     source = unwrap_ref(source)
+    if source.kind=='PathSet' and view in {'nodes','edges'}:
+        field='node_id' if view=='nodes' else 'edge_id'
+        item=source.item if view=='nodes' else source.metadata.get('edge_id_type')
+        if item is None:fail('INPUT_METADATA_REQUIRED',path)
+        return source,{'target':source.item,field:item,'ordinal':Type('Int64')}
     if view == 'rows':
         return source, row_schema(source, path)
     if view == 'edges' and source.kind in {'Graph','GraphView','EdgeStream'}:
@@ -58,13 +63,14 @@ def _view(source, view, path):
     if view == 'nodes' and source.kind in {'Graph','GraphView','NodeSet'}:
         schema = dict(source.metadata.get('node_schema', {}))
         schema['node_id'] = source.metadata.get('node_id_type', source.item or Type('Int64'))
-        return source, schema
+        metadata={**source.metadata,'node_id_mappings':{'node_id':{'domain':source.domain,'revision':source.revision}}}
+        return replace(source,metadata=metadata), schema
     if view == 'ids' and source.kind in {'Set','IDSet','RankedIDSet','NodeSet'}:
         return source, {'id':source.item}
     if view == 'paths' and source.kind == 'PathSet':
         return source, {'target':source.item, 'distance':Type('Nullable',item=Type('Float64')),
                         'reachable':Type('Bool'), 'nodes':Type('List',item=source.item),
-                        'edges':Type('List',item=Type('Utf8'))}
+                        'edges':Type('List',item=source.metadata.get('edge_id_type',Type('Utf8')))}
     fail('TYPE_MISMATCH', path)
 
 
@@ -114,6 +120,8 @@ def _project(node, inputs, path):
             mappings=[m for m in _id_mappings(source) if m['field']==name]
             kind,domain,revision='Set',source.domain,source.revision
             if source.kind in {'NodeSet','Graph','GraphView'} and name in {'id','node_id'}:kind='NodeSet'
+            elif name in source.metadata.get('node_id_mappings',{}):
+                identity=source.metadata['node_id_mappings'][name];kind,domain,revision='NodeSet',identity['domain'],identity['revision']
             elif source.kind in {'IDSet','RankedIDSet'}:kind='IDSet'
             elif mappings:kind,domain,revision='IDSet',mappings[0]['domain'],mappings[0]['revision']
             typ=Type(kind,item=item,domain=domain,revision=revision)
@@ -127,6 +135,12 @@ def _project(node, inputs, path):
 
 def validate_operator(node, inputs, *, task, stage, path):
     op, p = node['operator'], node['params']
+    if op.startswith('graph_'):
+        result=legacy(node,{k:unwrap_ref(t) for k,t in inputs.items()},task=task,stage=stage,path=path)
+        if op=='graph_shortest_path':
+            graph=unwrap_ref(inputs['graph']);edge_id=dict(graph.schema).get('edge_id')
+            if edge_id is not None:result['outputs']['paths']=replace(result['outputs']['paths'],metadata={**graph.metadata,'edge_id_type':edge_id})
+        return result
     if op=='project' and set(p)-{'columns'}:
         return _project(node,inputs,path)
     extra={'top_k':{'partition_by'},'text_retrieve':{'offset'},'semantic_extract':{'question'}}.get(op,set())

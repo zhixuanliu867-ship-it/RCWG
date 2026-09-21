@@ -10,6 +10,7 @@ CHOICES={'filter':['vectorized','scalar'],'project':['column_view','copy'],
          'join':['hash','sort_merge','block_nested'],'deduplicate':['hash','sort_unique'],
          'sort':['in_memory','external_merge'],'set_op':['hash','sorted_merge'],
          'graph_neighbors':['csr','indexed_adjacency'],'graph_reachability':['bfs','dfs'],
+         'graph_shortest_path':['bfs','dijkstra'],
          'graph_filter':['edge_mask','index_filter'],'broadcast':['shared_ref','copy_each'],
          'read_documents':['batched','per_document']}
 
@@ -67,15 +68,38 @@ def materialized_scan(plan,storage):
     return plan
 
 
+def graph_prefix(plan,task,storage,sharing):
+    plan=deepcopy(plan);graph=next((d for d in task['datasets'] if d.get('kind')=='graph'),None)
+    if graph is None:return None
+    alias=next((a for a,s in plan['external_inputs'].items() if s==graph['id']),None)
+    if alias is None:return None
+    original='$input.'+alias;ref=original;prefix=[];names={n['id'] for n in plan['nodes']}
+    name='candidate_graph'
+    while name in names or name+'_fan' in names:name+='x'
+    if storage!='stream':
+        prefix.append({'id':name,'operator':'cache','implementation':storage,'inputs':{'artifact':ref},
+                       'params':{'key_fields':['edge_id']},'outputs':{'artifact':'ArtifactRef'},'storage':storage})
+        ref=name+'.artifact'
+    if sharing!='direct':
+        prefix.append({'id':name+'_fan','operator':'broadcast','implementation':sharing,'inputs':{'artifact':ref},
+                       'params':{'consumers':['value']},'outputs':{'value':'ArtifactRef'}})
+        ref=name+'_fan.value'
+    for node in plan['nodes']:
+        node['inputs']={k:ref if v==original else v for k,v in node['inputs'].items()}
+    if plan['result']==original:plan['result']=ref
+    plan['nodes'][:0]=prefix;return plan
+
+
 def candidates(task,baseline,*,max_candidates=32):
     if not 8<=max_candidates<=32:raise ValueError('CANDIDATE_LIMIT')
     # Frozen axis order is chosen before any measurements; vary entire registered
     # operator classes and explicit stream/memory/disk, not names or hidden data.
     present={n['operator'] for n in baseline['nodes']}
-    axes=[op for op in ['top_k','aggregate','join','project','filter','deduplicate','sort','set_op','graph_neighbors','graph_reachability','graph_filter','broadcast','read_documents'] if op in present]
+    axes=[op for op in ['top_k','aggregate','join','project','filter','deduplicate','sort','set_op','graph_neighbors','graph_reachability','graph_shortest_path','graph_filter','broadcast','read_documents'] if op in present]
     axes=axes[:4];result=[];seen=set();rejected=[]
-    for choices,storage in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk']):
-        variant=materialized_scan(baseline,storage)
+    graph_task=any(d.get('kind')=='graph' for d in task['datasets'])
+    for choices,storage,sharing in product(product(*(CHOICES[op] for op in axes)),['stream','memory','disk'],['direct','shared_ref','copy_each'] if graph_task else ['direct']):
+        variant=graph_prefix(baseline,task,storage,sharing) if graph_task else materialized_scan(baseline,storage)
         if variant is None:continue
         decisions=dict(zip(axes,choices))
         for node in variant['nodes']:
@@ -84,7 +108,7 @@ def candidates(task,baseline,*,max_candidates=32):
         if report['status']!='IR_VALIDATED':rejected.append({'decisions':{**decisions,'storage':storage},'diagnostics':report['diagnostics']});continue
         identity=decision_identity(variant)
         if identity in seen:continue
-        seen.add(identity);result.append({'candidate_id':identity,'plan_hash':digest(variant),'plan':variant,'decisions':{**decisions,'storage':storage},'feasibility':'STATIC_PASS_REQUIRES_EXECUTION_AND_BUDGET'})
+        seen.add(identity);result.append({'candidate_id':identity,'plan_hash':digest(variant),'plan':variant,'decisions':{**decisions,'storage':storage,'sharing':sharing},'feasibility':'STATIC_PASS_REQUIRES_EXECUTION_AND_BUDGET'})
         if len(result)==max_candidates:break
     if len(result)<8:raise ValueError('INSUFFICIENT_DISTINCT_EXECUTABLE_GRAMMAR')
     return {'profile':'FULL001_REFERENCE_GRAMMAR_1','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),

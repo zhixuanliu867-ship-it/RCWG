@@ -27,7 +27,7 @@ class CandidateRuntime(unittest.TestCase):
                 directory=root/f'c{index}';directory.mkdir();report=FullCompiler().compile(built['task'],candidate['plan'])
                 self.assertEqual(report['status'],'IR_VALIDATED');journal=Journal(directory/'events.jsonl',f'candidate-{index}')
                 store=ArtifactStore(directory/'artifacts',f'candidate-{index}',journal);backend=Backend(self.native,store,built['task'])
-                external={alias:store.register(catalog.resolve(meta['source_id']),meta['type'],'source:'+alias) for alias,meta in report['typed_graph']['input_bindings'].items()}
+                external={alias:store.register(catalog.resolve(meta['source_id']) if meta['type']['kind']=='DatasetRef' else catalog.resolve(meta['source_id']).value(),meta['type'],'source:'+alias) for alias,meta in report['typed_graph']['input_bindings'].items()}
                 try:
                     scheduler=Scheduler(report,built['task'],external,backend,journal);actual=asyncio.run(asyncio.wait_for(scheduler.run(),20))
                     verified=check_output(actual,built['recipe']['expected'],built['recipe'])

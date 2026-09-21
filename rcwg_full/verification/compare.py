@@ -87,7 +87,10 @@ def check_output(actual,expected,contract):
         if kind=='set':passed=set_equal(actual,expected)
         elif kind=='bag':passed=bag_equal(actual,expected,**tolerance)
         elif kind in {'ordered','record','scalar'}:passed=equivalent(actual,expected,**tolerance)
-        elif kind=='graph':passed=actual.get('revision')==expected.get('revision') and actual.get('domain')==expected.get('domain') and bag_equal(actual['nodes'],expected['nodes'],**tolerance) and bag_equal(actual['edges'],expected['edges'],**tolerance)
+        elif kind=='graph':passed=actual.get('revision')==expected.get('revision') and actual.get('domain')==expected.get('domain') and equivalent(actual.get('directed'),expected.get('directed')) and bag_equal(actual['nodes'],expected['nodes'],**tolerance) and bag_equal(actual['edges'],expected['edges'],**tolerance)
+        elif kind in {'paths','enriched_paths','graph_record','query_edges'}:
+            from .graph_oracle import check_graph_output
+            passed=check_graph_output(actual,expected,kind)
         else:return {'status':'UNKNOWN','reason':'VERIFIER_CONTRACT_UNSUPPORTED'}
     except RecursionError:return {'status':'UNKNOWN','reason':'VERIFIER_MATCHING_CAPACITY'}
     except (ValueError,TypeError,KeyError):passed=False

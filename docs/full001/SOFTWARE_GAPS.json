@@ -1,12 +1,12 @@
 {
   "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
   "remaining_work": [
-    "F1 240 instances passed; verify F2 bridge fix and implement F3-F6 actual TaskBuilders plus formal candidate capacities",
-    "Bounded List state implemented and runtime tested; remaining Graph/Path/Document representation closure and catalog/schema supplement",
+    "F1-F3 720 actual tiny instances and 288 candidate executions passed; implement F4-F6 and formal candidate capacities",
+    "Graph and Path explicit representation bridges implemented; remaining document representations and catalog/schema binding",
     "Remaining native branch coverage (scan index/BM25/date-time/project nested types) and genuine pipeline resource accounting",
     "Complete document adapters including worker replay wiring, real upstream provenance and human review tools",
     "Independent per-template oracle and semantic gold recipes; real sharing/copy and alternate implementation equivalence coverage",
-    "Reference grammar and NNLS/confirmation golden tests implemented; execute variants, extend graph/text candidates and bind real development measurements",
+    "Reference candidates executed for F1-F3; extend text/control candidates and bind real development measurements",
     "Paid transport/auth/budget adapters using existing ledger; no paid authorization inferred",
     "Campaign diagnostics/lock/seal/unseal, complete analysis/rebuild and nine read-only views (fixed-denominator/statistics golden core implemented)",
     "End-to-end unified CLI and full acceptance matrix; Windows baseline evidence and final deliverable/PR"

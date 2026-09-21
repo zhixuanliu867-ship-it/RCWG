@@ -42,6 +42,9 @@ class Scheduler:
                 if value.release_status!='LIVE':del self.retirement_candidates[aid];continue
                 stream=value.value if isinstance(value.value,BoundedStream) else None
                 if aid in protected or aid in captured or store.leases[aid] or (stream is not None and (not stream.closed or stream.queue)):continue
+                # Sealed objects own the backing file. Retire their dependent
+                # views first; explicit release still rejects live aliases.
+                if value.path is not None and any(store.buffers[b]['artifacts']-{aid} or store.buffers[b]['leases'] for b in value.buffer_ids):continue
                 store.drop_view(value);del self.retirement_candidates[aid];changed=True
 
     def event(self,kind,payload,instance=None,status='OBSERVED'):

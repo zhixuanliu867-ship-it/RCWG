@@ -138,10 +138,14 @@ def build(template,base,condition,directory):
     elif template.startswith('F2-'):
         from .relational_f2 import f2
         definition=f2(template,base,condition);oracle=f2_expected
+    elif template.startswith('F3-'):
+        from .graph_templates import f3
+        from rcwg_full.verification.graph_oracle import f3_expected
+        definition=f3(template,base,condition);oracle=None
     else:raise ValueError('TEMPLATE_BUILDER_NOT_YET_REGISTERED')
-    values={'dataset:'+alias:pa.Table.from_pylist(rows,schema=arrow_schema({'kind':'Table','schema':definition['schemas'][alias]})) for alias,rows in definition['rows'].items()}
+    values={'dataset:'+alias:(pa.Table.from_pylist(rows,schema=arrow_schema({'kind':'Table','schema':definition['schemas'][alias]})) if alias in definition['schemas'] else deepcopy(rows)) for alias,rows in definition['rows'].items()}
     task,manifest,path=prepare(definition['task'],values,directory,layout='fragmented' if condition=='C3' else 'contiguous')
-    expected=oracle(int(template[-2:]),definition['rows'])
+    expected=oracle(int(template[-2:]),definition['rows']) if oracle else f3_expected(definition['expected_args'])
     report=FullCompiler().compile(task,definition['plan'])
     proof={'status':report['status'],'profile':report['profile'],'task_hash':digest(task),'plan_hash':digest(definition['plan']),
            'operators':[n['operator'] for n in definition['plan']['nodes']],'diagnostics':report['diagnostics']}
@@ -183,3 +187,16 @@ def f2_09(base,condition,directory):return build('F2-09',base,condition,director
 def f2_10(base,condition,directory):return build('F2-10',base,condition,directory)
 def f2_11(base,condition,directory):return build('F2-11',base,condition,directory)
 def f2_12(base,condition,directory):return build('F2-12',base,condition,directory)
+
+def f3_01(base,condition,directory):return build('F3-01',base,condition,directory)
+def f3_02(base,condition,directory):return build('F3-02',base,condition,directory)
+def f3_03(base,condition,directory):return build('F3-03',base,condition,directory)
+def f3_04(base,condition,directory):return build('F3-04',base,condition,directory)
+def f3_05(base,condition,directory):return build('F3-05',base,condition,directory)
+def f3_06(base,condition,directory):return build('F3-06',base,condition,directory)
+def f3_07(base,condition,directory):return build('F3-07',base,condition,directory)
+def f3_08(base,condition,directory):return build('F3-08',base,condition,directory)
+def f3_09(base,condition,directory):return build('F3-09',base,condition,directory)
+def f3_10(base,condition,directory):return build('F3-10',base,condition,directory)
+def f3_11(base,condition,directory):return build('F3-11',base,condition,directory)
+def f3_12(base,condition,directory):return build('F3-12',base,condition,directory)

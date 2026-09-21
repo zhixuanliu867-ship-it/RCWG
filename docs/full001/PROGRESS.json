@@ -62,7 +62,7 @@
     }
   },
   "next_actions": [
-    "Finish and verify F2-F6 actual TaskBuilders with independent per-template oracles",
+    "Implement F4-F6 actual TaskBuilders and independent oracles, genuine streaming aggregation, and formal candidate capacity profiles",
     "Validate candidate variants and independent confirmation, close document/native contracts",
     "Complete authorization/control, campaign sealing, CLI and offline analysis views",
     "Keep external host/data/service/formal gates distinct and closed"
@@ -78,17 +78,17 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T12:22:36.292269+00:00",
-  "checkpoint_commit": "33e1af322eebcb73e39f2e4894ba0591725ec2c7",
+  "updated_utc": "2026-09-21T12:51:27.954098+00:00",
+  "checkpoint_commit": "c273c542a5d42b29254847e4a8eb4a6866db2f33",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35593978630,
-    "ci_build_status": "PASS",
-    "ci_legacy_api_run": 35593978636,
+    "ci_build_run": 35599264121,
+    "ci_build_status": "FAIL_24_CANDIDATE_RETIREMENT_ERRORS_FIXED_PENDING_INTEGRATION",
+    "ci_legacy_api_run": 35599264059,
     "ci_legacy_api_status": "PASS",
-    "ci_full001_tests": 51,
+    "ci_full001_tests": 803,
     "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
@@ -216,6 +216,37 @@
       "errors": 20,
       "report": "runs/full001-f2-wsl-001/TEST_RESULTS.json",
       "failure": "F2-12 Table-to-materialize bridge absent; explicit stream_read inserted, pending rerun"
+    },
+    {
+      "scope": "immutable_integrated_c273c54",
+      "passed": 779,
+      "errors": 24,
+      "report": "runs/full001-integrated-linux-c273c54/TEST_RESULTS.json",
+      "failure": "Automatic retirement attempted sealed owners with live child views; historical failure retained"
+    },
+    {
+      "scope": "F1_F2_candidate_real_native_variants",
+      "passed": 24,
+      "actual_plan_executions": 192,
+      "report": "runs/full001-candidate-runtime-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F3_all_tiny_templates_and_conditions",
+      "passed": 242,
+      "template_instances": 240,
+      "report": "runs/full001-f3-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F3_candidate_real_native_variants",
+      "passed": 12,
+      "actual_plan_executions": 96,
+      "report": "runs/full001-candidate-graph-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F1_F2_F3_physical_C2_C3_invariants",
+      "passed_groups": 180,
+      "actual_instances": 720,
+      "report": "runs/full001-condition-audit-001/CONDITION_AUDIT.json"
     }
   ]
 }

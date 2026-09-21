@@ -26,3 +26,7 @@ The new profile uses versioned copies of the baseline static contracts and the o
 F1-08 uses explicit scalar ID-set union, a public canonical records lookup by semi-join, and source-ordinal deduplication before ranking. It does not equate arbitrary entity or document domains. F2-12 explicitly stream_reads the joined Table before materialization, preserving the registered Stream-to-materialize contract and metering that bridge.
 
 Reference candidates vary actual algorithm choices and explicit stream/memory/disk nodes; alpha-renaming is deduplicated. Screening times do not enter T_ref. Formal cost coefficients remain untrained. Statistical hypotheses are a candidate version with 18 Holm-family tests, never a declaration of formal freeze.
+
+## Graph closure and automatic retirement
+
+F3 supplies graph-domain-preserving projections and explicit PathSet node/edge flattening with target and ordinal. Bellman-Ford and edge-scan oracles are independent of the execution kernels. C2/C3 audits reread the physical files for all F1-F3 siblings. Automatic retirement defers sealed owners while child views or leases exist; explicit release still rejects live aliases. The failed immutable 803-test run is retained, and all 24 affected candidate cases have separate successful rerun evidence. Formal gates remain closed.
