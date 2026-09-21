@@ -25,3 +25,5 @@ gold/
 !rcwg_full/data/**
 *.so
 *.pyd
+__pycache__/
+*.pyc

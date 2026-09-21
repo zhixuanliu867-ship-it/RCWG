@@ -77,5 +77,16 @@
       "status": "BLOCKED_NOT_FROZEN",
       "rule": "All technical/data/service gates plus versioned campaign protocol required; formal launch and final unseal are explicit operations."
     }
-  ]
+  ],
+  "publication_authorization": {
+    "scope": "public source, tests, configuration and lock only",
+    "branch": "rcwg/full-001",
+    "base": "rcwg/native-001-n4",
+    "push": true,
+    "offline_ci": true,
+    "draft_pr": true,
+    "merge": false,
+    "force_push": false,
+    "source": "direct owner response in current task"
+  }
 }

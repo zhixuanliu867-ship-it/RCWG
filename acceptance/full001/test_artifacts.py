@@ -5,12 +5,13 @@ import unittest
 from unittest.mock import patch
 from rcwg_full.runtime.artifacts import ArtifactStore
 from rcwg_full.runtime.events import Journal,verify_journal
+from support import EvidenceDirectory
 
 
 class Artifacts(unittest.TestCase):
     def setUp(self):
         import pyarrow as pa
-        self.pa=pa;self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
+        self.pa=pa;self.tmp=EvidenceDirectory(self.id());self.root=Path(self.tmp.name)
         self.journal=Journal(self.root/'events.jsonl','test-run')
         self.store=ArtifactStore(self.root/'artifacts','test-run',self.journal)
         self.table=pa.table({'id':[1,2,3],'text':['a','中',None]})

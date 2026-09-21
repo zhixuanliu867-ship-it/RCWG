@@ -22,13 +22,21 @@ class Result(unittest.TextTestResult):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--pattern',default='test_*.py')
     p.add_argument('--native-build',type=Path)
+    p.add_argument('--suite-root',type=Path,default=Path(__file__).parent)
     a=p.parse_args()
     if a.native_build:os.environ['RCWG_FULL_BUILD']=str(a.native_build.absolute())
-    out=exclusive_directory(a.output);sources=source_hashes()
-    suite=unittest.defaultTestLoader.discover(str(Path(__file__).parent),pattern=a.pattern)
+    out=exclusive_directory(a.output);os.environ['RCWG_FULL_TEST_EVIDENCE']=str((out/'evidence').absolute());sources=source_hashes()
+    suite=unittest.defaultTestLoader.discover(str(a.suite_root),pattern=a.pattern)
+    def flatten(s):
+        for test in s:
+            if isinstance(test,unittest.TestSuite):yield from flatten(test)
+            else:yield test.id()
+    expected=list(flatten(suite))
+    if len(expected)!=len(set(expected)):raise RuntimeError('DUPLICATE_TEST_ID')
+    write(out/'EXPECTED_TESTS.json',{'test_ids':expected,'source':sources,'frozen_before_execution':True})
     with (out/'unittest.log').open('x',encoding='utf-8') as stream:
         result=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=Result).run(suite)
-    passed=result.wasSuccessful() and not result.skipped and len(result.outcomes)==result.testsRun and sources==source_hashes()
+    passed=result.wasSuccessful() and not result.skipped and len(result.outcomes)==result.testsRun and set(expected)=={t['test_id'] for t in result.outcomes} and sources==source_hashes()
     report={'scope':'TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE','status':'PASS' if passed else 'FAIL',
         'python':platform.python_version(),'platform':platform.platform(),'executable':sys.executable,
         'command':sys.argv,'source':sources,'tests':result.outcomes,'tests_run':result.testsRun,

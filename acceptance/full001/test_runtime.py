@@ -12,6 +12,7 @@ from rcwg_full.runtime.artifacts import ArtifactStore
 from rcwg_full.runtime.events import Journal,verify_journal
 from rcwg_full.runtime.backend import Backend
 from rcwg_full.runtime.scheduler import Scheduler,ExecutionFault
+from support import EvidenceDirectory
 
 
 def node(name,op,impl,inputs,params,outputs,**extra):
@@ -22,7 +23,7 @@ class Runtime(unittest.IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls):cls.native=Native(os.environ['RCWG_FULL_BUILD'])
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory();self.directory=Path(self.tmp.name)
+        self.tmp=EvidenceDirectory(self.id());self.directory=Path(self.tmp.name)
         self.journal=Journal(self.directory/'events.jsonl','runtime-test');self.store=ArtifactStore(self.directory/'artifacts','runtime-test',self.journal)
         self.task=json.loads((ROOT/'specs/reference_v1_0/examples/task_input.json').read_text('utf-8'))
         self.task['resources'].update(cpu_slots=2,worker_memory_limit_bytes=64*1024*1024,wall_timeout_s=10)

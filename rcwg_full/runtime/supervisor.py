@@ -1,0 +1,112 @@
+"""Externally bounded FULL001 worker, reusing native process-tree and N4 driver APIs."""
+from pathlib import Path
+import json
+import os
+import subprocess
+import sys
+import time
+import uuid
+from rcwg_full.evidence import ROOT,exclusive_directory,read,write,sha,canonical,source_hashes
+from rcwg_full.runtime.catalog import DataCatalog
+from rcwg_full.runtime.events import verify_journal
+from rcwg_native.supervisor import stop_group,live_group
+from rcwg_native.metrology import unavailable
+from rcwg_spec.public_task import validate_public_task
+from rcwg_spec.binding import build_context,freeze_expected,seal_events,make_sidecar,validate_evidence,EVENT_TYPES
+
+
+def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1'):
+    checked=validate_public_task(task);manifest=json.loads(read(Path(build)/'BUILD.json'));source=source_hashes()
+    return build_context(task,condition_id=condition_id,data_manifest=catalog.bindings(),
+        runtime={'revision':'full001-runtime-1','mode':mode,'data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024},
+        cache_policy={'revision':'full001-cache-1','cross_run':False},verifier={'revision':verifier_identity},
+        metric_spec={'revision':'full001-metric-1'},measurement_profile={'revision':'full001-engineering-uncalibrated-1','event_source_id':'full001-worker','clock_id':'monotonic_ns','host_calibrated':False},
+        operator_registry={'revision':'full001-operators-1','sha256':sha(read(ROOT/'specs/full001/operators.json'))},
+        source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
+
+
+def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None):
+    if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
+    out=exclusive_directory(output);ident=driver.ident if driver else 'r'+uuid.uuid4().hex;states=[];cleanup=[]
+    def transition(state,**detail):
+        record={'sequence':len(states),'state':state,'monotonic_ns':time.monotonic_ns(),**detail};states.append(record);write(out/('lifecycle-%03d.json'%len(states)),record)
+    transition('DECLARED');catalog=DataCatalog(data_manifest)
+    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode)
+    compiler_source=b''.join(read(p) for p in sorted((ROOT/'rcwg_full/compiler').glob('*.py')))
+    expected=freeze_expected(context,[{'record_id':ident,'record_role':'MODEL','plan':plan,'compiler_source':compiler_source,'generation_id':ident,'repeat_id':'r1','repeat_role':'PRIMARY_REPEAT'}])
+    write(out/'expected.json',expected.as_dict())
+    request={'run_id':ident,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance'}
+    write(out/'request.json',request);worker=out/'worker';worker.mkdir()
+    report={'run_id':ident,'mode':mode,'expected_manifest_sha256':expected.manifest_hash,'terminal_status':'UNKNOWN','execution_started':False,
+        'failure':None,'verification':{'status':'UNKNOWN','reason':'NOT_EXECUTED'},'measurements':unavailable(),'formal_ready':False,'paid_calls':0}
+    timeout_s=task['resources']['wall_timeout_s'] if timeout_s is None else timeout_s
+    if not 0<float(timeout_s)<=3600:raise ValueError('WALL_TIMEOUT_RANGE')
+    proc=None;entry_fd=None;reason=None;handles=[];worker_report=None
+    if driver:
+        sequence=[0]
+        def persist(stage,value):
+            sequence[0]+=1;write(out/('counter-%05d.json'%sequence[0]),{'stage':stage,'evidence':value})
+        driver.persist=persist
+    try:
+        transition('PREPARING')
+        if driver:
+            if not driver.fs.is_real or driver.ident!=ident:raise ValueError('CGROUP_DRIVER_IDENTITY')
+            driver.prepare();entry_fd=driver.fs.child_entry_fd(ident)
+        def enter_group():
+            os.write(entry_fd,str(os.getpid()).encode());os.close(entry_fd);os.sched_setaffinity(0,driver.limits.affinity)
+        for name in ['stdout.log','stderr.log']:handles.append((out/name).open('xb'))
+        env={k:v for k,v in os.environ.items() if k in {'PATH','SYSTEMROOT','WINDIR','TEMP','TMP'}}
+        env.update(LANG='C.UTF-8',LC_ALL='C.UTF-8',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1',ARROW_NUM_THREADS='1',PYTHONUTF8='1')
+        command=[sys.executable,'-m','rcwg_full.runtime.worker','--request',str((out/'request.json').absolute()),'--build',str(Path(build).absolute()),'--output',str(worker.absolute())]
+        proc=subprocess.Popen(command,cwd=ROOT,stdout=handles[0],stderr=handles[1],env=env,start_new_session=True,close_fds=True,
+            pass_fds=() if entry_fd is None else (entry_fd,),preexec_fn=enter_group if driver else None)
+        report['execution_started']=True;transition('RUNNING',pid=proc.pid);deadline=time.monotonic()+float(timeout_s);next_sample=time.monotonic()
+        while proc.poll() is None:
+            if cancel and cancel():reason='OWNER_CANCELLED';break
+            if time.monotonic()>=deadline:reason='WALL_TIMEOUT';break
+            if driver and time.monotonic()>=next_sample:driver.sample();next_sample+=.1
+            time.sleep(.005)
+        transition('STOPPING',cause=reason)
+        if driver:driver.kill()
+        report['process_group_final']=stop_group(proc);transition('DRAINING')
+        for handle in handles:handle.close()
+        handles=[]
+        if reason:
+            report['terminal_status']='TIMEOUT' if reason=='WALL_TIMEOUT' else 'UNKNOWN';report['failure']={'code':reason,'attribution':'deadline' if reason=='WALL_TIMEOUT' else 'owner'}
+        else:
+            worker_report=json.loads(read(worker/'worker-report.json'))
+            if worker_report['run_id']!=ident or worker_report['source']!=source_hashes():raise ValueError('WORKER_IDENTITY_OR_SOURCE')
+            events=verify_journal(worker/'events.jsonl',run_id=ident)
+            if events[0]['event_kind']!='run_started' or events[-1]['event_kind']!='run_finished':raise ValueError('RUN_BOUNDARIES')
+            if (proc.returncode==0)!=(worker_report['terminal_status']=='COMPLETED') or events[-1]['status']!=worker_report['terminal_status']:raise ValueError('WORKER_EXIT_STATUS')
+            report.update(terminal_status=worker_report['terminal_status'],failure=worker_report['failure'],worker=worker_report)
+    except BaseException as exc:
+        report.update(terminal_status='INFRA_FAILURE',failure={'code':type(exc).__name__,'detail':str(exc),'attribution':'facility'})
+    finally:
+        for handle in handles:handle.close()
+        if entry_fd is not None:os.close(entry_fd)
+        if proc:
+            try:report['process_group_final']=stop_group(proc)
+            except Exception as exc:cleanup.append({'stage':'PROCESS_TREE','cause':str(exc)})
+        transition('MEASURING')
+        if driver:
+            try:report['measurements']=driver.finish()
+            except Exception as exc:
+                report['measurements']=getattr(exc,'report',None) or getattr(exc,'partial_report',None) or driver.last_report or unavailable()
+                cleanup.append({'stage':'COUNTERS_OR_CLEANUP','cause':str(exc)})
+        report['cleanup_failures']=cleanup
+    # Independent verifier is controller-side, after worker exit, and never sent to worker.
+    if report['terminal_status']=='COMPLETED' and verify is not None:
+        begin=time.monotonic_ns()
+        try:report['verification']=verify(json.loads(read(worker/'result.json')),out)
+        except Exception as exc:report['verification']={'status':'UNKNOWN','reason':'VERIFIER_'+type(exc).__name__}
+        report['verifier_wall_ns']=time.monotonic_ns()-begin
+    if worker_report is not None:
+        observed=verify_journal(worker/'events.jsonl',run_id=ident)
+        projection=[{'event':e['event_kind'],'monotonic_ns':e['monotonic_ns'],'status':e['status'],'payload':{**e['payload'],'full_event_hash':e['event_hash']}} for e in observed if e['event_kind'] in EVENT_TYPES]
+        if projection[-1]['status']==report['terminal_status']:
+            events=seal_events(expected,ident,projection);sidecar=make_sidecar(expected,ident,events,terminal_status=report['terminal_status'],verification_status=report['verification']['status'])
+            report['binding_validation']=validate_evidence(expected,[sidecar],{ident:events});write(out/'bound-events.json',events);write(out/'sidecar.json',sidecar)
+    report['lifecycle']=states;write(out/'report.json',report)
+    inventory={p.relative_to(out).as_posix():sha(read(p)) for p in out.rglob('*') if p.is_file()}
+    write(out/'seal.json',{'run_id':ident,'files':inventory,'status':'SEALED','formal_ready':False});return report

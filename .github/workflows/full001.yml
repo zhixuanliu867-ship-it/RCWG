@@ -7,6 +7,34 @@ on:
 permissions:
   contents: read
 jobs:
+  inherited-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Rebuild and execute untouched N0-N3 and N4 offline gates
+        run: |
+          python scripts/build_native001.py --output runs/inherited-native-build
+          python scripts/accept_native001.py --build runs/inherited-native-build --output runs/inherited-native-tests
+          python scripts/build_native001_n4.py --output runs/inherited-n4-build
+          python scripts/accept_native001_n4.py --build runs/inherited-n4-build --output runs/inherited-n4-tests
+      - name: Preserve inherited regression identity and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full001-inherited-native-evidence
+          retention-days: 14
+          path: |
+            runs/inherited-native-build/
+            runs/inherited-native-tests/
+            runs/inherited-n4-build/
+            runs/inherited-n4-tests/
   full001:
     runs-on: ubuntu-24.04
     timeout-minutes: 30

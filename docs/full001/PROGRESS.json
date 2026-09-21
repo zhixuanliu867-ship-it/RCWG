@@ -33,7 +33,7 @@
       "evidence": []
     },
     "M04": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M05": {
@@ -62,10 +62,10 @@
     }
   },
   "next_actions": [
-    "Build and independently retest exact Int64 division and bounded multi-pass Arrow payload external sort",
-    "Complete runtime scheduler and all dispatch adapters",
-    "Complete 72 distinct template builders and independent verification, reference search, analysis and CLI",
-    "Rerun inherited exact test IDs, integrate acceptance, preserve formal gate closed"
+    "Run all current FULL001 tests and untouched inherited 936/115/82 test identities",
+    "Complete lifecycle retirement, compiler representations, 72 template builders and independent verifier",
+    "Integrate all text/native dispatches, reference candidate search, campaign authorization, analysis and nine views",
+    "Keep N4 original proposal approved=false and formal gate closed; collect external approval prerequisites only"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -78,16 +78,18 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T10:48:18.237081+00:00",
-  "checkpoint_commit": "3dec77ea19b043dcce23e2b6b0eafcdbb4f82bed",
+  "updated_utc": "2026-09-21T11:23:48.755566+00:00",
+  "checkpoint_commit": "86c89f175c23e233f1bf5366864df642da4bdd47",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
     "draft_pr_created": false,
-    "ci_build_run": 35589365986,
+    "ci_build_run": 35592821248,
     "ci_build_status": "PASS",
     "ci_legacy_api_run": 35589365820,
-    "ci_legacy_api_status": "PASS"
+    "ci_legacy_api_status": "PASS",
+    "ci_full001_tests": 39,
+    "git_transport": "Windows Git with existing per-command system proxy"
   },
   "verified_scopes": [
     {
@@ -115,6 +117,30 @@
       "failed": 1,
       "report": "runs/full001-native-wsl-001/TEST_RESULTS.json",
       "failure": "Int64 division double rounding; exact integer rounding fix awaiting new build"
+    },
+    {
+      "scope": "native_and_runtime_ci",
+      "passed": 39,
+      "report": "runs/full001-ci-86c89f1/full001-tests/TEST_RESULTS.json",
+      "run_id": 35592821248
+    },
+    {
+      "scope": "document_unicode_provenance_replay",
+      "platform": "Windows",
+      "passed": 8,
+      "report": "runs/full001-documents-win-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "worker_supervision_identity_and_data",
+      "platform": "WSL",
+      "passed": 4,
+      "report": "runs/full001-supervision-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "all_current_full001_modules",
+      "platform": "WSL",
+      "passed": 51,
+      "report": "runs/full001-integrated-wsl-001/TEST_RESULTS.json"
     }
   ]
 }
