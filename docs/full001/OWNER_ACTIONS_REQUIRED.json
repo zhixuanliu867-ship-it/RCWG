@@ -1,0 +1,81 @@
+{
+  "spec_version": "RCWG-FULL-001/1.0.0",
+  "is_authorization": false,
+  "approved": false,
+  "baseline_commit": "2824ee8e7678a39b3bff2ac701ffececd50d1e81",
+  "new_paid_model_requests_authorized": 0,
+  "new_count_requests_authorized": 0,
+  "new_cloud_mutations_authorized": 0,
+  "new_iam_mutations_authorized": 0,
+  "new_system_installs_authorized": 0,
+  "new_real_cgroup_writes_authorized": 0,
+  "new_calibration_stress_runs_authorized": 0,
+  "merge_authorized": false,
+  "actions": [
+    {
+      "id": "OWNER-N4",
+      "kind": "host",
+      "status": "AWAITING_EXACT_RECEIPT",
+      "proposal_file": "N4_OWNER_CHANGE_PLAN.json",
+      "reported_proposal_sha256": "b8061b9744d2ecd2294699a2353e1fb98b76928502976ac090dbbf973d65ea3e",
+      "proposal_inspected_by_spec_author": false,
+      "slots": {
+        "calibration": 230,
+        "warmup": 10,
+        "resource": 648,
+        "total": 888
+      },
+      "rule": "Keep original approved=false and all slots. Receipt must bind exact actual bytes and current applicability; no reuse of superseded boot plan."
+    },
+    {
+      "id": "OWNER-FULL-HOST",
+      "kind": "host",
+      "status": "PLAN_TO_BE_GENERATED",
+      "required": [
+        "final_source_closure",
+        "binary_and_dependency_hashes",
+        "host_boot_and_kernel",
+        "resource_and_thread_limits",
+        "finite_commands_and_loads",
+        "expiry",
+        "stop_cleanup_reconcile"
+      ],
+      "rule": "Separate FULL001 host proposal. N4 old-binary calibration is not blanket authorization/certification for new runtime."
+    },
+    {
+      "id": "OWNER-DEPENDENCIES",
+      "kind": "installation",
+      "status": "PLAN_TO_BE_GENERATED",
+      "rule": "Prefer already available isolated/CI toolchain. System installation or host change requires exact approved dependency/change plan; repository-local source/lock preparation can proceed."
+    },
+    {
+      "id": "OWNER-SERVICES",
+      "kind": "paid_or_cloud",
+      "status": "PLAN_TO_BE_GENERATED",
+      "required": [
+        "G0-G5_and_E0-E1_actual_bindings",
+        "provider_capabilities",
+        "count_and_generation_and_semantic_request_caps",
+        "concurrency",
+        "monetary_envelope",
+        "valid_time",
+        "region",
+        "data_retention",
+        "scope_hash"
+      ],
+      "rule": "Old pilot receipts and USD100–200 planning envelope do not authorize this campaign."
+    },
+    {
+      "id": "OWNER-DATA",
+      "kind": "human_and_licensing",
+      "status": "REVIEW_TOOLING_REQUIRED",
+      "rule": "Source licenses, derivative labels and independent annotator/adjudicator records must be real. Codex may prepare and validate the packages, not fabricate approval."
+    },
+    {
+      "id": "OWNER-FREEZE",
+      "kind": "scientific_release",
+      "status": "BLOCKED_NOT_FROZEN",
+      "rule": "All technical/data/service gates plus versioned campaign protocol required; formal launch and final unseal are explicit operations."
+    }
+  ]
+}

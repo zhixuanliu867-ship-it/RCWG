@@ -1,0 +1,1514 @@
+{
+  "spec_hash": "e06d3f0e9e7cef1b47a46aa9b86793068bf316d834acd6a6a4bd8438d122103b",
+  "requirements": [
+    {
+      "requirement_id": "M00-01",
+      "module": "M00",
+      "module_title": "基线、版本与集成交付",
+      "requirement": "精确基线与源闭包",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M00-02",
+      "module": "M00",
+      "module_title": "基线、版本与集成交付",
+      "requirement": "保护原件与旧测试字节",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M00-03",
+      "module": "M00",
+      "module_title": "基线、版本与集成交付",
+      "requirement": "分支/stacked base与工作树隔离",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M00-04",
+      "module": "M00",
+      "module_title": "基线、版本与集成交付",
+      "requirement": "统一续跑进度文件",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M00-05",
+      "module": "M00",
+      "module_title": "基线、版本与集成交付",
+      "requirement": "公私包与干净应用证明",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-01",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "32/56原契约映射",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-02",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "FULL001增补schema与旧profile隔离",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-03",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "所有72模板表达能力证明",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-04",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "参数绑定与能力句柄类型检查",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-05",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "原始/规范化计划与真实dispatch绑定",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M01-06",
+      "module": "M01",
+      "module_title": "协议闭包与接口",
+      "requirement": "合法低效计划原样执行",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-01",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "DAG就绪顺序与真实并发",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-02",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "map全局配额与有序输出",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-03",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "branch选择与unknown",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-04",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "loop初始/终止/上限",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-05",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "累计4096实例与递归48逻辑节点",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-06",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "有限队列、背压、取消唤醒",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-07",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "进程组与N4适配分离",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M02-08",
+      "module": "M02",
+      "module_title": "统一执行器",
+      "requirement": "失败/drain/断写后证据封存",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-01",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "56分支均真实dispatch",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-02",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "全实现差分与边界测试",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-03",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "物理语言/flags/布局一致",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-04",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "索引/外排/复制为真实动作",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-05",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "精确与候选语义区分",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-06",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "UTF8/Int64/Nullable语义一致",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M03-07",
+      "module": "M03",
+      "module_title": "算子与数据表示",
+      "requirement": "依赖锁和真实二进制构建",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-01",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "72模板各5×4微型建设与执行",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-02",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "正式规模builder和容量清单",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-03",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "公开/私有数据隔离",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-04",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "QASPER适配与问题绑定",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-05",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "SciFact适配和受控图来源",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-06",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "C0–C3单轴与版本不变量",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-07",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "来源簇防泄漏和许可状态",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M04-08",
+      "module": "M04",
+      "module_title": "数据与标签",
+      "requirement": "人工标注导入、分歧和裁定工具",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-01",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "唯一buffer/副本/视图身份",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-02",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "最后消费者/缓存租约/release",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-03",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "payload/read/copy/wire/block分账",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-04",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "事件序列/原始与final计数保全",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-05",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "性能/诊断模式与scope",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-06",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "N4原888槽与新运行时适用性",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-07",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "缺测/未知/OOM归因",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M05-08",
+      "module": "M05",
+      "module_title": "Artifact与计量",
+      "requirement": "跨进程和服务身份",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-01",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "F1–F4独立gold计算路径",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-02",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "F5–F6字段/证据/硬约束",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-03",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "公开span检查与私有语义区分",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-04",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "至少100错误变异体与100合法等价体",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-05",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "未完成/错误产物/伪hash拒绝",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-06",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "三值预算与设施故障分类",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M06-07",
+      "module": "M06",
+      "module_title": "独立验证器",
+      "requirement": "信息见证集检查点",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-01",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "每条件8–32去重候选定义",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-02",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "R-fixed/R-rule/同信息估计器/R-oracle",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-03",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "筛选与独立确认分离",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-04",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "共享可比上下文和覆盖集合",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-05",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "比参照更快保留rho<1",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M07-06",
+      "module": "M07",
+      "module_title": "参照与基线",
+      "requirement": "外部系统适配层及真实覆盖状态",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-01",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "沿用API001/WIN01/CLOUD001链路",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-02",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "G0–G5/E0/E1绑定schema",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-03",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "P0/P1物理请求及usage分账",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-04",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "零授权下LIVE/count拒绝",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-05",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "replay/live/executor模式严格区分",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-06",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "既有控制API幂等/权限/封存",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M08-07",
+      "module": "M08",
+      "module_title": "模型与控制面",
+      "requirement": "九视图数据与只读报告",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-01",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "精确23040生成和61440主执行槽",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-02",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "生成失败保留子槽和分母",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-03",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "E2冻结计划目标重绑定",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-04",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "E3–E8定义与离线可执行适配",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-05",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "幂等认领/崩溃/UNKNOWN请求对账",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-06",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "有限基础设施重试和计时确认",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-07",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "预算预测/预约/余额未知拒绝",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M09-08",
+      "module": "M09",
+      "module_title": "Campaign与诊断",
+      "requirement": "正式冻结与解封双门禁",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-01",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "三级布尔与固定分母识别区间",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-02",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "重复到六族宏平均",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-03",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "同模板成对bootstrap10000次",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-04",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "主比较与Holm族预登记",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-05",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "确认Tref/覆盖/截尾分析",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-06",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "信息保真与资源前沿分开",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-07",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "仅凭封存包离线重建图表",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "M10-08",
+      "module": "M10",
+      "module_title": "分析与发布",
+      "requirement": "无mock/调试/诊断污染正式结果",
+      "required_phase": "SOFTWARE_INTEGRATION",
+      "evidence": [
+        "test_id",
+        "command",
+        "exit_code",
+        "source_sha256",
+        "artifact_sha256",
+        "environment_id"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-01",
+      "module": "EXTERNAL",
+      "requirement": "N4 C01–C10 实机校准及原888槽完整报告",
+      "required_phase": "HOST_CALIBRATION",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-02",
+      "module": "EXTERNAL",
+      "requirement": "FULL001二进制/依赖/计量新配置的适用性与校准",
+      "required_phase": "HOST_CALIBRATION",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-03",
+      "module": "EXTERNAL",
+      "requirement": "正式数据与新增gold人工审核/许可",
+      "required_phase": "DATA_FREEZE",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-04",
+      "module": "EXTERNAL",
+      "requirement": "六G槽与E0/E1真实能力/预算/版本锁",
+      "required_phase": "LIVE_SERVICE",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-05",
+      "module": "EXTERNAL",
+      "requirement": "受控Linux worker与云控制面真实连通/身份",
+      "required_phase": "LIVE_DEPLOYMENT",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-06",
+      "module": "EXTERNAL",
+      "requirement": "候选确认资源、测量覆盖与正式campaign冻结",
+      "required_phase": "FORMAL_FREEZE",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    },
+    {
+      "requirement_id": "EXT-07",
+      "module": "EXTERNAL",
+      "requirement": "全部核心记录封存后显式审计解封",
+      "required_phase": "AUDIT_UNSEAL",
+      "evidence": [
+        "owner_receipt_or_human_review",
+        "exact_scope_hash",
+        "environment_binding",
+        "sealed_actual_results"
+      ],
+      "status": "PENDING",
+      "skip_is_pass": false,
+      "actual_evidence": []
+    }
+  ]
+}

@@ -1,0 +1,1002 @@
+{
+  "spec_version": "RCWG-FULL-001/1.0.0",
+  "baseline_commit": "2824ee8e7678a39b3bff2ac701ffececd50d1e81",
+  "source": "specs/spec001b/operator_contract_worklist.json + explicit FULL001 compatible supplement",
+  "operator_count": 32,
+  "dispatch_count": 56,
+  "operators": [
+    {
+      "operator_id": "scan",
+      "requirement_id": "OP-01",
+      "implementations": [
+        "sequential",
+        "index_range"
+      ],
+      "ports": "source → rows",
+      "parameters": "columns; optional predicate",
+      "semantics": "读取冻结表；顺扫逐行访问；索引范围只走登记索引及残余谓词；索引构建属于独立 preparation 账本。",
+      "mandatory_tests": [
+        "空表",
+        "索引不存在/版本错误",
+        "区间端点",
+        "null",
+        "UTF-8",
+        "实际访问行数"
+      ],
+      "diagnostic_counters": [
+        "rows_scanned",
+        "index_entries_visited",
+        "logical_read_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "filter",
+      "requirement_id": "OP-02",
+      "implementations": [
+        "vectorized",
+        "scalar"
+      ],
+      "ports": "rows → rows",
+      "parameters": "predicate",
+      "semantics": "保持原表示；SQL式三值过滤只保留 true；scalar逐行与vectorized批量路径独立可见；短路顺序保持AST语义。",
+      "mandatory_tests": [
+        "unknown/false区分",
+        "嵌套短路",
+        "除零",
+        "溢出",
+        "合法无匹配"
+      ],
+      "diagnostic_counters": [
+        "rows_in",
+        "rows_out",
+        "predicate_evaluations"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "project",
+      "requirement_id": "OP-03",
+      "implementations": [
+        "column_view",
+        "copy"
+      ],
+      "ports": "rows → rows",
+      "parameters": "columns; FULL001显式投影/封装补充见总规范§5",
+      "semantics": "列视图持有原buffer；copy真正复制选中值；公开图/路径/ID视图转换及Record封装必须显式、保留domain与来源。",
+      "mandatory_tests": [
+        "别名寿命",
+        "copy独立地址",
+        "变宽字符串",
+        "重复列",
+        "跨域ID",
+        "Record字段引用"
+      ],
+      "diagnostic_counters": [
+        "projected_cells",
+        "copy_bytes",
+        "buffer_allocations"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "join",
+      "requirement_id": "OP-04",
+      "implementations": [
+        "hash",
+        "sort_merge",
+        "block_nested"
+      ],
+      "ports": "left,right → rows",
+      "parameters": "keys,join_type,build_side",
+      "semantics": "inner/left/right/full/semi/anti；SQL null不等值；重复键保留乘积；左右前缀；构建侧真实生效；merge所需局部排序完整计量。",
+      "mandatory_tests": [
+        "空侧",
+        "重复乘积",
+        "null",
+        "左右外连接",
+        "semi/anti",
+        "极偏斜",
+        "交换构建侧"
+      ],
+      "diagnostic_counters": [
+        "hash_probes",
+        "key_comparisons",
+        "pairs_considered",
+        "rows_out",
+        "spill_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "aggregate",
+      "requirement_id": "OP-05",
+      "implementations": [
+        "hash_group",
+        "sorted_group"
+      ],
+      "ports": "rows → rows",
+      "parameters": "group_by,aggregates",
+      "semantics": "count/sum/min/max/mean；count(*)与count(field)分开；忽略值null；空全局聚合输出一行；空分组输出零行；整数检查溢出。",
+      "mandatory_tests": [
+        "全null",
+        "空输入",
+        "复合键",
+        "均值分母",
+        "累计溢出",
+        "浮点容差"
+      ],
+      "diagnostic_counters": [
+        "groups",
+        "hash_probes",
+        "key_comparisons",
+        "values_accumulated"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "deduplicate",
+      "requirement_id": "OP-06",
+      "implementations": [
+        "hash",
+        "sort_unique"
+      ],
+      "ports": "rows → rows",
+      "parameters": "keys,keep",
+      "semantics": "按输入遍历ordinal落实first/last；键null成同组；sort_unique为真实排序去重；输出保留顺序依契约和ordinal。",
+      "mandatory_tests": [
+        "first/last不同",
+        "null",
+        "跨batch重复",
+        "稳定顺序"
+      ],
+      "diagnostic_counters": [
+        "rows_in",
+        "distinct_keys",
+        "hash_probes",
+        "key_comparisons"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "sort",
+      "requirement_id": "OP-07",
+      "implementations": [
+        "in_memory",
+        "external_merge"
+      ],
+      "ports": "rows → rows",
+      "parameters": "keys",
+      "semantics": "nullable键显式nulls；相等按稳定ordinal；外排真实有界run生成与归并，落盘格式和fan-in固定；不调用优化器选择算法。",
+      "mandatory_tests": [
+        "多键升降",
+        "null排序",
+        "跨run同分",
+        "磁盘满",
+        "超宽行",
+        "取消清理"
+      ],
+      "diagnostic_counters": [
+        "key_comparisons",
+        "sort_runs",
+        "merge_passes",
+        "spill_read_bytes",
+        "spill_write_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "top_k",
+      "requirement_id": "OP-08",
+      "implementations": [
+        "full_sort",
+        "streaming_heap"
+      ],
+      "ports": "rows → rows",
+      "parameters": "k,keys; FULL001 optional partition_by",
+      "semantics": "k=0合法；full_sort完整排序后截取；heap维护精确k；同分ordinal；分组版本分别满足每组契约，组内两路径保持一致语义。",
+      "mandatory_tests": [
+        "不足k",
+        "k=0",
+        "ties",
+        "null",
+        "k>N",
+        "分组top-k",
+        "流末尾更优项"
+      ],
+      "diagnostic_counters": [
+        "key_comparisons",
+        "heap_pushes",
+        "heap_replacements",
+        "rows_in"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "set_op",
+      "requirement_id": "OP-09",
+      "implementations": [
+        "hash",
+        "sorted_merge"
+      ],
+      "ports": "left,right → items",
+      "parameters": "mode",
+      "semantics": "union/intersection/difference；同域同类型；去重集合语义；确定性序列化不被当作额外业务排序。",
+      "mandatory_tests": [
+        "空集",
+        "重复",
+        "方向性difference",
+        "domain不一致"
+      ],
+      "diagnostic_counters": [
+        "hash_probes",
+        "key_comparisons",
+        "items_out"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "graph_neighbors",
+      "requirement_id": "OP-10",
+      "implementations": [
+        "csr",
+        "indexed_adjacency"
+      ],
+      "ports": "graph,seeds → edges",
+      "parameters": "direction,edge_types",
+      "semantics": "稳定edge_id区分平行边；方向与公开类型过滤；空类型列表=全部；CSR和索引邻接使用冻结的不同物理结构。",
+      "mandatory_tests": [
+        "孤立点",
+        "自环",
+        "平行边",
+        "in/out/both",
+        "缺seed",
+        "domain错误"
+      ],
+      "diagnostic_counters": [
+        "edge_visits",
+        "adjacency_lookups",
+        "edges_out"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "graph_reachability",
+      "requirement_id": "OP-11",
+      "implementations": [
+        "bfs",
+        "dfs"
+      ],
+      "ports": "graph,seeds → nodes",
+      "parameters": "max_hops,direction",
+      "semantics": "包含depth0种子；有界DFS必须在发现更小depth时重新扩展或保留(node,remaining_hops)状态，禁止一次visited漏可达节点。",
+      "mandatory_tests": [
+        "钻石图长路径先到",
+        "环",
+        "max_hops0",
+        "多源",
+        "断连"
+      ],
+      "diagnostic_counters": [
+        "edge_visits",
+        "state_expansions",
+        "nodes_out"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "graph_shortest_path",
+      "requirement_id": "OP-12",
+      "implementations": [
+        "bfs",
+        "dijkstra"
+      ],
+      "ports": "graph,seeds → paths",
+      "parameters": "target,weight_field",
+      "semantics": "BFS等权、Dijkstra非负；返回每目标可达状态/距离/合法路径；相等最短路径默认任一合法最短见证，特定tie规则由任务明示。",
+      "mandatory_tests": [
+        "负权拒绝",
+        "零权环",
+        "断连",
+        "源=目标",
+        "平行边",
+        "多条同长路"
+      ],
+      "diagnostic_counters": [
+        "edge_visits",
+        "relaxations",
+        "heap_operations"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "graph_filter",
+      "requirement_id": "OP-13",
+      "implementations": [
+        "edge_mask",
+        "index_filter"
+      ],
+      "ports": "graph → graph",
+      "parameters": "predicate",
+      "semantics": "GraphView保留原domain/revision；mask和index实际构建/遍历计费；所有后继读取落实视图约束。",
+      "mandatory_tests": [
+        "过滤后方向",
+        "端点保留",
+        "时间半开区间",
+        "索引失配"
+      ],
+      "diagnostic_counters": [
+        "predicate_evaluations",
+        "index_entries_visited",
+        "view_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "graph_subgraph",
+      "requirement_id": "OP-14",
+      "implementations": [
+        "induced",
+        "edge_selected"
+      ],
+      "ports": "graph,nodes OR graph,edges → graph",
+      "parameters": "mode",
+      "semantics": "induced保留选中节点及两端都在集合中的全部合格边；edge_selected仅显式合法边和端点；固定重边、自环与孤立节点规则。",
+      "mandatory_tests": [
+        "诱导多余边",
+        "边选遗漏边",
+        "foreign edge_id",
+        "孤立节点"
+      ],
+      "diagnostic_counters": [
+        "edge_visits",
+        "nodes_out",
+        "edges_out",
+        "materialized_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "read_documents",
+      "requirement_id": "OP-15",
+      "implementations": [
+        "batched",
+        "per_document"
+      ],
+      "ports": "index,ids → documents",
+      "parameters": "fields,batch_size; optional id_field",
+      "semantics": "真实按冻结文档ID读取；per_document不合并成batched；携带query_id和公开问题上下文；严格document revision和显式ID域映射。",
+      "mandatory_tests": [
+        "重复请求ID",
+        "未知ID",
+        "错revision",
+        "批大小边界",
+        "问题—文档错配"
+      ],
+      "diagnostic_counters": [
+        "documents_read",
+        "read_operations",
+        "logical_read_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "text_retrieve",
+      "requirement_id": "OP-16",
+      "implementations": [
+        "bm25",
+        "dense_fixed"
+      ],
+      "ports": "index → ids",
+      "parameters": "query,limit; FULL001 optional offset",
+      "semantics": "BM25固定分词和参数；dense固定真实索引/嵌入器/查询编码身份，默认精确向量点积排序；二者均只给候选，不宣称穷尽答案。",
+      "mandatory_tests": [
+        "limit0",
+        "同分doc_id",
+        "未知索引",
+        "pagination稳定",
+        "query向量维度错误"
+      ],
+      "diagnostic_counters": [
+        "postings_visited",
+        "dot_products",
+        "candidates_scored",
+        "query_embedding_requests"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "split_documents",
+      "requirement_id": "OP-17",
+      "implementations": [
+        "section",
+        "token_window"
+      ],
+      "ports": "documents → chunks",
+      "parameters": "size,overlap",
+      "semantics": "冻结tokenizer；section按源段落边界并对超长段使用已声明窗规则；token窗口实际切分并输出可逆原文codepoint映射。",
+      "mandatory_tests": [
+        "空段",
+        "emoji/组合字符",
+        "边界切证据",
+        "超长token",
+        "overlap"
+      ],
+      "diagnostic_counters": [
+        "chunks_created",
+        "source_codepoints",
+        "reference_tokens"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "gather_context",
+      "requirement_id": "OP-18",
+      "implementations": [
+        "neighbors",
+        "section_header"
+      ],
+      "ports": "chunks → chunks",
+      "parameters": "window",
+      "semantics": "按原文邻接/章节标题补充；piecewise映射表示不连续片段；重复片段去重仅按显式规则；实际读取入账。",
+      "mandatory_tests": [
+        "跨段证据",
+        "重复标题",
+        "文档边界",
+        "不同revision"
+      ],
+      "diagnostic_counters": [
+        "context_segments_added",
+        "logical_read_bytes",
+        "reference_tokens"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "semantic_extract",
+      "requirement_id": "OP-19",
+      "implementations": [
+        "fixed_e0"
+      ],
+      "ports": "documents → evidence",
+      "parameters": "field_schema,context_budget; FULL001 optional question",
+      "semantics": "绑定一个固定E0和模板；输出value/status/source_spans；未知不变成反驳；真实响应归档与严格解析；REPLAY与LIVE分离。",
+      "mandatory_tests": [
+        "拒答",
+        "截断",
+        "多JSON",
+        "缺span",
+        "unknown/refuted",
+        "提示注入",
+        "超上下文"
+      ],
+      "diagnostic_counters": [
+        "semantic_requests",
+        "semantic_examples",
+        "input_reference_tokens",
+        "provider_usage"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "evidence_merge",
+      "requirement_id": "OP-20",
+      "implementations": [
+        "by_entity",
+        "by_document"
+      ],
+      "ports": "evidence → evidence",
+      "parameters": "keys,conflict_policy; optional priority_rule",
+      "semantics": "keep_all/reject/declared_priority；公开priority支持日期版本优先并稳定处理同优先冲突；保留全部源证据和被取代记录。",
+      "mandatory_tests": [
+        "相反极性",
+        "单位冲突",
+        "时间冲突",
+        "同优先级",
+        "缺证据"
+      ],
+      "diagnostic_counters": [
+        "evidence_rows_in",
+        "conflicts",
+        "provenance_links"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "evidence_validate",
+      "requirement_id": "OP-21",
+      "implementations": [
+        "span_check"
+      ],
+      "ports": "evidence,index → evidence",
+      "parameters": "strict",
+      "semantics": "只检原文hash、document_id、半开codepoint范围、quote一致与公开格式；strict失败终止，宽松模式标记无效但不伪装语义通过。",
+      "mandatory_tests": [
+        "越界",
+        "字节当字符",
+        "相同文本错文档",
+        "篡改hash",
+        "合法引用但语义不支持"
+      ],
+      "diagnostic_counters": [
+        "spans_checked",
+        "invalid_spans",
+        "logical_read_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "materialize",
+      "requirement_id": "OP-22",
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "ports": "rows → rows",
+      "parameters": "format",
+      "semantics": "arrow_ipc/parquet；memory使用真实内存编码或登记Arrow结构，disk流式落盘；格式和压缩参数锁定；格式转换成本在worker内。",
+      "mandatory_tests": [
+        "stream耗尽",
+        "实际落盘",
+        "格式往返",
+        "断写",
+        "超额"
+      ],
+      "diagnostic_counters": [
+        "materialized_bytes",
+        "serialization_ns",
+        "spill_write_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "stream_read",
+      "requirement_id": "OP-23",
+      "implementations": [
+        "arrow_batches"
+      ],
+      "ports": "artifact → rows",
+      "parameters": "batch_size",
+      "semantics": "对受管对象实际分批读取；不隐式将全部磁盘对象装入RAM；流消费游标、可重放性和引用寿命明确。",
+      "mandatory_tests": [
+        "跨batch",
+        "零行",
+        "已释放对象",
+        "只读句柄",
+        "异常关闭"
+      ],
+      "diagnostic_counters": [
+        "batches_read",
+        "logical_read_bytes",
+        "serialization_ns"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "broadcast",
+      "requirement_id": "OP-24",
+      "implementations": [
+        "shared_ref",
+        "copy_each"
+      ],
+      "ports": "artifact → consumer-named refs",
+      "parameters": "consumers",
+      "semantics": "每消费者独立输出端口；shared_ref同一backing对象；copy_each每端口真实独立buffer/文件；后续每次读取分别计费。",
+      "mandatory_tests": [
+        "2/4/8扇出",
+        "提前释放",
+        "copy地址",
+        "共享hash不同副本ID"
+      ],
+      "diagnostic_counters": [
+        "reference_payload_bytes",
+        "copy_bytes",
+        "replica_count"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "release",
+      "requirement_id": "OP-25",
+      "implementations": [
+        "explicit"
+      ],
+      "ports": "artifact → done",
+      "parameters": "无",
+      "semantics": "实际消费者、控制捕获、未结束stream和缓存租约都归并至底层buffer；提前释放拒绝，不静默延迟到合理时刻帮助错误计划。",
+      "mandatory_tests": [
+        "跨分支",
+        "loop捕获",
+        "未取stream",
+        "双release",
+        "最后消费者"
+      ],
+      "diagnostic_counters": [
+        "buffers_released",
+        "live_registered_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "cache",
+      "requirement_id": "OP-26",
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "ports": "artifact → artifact",
+      "parameters": "key_fields",
+      "semantics": "只在同run合法复用；key包含内容/schema/domain/revision/编码与指定字段；cache租约直到显式release或run teardown。",
+      "mandatory_tests": [
+        "跨run隔离",
+        "key碰撞",
+        "相同内容不同schema",
+        "cache与alias"
+      ],
+      "diagnostic_counters": [
+        "cache_hits",
+        "cache_misses",
+        "cache_bytes",
+        "logical_read_bytes"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "map",
+      "requirement_id": "OP-27",
+      "implementations": [
+        "bounded_map"
+      ],
+      "ports": "rows → rows",
+      "parameters": "regions.body; resources.max_parallelism",
+      "semantics": "Record→Record；有界输入、有序结果；同级及嵌套共享全局CPU/实例预算；重排缓冲受同一内存/背压限制。",
+      "mandatory_tests": [
+        "完成顺序反转",
+        "嵌套并发",
+        "4096边界",
+        "下游停止",
+        "异常取消"
+      ],
+      "diagnostic_counters": [
+        "instances_admitted",
+        "ready_wait_ns",
+        "backpressure_ns"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "branch",
+      "requirement_id": "OP-28",
+      "implementations": [
+        "predicate_branch"
+      ],
+      "ports": "condition,captures → declared yields",
+      "parameters": "predicate; regions.then/else",
+      "semantics": "只执行选中分支；unknown是明确运行错误；未选择分支记NOT_SELECTED而非执行成功；捕获显式。",
+      "mandatory_tests": [
+        "true/false/unknown",
+        "未选分支有错误",
+        "捕获别名释放"
+      ],
+      "diagnostic_counters": [
+        "branch_selections",
+        "instances_admitted"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "loop",
+      "requirement_id": "OP-29",
+      "implementations": [
+        "bounded_loop"
+      ],
+      "ports": "state,captures → state",
+      "parameters": "condition,max_iterations; regions.body",
+      "semantics": "初始与每次更新后检查继续条件；上限后false可成功、true报LOOP_LIMIT_REACHED；state类型不变、累计实例不退还。",
+      "mandatory_tests": [
+        "零次体执行",
+        "最后一次满足",
+        "恰好超限",
+        "状态错型",
+        "取消"
+      ],
+      "diagnostic_counters": [
+        "loop_iterations",
+        "condition_evaluations",
+        "instances_admitted"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "collect",
+      "requirement_id": "OP-30",
+      "implementations": [
+        "bounded_collect"
+      ],
+      "ports": "rows → rows",
+      "parameters": "limit",
+      "semantics": "保护上限不等于合法截断；第limit+1项存在即LIMIT_EXCEEDED；达到limit且流确实结束才可完成。",
+      "mandatory_tests": [
+        "limit0空/非空",
+        "恰好limit",
+        "多一项",
+        "消费者关闭"
+      ],
+      "diagnostic_counters": [
+        "rows_collected",
+        "batches_read"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "emit",
+      "requirement_id": "OP-31",
+      "implementations": [
+        "json_artifact"
+      ],
+      "ports": "rows → result",
+      "parameters": "output_contract",
+      "semantics": "序列化实际计算结果；严格有限JSON；Result绑定producer/data/schema/raw bytes哈希；排序集合仅按公开输出约定。",
+      "mandatory_tests": [
+        "无结果",
+        "伪造引用",
+        "断写",
+        "NaN",
+        "合法等价集合",
+        "内容变动"
+      ],
+      "diagnostic_counters": [
+        "serialized_bytes",
+        "serialization_ns"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    },
+    {
+      "operator_id": "stats",
+      "requirement_id": "OP-32",
+      "implementations": [
+        "metadata",
+        "sample"
+      ],
+      "ports": "source → stats",
+      "parameters": "fields; sample requires sample_size",
+      "semantics": "仅generation_probe+I2；metadata只读公开已登记统计；sample用冻结抽样算法和种子，真实样本读取进生成探测账本。",
+      "mandatory_tests": [
+        "P0/P1主阶段拒绝",
+        "隐藏统计拒绝",
+        "sample数边界",
+        "采样复现"
+      ],
+      "diagnostic_counters": [
+        "sample_rows",
+        "logical_read_bytes",
+        "probe_cpu_usec"
+      ],
+      "required_evidence": [
+        "dispatch_test_ids",
+        "source_closure_sha256",
+        "kernel_id",
+        "semantic_diff_results",
+        "real_artifact_hashes"
+      ],
+      "implementation_status": "TARGET_NOT_AUDITED_BY_THIS_SPEC"
+    }
+  ]
+}

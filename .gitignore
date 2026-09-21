@@ -21,3 +21,7 @@ gold/
 *.pdf
 *.docx
 .DS_Store
+!rcwg_full/data/
+!rcwg_full/data/**
+*.so
+*.pyd

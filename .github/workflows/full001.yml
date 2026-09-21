@@ -1,0 +1,33 @@
+name: FULL001 exact-head offline engineering
+on:
+  push:
+    branches: ['rcwg/full-001']
+  pull_request:
+    branches: ['rcwg/native-001-n4']
+permissions:
+  contents: read
+jobs:
+  full001:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Explicit isolated dependency preparation
+        run: |
+          python -m venv environments/full001/.venv
+          environments/full001/.venv/bin/python -m pip install --require-hashes -r environments/full001/requirements.lock
+      - name: Build actual Arrow C++20 kernels with existing compiler
+        run: environments/full001/.venv/bin/python scripts/build_full001.py --output runs/full001-build
+      - name: Preserve build evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full001-offline-evidence
+          retention-days: 14
+          path: runs/full001-build/

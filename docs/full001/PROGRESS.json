@@ -1,0 +1,80 @@
+{
+  "task": "RCWG-FULL-001",
+  "spec_hash": "e06d3f0e9e7cef1b47a46aa9b86793068bf316d834acd6a6a4bd8438d122103b",
+  "baseline": "2824ee8e7678a39b3bff2ac701ffececd50d1e81",
+  "baseline_tree": "dfe9986aaae1f1bf3315a0baa4325dcf140a4904",
+  "branch": "rcwg/full-001",
+  "stacked_base": "rcwg/native-001-n4",
+  "status": "IN_PROGRESS",
+  "states": {
+    "IMPLEMENTATION_COMPLETE": false,
+    "SOFTWARE_ACCEPTED": false,
+    "HOST_CALIBRATED": false,
+    "DATA_FROZEN": false,
+    "SERVICE_READY": false,
+    "FORMAL_READY": false
+  },
+  "formal_status": "BLOCKED_NOT_FROZEN",
+  "modules": {
+    "M00": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M01": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M02": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M03": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M04": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M05": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M06": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M07": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M08": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M09": {
+      "status": "PENDING",
+      "evidence": []
+    },
+    "M10": {
+      "status": "PENDING",
+      "evidence": []
+    }
+  },
+  "next_actions": [
+    "Implement COMPAT1 compiler without changing the legacy profile",
+    "Prepare isolated dependency lock and CI native build",
+    "Implement actual kernels, runtime, builders and independent verification"
+  ],
+  "commands": [],
+  "external_actions_performed": {
+    "paid_generation": 0,
+    "paid_count": 0,
+    "cloud_mutations": 0,
+    "iam_mutations": 0,
+    "system_install": 0,
+    "cgroup_write": 0,
+    "calibration_load": 0,
+    "merge": 0
+  }
+}
