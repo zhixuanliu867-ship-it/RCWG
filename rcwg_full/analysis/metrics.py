@@ -44,7 +44,7 @@ def capability(observation, reference=None, threshold=.2):
             'reason':status,'measurement_valid':observation.get('evidence_valid') is True}
 
 
-def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATIVE'):
+def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATIVE', ledger_role='PRIMARY'):
     """Select at most one reconciled facility retry per frozen logical execution slot."""
     references=references or {};slots={};attempts=defaultdict(list);seen=set();excluded=[]
     for slot in expected:
@@ -62,12 +62,12 @@ def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATI
         attempts[item['slot_id']].append(item)
     rows=[];missing=[]
     for slot in slots.values():
-        if slot.get('slot_kind')!='execution' or slot.get('ledger_role')!='PRIMARY':continue
+        if slot.get('slot_kind')!='execution' or slot.get('ledger_role')!=ledger_role:continue
         candidates=attempts[slot['slot_id']]
         if len(candidates)>2:raise ValueError('RETRY_LIMIT')
         selected=None
         if candidates:
-            primary=[r for r in candidates if r.get('ledger_role')=='PRIMARY' and r.get('parent_attempt_id') is None]
+            primary=[r for r in candidates if r.get('ledger_role')==ledger_role and r.get('parent_attempt_id') is None]
             if len(primary)!=1:raise ValueError('PRIMARY_ATTEMPT_AMBIGUOUS')
             selected=primary[0]
             if len(candidates)==2:
@@ -77,12 +77,30 @@ def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATI
                     raise ValueError('RETRY_NOT_EQUIVALENT')
                 selected=retry
         else:missing.append(slot['slot_id'])
-        rows.append({**slot,**capability(selected,references.get(slot.get('task_id'))),
+        context={k:selected[k] for k in (*CONTEXT,'comparison_context_hash','plan_hash','c0_source_plan_hash') if selected and k in selected}
+        rows.append({**slot,**context,**capability(selected,references.get(slot.get('task_id'))),
                      'selected_attempt':selected['attempt_id'] if selected else None,
                      'attempt_count':len(candidates),'observed_status':selected['status'] if selected else 'MISSING_LOG'})
     return {'rows':rows,'missing_log_ids':missing,'excluded_timing_attempts':excluded,
             'expected_manifest_hash':digest(expected),'observation_hash':digest(observations),
             'evidence_integrity':'FAIL' if missing else 'PASS','mode':mode,'formal_ready':False}
+
+
+def common_reference_domain(expected,references,*,mode='ENGINEERING_NATIVE'):
+    """Select from frozen task/measurement bindings, never successful responses."""
+    methods=defaultdict(set);by_task=defaultdict(list)
+    for slot in expected:
+        if slot.get('slot_kind')=='execution' and slot.get('ledger_role')=='PRIMARY':
+            methods[(slot['generator'],slot['protocol'])].add(slot['task_id']);by_task[slot['task_id']].append(slot)
+    common=set.intersection(*methods.values()) if methods else set();covered=set()
+    for task in common:
+        reference=references.get(task,{})
+        if reference.get('confirmed') is not True or not _positive(reference.get('elapsed_ns')) or not reference.get('context_hash'):continue
+        contexts={s.get('comparison_context_hash') for s in by_task[task]}
+        if mode=='FORMAL' and None in contexts:raise ValueError('FROZEN_REFERENCE_CONTEXT_REQUIRED')
+        if contexts-{None,reference['context_hash']}:continue
+        covered.add(task)
+    return covered
 
 
 def template_means(rows, metric, unknown_value):

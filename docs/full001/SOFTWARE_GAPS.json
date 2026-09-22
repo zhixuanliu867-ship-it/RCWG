@@ -1,21 +1,34 @@
 {
   "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
-  "verified_template_scope": "All 72 templates x 5 bases x 4 conditions = 1440 engineering instances passed at cbd55f6 CI; all 12 templates per family have eight actual candidate executions.",
+  "updated_utc": "2026-09-22T11:52:03.372526+00:00",
+  "implemented_since_previous_checkpoint": [
+    "Source-bound finite campaign runner, diagnostic dependency graph and E2 unchanged-plan target binding.",
+    "Existing Vertex/Windows/Cloud transport adapters, eight-slot registry, durable requests, fixed semantic IPC and explicit billing upper bounds.",
+    "Control routes, transaction outbox dispatch, cancellation, idempotency, trusted WSGI boundary and nine read-only projections.",
+    "Private raw-attempt/request/SQLite snapshots, sealed artifact checks and explicit Auditor release.",
+    "Verified source snapshots, bounded ZIP extraction, category-complete unknown-aware budget forecast.",
+    "Shared frozen reference coverage, paired E2 inference and versioned 18-member Holm family.",
+    "Linux native launcher source and receipt-bound N4-compatible driver adapter; not built in current environment.",
+    "Stdlib acceptance dispatcher and real target-environment rejection evidence."
+  ],
   "remaining_work": [
-    "Date/Timestamp actual native build and independent integration (implementation added, not yet accepted)",
-    "Actual JSON source schema/identity validation and independent logical-hash recomputation",
-    "Graph public endpoint fields and predicate capabilities",
-    "Physical accounting of transformed streams and genuine external-sort streaming path",
-    "Formal capacity generator implementation and upstream provenance/review tooling",
-    "Reference dispatch development measurements and external benchmark adapters",
-    "Versioned existing-auth transport and durable budget/generation adapters",
-    "Campaign E3/E4/E5/E8 complete planning, controller, sealing, Auditor unsealing and nine views",
-    "Unified CLI, all 78 software evidence mappings, full inherited gates and final delivery/PR"
+    "Implement formal capacity builders and capacity tables; do not run stress workloads without exact approval.",
+    "Complete native external merge streaming, transformed-batch and graph/JSON allocation accounting.",
+    "Complete versioned schemas, external benchmark adapters and bounded retry/timing confirmation integration.",
+    "Run current source in Linux Python 3.12.14 with native build, 56 dispatches, 1440 tiny cases and all inherited gates.",
+    "Finish requirement evidence mapping, source guard, clean baseline application and unified public/private delivery."
   ],
   "known_implementation_limits": [
-    "Incremental hash aggregation, bounded IPC scanning and disk materialization are implemented and tested. Sorted-group/sort/join currently collect inputs.",
-    "Native BM25, nested Arrow values, supervised document replay, F5 and F6 candidates have actual source-bound execution evidence.",
-    "Registered Arrow buffer accounting is incomplete for transformed stream batches and graph/JSON allocations.",
-    "Host calibration, approved model/service bindings, private human gold, license/data freeze and formal admission remain external prerequisites. All six readiness flags remain false."
-  ]
+    "Formal scale generators are still incomplete; engineering_tiny_v1 is the implemented data build profile.",
+    "Sorted-group, sort and joins collect input; current external sort does not yet have bounded end-to-end streaming.",
+    "Registered Arrow buffers do not cover all transformed batch, graph and JSON allocations.",
+    "No exact-current-source Linux/native/inherited acceptance after recovery; historical CI is not reusable as current evidence.",
+    "Control deployment, live model capability and host calibration have not been exercised.",
+    "Formal data, verified human labels, license freeze, service bindings, host receipts and Auditor receipt remain separate prerequisites."
+  ],
+  "latest_supplementary_tests": {
+    "report": "runs/portable-w03/TEST_RESULTS.json",
+    "passed": 331,
+    "source_hash": "648369747eeaf3998f1f3ea2a905469984cd9ec3068f62cc9d170ad13089dd3d"
+  }
 }

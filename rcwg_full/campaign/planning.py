@@ -58,15 +58,24 @@ def diagnostic_slots(experiment):
     elif experiment=='E4':tasks=selected_tasks('E4');models=['G2','G5'];protocols=['P1'];arms=['window512','window2048','neighbors1','shared_prefix']
     elif experiment=='E7':tasks=selected_tasks('E7');models=['G2','G5'];protocols=['P0','P1'];arms=['executor_E1']
     else:raise ValueError('DIAGNOSTIC_UNKNOWN')
+    from functools import lru_cache
+    source_tasks={r['task_id']:r for r in task_grid()}
+    def primary_dependency(task,model,protocol,trial):
+        source_id=task['task_id'] if experiment!='E2' else task['task_id'].rsplit('-',1)[0]+'-C0'
+        source=source_tasks[source_id]
+        base={**source,'experiment_id':'E1','generator':model,'protocol':protocol,'trial_label':trial,
+              'ledger_role':'PRIMARY','plan_source':'GENERATED','status':'NOT_RUN'}
+        return digest({**base,'slot_kind':'generation'})
     for task,model,protocol,trial,arm in product(tasks,models,protocols,[17,29],arms):
         plan={**task,'experiment_id':experiment,'generator':model,'protocol':protocol,'trial_label':trial,'arm':arm,
               'ledger_role':'DIAGNOSTIC','status':'NOT_RUN','plan_source':'C0_FROZEN' if experiment=='E2' else 'E1_DERIVED'}
         plan_id=digest(plan)
         if experiment=='E3' and arm=='L':
-            yield {**plan,'slot_id':plan_id,'slot_kind':'generation','generation_stage':'GUIDED_PHYSICAL','expected_dependencies':['PUBLIC_GUIDANCE_FROZEN']}
+            yield {**plan,'slot_id':plan_id,'slot_kind':'generation','generation_stage':'GUIDED_PHYSICAL','guidance_revision':'FULL001_E3_L_GUIDANCE_1','expected_dependencies':[]}
         for repeat in range(3 if task['family'] in ['F1','F2','F3','F4'] else 2):
+            dependency=plan_id if experiment=='E3' and arm=='L' else primary_dependency(task,model,protocol,trial)
             row={**plan,'slot_kind':'execution','execution_repeat':repeat,'plan_binding':plan_id,
-                 'expected_dependencies':[plan_id] if experiment=='E3' and arm=='L' else ['E1_SOURCE_PLAN']}
+                 'generation_slot_id':dependency,'expected_dependencies':[dependency]}
             yield {'slot_id':digest(row),**row}
 
 

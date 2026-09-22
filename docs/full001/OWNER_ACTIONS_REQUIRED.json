@@ -68,7 +68,7 @@
     {
       "id": "OWNER-DATA",
       "kind": "human_and_licensing",
-      "status": "REVIEW_TOOLING_REQUIRED",
+      "status": "TOOLING_AVAILABLE_REAL_REVIEW_AND_LICENSE_EVIDENCE_PENDING",
       "rule": "Source licenses, derivative labels and independent annotator/adjudicator records must be real. Codex may prepare and validate the packages, not fabricate approval."
     },
     {
@@ -76,6 +76,18 @@
       "kind": "scientific_release",
       "status": "BLOCKED_NOT_FROZEN",
       "rule": "All technical/data/service gates plus versioned campaign protocol required; formal launch and final unseal are explicit operations."
+    },
+    {
+      "id": "ENV-LINUX-ACCESS",
+      "kind": "execution_environment",
+      "status": "BLOCKED_BY_CURRENT_SANDBOX",
+      "rule": "WSL enumeration returned E_ACCESSDENIED. Current Windows interpreter is supplementary. Restore an accessible approved Linux Python 3.12.14 environment; no system install or host changes inferred."
+    },
+    {
+      "id": "ENV-PUBLIC-WRITE",
+      "kind": "repository_access",
+      "status": "WRITE_PERMISSION_UNAVAILABLE",
+      "rule": "Existing authorization covers public branch push/draft PR, but GitHub integration write returned HTTP 403 Resource not accessible by integration. Preserve local commits/bundle; no permission bypass or merge."
     }
   ],
   "publication_authorization": {

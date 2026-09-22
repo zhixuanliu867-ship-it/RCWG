@@ -62,11 +62,11 @@ def read(path):
 
 def source_hashes():
     result={}
-    for folder in ['rcwg_full','native_full001','rcwg_boot','rcwg_spec','rcwg_exec','rcwg_native','rcwg_native_n4','rcwg_api','rcwg_cloud','specs/full001','acceptance/full001','tests','native001_tests','native001_n4_tests']:
+    for folder in ['rcwg_full','native_full001','rcwg_boot','rcwg_spec','rcwg_exec','rcwg_native','rcwg_native_n4','rcwg_api','rcwg_cloud','specs','prompts','configs','scripts','.github/workflows','native001','native001_n4','acceptance','tests','native001_tests','native001_n4_tests']:
         for p in (ROOT/folder).rglob('*'):
             if p.is_file() and '__pycache__' not in p.parts and p.suffix not in {'.pyc','.so','.pyd'}:
                 result[p.relative_to(ROOT).as_posix()]=sha(p.read_bytes())
-    for rel in ['native001/json.hpp','environments/full001/requirements.lock','scripts/build_full001.py']:
+    for rel in ['environments/full001/requirements.lock','environments/full001/requirements.in','accept_full001.py','pyproject.toml','uv.lock','.python-version']:
         p=ROOT/rel
         if p.is_file():result[rel]=sha(p.read_bytes())
     return result

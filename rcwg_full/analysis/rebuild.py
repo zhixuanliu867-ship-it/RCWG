@@ -7,7 +7,7 @@ import io
 import json
 from rcwg_full.evidence import canonical, digest, read, sha, write, exclusive_directory
 from rcwg_full.campaign.sealing import authorized_package, relative_file
-from .metrics import normalize, summarize, template_means, frontier
+from .metrics import normalize, summarize, template_means, frontier,common_reference_domain,pair_e2
 from .statistics import paired_inference, holm, hypothesis_registry
 
 
@@ -47,6 +47,16 @@ def rebuild(sealed_manifest, output):
     expected, observations = load('expected.json'), load('observations.json')
     references = load('references.json', {})
     normalized = normalize(expected, observations, references, mode=manifest['mode'])
+    reference_domain=common_reference_domain(expected,references,mode=manifest['mode'])
+    e2_expected=[s for s in expected if s.get('experiment_id')=='E2']
+    e2_observed=[s for s in observations if s.get('experiment_id')=='E2']
+    e2=normalize(e2_expected,e2_observed,references,mode=manifest['mode'],ledger_role='DIAGNOSTIC')
+    paired=[]
+    if e2['rows']:
+        # Restrict to the preregistered diagnostic identities before pairing.
+        e2_keys={(r['task_id'],r['generator'],r['protocol'],r['trial_label'],r['execution_repeat']) for r in e2['rows']}
+        adaptive=[r for r in normalized['rows'] if (r['task_id'],r['generator'],r['protocol'],r['trial_label'],r['execution_repeat']) in e2_keys]
+        paired=pair_e2(adaptive,e2['rows'])
     groups = defaultdict(list)
     for row in normalized['rows']:
         groups[(row['generator'], row['protocol'], row.get('arm'))].append(row)
@@ -61,17 +71,18 @@ def rebuild(sealed_manifest, output):
         summaries.append({**identity, **summarize(rows, families=families, evidence_integrity=normalized['evidence_integrity'])})
         for epsilon in [0.1, 0.2, 0.5]:
             selected = [{**r, 'efficient': False if r['success'] is False else r['rho'] <= 1 + epsilon if r['rho'] is not None else None}
-                        for r in rows if r['reference_covered']]
+                        for r in rows if r['task_id'] in reference_domain]
             if selected and {r['family'] for r in selected} == set(families):
                 estimate = summarize(selected, 'efficient', families=families, evidence_integrity=normalized['evidence_integrity'])
             else:
                 estimate = {'point': None, 'reason': 'REFERENCE_COVERAGE_INCOMPLETE', 'denominator': len(selected)}
-            efficient.append({**identity, 'epsilon': epsilon, 'primary_denominator': len(rows), **estimate})
+            efficient.append({**identity, 'epsilon': epsilon, 'primary_denominator': len(rows), 'common_reference_domain_hash':digest(sorted(reference_domain)),**estimate})
         for family in families:
             family_rows = [r for r in rows if r['family'] == family]
             coverage.append({**identity, 'family': family, 'expected': len(family_rows),
                              'observed': sum(r['selected_attempt'] is not None for r in family_rows),
                              'reference_covered': sum(r['reference_covered'] for r in family_rows),
+                             'frozen_common_reference_slots':sum(r['task_id'] in reference_domain for r in family_rows),
                              'timing_valid': sum(r.get('completed_time_ns') is not None for r in family_rows)})
     hypotheses = hypothesis_registry(); infer = []
     for definition in hypotheses['tests']:
@@ -79,14 +90,23 @@ def rebuild(sealed_manifest, output):
         record = {**definition, 'status': 'NOT_ESTIMABLE', 'reason': 'PAIRED_OBSERVATIONS_OR_REFERENCE_MISSING'}
         if definition['contrast'] != 'Adaptive-Frozen':
             left, right = groups.get((key, 'P1', None)), groups.get((key, 'P0', None))
+            if metric=='efficient':
+                left=[r for r in (left or []) if r['task_id'] in reference_domain]
+                right=[r for r in (right or []) if r['task_id'] in reference_domain]
             if left and right and not any(r[metric] is None for r in left + right):
                 # All lower-level units must be paired before any template mean.
                 pairing = lambda rows: {(r['task_id'], r['trial_label'], r['execution_repeat']) for r in rows}
                 if pairing(left) != pairing(right): raise ValueError('PRIMARY_PAIRING_MISMATCH')
                 families = sorted({r['family'] for r in left})
-                if metric != 'efficient' or all(r['reference_covered'] for r in left + right):
-                    record.update(status='ESTIMATED', reason=None,
-                                  **paired_inference(template_means(left, metric, 0), template_means(right, metric, 0), families=families))
+                record.update(status='ESTIMATED', reason=None,
+                              **paired_inference(template_means(left, metric, 0), template_means(right, metric, 0), families=families))
+        else:
+            selected=[(a,b) for a,b in paired if a['generator']==key]
+            if selected and e2['evidence_integrity']=='PASS' and not any(r['success'] is None for pair in selected for r in pair):
+                left=[a for a,b in selected];right=[b for a,b in selected]
+                families=sorted({r['family'] for r in left})
+                record.update(status='ESTIMATED',reason=None,protocol_pooling='equal protocol weight within identical lower-level units',
+                    **paired_inference(template_means(left,'success',0),template_means(right,'success',0),families=families))
         infer.append(record)
     # The family remains all 18 preregistered hypotheses. A missing test is never
     # dropped to shrink multiplicity; p=1 is only an internal conservative bound.
@@ -101,12 +121,16 @@ def rebuild(sealed_manifest, output):
             strata.append({'stratum': stratum, 'condition': condition, 'denominator': len(subset),
                            'unknown': sum(r['success'] is None for r in subset)})
     diagnostics = [r for r in observations if r.get('experiment_id') in {'E2','E3','E4','E5','E7','E8'}]
-    resources = [r for r in observations if r.get('ledger_role') == 'PRIMARY']
+    selected_by_attempt={r['selected_attempt']:r for r in normalized['rows'] if r['selected_attempt']}
+    resources = [{**r,**selected_by_attempt[r['attempt_id']]} for r in observations if r['attempt_id'] in selected_by_attempt]
     resource_frontier = frontier(resources, ['exec_elapsed_ns', 'worker_memory_peak_bytes'])
     tables = {'task_resource_coverage': coverage, 'success_budget': summaries, 'efficient_success': efficient,
               'failure_unknown_not_run': statuses, 'reference_coverage': coverage,
               'resource_vectors': resources, 'resource_frontier': resource_frontier,
-              'frozen_adaptive': [r for r in diagnostics if r.get('experiment_id') == 'E2'],
+              'frozen_adaptive': [{'task_id':a['task_id'],'generator':a['generator'],'protocol':a['protocol'],
+                'trial_label':a['trial_label'],'execution_repeat':a['execution_repeat'],'adaptive_success':a['success'],
+                'frozen_success':b['success'],'difference':int(a['success'])-int(b['success']) if a['success'] is not None and b['success'] is not None else None,
+                'frozen_plan_hash':b.get('plan_hash'),'c0_source_plan_hash':b.get('c0_source_plan_hash')} for a,b in paired],
               'artifact_lifetime': load('artifact_lifetimes.json', []),
               'information_fidelity': load('information_fidelity.json', []),
               'diagnostics': diagnostics, 'generalization': strata,

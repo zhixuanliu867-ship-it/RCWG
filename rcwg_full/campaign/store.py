@@ -59,18 +59,21 @@ class CampaignStore:
             if row['version']!=version or row['status']!='NOT_RUN':raise Conflict('SLOT_NOT_CLAIMABLE')
             attempt=str(uuid.uuid4());expires=time.time_ns()+int(lease_seconds*1e9)
             self.db.execute('UPDATE slots SET status=?,owner=?,expires_ns=?,active_attempt=?,version=version+1 WHERE id=?',('CLAIMED',owner,expires,attempt,slot_id))
-            self.db.execute('INSERT INTO attempts VALUES(?,?,?,?,?,?,?)',(attempt,slot_id,None,'PRIMARY','CLAIMED',0,None))
+            role=json.loads(row['definition']).get('ledger_role','PRIMARY')
+            if role not in {'PRIMARY','DIAGNOSTIC','TIMING_CONFIRMATION','MANUAL_DEBUG','EXTERNAL_REPLICATION'}:raise ValueError('SLOT_ROLE')
+            self.db.execute('INSERT INTO attempts VALUES(?,?,?,?,?,?,?)',(attempt,slot_id,None,role,'CLAIMED',0,None))
             result={'slot_id':slot_id,'attempt_id':attempt,'version':version+1,'expires_ns':expires}
             self.db.execute('INSERT INTO requests VALUES(?,?,?)',(idempotency_key,h,canonical(result).decode()));self._audit('claim',result)
             return result
 
     def mark(self,slot_id,attempt_id,owner,version,status,evidence):
-        allowed={'RUNNING','COMPLETED','MODEL_FAILURE','PLAN_INVALID','INFRA_FAILURE','UNKNOWN','SENT_UNCONFIRMED','TIMEOUT','OOM','CANCELLED'}
+        allowed={'RUNNING','COMPLETED','MODEL_FAILURE','PLAN_INVALID','INFRA_FAILURE','UNKNOWN','SENT_UNCONFIRMED','TIMEOUT','OOM','CANCELLED','TRANSFORM_NOT_APPLICABLE'}
         if status not in allowed:raise ValueError('ATTEMPT_STATUS')
         with self.transaction():
             row=self.db.execute('SELECT * FROM slots WHERE id=?',(slot_id,)).fetchone()
             if row is None or (row['active_attempt'],row['owner'],row['version'])!=(attempt_id,owner,version):raise Conflict('OPTIMISTIC_VERSION')
             if row['status'] not in {'CLAIMED','RUNNING','UNKNOWN','SENT_UNCONFIRMED'}:raise Conflict('TERMINAL_IMMUTABLE')
+            if row['status'] in {'UNKNOWN','SENT_UNCONFIRMED'} and (evidence.get('reconciliation',{}).get('worker_stopped') is not True or evidence.get('reconciliation',{}).get('request_uncertain') is not False):raise Conflict('RECONCILIATION_INCOMPLETE')
             self.db.execute('UPDATE attempts SET status=?,evidence=? WHERE id=?',(status,canonical(evidence).decode(),attempt_id))
             self.db.execute('UPDATE slots SET status=?,version=version+1 WHERE id=?',(status,slot_id));self._audit('transition',{'slot_id':slot_id,'attempt_id':attempt_id,'status':status,'evidence':evidence})
             return version+1
@@ -98,10 +101,40 @@ class CampaignStore:
             return {'attempt_id':attempt,'version':version+1}
 
     def upstream_failure(self,generation_slot_id,cause):
+        if cause not in {'MODEL_FAILURE','PLAN_INVALID'}:raise ValueError('UPSTREAM_FAILURE_NOT_CONFIRMED')
         with self.transaction():
+            parent=self.db.execute('SELECT status FROM slots WHERE id=?',(generation_slot_id,)).fetchone()
+            if parent is None or parent['status']!=cause:raise Conflict('UPSTREAM_FAILURE_NOT_TERMINAL')
             rows=list(self.db.execute("SELECT id,definition FROM slots WHERE status='NOT_RUN'"))
             for row in rows:
                 definition=json.loads(row['definition'])
                 if generation_slot_id in definition.get('expected_dependencies',[]):
                     self.db.execute("UPDATE slots SET status='NOT_RUN_UPSTREAM_PLAN_FAILURE',version=version+1 WHERE id=?",(row['id'],))
             self._audit('upstream_failure',{'generation_slot_id':generation_slot_id,'cause':cause})
+
+    def slot(self,slot_id):
+        row=self.db.execute('SELECT * FROM slots WHERE id=?',(slot_id,)).fetchone()
+        if row is None:raise ValueError('UNKNOWN_SLOT')
+        return {**dict(row),'definition':json.loads(row['definition'])}
+
+    def cancel_pending(self,slot_id,version):
+        with self.transaction():
+            changed=self.db.execute("UPDATE slots SET status='CANCELLED',version=version+1 WHERE id=? AND version=? AND status='NOT_RUN'",(slot_id,version))
+            if changed.rowcount!=1:raise Conflict('SLOT_NOT_PENDING')
+            self._audit('cancel_before_launch',{'slot_id':slot_id,'physical_attempt':False})
+
+    def observations(self,mode):
+        """One row per actual attempt; explicit unrun dependents have no resources."""
+        result=[]
+        for row in self.db.execute('SELECT * FROM slots ORDER BY id'):
+            definition=json.loads(row['definition'])
+            attempts=list(self.db.execute('SELECT * FROM attempts WHERE slot_id=? ORDER BY retry_index,id',(row['id'],)))
+            for attempt in attempts:
+                evidence=json.loads(attempt['evidence']) if attempt['evidence'] else {}
+                result.append({**definition,**evidence,'slot_id':row['id'],'attempt_id':attempt['id'],
+                    'parent_attempt_id':attempt['parent'],'ledger_role':attempt['role'],'status':attempt['status'],'mode':mode})
+            if not attempts and row['status'] in {'NOT_RUN_UPSTREAM_PLAN_FAILURE','CANCELLED'}:
+                result.append({**definition,'attempt_id':'not-run-'+row['id'],'physical_attempt':False,
+                    'status':row['status'],'mode':mode,'failure_class':'CONFIRMED_PLAN' if row['status']=='NOT_RUN_UPSTREAM_PLAN_FAILURE' else 'CANCELLED','exec_elapsed_ns':None,
+                    'worker_memory_peak_bytes':None,'semantic':None,'budget':None,'evidence_valid':True})
+        return result

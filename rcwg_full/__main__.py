@@ -22,7 +22,8 @@ def parser():
     for action in ['admit', 'run', 'reconcile', 'seal', 'unseal']:
         sub = campaign.add_parser(action); sub.add_argument('--manifest', required=True, type=Path)
         if action == 'admit': sub.add_argument('--check-only', required=True, action='store_true')
-        if action == 'run': sub.add_argument('--receipts', required=True, type=Path)
+        if action == 'run':
+            sub.add_argument('--receipts', required=True, type=Path);sub.add_argument('--resume',action='store_true')
         if action == 'reconcile': sub.add_argument('--read-only', required=True, action='store_true')
         if action == 'unseal': sub.add_argument('--audit-receipt', required=True, type=Path)
     analyze = commands.add_parser('analyze'); analyze.add_argument('--sealed-manifest', required=True, type=Path)
@@ -69,15 +70,14 @@ def dispatch(a):
         result = admit(a.manifest, receipts)
         if result['blockers']: return 2, result
         if a.action == 'admit': return 0, result
-        # Reached only after actual external prerequisites. Until the managed
-        # launcher integration is complete this is a software gap, never an
-        # external permission problem or a claimed successful execution.
-        return 1, {'phase': 'CAMPAIGN_EXECUTION', 'status': 'IMPLEMENTATION_GAP', 'blockers': ['MANAGED_CAMPAIGN_RUNNER'], 'launch_performed': False}
+        from rcwg_full.campaign.execute import run_from_manifest
+        result=run_from_manifest(a.manifest,receipts,resume=a.resume)
+        return (0 if result['status']=='TERMINAL' else 2),result
     if a.action == 'reconcile':
         from collections import Counter
         from rcwg_full.campaign.sealing import check_expected
         from rcwg_full.campaign.store import CampaignStore
-        manifest = check_expected(a.manifest); db_path = a.manifest.parent / 'campaign.sqlite3'
+        manifest = check_expected(a.manifest); db_path = a.manifest.parent / 'execution' / 'campaign.sqlite3'
         if not db_path.exists():
             return 0, {'phase': 'RECONCILE', 'status': 'NO_ATTEMPTS', 'new_actions': 0, 'manifest_hash': manifest['manifest_hash']}
         store = CampaignStore(db_path, read_only=True)
@@ -86,12 +86,8 @@ def dispatch(a):
         return 0, {'phase': 'RECONCILE', 'status': 'READ_ONLY_COMPLETE', 'new_actions': 0,
                    'states': dict(Counter(r['status'] for r in rows)), 'reconcile_required': [r['id'] for r in rows if r['coordination'] == 'RECONCILE_REQUIRED']}
     if a.action == 'seal':
-        from rcwg_full.campaign.sealing import check_expected, seal_package, relative_file
-        manifest = check_expected(a.manifest)
-        expected = [json.loads(line) for line in read(relative_file(a.manifest.parent, manifest['primary']['file'])).splitlines()]
-        payload = json.loads(read(a.manifest.parent / 'attempts.json'))
-        out = exclusive_directory(a.manifest.parent / 'sealed')
-        result = seal_package(out, expected_slots=expected, observations=payload['observations'], mode=payload['mode'], source_identity=payload['source_identity'])
+        from rcwg_full.campaign.sealing import seal_run
+        result = seal_run(a.manifest,a.manifest.parent/'sealed')
         return 0, {'phase': 'CAMPAIGN_SEAL', 'status': 'SEALED', 'manifest_hash': result['manifest_hash'], 'audit_released': False}
     if a.action == 'unseal':
         from rcwg_full.campaign.sealing import unseal

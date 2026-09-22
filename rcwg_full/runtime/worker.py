@@ -4,6 +4,7 @@ import asyncio
 import json
 import time
 import traceback
+import os
 from pathlib import Path
 from rcwg_full.evidence import read,write,source_hashes,sha
 from rcwg_full.compiler import FullCompiler
@@ -21,14 +22,19 @@ async def execute(request,build,output):
     result={'run_id':request['run_id'],'terminal_status':'INFRA_FAILURE','failure':None,'formal_ready':False,'source':sources,'paid_calls':0,'measurement_profile':'ENGINEERING_UNCALIBRATED'}
     store=None;scheduler=None
     try:
-        if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
+        if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
         if sha(read(request['data_manifest']))!=request['data_manifest_sha256']:raise ExecutionFault('DATA_MANIFEST_CHANGED','facility')
         native=Native(build,request.get('native_mode','performance'));catalog=DataCatalog(request['data_manifest']).bind(request['task'])
-        report=FullCompiler().compile(request['task'],request['plan']);write(out/'compiler.json',report)
+        report=FullCompiler().compile(request['task'],request['plan'],frozen_binding=request.get('frozen_binding'));write(out/'compiler.json',report)
         if report['status']!='IR_VALIDATED':raise ExecutionFault(report['status'],'plan' if report['status']=='PLAN_INVALID' else 'facility')
         from rcwg_full.runtime.document_registry import DocumentRegistry
         from rcwg_full.runtime.documents import ReplaySemantic
         semantic=None
+        if request.get('semantic_connection'):
+            from rcwg_full.services.broker import RemoteSemantic
+            semantic=RemoteSemantic(request['semantic_connection'])
+            if (request['mode']=='FORMAL')!=(semantic.mode=='LIVE'):raise ExecutionFault('SEMANTIC_MODE_BINDING','facility')
+            result['paid_calls']=None if semantic.mode=='LIVE' else 0
         if request.get('semantic_replay'):
             if request['mode']!='ENGINEERING_REPLAY':raise ExecutionFault('REPLAY_MODE_FORBIDDEN','facility')
             replay=request['semantic_replay'];raw=read(replay['path'])
@@ -50,7 +56,11 @@ async def execute(request,build,output):
         result['failure']={'code':getattr(exc,'code',type(exc).__name__),'attribution':getattr(exc,'attribution','facility'),'detail':str(exc)}
         write(out/'failure.traceback.txt',traceback.format_exc().encode('utf-8'))
     finally:
-        result['worker_exec_wall_ns']=time.monotonic_ns()-started
+        finished=time.monotonic_ns();result['worker_exec_wall_ns']=finished-started
+        if request.get('go_record'):
+            go=json.loads(read(request['go_record']))
+            if go['run_id']!=request['run_id'] or not 0<go['exec_started_monotonic_ns']<=started:raise ValueError('GO_CLOCK_BINDING')
+            result['exec_elapsed_ns']=finished-go['exec_started_monotonic_ns']
         result['buffer_metrics']=store.lifetime_metrics() if store else None
         result['logical_instances']=scheduler.admission.instances if scheduler else 0
         journal.append('run_finished',{'terminal_status':result['terminal_status'],'failure':result['failure']},status=result['terminal_status'])
@@ -60,6 +70,12 @@ async def execute(request,build,output):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('--request',required=True);p.add_argument('--build',required=True);p.add_argument('--output',required=True)
-    a=p.parse_args();request=json.loads(read(a.request));return asyncio.run(execute(request,a.build,a.output))
+    p.add_argument('--ack-fd',type=int);p.add_argument('--go-fd',type=int)
+    a=p.parse_args()
+    if a.ack_fd is not None:
+        os.write(a.ack_fd,str(os.getpid()).encode('ascii'));os.close(a.ack_fd)
+        if os.read(a.go_fd,1)!=b'1':raise ValueError('GO_REQUIRED')
+        os.close(a.go_fd)
+    request=json.loads(read(a.request));return asyncio.run(execute(request,a.build,a.output))
 
 if __name__=='__main__':raise SystemExit(main())

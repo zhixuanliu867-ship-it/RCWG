@@ -44,6 +44,14 @@ def build(output,compiler='g++'):
             manifest.update(status='BUILD_FAILED',command=cmd,returncode=result.returncode)
             write(out/'BUILD.json',manifest);return 1
         manifest['binaries'][mode]={'name':target.name,'sha256':sha(target.read_bytes()),'command':cmd}
+    target=out/'full001-launcher'
+    cmd=[cc,'-x','c','-std=c11','-O2','-Wall','-Wextra',str(ROOT/'native_full001/launcher.c'),'-o',str(target)]
+    result=subprocess.run(cmd,capture_output=True,timeout=60)
+    write(out/'launcher.log',result.stdout+result.stderr)
+    if result.returncode:
+        manifest.update(status='BUILD_FAILED',command=cmd,returncode=result.returncode)
+        write(out/'BUILD.json',manifest);return 1
+    manifest['binaries']['launcher']={'name':target.name,'sha256':sha(target.read_bytes()),'command':cmd}
     if manifest['source']!=source_hashes():raise RuntimeError('SOURCE_CHANGED_DURING_BUILD')
     manifest['status']='BUILD_PASS';write(out/'BUILD.json',manifest)
     print('FULL001_BUILD_PASS');return 0

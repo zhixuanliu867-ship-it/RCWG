@@ -49,7 +49,7 @@
       "evidence": []
     },
     "M08": {
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": []
     },
     "M09": {
@@ -62,10 +62,11 @@
     }
   },
   "next_actions": [
-    "Finish managed campaign runner, six service slots and control routes with native integration",
-    "Complete formal capacity builders, source snapshot and annotation tooling",
-    "Close shared reference coverage and E2 paired statistical rebuilding",
-    "Complete exact-source 56-dispatch/72-template evidence, inherited gates, total acceptance and package verification"
+    "Implement formal capacity builders and capacity tables; do not run stress workloads without exact approval.",
+    "Complete native external merge streaming, transformed-batch and graph/JSON allocation accounting.",
+    "Complete versioned schemas, external benchmark adapters and bounded retry/timing confirmation integration.",
+    "Run current source in Linux Python 3.12.14 with native build, 56 dispatches, 1440 tiny cases and all inherited gates.",
+    "Finish requirement evidence mapping, source guard, clean baseline application and unified public/private delivery."
   ],
   "commands": [],
   "external_actions_performed": {
@@ -78,8 +79,7 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-22T10:12:48.436315+00:00",
-  "checkpoint_commit": "00d5acab74c874fd140fa0955904673a8d053290",
+  "updated_utc": "2026-09-22T11:52:03.372526+00:00",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
@@ -89,7 +89,12 @@
     "ci_legacy_api_run": 35615748906,
     "ci_legacy_api_status": "PASS",
     "ci_full001_tests": 1863,
-    "git_transport": "Windows Git with existing per-command system proxy"
+    "git_transport": "Windows Git with existing per-command system proxy",
+    "latest_source_pushed": false,
+    "local_changes_pending_publication": true,
+    "last_remote_commit": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "write_status": "CONNECTOR_HTTP_403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+    "ci_applies_to_historical_remote_only": true
   },
   "verified_scopes": [
     {
@@ -404,6 +409,36 @@
       "report": "runs/resume-sealed-analysis-win-001/TEST_RESULTS.json",
       "report_sha256": "ec6f904885fad0e71275e54c95ed958135b386556631c7298e3869051f9dd1be",
       "passed": 5
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 322,
+      "report": "runs/portable-w02/TEST_RESULTS.json",
+      "report_sha256": "7d213d26e715db03c8ccb60fa03e2a3097635878877b0aecd0ebecd22f34d042",
+      "source_hash": "8c17413750cf426630303145784b198e0fbe5c196b05ab4aad83ed3857f42c62",
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 331,
+      "report": "runs/portable-w03/TEST_RESULTS.json",
+      "report_sha256": "71993e908b161ed18708d4bcb397f030db69afb18f028638dd37d74da713907b",
+      "source_hash": "648369747eeaf3998f1f3ea2a905469984cd9ec3068f62cc9d170ad13089dd3d",
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 31,
+      "report": "runs/control-seal-w01/TEST_RESULTS.json",
+      "report_sha256": "912caa648d9719d504035e41680ac34995d96acda2cb624e60715475e7100067",
+      "source_hash": "784ae5e8a0188a530eecb3f3209084ddc2a976cec6dbe723fd8730ac35a44d63",
+      "not_full_acceptance": true
     }
   ],
   "recovery": {
@@ -424,5 +459,13 @@
       "status": "success"
     },
     "read_entire_spec_and_all_json": true
+  },
+  "checkpoint_parent_commit": "f2d219fa3e5994d0fe3dd9af60e246ae42069ded",
+  "working_source_hash": "648369747eeaf3998f1f3ea2a905469984cd9ec3068f62cc9d170ad13089dd3d",
+  "total_acceptance": {
+    "status": "BLOCKED",
+    "report": "runs/resume-total-win-001/invocation-1790074550082877200/ACCEPTANCE.json",
+    "sha256": "b74185474f99f60bc0591c32aaebfcda28d9d0b87e5f709eacc66a950abe8a4f",
+    "reason": "Windows Python 3.13.4 does not satisfy target Linux Python 3.12.14; no current native build evidence."
   }
 }

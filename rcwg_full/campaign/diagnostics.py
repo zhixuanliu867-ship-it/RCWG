@@ -26,6 +26,8 @@ def control_slots():
         for repeat in range(3 if control['family'] in {'F1', 'F2', 'F3', 'F4'} else 2):
             row = {**control, 'slot_kind': 'execution', 'execution_repeat': repeat,
                    'generation_stage': None, 'generator': 'CONTROL', 'protocol': 'CONTROL',
+                   'task_id':f"{control['template_id']}-b{control['base_id']}-{control['condition']}",
+                   'generation_slot_id':control['control_plan_id'],
                    'trial_label': None, 'expected_dependencies': [control['control_plan_id']]}
             yield {'slot_id': digest(row), **row}
 
@@ -98,5 +100,6 @@ def external_slots(tasks):
         yield {'slot_id': generation_id, **row}
         for repeat in range(2 if task['uses_semantics'] else 3):
             execution = {**row, 'slot_kind': 'execution', 'execution_repeat': repeat,
+                         'generation_slot_id':generation_id,
                          'generation_stage': None, 'expected_dependencies': [generation_id]}
             yield {'slot_id': digest(execution), **execution}
