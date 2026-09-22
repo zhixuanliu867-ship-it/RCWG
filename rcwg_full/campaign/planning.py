@@ -93,10 +93,14 @@ def materialize_expected(campaign_spec, output, *, include_diagnostics=True):
         'status':'PLANNED_ONLY','formal_ready':False,'execution_authorized':False,'primary':primary,'diagnostics':{},
         'http_request_prediction':{'G_primary_if_all_stages_sent':34560,'E':None,'count':None,'retry':0},
         'unknown_costs':['G_PRICE_SNAPSHOT','SEMANTIC_CALL_COUNTS','COUNT_CALLS','REFERENCE_USAGE','CLOUD','STORAGE'],
-        'E5':{'pairs':60,'plans':120,'execution_slots':320,'definitions_status':'PENDING'},
+        'E5':{'pairs':60,'plans':120,'execution_slots':320,'definitions_status':'PREDECLARED_UNFROZEN'},
         'E6':{'reuse':'E1','strata':['standard','compositional','C1']},
         'E8':{'generation':1440,'G_if_all_stages_sent':2160,'execution_range':[2880,4320],'data_status':'NOT_FROZEN'}}
     if include_diagnostics:
+        from .diagnostics import controls,control_slots
+        definitions=list(controls())
+        manifest['E5']['definitions_sha256']=write(out/'E5-controls.json',definitions)
+        manifest['diagnostics']['E5']=_write_slots(out/'E5.jsonl',control_slots())
         for experiment in ['E2','E3','E4','E7']:
             manifest['diagnostics'][experiment]=_write_slots(out/(experiment+'.jsonl'),diagnostic_slots(experiment))
             if experiment!='E2':write(out/(experiment+'-selection.json'),selected_tasks(experiment))

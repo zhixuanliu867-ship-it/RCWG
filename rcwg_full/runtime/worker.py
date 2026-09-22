@@ -41,7 +41,7 @@ async def execute(request,build,output):
         for alias,meta in report['typed_graph']['input_bindings'].items():
             source=catalog.resolve(meta['source_id']);value=source if meta['type']['kind']=='DatasetRef' else source.value()
             externals[alias]=store.register(value,meta['type'],'external:'+alias,source_refs=[meta['source_id']])
-        scheduler=Scheduler(report,request['task'],externals,backend,journal)
+        scheduler=Scheduler(report,request['task'],externals,backend,journal,execution_profile=request.get('execution_profile'))
         value=await scheduler.run();write(out/'result.json',value)
         if source_hashes()!=sources:raise ExecutionFault('SOURCE_CHANGED_DURING_RUN','facility')
         result['terminal_status']='COMPLETED'

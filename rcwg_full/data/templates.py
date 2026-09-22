@@ -1,7 +1,7 @@
 """Registered, reproducible task constructors. Data and private recipes are separate."""
 from copy import deepcopy
 import random
-from rcwg_full.evidence import ROOT,digest,write
+from rcwg_full.evidence import ROOT,digest,write,exclusive_directory
 from rcwg_full.compiler import FullCompiler
 from .prepare import prepare
 
@@ -166,18 +166,20 @@ def build(template,base,condition,directory):
     write(path.parent/'candidate_definitions.json',candidates(task,definition['plan']))
     recipe={'role':'PRIVATE_ENGINEERING_ORACLE','template_id':template,'seed':definition['seed'],'comparison':definition['comparison'],
             'expected':expected,'implementation':'independent source-language oracle' if template.startswith(('F5-','F6-')) else 'independent Python contract; no runtime kernels','formal_gold_reviewed':False}
+    private=exclusive_directory(path.parent.with_name(path.parent.name+'-private'))
     if 'replay' in definition:
-        write(path.parent/'engineering_service_replay.json',definition['replay'])
-        write(path.parent/'semantic_stage_definitions.json',definition['semantic_stages'])
+        write(private/'engineering_service_replay.json',definition['replay'])
+        write(private/'semantic_stage_definitions.json',definition['semantic_stages'])
         write(path.parent/'evidence_span_remap.json',{'condition':condition,'mapping':'IDENTITY_CANONICAL_TEXT_UNCHANGED',
             'documents':[{'document_id':d['document_id'],'revision':d['revision'],'canonical_sha256':d['canonical_text_sha256']} for d in definition['rows']['documents']],
             'human_reviewed':False,'formal_frozen':False})
-    write(path.parent/'private_verifier_recipe.json',recipe)
+    write(private/'private_verifier_recipe.json',recipe)
     write(path.parent/'condition_invariants.json',{'condition':condition,'c1_axis':definition['axis'],'base_seed':definition['seed'],
         'logical_hashes':{r['source_id']:r['logical_content_sha256'] for r in manifest['sources']},
         'physical_hashes':{r['source_id']:r['content_sha256'] for r in manifest['sources']},
         'expected_output_hash':digest(expected),'condition_crosscheck':'REQUIRES_SIBLING_CONDITIONS'})
-    return {**definition,'task':task,'manifest':manifest,'manifest_path':path,'recipe':recipe,'proof':proof}
+    return {**definition,'task':task,'manifest':manifest,'manifest_path':path,'recipe':recipe,'proof':proof,
+            'private_directory':private,'semantic_replay_path':private/'engineering_service_replay.json' if 'replay' in definition else None}
 
 
 def f1_01(base,condition,directory):return build('F1-01',base,condition,directory)

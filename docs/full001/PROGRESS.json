@@ -62,11 +62,10 @@
     }
   },
   "next_actions": [
-    "Build and test public graph field and endpoint predicate support",
-    "Complete diagnostic transforms and E5 controlled plan definitions",
-    "Complete campaign auth/control/analysis CLI integration",
-    "Finish physical allocation accounting and formal capacity builders",
-    "Re-run inherited gates on final source and produce unified delivery and draft PR"
+    "Finish managed campaign runner, six service slots and control routes with native integration",
+    "Complete formal capacity builders, source snapshot and annotation tooling",
+    "Close shared reference coverage and E2 paired statistical rebuilding",
+    "Complete exact-source 56-dispatch/72-template evidence, inherited gates, total acceptance and package verification"
   ],
   "commands": [],
   "external_actions_performed": {
@@ -79,7 +78,7 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-21T15:18:02.761981+00:00",
+  "updated_utc": "2026-09-22T10:12:48.436315+00:00",
   "checkpoint_commit": "00d5acab74c874fd140fa0955904673a8d053290",
   "publication": {
     "authorized": true,
@@ -384,6 +383,46 @@
       "instances": 288,
       "source_unchanged": true,
       "report": "runs/full001-all-family-source-audit-001/SOURCE_AUDIT.json"
+    },
+    {
+      "scope": "upstream_adapters_and_blind_reviews",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-upstream-win-001/TEST_RESULTS.json",
+      "report_sha256": "01e9991224bad35c702213ead3b135138066ceca7431f64f83b7f6a0da7423e1",
+      "passed": 7
+    },
+    {
+      "scope": "diagnostic_transforms_and_E5_E8_planning",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-diagnostics-win-001/TEST_RESULTS.json",
+      "report_sha256": "edf5e77bffe101653481a3404180ea495d6070087a81a3e7b3b473b4a49de6f5",
+      "passed": 7
+    },
+    {
+      "scope": "sealed_rebuild_and_separate_private_data",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-sealed-analysis-win-001/TEST_RESULTS.json",
+      "report_sha256": "ec6f904885fad0e71275e54c95ed958135b386556631c7298e3869051f9dd1be",
+      "passed": 5
     }
-  ]
+  ],
+  "recovery": {
+    "source_checkpoint": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "checkpoint_tree": "71621d2f312d2772fc038a4d08d98faa2cf79d59",
+    "previous_worktree_preserved": true,
+    "recovered_uncommitted_files": [
+      "runtime/scheduler.py",
+      "runtime/supervisor.py",
+      "runtime/worker.py",
+      "runtime/scheduling_profile.py",
+      "campaign/transforms.py"
+    ],
+    "wsl_status": "ACCESS_DENIED_BY_CURRENT_SANDBOX",
+    "latest_exact_head_ci": {
+      "full001": 35618135593,
+      "legacy": 35618135588,
+      "status": "success"
+    },
+    "read_entire_spec_and_all_json": true
+  }
 }

@@ -11,10 +11,14 @@ class Conflict(RuntimeError):pass
 
 
 class CampaignStore:
-    def __init__(self,path):
+    def __init__(self,path,*,read_only=False):
         self.path=safe_path(path)
-        self.db=sqlite3.connect(self.path,timeout=30,isolation_level=None)
+        self.read_only=read_only
+        self.db=sqlite3.connect(self.path.as_uri()+'?mode=ro' if read_only else self.path,uri=read_only,timeout=30,isolation_level=None)
         self.db.row_factory=sqlite3.Row
+        if read_only:
+            self.db.execute('PRAGMA query_only=ON')
+            return
         self.db.execute('PRAGMA foreign_keys=ON');self.db.execute('PRAGMA journal_mode=WAL');self.db.execute('PRAGMA synchronous=FULL')
         self.db.executescript('''
         CREATE TABLE IF NOT EXISTS requests(key TEXT PRIMARY KEY, payload_hash TEXT NOT NULL, response TEXT NOT NULL);
@@ -28,6 +32,7 @@ class CampaignStore:
 
     @contextmanager
     def transaction(self):
+        if self.read_only:raise PermissionError('READ_ONLY_STORE')
         self.db.execute('BEGIN IMMEDIATE')
         try:yield;self.db.execute('COMMIT')
         except BaseException:self.db.execute('ROLLBACK');raise

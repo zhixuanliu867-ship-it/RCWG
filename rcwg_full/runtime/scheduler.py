@@ -13,13 +13,18 @@ class ExecutionFault(RuntimeError):
 
 
 class Scheduler:
-    def __init__(self,report,task,externals,backend,journal):
+    def __init__(self,report,task,externals,backend,journal,*,execution_profile=None):
         if report['status']!='IR_VALIDATED':raise ExecutionFault('COMPILED_PLAN_REQUIRED','facility')
         self.report=report;self.task=task;self.externals=externals;self.backend=backend;self.journal=journal
         self.nodes=report['typed_graph']['nodes'];self.scopes={}
         for n in self.nodes:self.scopes.setdefault(n['scope'],[]).append(n)
         self.admission=CpuAdmission(task['resources']['cpu_slots'],report['original_plan'].get('limits',{}).get('max_node_instances',4096))
-        self.pool=ThreadPoolExecutor(max_workers=self.admission.slots,thread_name_prefix='full001-cpu')
+        from rcwg_full.runtime.scheduling_profile import validate_profile
+        self.execution_profile=validate_profile(task,execution_profile)
+        parallelism=self.execution_profile['cpu_kernel_concurrency'] if self.execution_profile else self.admission.slots
+        self.kernel_gate=asyncio.Semaphore(parallelism)
+        self.pool=ThreadPoolExecutor(max_workers=parallelism,thread_name_prefix='full001-cpu')
+        if self.execution_profile:self.event('scheduling_profile',{'profile':self.execution_profile,'public_cpu_budget':self.admission.slots})
         self.background=set();self.live_streams=[];self.timings=[];self.reference_roots={};self.retirement_candidates={}
 
     def retire(self):
@@ -52,7 +57,7 @@ class Scheduler:
 
     async def compute(self,instance,node,fn,*args):
         self.event('node_waiting_cpu',{'blocked_reason':'CPU_PERMIT'},instance)
-        async with self.admission.acquire(node.get('resources',{}).get('cpu_slots',1)):
+        async with self.kernel_gate,self.admission.acquire(node.get('resources',{}).get('cpu_slots',1)):
             self.event('cpu_permit_acquired',{'resource_ready_ns':time.monotonic_ns()},instance)
             future=asyncio.get_running_loop().run_in_executor(self.pool,fn,*args)
             try:return await asyncio.shield(future)
@@ -193,7 +198,9 @@ class Scheduler:
                 ordinal=index;index+=1
                 wrapped=self.backend.register_item(item,node['inputs']['rows']['item'],instance)
                 return (await region('body',{'$item':wrapped},'item-'+str(ordinal)))['rows']
-            async for result in bounded_map(source,item_body,parallelism=node.get('resources',{}).get('max_parallelism',1),admission=self.admission):
+            parallelism=node.get('resources',{}).get('max_parallelism',1)
+            if self.execution_profile:parallelism=min(parallelism,self.execution_profile['map_parallelism'])
+            async for result in bounded_map(source,item_body,parallelism=parallelism,admission=self.admission):
                 await stream.put(result,self.backend.size(result))
         stream=self.spawn_stream(producer,instance,holds=list(captured.values()))
         return {'rows':self.backend.wrap(stream,node['outputs']['rows'],instance,parents=list(inputs.values()))}
