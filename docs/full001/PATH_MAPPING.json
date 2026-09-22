@@ -8,7 +8,7 @@
     "M05": "rcwg_full/runtime/artifacts.py",
     "M06": "rcwg_full/verification",
     "M07": "rcwg_full/reference",
-    "M08": "rcwg_full/adapters",
+    "M08": "rcwg_full/services and rcwg_full/control",
     "M09": "rcwg_full/campaign",
     "M10": "rcwg_full/analysis"
   }

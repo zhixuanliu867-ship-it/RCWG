@@ -105,7 +105,12 @@ class ControlAPI:
             record=self.get('launch',launch['id'])
             self.put('launch',record['id'],{k:v for k,v in {**record,'status':'RECONCILE_REQUIRED' if outcome['paused'] and terminal!='CANCELLED' else 'DISPATCHED'}.items() if k not in {'id','version'}},version=record['version'])
             self.store._audit('outbox_dispatch',{'run_id':run['id'],'slot_id':launch['id'],'attempt_id':slot['active_attempt'],'status':terminal,'outcome_hash':digest(outcome)})
-        return {'run':self.get('run_attempt',run['id']),'runner_outcome':outcome}
+        from .indexing import index_attempt
+        try:indexed=index_attempt(self,campaign_id,run['id'],runner,launch['id'])
+        except (OSError,ValueError,KeyError,TypeError) as exc:
+            indexed={'status':'INDEX_FAILED','code':type(exc).__name__,'reason':str(exc)}
+            with self.store.transaction():self.store._audit('evidence_index_failed',{'run_id':run['id'],**indexed})
+        return {'run':self.get('run_attempt',run['id']),'runner_outcome':outcome,'evidence_index':indexed}
 
     @staticmethod
     def closed(body,required,optional=()):

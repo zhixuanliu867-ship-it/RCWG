@@ -30,6 +30,9 @@ class Supervision(unittest.TestCase):
         report=execute(self.task,self.plan,self.manifest_path,build=os.environ['RCWG_FULL_BUILD'],output=self.root/'run',verify=verifier)
         self.assertEqual(report['terminal_status'],'COMPLETED',report)
         self.assertEqual(report['verification']['status'],'PASS');self.assertFalse(report['formal_ready'])
+        self.assertEqual(report['exec_elapsed_scope'],'CONTROLLER_GO_TO_COMMITTED_RESULT_RECEIPT')
+        self.assertEqual(report['exec_elapsed_ns'],report['result_received_monotonic_ns']-report['exec_started_monotonic_ns'])
+        self.assertGreaterEqual(report['exec_elapsed_ns'],report['worker']['worker_exec_wall_ns'])
         self.assertEqual(report['process_group_final']['live'],[]);self.assertEqual(report['cleanup_failures'],[])
         self.assertEqual(report['binding_validation']['expected_count'],1)
         self.assertTrue((self.root/'run'/'sidecar.json').exists());self.assertTrue((self.root/'run'/'seal.json').exists())
@@ -42,6 +45,34 @@ class Supervision(unittest.TestCase):
         report=execute(self.task,self.plan,self.manifest_path,build=os.environ['RCWG_FULL_BUILD'],output=self.root/'deadline',timeout_s=.001)
         self.assertEqual(report['terminal_status'],'TIMEOUT',report);self.assertEqual(report['failure']['code'],'WALL_TIMEOUT')
         self.assertEqual(report['verification']['status'],'UNKNOWN');self.assertEqual(report['process_group_final']['live'],[])
+
+    def test_real_reference_screen_has_reference_role_and_shared_context(self):
+        import uuid
+        from rcwg_full.evidence import write,digest
+        from rcwg_full.reference.execution import NativeReferenceExecutor
+        gold=self.root/'gold.json';expected=[{'id':r['id'],'score':r['score']} for r in reversed(self.rows) if r['eligible']][:20]
+        write(gold,{'expected':expected,'comparison':'ordered'})
+        executor=NativeReferenceExecutor(self.task,self.manifest_path,gold,os.environ['RCWG_FULL_BUILD'],self.root/'reference-runs',condition='C0')
+        request={'candidate_id':'reference-candidate','attempt_id':str(uuid.uuid4()),'plan_hash':digest(self.plan),
+            'role':'REFERENCE_SCREEN','repeat':0,'context_hash':executor.context.comparison_context_hash}
+        result=executor(self.plan,request);self.assertEqual(result['status'],'COMPLETED')
+        self.assertTrue(result['semantic']);self.assertTrue(result['timing_valid']);self.assertIsNone(result['budget'])
+        manifest=json.loads(read(self.root/'reference-runs'/request['attempt_id']/'expected.json'))
+        self.assertEqual(manifest['expected_records'][0]['record_role'],'REFERENCE')
+
+    def test_real_e2_target_keeps_c0_plan_through_worker_and_seal(self):
+        from rcwg_full.campaign.planning import rebind_frozen
+        from rcwg_full.evidence import digest
+        original=copy.deepcopy(self.plan);task=copy.deepcopy(self.task);task['task_id']=self.task['task_id']+'-C2'
+        task['resources']['worker_memory_limit_bytes']//=2
+        common={'template_id':'F1-01','base_id':0,'generator':'G0','protocol':'P1','trial_label':17}
+        frozen=rebind_frozen(original,{**common,'task_id':self.task['task_id'],'condition':'C0'},{**common,'task_id':task['task_id'],'condition':'C2'})
+        expected=[{'id':r['id'],'score':r['score']} for r in reversed(self.rows) if r['eligible']][:20]
+        result=execute(task,original,self.manifest_path,build=os.environ['RCWG_FULL_BUILD'],output=self.root/'frozen',condition_id='C2',
+            frozen_binding=frozen,verify=lambda actual,out:{'status':'PASS' if actual==expected else 'FAIL'})
+        self.assertEqual(result['terminal_status'],'COMPLETED',result);self.assertEqual(result['verification']['status'],'PASS')
+        sealed=json.loads(read(self.root/'frozen/expected.json'))
+        self.assertEqual(sealed['expected_records'][0]['plan_hash'],digest(original));self.assertEqual(original,self.plan)
 
     def test_data_file_tamper_prevents_silent_execution(self):
         path=self.manifest_path.parent/self.manifest['sources'][0]['physical_files'][0]['path']

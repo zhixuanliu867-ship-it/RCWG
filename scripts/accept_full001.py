@@ -40,21 +40,11 @@ def main(argv=None):
     invocation=out/('invocation-'+str(time.time_ns()));invocation.mkdir(mode=0o700)
     stages=[];blockers=[]
     def run(name,command,expected_report=None):
-        stage_dir=out/name
-        if a.resume and (stage_dir/'stage.json').exists():
-            prior=json.loads((stage_dir/'stage.json').read_text('utf-8'))
-            if prior['command']!=command or prior['source_hash']!=identity['source_hash']:raise ValueError('STAGE_RESUME_IDENTITY')
-            for file,h in prior['files'].items():
-                if sha(stage_dir/file)!=h:raise ValueError('STAGE_RESUME_ARTIFACT')
-            stages.append(prior);return prior['exit_code']
-        stage_dir.mkdir(mode=0o700)
-        start=time.time_ns()
-        with (stage_dir/'stdout.log').open('xb') as stdout,(stage_dir/'stderr.log').open('xb') as stderr:
-            result=subprocess.run(command,cwd=ROOT,stdout=stdout,stderr=stderr,timeout=7200)
-        record={'name':name,'command':command,'exit_code':result.returncode,'source_hash':identity['source_hash'],
-                'started_unix_ns':start,'finished_unix_ns':time.time_ns(),'expected_report':expected_report,
-                'files':{q.relative_to(stage_dir).as_posix():sha(q) for q in stage_dir.rglob('*') if q.is_file()}}
-        save(stage_dir/'stage.json',record);stages.append(record);return result.returncode
+        from rcwg_full.acceptance_stages import run_stage
+        record=run_stage(out,name,command,source_hash=identity['source_hash'],cwd=ROOT,resume=a.resume,expected_report=expected_report)
+        stages.append(record)
+        if record.get('blocker'):blockers.append(name+':'+record['blocker'])
+        return record['exit_code']
     actual={'interpreter_exists':interpreter.is_file(),'outer_python':platform.python_version(),'outer_executable':sys.executable}
     if interpreter.is_file():
         probe="import sys,platform,json,importlib.metadata as m;print(json.dumps({'python':platform.python_version(),'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'packages':{k:m.version(k) for k in ['pyarrow','pybind11']}}))"
@@ -72,19 +62,16 @@ def main(argv=None):
     code=2 if blockers else 0
     if not blockers:
         py=str(interpreter.absolute());build=a.native_build or out/'native-build'/'build'
-        if not a.native_build:
-            code=run('native-build',[py,'scripts/build_full001.py','--output',str(build.absolute())])
-        if code==0:
-            for name,command in [
-                ('full001',[py,'acceptance/full001/run_tests.py','--native-build',str(build.absolute()),'--output',str((out/'full001/results').absolute())]),
-                ('inherited-python',[py,'acceptance/full001/run_tests.py','--suite-root','tests','--output',str((out/'inherited-python/results').absolute())]),
-                ('native-original-build',[py,'scripts/build_native001.py','--output',str((out/'native-original-build/build').absolute())]),
-                ('native-original',[py,'scripts/accept_native001.py','--build',str((out/'native-original-build/build').absolute()),'--output',str((out/'native-original/results').absolute())]),
-                ('n4-original-build',[py,'scripts/build_native001_n4.py','--output',str((out/'n4-original-build/build').absolute())]),
-                ('n4-original',[py,'scripts/accept_native001_n4.py','--build',str((out/'n4-original-build/build').absolute()),'--output',str((out/'n4-original/results').absolute())])]:
-                rc=run(name,command)
-                if rc:code=1
-        elif code!=2:code=1
+        native_code=0 if a.native_build else run('native-build',[py,'scripts/build_full001.py','--output',str(build.absolute())])
+        if native_code==0:
+            run('full001',[py,'acceptance/full001/run_tests.py','--native-build',str(build.absolute()),'--output',str((out/'full001/results').absolute())])
+        run('inherited-python',[py,'acceptance/full001/run_tests.py','--suite-root','tests','--output',str((out/'inherited-python/results').absolute())])
+        for name,builder,acceptor in [('native-original','scripts/build_native001.py','scripts/accept_native001.py'),
+                                     ('n4-original','scripts/build_native001_n4.py','scripts/accept_native001_n4.py')]:
+            original_build=out/(name+'-build')/'build'
+            if run(name+'-build',[py,builder,'--output',str(original_build.absolute())])==0:
+                run(name,[py,acceptor,'--build',str(original_build.absolute()),'--output',str((out/name/'results').absolute())])
+        code=1 if any(r['status']=='FAIL' for r in stages) else 2 if any(r['status']=='BLOCKED' for r in stages) else 0
     if source_hashes()!=sources:code=1;blockers.append('SOURCE_CHANGED_DURING_ACCEPTANCE')
     # Requirements require inspectable source-bound coverage, not just a green
     # unittest count. External phases are listed independently, never skipped PASS.

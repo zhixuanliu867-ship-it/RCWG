@@ -12,8 +12,8 @@ from rcwg_full.runtime.events import verify_journal
 from rcwg_native.supervisor import stop_group,live_group
 from rcwg_native.metrology import unavailable
 from rcwg_full.compiler.public_task import validate_public_task
-from rcwg_full.runtime.binding import build_context
-from rcwg_spec.binding import freeze_expected,seal_events,make_sidecar,validate_evidence,EVENT_TYPES
+from rcwg_full.runtime.binding import build_context,freeze_execution
+from rcwg_spec.binding import seal_events,make_sidecar,validate_evidence,EVENT_TYPES
 
 
 def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None,execution_profile=None,service_binding=None):
@@ -28,7 +28,7 @@ def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE'
         source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
 
 
-def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None):
+def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1'):
     if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
     if mode=='FORMAL' and (not admission or admission.get('status')!='ADMITTED' or driver is None or not getattr(driver,'full001_authorization',None)):raise PermissionError('FORMAL_ADMISSION_REQUIRED')
     if semantic_service is not None and ((mode=='FORMAL')!=(semantic_service.mode=='LIVE')):raise ValueError('SERVICE_MODE_BINDING')
@@ -41,7 +41,8 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
     transition('DECLARED');catalog=DataCatalog(data_manifest)
     context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None,execution_profile=execution_profile,service_binding=semantic_service.client.binding if semantic_service else None)
     compiler_source=b''.join(read(p) for p in sorted((ROOT/'rcwg_full/compiler').glob('*.py')))
-    expected=freeze_expected(context,[{'record_id':ident,'record_role':'MODEL','plan':plan,'compiler_source':compiler_source,'generation_id':ident,'repeat_id':'r1','repeat_role':'PRIMARY_REPEAT'}])
+    expected=freeze_execution(context,task,plan,compiler_source,ident,frozen_binding=frozen_binding,
+        record_role=record_role,repeat_role=repeat_role,generation_id=generation_id,repeat_id=repeat_id)
     write(out/'expected.json',expected.as_dict())
     request={'run_id':ident,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance','go_record':str((out/'go.json').absolute())}
     if replay is not None:request['semantic_replay']=replay
@@ -90,6 +91,13 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
             time.sleep(.005)
         if handshake.go_ns is None:raise ValueError('LAUNCH_GO_MISSING')
         report['observed_elapsed_ns']=time.monotonic_ns()-handshake.go_ns
+        if reason is None:
+            # Receipt of the committed worker report is the FULL001 timing end.
+            # Tree drain, final counters and independent verification follow it.
+            worker_report=json.loads(read(worker/'worker-report.json'))
+            received_ns=time.monotonic_ns()
+            report.update(result_received_monotonic_ns=received_ns,exec_started_monotonic_ns=handshake.go_ns,
+                exec_elapsed_ns=received_ns-handshake.go_ns,exec_elapsed_scope='CONTROLLER_GO_TO_COMMITTED_RESULT_RECEIPT')
         transition('STOPPING',cause=reason)
         if driver:driver.kill()
         report['process_group_final']=stop_group(proc);transition('DRAINING')
@@ -98,13 +106,12 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         if reason:
             report['terminal_status']='TIMEOUT' if reason=='WALL_TIMEOUT' else 'UNKNOWN';report['failure']={'code':reason,'attribution':'deadline' if reason=='WALL_TIMEOUT' else 'owner'}
         else:
-            worker_report=json.loads(read(worker/'worker-report.json'))
             if worker_report['run_id']!=ident or worker_report['source']!=source_hashes():raise ValueError('WORKER_IDENTITY_OR_SOURCE')
             events=verify_journal(worker/'events.jsonl',run_id=ident)
             if events[0]['event_kind']!='run_started' or events[-1]['event_kind']!='run_finished':raise ValueError('RUN_BOUNDARIES')
             if (proc.returncode==0)!=(worker_report['terminal_status']=='COMPLETED') or events[-1]['status']!=worker_report['terminal_status']:raise ValueError('WORKER_EXIT_STATUS')
             report.update(terminal_status=worker_report['terminal_status'],failure=worker_report['failure'],worker=worker_report)
-            report['exec_elapsed_ns']=worker_report.get('exec_elapsed_ns')
+            report['worker_prepare_to_computation_finish_ns']=worker_report.get('exec_elapsed_ns')
     except BaseException as exc:
         report.update(terminal_status='INFRA_FAILURE',failure={'code':type(exc).__name__,'detail':str(exc),'attribution':'facility'})
     finally:
@@ -134,7 +141,8 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         projection=[{'event':e['event_kind'],'monotonic_ns':e['monotonic_ns'],'status':e['status'],'payload':{**e['payload'],'full_event_hash':e['event_hash']}} for e in observed if e['event_kind'] in EVENT_TYPES]
         if projection[-1]['status']==report['terminal_status']:
             events=seal_events(expected,ident,projection);sidecar=make_sidecar(expected,ident,events,terminal_status=report['terminal_status'],verification_status=report['verification']['status'])
-            report['binding_validation']=validate_evidence(expected,[sidecar],{ident:events});write(out/'bound-events.json',events);write(out/'sidecar.json',sidecar)
+            report['binding_validation']=validate_evidence(expected,[sidecar] if record_role=='MODEL' else [],{ident:events},
+                reference_records=[sidecar] if record_role=='REFERENCE' else []);write(out/'bound-events.json',events);write(out/'sidecar.json',sidecar)
     report['lifecycle']=states;write(out/'report.json',report)
     inventory={p.relative_to(out).as_posix():sha(read(p)) for p in out.rglob('*') if p.is_file()}
     write(out/'seal.json',{'run_id':ident,'files':inventory,'status':'SEALED','formal_ready':False});return report

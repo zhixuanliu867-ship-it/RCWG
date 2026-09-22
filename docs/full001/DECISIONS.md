@@ -76,3 +76,14 @@ Campaign order is derived only from predeclared slots, with paired protocol orde
 The control outbox calls the actual runner for selected frozen slots, waits for prerequisites, records cancel-before-launch without a physical attempt, and preserves a crash claim. Trusted middleware supplies actor roles. Raw verification and metric payloads remain private until the complete package has an explicit Auditor release. Private seals include raw attempt outputs, worker logs, service request/response files and consistent SQLite snapshots; original sources remain unchanged. Source datasets and build binaries retain separate frozen artifact identities, explicitly declared in the sealed scope.
 
 The latest supplementary cohort passed 331 tests, with zero skips. Earlier failures and all prior successful results are retained. Requirement mappings are PARTIAL wherever a supplementary cohort covers only part of a requirement. The total dispatcher produced an actual BLOCKED report, not a software acceptance pass. Formal builders, true bounded external merge, remaining memory accounting and exact-source native integration are still outstanding software obligations.
+
+
+## RCWG-FULL-001 continuation checkpoint — 2026-09-22, portable-w05
+
+Current supplementary integration passed 369 tests and 104 subtests, without skips, on Windows Python 3.13.4. Independent JSON Schema validation passed all 1440 plan structures, eight service bindings and three rejection variants; workflow YAML was checked offline. These are not current Linux/native, formal capacity or cloud acceptance.
+
+F1/F2 now have bounded Arrow construction and an independent on-disk SQL oracle. Their 24 templates x four conditions passed small fixture construction, static compilation and independent oracle/condition checks. Formal workload construction still requires exact host admission. F3/F4 formal builders and F5/F6 formal-source binding remain software work.
+
+Reference attempts persist before execution and resume without resend; uncertain outcomes pause their group. New native reference execution uses inherited reference/timing evidence roles. E2's versioned binding now seals the original C0 plan against the target context without rewriting the plan. Controller timing now ends at committed result receipt, before process drain and verification. New Linux integration cases are retained but have not run in this environment. A facility retry must preserve plan, source, data, model, budget and comparison context.
+
+Resume from PROGRESS.json and SOFTWARE_GAPS.json. All six readiness flags remain false, formal BLOCKED_NOT_FROZEN. No host load, paid/count request, cloud/IAM change, system install, cgroup write, merge or force push occurred. N4 and inherited protected bytes are unchanged. Historical failure directories remain; inaccessible historical directories are separately recorded and never inferred as acceptance evidence.

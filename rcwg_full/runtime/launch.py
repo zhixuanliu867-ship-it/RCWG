@@ -79,8 +79,10 @@ class Handshake:
         evidence={'pid':proc.pid,'ack':self.ack.decode(),'membership':'NOT_MEASURED_ENGINEERING'}
         if self.driver:
             evidence.update(verify_membership(proc.pid,self.driver.fs.root/run_id,self.driver.limits.affinity))
+        prepared_ns=time.monotonic_ns()
+        write(go_path,{'run_id':run_id,'exec_started_monotonic_ns':prepared_ns,
+            'clock_scope':'PREPARE_MARKER_ONLY_CONTROLLER_REPORT_HAS_ACTUAL_GO_CLOCK','launcher':evidence})
         self.go_ns=time.monotonic_ns()
-        write(go_path,{'run_id':run_id,'exec_started_monotonic_ns':self.go_ns,'launcher':evidence})
         if os.write(self.go_w,b'1')!=1:raise FacilityFault('LAUNCH_GO_FAILED')
         return evidence
 

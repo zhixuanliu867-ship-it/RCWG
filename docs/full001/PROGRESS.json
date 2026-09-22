@@ -62,11 +62,12 @@
     }
   },
   "next_actions": [
-    "Implement formal capacity builders and capacity tables; do not run stress workloads without exact approval.",
-    "Complete native external merge streaming, transformed-batch and graph/JSON allocation accounting.",
-    "Complete versioned schemas, external benchmark adapters and bounded retry/timing confirmation integration.",
-    "Run current source in Linux Python 3.12.14 with native build, 56 dispatches, 1440 tiny cases and all inherited gates.",
-    "Finish requirement evidence mapping, source guard, clean baseline application and unified public/private delivery."
+    "Complete formal F3/F4 builders and F5/F6 real-source template binding; validate formal F1/F2 builder capacity and native reference feasibility after exact approval.",
+    "Complete genuinely bounded end-to-end native external merge, sorted grouping/joins and transformed-batch/graph/JSON allocation accounting.",
+    "Complete real upstream-native external benchmark adapters; the source registry and private interchange do not reproduce their original protocols.",
+    "Complete facility-generation retry integration, finite host-run scope integration and calibration applicability for the final binaries.",
+    "Run exact current source on accessible Linux Python 3.12.14: native build, 56 dispatches, all 1440 engineering tiny cases, new E2/reference/timing integrations and inherited gates.",
+    "Complete requirement-level evidence and complete historical private archive after access restoration; publish the authorized branch/draft PR when repository write access is available."
   ],
   "commands": [],
   "external_actions_performed": {
@@ -79,7 +80,7 @@
     "calibration_load": 0,
     "merge": 0
   },
-  "updated_utc": "2026-09-22T11:52:03.372526+00:00",
+  "updated_utc": "2026-09-22T12:56:08.710603+00:00",
   "publication": {
     "authorized": true,
     "branch_pushed": true,
@@ -93,7 +94,7 @@
     "latest_source_pushed": false,
     "local_changes_pending_publication": true,
     "last_remote_commit": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
-    "write_status": "CONNECTOR_HTTP_403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+    "write_status": "CONNECTOR_HTTP_403; GIT_DRY_RUN_TRANSPORT_STALLED_AND_STOPPED_WITHOUT_PUSH",
     "ci_applies_to_historical_remote_only": true
   },
   "verified_scopes": [
@@ -439,6 +440,126 @@
       "report_sha256": "912caa648d9719d504035e41680ac34995d96acda2cb624e60715475e7100067",
       "source_hash": "784ae5e8a0188a530eecb3f3209084ddc2a976cec6dbe723fd8730ac35a44d63",
       "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/portable-w04/TEST_RESULTS.json",
+      "report_sha256": "0848af3f2117bfeca185ab339a1e3b2a05648dd4b0d75374438ee24c45b03de6",
+      "source_hash": "c1e2b7b0762ba12df3737af0d460e00637b263aa894f75c9cbdb042e2c9be9dd",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 338,
+      "tests_run": 338,
+      "subtests": 2,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/control-wire-w01/TEST_RESULTS.json",
+      "report_sha256": "13a66fcf78756af227860624b01e531462b4792ab06219fec384dfe10c7eb711",
+      "source_hash": "e5591975384274a9cee33a1d80dc4e2d8dd072a846979ccad456237533f8e440",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 30,
+      "tests_run": 30,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/retry-control-w01/TEST_RESULTS.json",
+      "report_sha256": "dd0dce1144734cc0639c613e3843ff4b7525b064b64d4556e3477d41a2cb4a51",
+      "source_hash": "c1e2b7b0762ba12df3737af0d460e00637b263aa894f75c9cbdb042e2c9be9dd",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 42,
+      "tests_run": 42,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/external-w01/TEST_RESULTS.json",
+      "report_sha256": "8c292a919b8f6cfcfd54663584cae806e895a88a9a202208f0ace1e75615137b",
+      "source_hash": "8e4f79c66f241afdf2a96188d0547a449fd60621c2c126f1522f03f9d5507bf3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 3,
+      "tests_run": 3,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "FAIL",
+      "report": "runs/formal-build-w01/TEST_RESULTS.json",
+      "report_sha256": "5518267d6352b44efcfd1892d6e74ace33b54d305ec23005703c1f1ffb8ffff4",
+      "source_hash": "82b1bfd7cccbe3c28aaa4721c02f0085cad440c5a2400707f9a678ff616a9aa3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 3,
+      "tests_run": 4,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/formal-build-w02/TEST_RESULTS.json",
+      "report_sha256": "37edf93ba920433193b7f8f0112c40f445d5c4fd63f68a4979aba3daf9208b7f",
+      "source_hash": "b971504151cf9e00e3edc6e73ee82ba8d4fdaceb616e96f5c225efc96d85a806",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 7,
+      "tests_run": 7,
+      "subtests": 96,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/confirmation-w01/TEST_RESULTS.json",
+      "report_sha256": "a5d1e071cf46a8d4bd37b018376cccc52b0d2946c916c3467c36b41aa2803954",
+      "source_hash": "bd0aaeecb9e8b2c2cce307a8f6748bac0ccd65009e878fa8585fa2716043cd43",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 33,
+      "tests_run": 33,
+      "subtests": 6,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/acceptance-recovery-w01/TEST_RESULTS.json",
+      "report_sha256": "1779f8b3f436210e1bd2b81fc72c4daac8a8e88b81a0cb673e2dafd9e789d4a4",
+      "source_hash": "4ea631cc0dd7406e4d3555e79cd987bef2e55ddb7d8457a0d8e8c8d941a3b5fe",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 4,
+      "tests_run": 4,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/portable-w05/TEST_RESULTS.json",
+      "report_sha256": "02e647da8aafdd5a35cc8b13ee62fb2b2d8aea2c677615cdafa960eff224c188",
+      "source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 369,
+      "tests_run": 369,
+      "subtests": 104,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "WIRE_SCHEMAS_AND_WORKFLOW_SYNTAX_ONLY",
+      "status": "PASS",
+      "report": "runs/schema-wire-w02/REPORT.json",
+      "report_sha256": "9f5e8494fae9e160024737efb20676dfa292e9d2cc3d0d85ddc16d6e8a1a14fc",
+      "source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
+      "template_plan_checks": 1440,
+      "service_bindings": 8,
+      "invalid_variants_rejected": 3,
+      "not_native_execution": true,
+      "not_cloud_deployment": true
     }
   ],
   "recovery": {
@@ -458,14 +579,20 @@
       "legacy": 35618135588,
       "status": "success"
     },
-    "read_entire_spec_and_all_json": true
+    "read_entire_spec_and_all_json": true,
+    "historical_evidence_scope": "Original prior worktree preserved. Nine historical Windows evidence directories currently deny enumeration; remaining accessible history is separately indexed. No missing history is treated as current acceptance."
   },
-  "checkpoint_parent_commit": "f2d219fa3e5994d0fe3dd9af60e246ae42069ded",
-  "working_source_hash": "648369747eeaf3998f1f3ea2a905469984cd9ec3068f62cc9d170ad13089dd3d",
+  "checkpoint_parent_commit": "68dd53d1335cbf63212d1cd82bef6c7acc4e77ca",
+  "working_source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
   "total_acceptance": {
     "status": "BLOCKED",
-    "report": "runs/resume-total-win-001/invocation-1790074550082877200/ACCEPTANCE.json",
-    "sha256": "b74185474f99f60bc0591c32aaebfcda28d9d0b87e5f709eacc66a950abe8a4f",
-    "reason": "Windows Python 3.13.4 does not satisfy target Linux Python 3.12.14; no current native build evidence."
+    "report": "runs/total-w03/invocation-1790081513222006200/ACCEPTANCE.json",
+    "sha256": "a000f67bdf02ba618a603a5956be93659c5fb66b48299fa7dff56858391973d5",
+    "exit_code": 2,
+    "blockers": [
+      "TARGET_PYTHON_3_12_14_REQUIRED",
+      "LINUX_NATIVE_ACCEPTANCE_ENVIRONMENT_REQUIRED"
+    ],
+    "reason": "Linux Python 3.12.14 and exact-current-source native build unavailable."
   }
 }

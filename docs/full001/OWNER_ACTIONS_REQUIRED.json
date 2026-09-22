@@ -88,6 +88,12 @@
       "kind": "repository_access",
       "status": "WRITE_PERMISSION_UNAVAILABLE",
       "rule": "Existing authorization covers public branch push/draft PR, but GitHub integration write returned HTTP 403 Resource not accessible by integration. Preserve local commits/bundle; no permission bypass or merge."
+    },
+    {
+      "id": "ENV-HISTORICAL-EVIDENCE-ACCESS",
+      "kind": "evidence_access",
+      "status": "PARTIAL_READ_ACCESS",
+      "rule": "Nine historical Windows evidence directories could not be enumerated. Preserve originals; restore read access for complete private evidence packaging. The accessible archive is not a complete historical record."
     }
   ],
   "publication_authorization": {

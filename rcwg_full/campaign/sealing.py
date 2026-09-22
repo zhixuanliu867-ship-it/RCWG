@@ -51,6 +51,11 @@ def check_expected(path):
             identities.add(row['slot_id']); counts[row['slot_kind']] += 1
         if dict(counts) != entry['counts'] or sum(counts.values()) != entry['total']:
             raise ValueError('EXPECTED_FILE_COUNTS')
+    for name,expected in manifest.get('supporting_files',{}).items():
+        if sha(read(relative_file(root,name)))!=expected:raise ValueError('SUPPORTING_FILE_HASH')
+    if 'capacity_plan' in manifest:
+        entry=manifest['capacity_plan']
+        if sha(read(relative_file(root,entry['file'])))!=entry['sha256']:raise ValueError('CAPACITY_PLAN_HASH')
     return manifest
 
 
@@ -196,6 +201,8 @@ def seal_run(manifest_path,output):
         if (root/'service-evidence').exists():files+=_snapshot_tree(root/'service-evidence',out/'service-evidence')
         source_dir=out/'frozen-inputs';source_dir.mkdir(mode=0o700)
         inputs={manifest_path.name,*[entry['file'] for entry in [manifest['primary'],*manifest['diagnostics'].values()]]}
+        inputs.update(manifest.get('supporting_files',{}))
+        if 'capacity_plan' in manifest:inputs.add(manifest['capacity_plan']['file'])
         if (root/'freeze.json').is_file():inputs.add('freeze.json')
         for name in sorted(inputs):
             destination=relative_file(source_dir,name);destination.parent.mkdir(parents=True,exist_ok=True,mode=0o700)

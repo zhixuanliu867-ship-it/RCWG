@@ -75,6 +75,8 @@ def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATI
                 if (retry.get('ledger_role')!='INFRA_RETRY' or retry.get('parent_attempt_id')!=selected['attempt_id']
                     or selected['status']!='INFRA_FAILURE' or retry.get('reconciliation')!={'worker_stopped':True,'request_uncertain':False}):
                     raise ValueError('RETRY_NOT_EQUIVALENT')
+                if any(retry.get(k)!=selected.get(k) for k in (*CONTEXT,'plan_hash','comparison_context_hash')):
+                    raise ValueError('RETRY_CONTEXT_CHANGED')
                 selected=retry
         else:missing.append(slot['slot_id'])
         context={k:selected[k] for k in (*CONTEXT,'comparison_context_hash','plan_hash','c0_source_plan_hash') if selected and k in selected}

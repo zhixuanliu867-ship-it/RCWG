@@ -95,3 +95,41 @@ class CampaignRunnerTests(unittest.TestCase):
         self.assertTrue(all(order[d]<order[r['slot_id']] for r in all_rows for d in r['expected_dependencies']))
         self.assertEqual(sum(r['slot_kind']=='generation' for r in primary),23040)
         self.assertEqual(sum(r['slot_kind']=='execution' for r in primary),61440)
+
+    def test_one_facility_retry_uses_same_plan_and_retains_both_attempts(self):
+        plan=f1('F1-01',0,'C0')['plan'];calls=[]
+        def action(slot,attempt,deps,directory):
+            self.assertEqual(deps['generation']['plan'],plan);calls.append(attempt)
+            native=directory/'native';native.mkdir()
+            report={'run_id':attempt,'terminal_status':'INFRA_FAILURE','process_group_final':{'live':[],'zombie':[]},
+                'cleanup_failures':[],'paid_calls':0}
+            report_hash=write(native/'report.json',report)
+            write(native/'seal.json',{'run_id':attempt,'status':'SEALED','files':{'report.json':report_hash}})
+            return {'status':'INFRA_FAILURE','failure_class':'INFRASTRUCTURE','plan_hash':digest(plan)}
+        runner=self.runner(lambda *a:{'status':'COMPLETED','plan':plan,'plan_hash':digest(plan)},action)
+        try:
+            first=runner.run();self.assertEqual(first['actual_attempts_this_invocation'][-1]['status'],'INFRA_FAILURE')
+            second=runner.retry_failed_execution('exec-0');self.assertEqual(len(calls),2);self.assertNotEqual(*calls)
+            records=[r for r in runner.store.observations('ENGINEERING_REPLAY') if r['slot_id']=='exec-0']
+            self.assertEqual([r['ledger_role'] for r in records],['PRIMARY','INFRA_RETRY'])
+            self.assertEqual(records[1]['parent_attempt_id'],records[0]['attempt_id'])
+            self.assertEqual(records[1]['reconciliation'],{'worker_stopped':True,'request_uncertain':False})
+            self.assertEqual(records[0]['plan_hash'],records[1]['plan_hash'])
+            with self.assertRaisesRegex(Conflict,'RETRY_LIMIT'):runner.retry_failed_execution('exec-0')
+            with self.assertRaisesRegex(Conflict,'NOT_ALLOWED'):runner.retry_failed_execution('generation')
+            self.assertEqual(runner.store.slot('exec-1')['status'],'NOT_RUN')
+        finally:runner.close()
+
+    def test_uncertain_service_or_live_descendant_denies_retry(self):
+        def failure(slot,attempt,deps,directory):
+            native=directory/'native';native.mkdir()
+            report={'run_id':attempt,'terminal_status':'INFRA_FAILURE','process_group_final':{'live':[123]},'cleanup_failures':[],
+                'paid_calls':None,'semantic_requests':{'inflight':1,'failures':0,'requests':1,'responses':0}}
+            h=write(native/'report.json',report);write(native/'seal.json',{'run_id':attempt,'status':'SEALED','files':{'report.json':h}})
+            return {'status':'INFRA_FAILURE'}
+        runner=self.runner(lambda *a:{'status':'COMPLETED'},failure)
+        try:
+            runner.run()
+            with self.assertRaisesRegex(Conflict,'PROCESS_NOT_RECONCILED'):runner.retry_failed_execution('exec-0')
+            self.assertEqual(runner.store.db.execute("SELECT COUNT(*) FROM attempts WHERE slot_id='exec-0'").fetchone()[0],1)
+        finally:runner.close()

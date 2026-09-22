@@ -8,6 +8,36 @@ from rcwg_spec.identity import comparison_identity
 from rcwg_full.compiler.public_task import validate_public_task
 
 
+def freeze_execution(context,task,plan,compiler_source,run_id,*,frozen_binding=None,
+                     record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1'):
+    """Keep E2's C0 plan bytes while binding the actual target task context.
+
+    The inherited manifest and evidence validators are unchanged. Only the
+    explicitly checked E2 task-id relation extends their pre-execution builder.
+    """
+    import hashlib
+    from rcwg_spec.binding import freeze_expected,ExpectedManifest,_context_snapshot,_manifest,_json_contract
+    from rcwg_spec.identity import execution_identity
+    specification={'record_id':run_id,'record_role':record_role,'plan':plan,'compiler_source':compiler_source,
+        'generation_id':generation_id or run_id,'repeat_id':repeat_id,'repeat_role':repeat_role}
+    if frozen_binding is None:return freeze_expected(context,[specification])
+    from rcwg_full.compiler import FullCompiler
+    checked=validate_public_task(task);snapshot=_context_snapshot(context)
+    if snapshot['task_input_hash']!=checked['task_input_hash']:raise ValueError('FROZEN_CONTEXT_TASK_MISMATCH')
+    FullCompiler().compile(task,plan,frozen_binding=frozen_binding)
+    _json_contract(plan)
+    if record_role not in {'MODEL','REFERENCE'}:raise ValueError('EXPECTED_RECORD_ROLE')
+    if type(compiler_source) is not bytes or not compiler_source:raise ValueError('COMPILER_SOURCE_REQUIRED')
+    for key in ['record_id','generation_id','repeat_id']:_id(specification[key],'/expected/'+key)
+    identity=execution_identity(snapshot['identity']['context'],plan_hash=digest(plan),
+        compiler_hash=hashlib.sha256(compiler_source).hexdigest(),input_hash=snapshot['task_input_hash'],
+        generation_id=specification['generation_id'],repeat_id=repeat_id,repeat_role=repeat_role)
+    result=ExpectedManifest(canonical({'schema_version':'SPEC001B_EXPECTED_0.1','context':snapshot,
+        'expected_records':[{'record_id':run_id,'record_role':record_role,**identity}],'formal_ready':False}))
+    _manifest(result)
+    return result
+
+
 def build_context(task: dict, *, condition_id: str, data_manifest: list[dict],
                   runtime: dict, cache_policy: dict, verifier: dict, metric_spec: dict,
                   measurement_profile: dict, operator_registry: dict,
@@ -70,5 +100,4 @@ def build_context(task: dict, *, condition_id: str, data_manifest: list[dict],
                                            **components},
                 "formal_ready": False, "runtime_enforcement": "NOT_VERIFIED"}
     return RunnerContext(canonical(snapshot))
-
 

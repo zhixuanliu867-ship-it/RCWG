@@ -77,6 +77,13 @@ class GoldenAnalysis(unittest.TestCase):
         retry={**o[0],'attempt_id':'retry','parent_attempt_id':o[0]['attempt_id'],'ledger_role':'INFRA_RETRY',
                'reconciliation':{'worker_stopped':True,'request_uncertain':False}}
         with self.assertRaisesRegex(ValueError,'RETRY_NOT_EQUIVALENT'):normalize(e,o+[retry])
+    def test_retry_cannot_change_unlisted_frozen_plan_or_runtime(self):
+        e,o=sample();o[0].update(status='INFRA_FAILURE',plan_hash='original',source_hash='frozen')
+        retry={**o[0],'status':'COMPLETED','attempt_id':'retry','parent_attempt_id':o[0]['attempt_id'],
+               'ledger_role':'INFRA_RETRY','reconciliation':{'worker_stopped':True,'request_uncertain':False}}
+        for field in ['plan_hash','source_hash','data_hash','model_snapshot_hash','profile_hash','comparison_context_hash']:
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'RETRY_CONTEXT_CHANGED'):
+                normalize(e,o+[{**retry,field:'changed'}])
     def test_timing_confirmation_does_not_change_denominator(self):
         e,o=sample();n=normalize(e,o+[{**o[0],'attempt_id':'confirmation','ledger_role':'TIMING_CONFIRMATION','semantic':False}])
         self.assertEqual(len(n['rows']),24);self.assertEqual(n['excluded_timing_attempts'],['confirmation'])

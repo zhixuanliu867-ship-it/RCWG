@@ -64,6 +64,7 @@ class CampaignRunner:
             write(self.root/'execution-order.json',{'seed':481013,'slots':[r['slot_id'] for r in ordered_slots(slots)]})
             (self.root/'attempts').mkdir(mode=0o700)
         self.anchor=anchor;self.owns_store=store is None;self.store=store or CampaignStore(self.root/'campaign.sqlite3');self.store.register(slots)
+        self.retry_claims={}
 
     def close(self):
         if self.owns_store:self.store.close()
@@ -76,6 +77,41 @@ class CampaignRunner:
         if sha(raw)!=evidence['result_sha256']:raise ValueError('ATTEMPT_RESULT_CHANGED')
         return json.loads(raw)
 
+    def retry_failed_execution(self,slot_id):
+        """One explicit facility retry after sealed process/request evidence.
+
+        This never retries a generation, plan failure, timeout, OOM or an
+        uncertain service call. Host and paid handlers recheck their receipts.
+        """
+        slot=self.store.slot(slot_id)
+        if slot['definition']['slot_kind']!='execution' or slot['status']!='INFRA_FAILURE':raise Conflict('RETRY_NOT_ALLOWED')
+        if source_hashes()!=self.identity:raise Conflict('RETRY_SOURCE_CHANGED')
+        parent=slot['active_attempt'];directory=self.root/'attempts'/parent/'native'
+        seal=json.loads(read(directory/'seal.json'))
+        if seal.get('status')!='SEALED':raise Conflict('RETRY_UNSEALED_ATTEMPT')
+        for name,expected in seal['files'].items():
+            if sha(read(relative_file(directory,name)))!=expected:raise Conflict('RETRY_ARTIFACT_CHANGED')
+        if 'report.json' not in seal['files']:raise Conflict('RETRY_PROCESS_EVIDENCE_MISSING')
+        report=json.loads(read(directory/'report.json'))
+        if (report.get('run_id')!=seal['run_id'] or report.get('terminal_status')!='INFRA_FAILURE' or
+            report.get('process_group_final',{}).get('live')!=[] or report.get('cleanup_failures')!=[]):raise Conflict('RETRY_PROCESS_NOT_RECONCILED')
+        services=report.get('semantic_requests',{})
+        if report.get('paid_calls')!=0 and (not services or services.get('inflight')!=0 or
+            services.get('failures')!=0 or services.get('requests')!=services.get('responses')):raise Conflict('RETRY_REQUEST_NOT_RECONCILED')
+        if report.get('service_reconciliation_required'):raise Conflict('RETRY_REQUEST_NOT_RECONCILED')
+        service_root=self.root.parent/'service-evidence'
+        if service_root.exists():
+            import sqlite3
+            for path in service_root.rglob('request-index.sqlite3'):
+                with sqlite3.connect(safe_path(path).as_uri()+'?mode=ro',uri=True) as db:
+                    if db.execute("SELECT 1 FROM requests WHERE status IN ('PREPARED','SENDING','SENT_UNCONFIRMED') LIMIT 1").fetchone():raise Conflict('RETRY_REQUEST_NOT_RECONCILED')
+        reconciliation={'worker_stopped':True,'request_uncertain':False}
+        proof={'parent_attempt_id':parent,'seal_file':(directory/'seal.json').relative_to(self.root).as_posix(),
+               'seal_sha256':sha(read(directory/'seal.json')),'report_sha256':seal['files']['report.json']}
+        claim=self.store.retry(slot_id,self.owner,slot['version'],reconciliation={**reconciliation,'evidence':proof})
+        self.retry_claims[slot_id]={**claim,'reconciliation':reconciliation,'reconciliation_evidence':proof}
+        return self.run(selected_slots=[slot_id])
+
     def run(self,*,cancel=lambda:False,selected_slots=None):
         selected=set(self.slots) if selected_slots is None else set(selected_slots)
         if not selected<=self.slots.keys():raise ValueError('SELECTED_SLOT_UNKNOWN')
@@ -86,9 +122,11 @@ class CampaignRunner:
             if cancel():paused.append({'slot_id':ident,'reason':'OWNER_CANCELLED'});break
             if source_hashes()!=self.identity:
                 paused.append({'slot_id':ident,'reason':'SOURCE_CHANGED'});break
-            if slot['status'] in {'CLAIMED','RUNNING','UNKNOWN','SENT_UNCONFIRMED'}:
+            retry=self.retry_claims.get(ident)
+            if retry and (slot['status']!='CLAIMED' or slot['owner']!=self.owner or slot['active_attempt']!=retry['attempt_id'] or slot['version']!=retry['version']):raise Conflict('RETRY_CLAIM_CHANGED')
+            if not retry and slot['status'] in {'CLAIMED','RUNNING','UNKNOWN','SENT_UNCONFIRMED'}:
                 paused.append({'slot_id':ident,'reason':'RECONCILE_REQUIRED'});break
-            if slot['status']!='NOT_RUN':continue
+            if not retry and slot['status']!='NOT_RUN':continue
             dependencies={};not_ready=False
             for dependency in definition.get('expected_dependencies',[]):
                 if dependency in self.external_dependencies:
@@ -103,7 +141,7 @@ class CampaignRunner:
             if not_ready:
                 if paused:break
                 continue
-            claim=self.store.claim(ident,self.owner,'claim:'+ident,version=slot['version'])
+            claim=self.retry_claims.pop(ident) if retry else self.store.claim(ident,self.owner,'claim:'+ident,version=slot['version'])
             attempt_id=claim['attempt_id'];directory=self.root/'attempts'/attempt_id;directory.mkdir(mode=0o700)
             write(directory/'claim.json',{'slot':definition,'claim':claim,'anchor_hash':digest(self.anchor)})
             version=self.store.mark(ident,attempt_id,self.owner,claim['version'],'RUNNING',{'claim_file':str(directory.relative_to(self.root)/'claim.json')})
@@ -115,6 +153,7 @@ class CampaignRunner:
             except Exception as exc:
                 result={'status':'INFRA_FAILURE','failure_class':'INFRASTRUCTURE','exception_type':type(exc).__name__,'message':str(exc)}
             result={**result,'slot_id':ident,'attempt_id':attempt_id,'mode':self.mode,'source_hash':digest(self.identity)}
+            if retry:result.update(reconciliation=retry['reconciliation'],reconciliation_evidence=retry['reconciliation_evidence'])
             result_hash=write(directory/'outcome.json',result)
             evidence={**{k:v for k,v in result.items() if k not in {'plan','records','proof'}},'result_file':(directory/'outcome.json').relative_to(self.root).as_posix(),'result_sha256':result_hash}
             status=result['status'];stored_status='UNKNOWN' if status in {'NOT_AUTHORIZED','SERVICE_DRIFT'} else status

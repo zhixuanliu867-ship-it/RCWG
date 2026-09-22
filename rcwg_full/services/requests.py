@@ -17,7 +17,7 @@ def assemble(task, binding, *, protocol, stage, attempt_id, request_id, trial_la
     if protocol=='P1' and stage=='physical':logical=validate_logical_contract(logical)
     elif logical is not None:raise ValueError('LOGICAL_UNEXPECTED')
     source_names=['prompts/v1_1/system.txt','prompts/v1_1/'+('p0_user.txt' if protocol=='P0' else 'p1_'+stage+'.txt'),
-                  'specs/reference_v1_0/catalogs/operators.json','specs/reference_v1_0/schemas/workflow.schema.json',
+                  'specs/reference_v1_0/catalogs/operators.json','specs/full001/schemas/workflow.compat1.schema.json',
                   'specs/reference_v1_0/examples/workflow_topk.json','specs/spec001b/generation_schema_addendum.json',
                   'specs/spec001b/operator_contract_worklist.json','specs/full001/operators.json','specs/full001/defaults.json',
                   'prompts/full001/compat1.txt']

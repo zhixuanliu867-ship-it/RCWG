@@ -113,6 +113,11 @@ def materialize_expected(campaign_spec, output, *, include_diagnostics=True):
         for experiment in ['E2','E3','E4','E7']:
             manifest['diagnostics'][experiment]=_write_slots(out/(experiment+'.jsonl'),diagnostic_slots(experiment))
             if experiment!='E2':write(out/(experiment+'-selection.json'),selected_tasks(experiment))
+    from rcwg_full.data.capacity import capacity_plan
+    manifest['capacity_plan']={'file':'formal-capacity-plan.json','sha256':write(out/'formal-capacity-plan.json',capacity_plan()),
+                               'status':'PLANNED_ONLY_NOT_FORMAL_BUILDER_ACCEPTANCE'}
+    slot_files={entry['file'] for entry in [manifest['primary'],*manifest['diagnostics'].values()]}
+    manifest['supporting_files']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir() if p.is_file() and p.name not in slot_files}
     manifest['manifest_hash']=digest(manifest);write(out/'manifest.json',manifest)
     return manifest
 

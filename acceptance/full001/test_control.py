@@ -101,6 +101,8 @@ class ControlTests(unittest.TestCase):
         self.assertEqual(calls,[]);self.queue(c,'generation')
         generated=self.api.dispatch_one(c['id'],runner);executed=self.api.dispatch_one(c['id'],runner)
         self.assertEqual(calls,['generation','exec-0']);self.assertEqual(generated['run']['status'],'COMPLETED')
+        self.assertEqual(executed['evidence_index']['status'],'INDEXED_PRIVATE')
+        self.assertGreaterEqual(executed['evidence_index']['files'],2)
         self.assertEqual(executed['run']['id'],child['id']);self.assertIsNotNone(executed['run']['attempt_id'])
         self.assertEqual(self.api.dispatch_one(c['id'],runner)['status'],'NO_NEW_ACTION')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM attempts').fetchone()[0],2)
@@ -131,6 +133,19 @@ class ControlTests(unittest.TestCase):
         self.assertTrue(call(b'{}',CONTENT_LENGTH='131073')[0].startswith('400'))
         self.assertTrue(call(b'{}',CONTENT_LENGTH='3')[0].startswith('400'))
 
+    def test_concurrent_wsgi_requests_use_independent_sqlite_connections(self):
+        from rcwg_full.control.wsgi import application
+        from rcwg_full.evidence import canonical
+        app=application(self.api,lambda env:OWNER)
+        raw=canonical({'manifest_hash':'a'*64,'spec_hash':'b'*64,'mode':'ENGINEERING_REPLAY'})
+        def call(_):
+            response=[];body=b''.join(app({'REQUEST_METHOD':'POST','PATH_INFO':'/campaigns','CONTENT_TYPE':'application/json',
+                'CONTENT_LENGTH':str(len(raw)),'wsgi.input':io.BytesIO(raw),'HTTP_IDEMPOTENCY_KEY':'threaded','wsgi.multithread':True},
+                lambda status,headers:response.append(status)))
+            return response[0],json.loads(body)
+        with ThreadPoolExecutor(max_workers=4) as pool:results=list(pool.map(call,range(8)))
+        self.assertTrue(all(r==results[0] for r in results));self.assertEqual(results[0][0],'200 OK')
+
     def test_crashed_dispatch_claim_does_not_expire_into_duplicate(self):
         c,runner,calls=self.connect_runner();self.queue(c,'generation')
         def interrupted(*args):calls.append('interrupted');raise SystemExit('controller exit fixture')
@@ -139,3 +154,30 @@ class ControlTests(unittest.TestCase):
         result=self.api.dispatch_one(c['id'],runner)
         self.assertEqual(result['status'],'NO_NEW_ACTION');self.assertEqual(result['reconcile_required'],['generation'])
         self.assertEqual(calls,['interrupted']);runner.close()
+
+    def test_actual_private_journal_and_lifetime_are_indexed_and_tampering_is_rejected(self):
+        from rcwg_full.runtime.events import Journal
+        from rcwg_full.control.indexing import index_attempt
+        from rcwg_full.evidence import sha,read
+        c,runner,calls=self.connect_runner()
+        def action(slot,attempt,deps,directory):
+            root=directory/'native';worker=root/'worker';worker.mkdir(parents=True)
+            journal=Journal(worker/'events.jsonl',attempt)
+            journal.append('node_started',{'operator':'fixture','secret_label':'private sentinel'},node_instance='root/a#1')
+            journal.append('buffer_created',{'buffer_id':'fixture-buffer','capacity_bytes':64,'storage_kind':'arrow_memory'})
+            journal.append('buffer_released',{'buffer_id':'fixture-buffer'})
+            journal.append('node_finished',{},node_instance='root/a#1',status='COMPLETED');journal.close()
+            write(root/'report.json',{'verification':{'status':'PASS','private_annotation':'sentinel'}})
+            write(root/'seal.json',{'status':'SEALED','run_id':attempt,'files':{p.relative_to(root).as_posix():sha(read(p)) for p in root.rglob('*') if p.is_file()}})
+            return {'status':'COMPLETED','protocol_fixture_only':True}
+        runner.generate=action;run=self.queue(c,'generation');result=self.api.dispatch_one(c['id'],runner)
+        self.assertEqual(result['evidence_index']['nodes'],1);self.assertEqual(result['evidence_index']['buffers'],1)
+        _,events=self.api.handle('GET',f'/runs/{run["id"]}/events',{},principal=OPERATOR)
+        self.assertEqual(len(events['items']),1);self.assertNotIn('private sentinel',str(events))
+        self.assertEqual(events['items'][0]['status'],'SEALED_PRIVATE')
+        self.assertTrue(any(r.get('kind')=='BUFFER_LIFETIME' for r in self.api.rows('artifact',c['id'])))
+        index_attempt(self.api,c['id'],run['id'],runner,'generation')
+        attempt=self.store.slot('generation')['active_attempt'];path=runner.root/'attempts'/attempt/'native/worker/events.jsonl'
+        path.write_bytes(read(path)+b'bad')
+        with self.assertRaisesRegex(ValueError,'ARTIFACT_CHANGED'):index_attempt(self.api,c['id'],run['id'],runner,'generation')
+        runner.close()
