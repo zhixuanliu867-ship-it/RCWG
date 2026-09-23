@@ -29,7 +29,7 @@ def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE'
         source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
 
 
-def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1',stage='primary_execution'):
+def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1',stage='primary_execution',engineering_output_limit_bytes=None):
     if stage not in {'primary_execution','generation_probe'}:raise ValueError('STAGE_INVALID')
     if stage=='generation_probe' and frozen_binding is not None:raise ValueError('FROZEN_STAGE_BINDING')
     if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
@@ -37,10 +37,14 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
     if semantic_service is not None and ((mode=='FORMAL')!=(semantic_service.mode=='LIVE')):raise ValueError('SERVICE_MODE_BINDING')
     if semantic_service is not None and semantic_replay is not None:raise ValueError('MULTIPLE_SEMANTIC_SERVICES')
     if semantic_replay is not None and mode!='ENGINEERING_REPLAY':raise ValueError('REPLAY_MODE_FORBIDDEN')
+    if engineering_output_limit_bytes is not None and (mode=='FORMAL' or driver is not None):raise ValueError('OUTPUT_LIMIT_OVERRIDE_FORBIDDEN')
     replay=None if semantic_replay is None else {'path':str(Path(semantic_replay).absolute()),'sha256':sha(read(semantic_replay))}
     out=exclusive_directory(output);ident=driver.ident if driver else 'r'+uuid.uuid4().hex;states=[];cleanup=[]
     def transition(state,**detail):
         record={'sequence':len(states),'state':state,'monotonic_ns':time.monotonic_ns(),**detail};states.append(record);write(out/('lifecycle-%03d.json'%len(states)),record)
+    from rcwg_full.runtime.output_limit import OutputWatchdog
+    limit=driver.full001_authorization['per_run_total_output_bytes'] if driver else engineering_output_limit_bytes
+    watchdog=OutputWatchdog(out,limit) if limit is not None else None
     transition('DECLARED');catalog=DataCatalog(data_manifest)
     calibration=getattr(driver,'calibration',None);affinity=driver.limits.affinity if driver else None
     metrology=measurement_profile(task,build,calibration=calibration,affinity=affinity)
@@ -89,6 +93,7 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         proc=subprocess.Popen(handshake.command,cwd=ROOT,stdout=handles[0],stderr=handles[1],env=env,start_new_session=True,close_fds=True,pass_fds=handshake.pass_fds)
         handshake.spawned();transition('SPAWNED',pid=proc.pid);deadline=time.monotonic_ns()+int(max(10,float(timeout_s))*1e9);next_sample=time.monotonic()
         while proc.poll() is None:
+            if watchdog and watchdog.sample():reason='OUTPUT_LIMIT_EXCEEDED';break
             ack=handshake.ready(proc,out/'go.json',ident)
             if ack is not None:
                 report['execution_started']=True;report['launch_ack']=ack;report['exec_started_monotonic_ns']=handshake.go_ns
@@ -102,6 +107,7 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
             from rcwg_full.runtime.errors import ExecutionFault
             raise ExecutionFault(reason or 'LAUNCH_GO_MISSING','facility',stage='STARTUP')
         report['observed_elapsed_ns']=time.monotonic_ns()-handshake.go_ns
+        if reason is None and watchdog and watchdog.sample():reason='OUTPUT_LIMIT_EXCEEDED'
         if reason is None:
             # Receipt of the committed worker report is the FULL001 timing end.
             # Tree drain, final counters and independent verification follow it.
@@ -115,7 +121,7 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         for handle in handles:handle.close()
         handles=[]
         if reason:
-            report['terminal_status']='TIMEOUT' if reason=='WALL_TIMEOUT' else 'UNKNOWN';report['failure']={'code':reason,'attribution':'deadline' if reason=='WALL_TIMEOUT' else 'owner'}
+            report['terminal_status']='TIMEOUT' if reason=='WALL_TIMEOUT' else 'INFRA_FAILURE' if reason=='OUTPUT_LIMIT_EXCEEDED' else 'UNKNOWN';report['failure']={'code':reason,'attribution':'deadline' if reason=='WALL_TIMEOUT' else 'facility' if reason=='OUTPUT_LIMIT_EXCEEDED' else 'owner'}
         else:
             if worker_report['run_id']!=ident or worker_report['source']!=source_hashes():raise ValueError('WORKER_IDENTITY_OR_SOURCE')
             events=verify_journal(worker/'events.jsonl',run_id=ident)
@@ -166,6 +172,8 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
             events=seal_events(expected,ident,projection);sidecar=make_sidecar(expected,ident,events,terminal_status=report['terminal_status'],verification_status=report['verification']['status'])
             report['binding_validation']=validate_evidence(expected,[sidecar] if record_role=='MODEL' else [],{ident:events},
                 reference_records=[sidecar] if record_role=='REFERENCE' else []);write(out/'bound-events.json',events);write(out/'sidecar.json',sidecar)
+    if watchdog:
+        watchdog.sample();report['output_watchdog']=watchdog.snapshot()
     report['lifecycle']=states;write(out/'report.json',report)
     inventory={p.relative_to(out).as_posix():sha(read(p)) for p in out.rglob('*') if p.is_file()}
     write(out/'seal.json',{'run_id':ident,'files':inventory,'status':'SEALED','formal_ready':False});return report

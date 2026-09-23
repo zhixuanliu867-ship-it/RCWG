@@ -113,3 +113,8 @@ All six readiness flags remain false until requirement-level final-head acceptan
 stats 只在可信 generation_probe + I2 入口接受，stage 进入运行上下文身份，不能由 WorkIR 提升阶段。metadata 仅返回公开统计；sample 使用 full001-reservoir-sample-1、Algorithm R、固定 seed 714091，以 O(sample_size + batch_rows) 空间读取指定列，实际完整扫描及哈希完整性读分别入账。probe 的 Stats 输出属于生成探测结果，不改变正式任务 output contract。
 
 验收冻结 b3 审查点的 1966 个旧测试 ID、旧测试源码哈希及其中历史 Linux 1863 项集合。新报告加入 head/tree、依赖、build manifest 和所有测试文件的内容哈希；验收器从有效 journal 的成功 node_finished 和实际 tiny/verifier 产物构建覆盖，不信任进度文件中的 PASS 字样。78 条软件需求的选择器必须解析到实际通过的单项测试；7 个外部门禁另报。
+
+
+## R1 有限主机输出观察上限
+
+最终主机批准材料复核发现 per_run_total_output_bytes 已验证却没有传入监督器，现接到实际运行目录字节 watchdog，超过观察阈值即停止、drain 并保全设施失败证据。该阈值明确不是文件系统硬配额，允许观察间隔超量和封存证据开销；RLIMIT_FSIZE 仍是单文件硬限制。报告记录真实峰值与 hard_filesystem_quota=false，不把观察阈值宣称为硬容量保证。正式运行不能通过工程参数替换批准 scope 的值；正式主机方案须按最终运行时重新校准该监督开销。

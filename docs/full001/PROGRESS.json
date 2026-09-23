@@ -692,5 +692,21 @@
     "status": "PASS",
     "inherited_native": "PASS",
     "scope": "INTERMEDIATE_COMMIT_NOT_FINAL_ACCEPTANCE"
+  },
+  "status_authority": {
+    "checked_in_state": "PRE_EXECUTION_CHECKPOINT_NOT_SELF_CERTIFICATION",
+    "final_state": "Use the exact-head ACCEPTANCE.json and DELIVERY_MANIFEST.json generated after commit; do not treat this checkpoint as newer than those source-bound reports."
+  },
+  "latest_dispatch_supplement": {
+    "environment": "Linux WSL Python 3.12.14 with hash-locked dependencies; intermediate 6cc binary, current Python source overlay",
+    "runs/r1-dispatch02": {
+      "tests": 25,
+      "status": "PASS"
+    },
+    "runs/r1-output02": {
+      "tests": 17,
+      "status": "PASS"
+    },
+    "scope": "SUPPLEMENTARY_NOT_EXACT_FINAL_HEAD"
   }
 }

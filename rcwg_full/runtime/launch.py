@@ -62,7 +62,8 @@ def approved_driver(host_scope,receipt,task,run_id,*,source_hash,build_hash,buil
     fs=(fs_factory or LinuxFS)(root,approval={'approved':True,'delegated_root':str(root),'permission':'NATIVE001_N4_PER_RUN_CGROUP'})
     driver=FullDriver(fs,run_id,limits);driver.claim=claim;driver.calibration=host_scope.get('calibration_package')
     driver.full001_authorization={**claim.binding,'pids_max':host_scope['pids_max'],
-       'output_file_max_bytes':host_scope['output_file_max_bytes']}
+       'output_file_max_bytes':host_scope['output_file_max_bytes'],
+       'per_run_total_output_bytes':host_scope['per_run_total_output_bytes']}
     return driver
 
 

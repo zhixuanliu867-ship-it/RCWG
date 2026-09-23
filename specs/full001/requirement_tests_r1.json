@@ -403,7 +403,8 @@
   "M05-06": {
     "test_selectors": [
       "test_review_r1.HostScopeR1.",
-      "test_review_r1.BudgetR1.test_uncalibrated"
+      "test_review_r1.BudgetR1.test_uncalibrated",
+      "test_output_limit."
     ],
     "coverage_checks": [
       "exact_source_and_binary",
