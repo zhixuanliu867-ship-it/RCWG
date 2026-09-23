@@ -17,19 +17,21 @@ from rcwg_spec.binding import seal_events,make_sidecar,validate_evidence,EVENT_T
 from rcwg_full.runtime.measurement import measurement_profile,terminal_budget
 
 
-def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None,execution_profile=None,service_binding=None,calibration=None,affinity=None):
+def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None,execution_profile=None,service_binding=None,calibration=None,affinity=None,stage='primary_execution'):
     checked=validate_public_task(task);manifest=json.loads(read(Path(build)/'BUILD.json'));source=source_hashes()
     from rcwg_full.runtime.scheduling_profile import validate_profile
     profile=validate_profile(task,execution_profile)
     return build_context(task,condition_id=condition_id,data_manifest=catalog.bindings(),
-        runtime={'revision':'full001-runtime-1','mode':mode,'semantic_replay_sha256':replay_sha256 or 'NOT_CONFIGURED','data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024,**({'scheduling_profile':profile} if profile else {}),**({'semantic_service':service_binding,'semantic_concurrency':4} if service_binding else {})},
+        runtime={'revision':'full001-runtime-1','mode':mode,'stage':stage,'semantic_replay_sha256':replay_sha256 or 'NOT_CONFIGURED','data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024,**({'scheduling_profile':profile} if profile else {}),**({'semantic_service':service_binding,'semantic_concurrency':4} if service_binding else {})},
         cache_policy={'revision':'full001-cache-1','cross_run':False},verifier={'revision':verifier_identity},
         metric_spec={'revision':'full001-metric-1'},measurement_profile=measurement_profile(task,build,calibration=calibration,affinity=affinity),
         operator_registry={'revision':'full001-operators-1','sha256':sha(read(ROOT/'specs/full001/operators.json'))},
         source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
 
 
-def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1'):
+def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1',stage='primary_execution'):
+    if stage not in {'primary_execution','generation_probe'}:raise ValueError('STAGE_INVALID')
+    if stage=='generation_probe' and frozen_binding is not None:raise ValueError('FROZEN_STAGE_BINDING')
     if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
     if mode=='FORMAL' and (not admission or admission.get('status')!='ADMITTED' or driver is None or not getattr(driver,'full001_authorization',None)):raise PermissionError('FORMAL_ADMISSION_REQUIRED')
     if semantic_service is not None and ((mode=='FORMAL')!=(semantic_service.mode=='LIVE')):raise ValueError('SERVICE_MODE_BINDING')
@@ -42,12 +44,12 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
     transition('DECLARED');catalog=DataCatalog(data_manifest)
     calibration=getattr(driver,'calibration',None);affinity=driver.limits.affinity if driver else None
     metrology=measurement_profile(task,build,calibration=calibration,affinity=affinity)
-    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None,execution_profile=execution_profile,service_binding=semantic_service.client.binding if semantic_service else None,calibration=calibration,affinity=affinity)
+    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None,execution_profile=execution_profile,service_binding=semantic_service.client.binding if semantic_service else None,calibration=calibration,affinity=affinity,stage=stage)
     compiler_source=b''.join(read(p) for p in sorted((ROOT/'rcwg_full/compiler').glob('*.py')))
     expected=freeze_execution(context,task,plan,compiler_source,ident,frozen_binding=frozen_binding,
         record_role=record_role,repeat_role=repeat_role,generation_id=generation_id,repeat_id=repeat_id)
     write(out/'expected.json',expected.as_dict())
-    request={'run_id':ident,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance','go_record':str((out/'go.json').absolute())}
+    request={'run_id':ident,'stage':stage,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance','go_record':str((out/'go.json').absolute())}
     request['measurement_profile']=metrology
     if replay is not None:request['semantic_replay']=replay
     if execution_profile is not None:request['execution_profile']=execution_profile

@@ -231,8 +231,17 @@ class Documents:
         if op=='text_retrieve':
             if impl=='bm25':return await scheduler.compute(instance,node,self.retrieve,p['query'],p['limit'],p.get('offset',0))
             if self.query_encoder is None:raise ExecutionFault('DENSE_ENCODER_UNAVAILABLE','facility')
-            vector=self.query_encoder.encode(p['query']);docs=[{'document_id':d['document_id'],'vector':d['vector']} for d in self.by_id.values()]
-            result,c=await scheduler.compute(instance,node,self.native.dense,docs,vector,p);self.event('dense_query',{'encoder_hash':self.query_encoder.identity,'counts':c,'origin':self.query_encoder.origin});return result
+            import time
+            started=time.monotonic_ns()
+            vector=await scheduler.compute(instance,node,self.query_encoder.encode,p['query'])
+            encoding_ns=time.monotonic_ns()-started
+            docs=[{'document_id':d['document_id'],'vector':d['vector']} for d in self.by_id.values()]
+            result,c=await scheduler.compute(instance,node,self.native.dense,docs,vector,p)
+            self.event('dense_query',{'encoder_hash':self.query_encoder.identity,'counts':c,'origin':self.query_encoder.origin,
+                'query_sha256':sha(p['query'].encode('utf8')),'query_encoding_elapsed_ns':encoding_ns,
+                'query_utf8_bytes':len(p['query'].encode('utf8')),'query_tokens':len(tokens(p['query'])),
+                'encoded_vector_sha256':digest(vector),'paid_calls':0,'encoding_in_execution_clock':True})
+            return result
         if op=='read_documents':return self.read_documents(inputs['ids'].to_pylist() if hasattr(inputs['ids'],'to_pylist') else inputs['ids'],p['fields'],p['batch_size'],impl,instance,p.get('id_field','document_id'))
         if op=='split_documents':return self.split(inputs['documents'],p['size'],p['overlap'],impl)
         if op=='gather_context':return self.gather(inputs['chunks'],p['window'],impl,instance)

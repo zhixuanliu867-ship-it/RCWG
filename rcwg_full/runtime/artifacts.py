@@ -234,7 +234,9 @@ class ArtifactStore:
         import pyarrow as pa
         import pyarrow.parquet as pq
         self.check(item)
-        if item.value is not None:return item.value
+        # A live in-memory Nullable value may actually be None. Only a disk
+        # artifact uses an absent value to mean that its sealed file must load.
+        if item.value is not None or item.storage=='memory':return item.value
         self.verify_file(item)
         self.read_bytes+=item.serialized_bytes
         if item.format=='json_stream':

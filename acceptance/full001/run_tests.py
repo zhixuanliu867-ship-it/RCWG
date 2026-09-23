@@ -31,6 +31,9 @@ def main():
     a=p.parse_args()
     if a.native_build:os.environ['RCWG_FULL_BUILD']=str(a.native_build.absolute())
     out=exclusive_directory(a.output);os.environ['RCWG_FULL_TEST_EVIDENCE']=str((out/'evidence').absolute());sources=source_hashes()
+    from rcwg_full.acceptance_identity import git_identity,dependencies,file_manifest,file_hash
+    checkout=git_identity();installed=dependencies()
+    build_identity=None if not a.native_build else {'manifest_sha256':file_hash(a.native_build/'BUILD.json'),'manifest':json.loads((a.native_build/'BUILD.json').read_text('utf8'))}
     suite=unittest.TestSuite(unittest.defaultTestLoader.discover(str(a.suite_root),pattern=pattern) for pattern in (a.pattern or ['test_*.py']))
     def flatten(s):
         for test in s:
@@ -41,11 +44,11 @@ def main():
     write(out/'EXPECTED_TESTS.json',{'test_ids':expected,'source':sources,'frozen_before_execution':True})
     with (out/'unittest.log').open('x',encoding='utf-8') as stream:
         result=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=Result).run(suite)
-    passed=result.wasSuccessful() and not result.skipped and len(result.outcomes)==result.testsRun and set(expected)=={t['test_id'] for t in result.outcomes} and sources==source_hashes()
+    passed=result.wasSuccessful() and not result.skipped and len(result.outcomes)==result.testsRun and set(expected)=={t['test_id'] for t in result.outcomes} and sources==source_hashes() and checkout==git_identity()
     report={'scope':'TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE','status':'PASS' if passed else 'FAIL',
         'python':platform.python_version(),'platform':platform.platform(),'executable':sys.executable,
-        'command':sys.argv,'source':sources,'tests':result.outcomes,'subtests':result.subtests,'tests_run':result.testsRun,
+        'command':sys.argv,'exit_code':0 if passed else 1,'git_identity':checkout,'dependencies':installed,'native_build':build_identity,'artifact_files':file_manifest(out),'source':sources,'tests':result.outcomes,'subtests':result.subtests,'tests_run':result.testsRun,
         'formal_ready':False,'implementation_complete':False}
-    write(out/'TEST_RESULTS.json',report);print(json.dumps({k:v for k,v in report.items() if k not in {'source','tests'}}));return 0 if passed else 1
+    write(out/'TEST_RESULTS.json',report);print(json.dumps({k:v for k,v in report.items() if k not in {'source','tests','artifact_files','native_build','subtests'}}));return 0 if passed else 1
 
 if __name__=='__main__':raise SystemExit(main())

@@ -5,8 +5,9 @@ from .core import validate_workflow, validate_workflow_bytes
 from rcwg_full import PROFILE
 
 class FullCompiler:
-    def compile(self, public_task, raw_plan, implementation_profile=PROFILE, *, frozen_binding=None):
+    def compile(self, public_task, raw_plan, implementation_profile=PROFILE, *, frozen_binding=None, stage='primary_execution'):
         if frozen_binding is not None:
+            if stage!='primary_execution':raise ValueError('FROZEN_STAGE_BINDING')
             from copy import deepcopy
             from rcwg_full.evidence import digest
             plan=parse_ir_bytes(raw_plan) if isinstance(raw_plan,bytes) else raw_plan
@@ -22,9 +23,9 @@ class FullCompiler:
                           source_task_id=source['task_id'],target_task_id=target['task_id'],plan_rewritten=False)
             return report
         if implementation_profile == 'RCWG_WORKIR_1_0_SPEC001B':
-            return legacy_validate(public_task, parse_ir_bytes(raw_plan) if isinstance(raw_plan, bytes) else raw_plan)
+            return legacy_validate(public_task, parse_ir_bytes(raw_plan) if isinstance(raw_plan, bytes) else raw_plan,stage=stage)
         if implementation_profile != PROFILE:
             return {'status':'INPUT_INVALID','diagnostics':[{'code':'PROFILE_UNKNOWN'}], 'formal_ready':False}
         if isinstance(raw_plan, bytes):
-            return validate_workflow_bytes(public_task, raw_plan)
-        return validate_workflow(public_task, raw_plan)
+            return validate_workflow_bytes(public_task, raw_plan,stage=stage)
+        return validate_workflow(public_task, raw_plan,stage=stage)

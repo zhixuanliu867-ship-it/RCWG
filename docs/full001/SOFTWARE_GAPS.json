@@ -30,9 +30,14 @@
     "Five exact upstream source pins and native API adapters; 13 real source AST signatures checked, TPS original parser/normalizer exercised without judge calls",
     "Call-scoped native allocation observer and serialized retirement; 1 MiB maximum journal sync coalescing without dropping events",
     "Direct native convenience methods for external sort/sorted group/sort-merge now use bounded states and lazy disk handles; obsolete materializing C++ entry rejects calls",
-    "Actual supervisor GO/deadline -> campaign store -> analysis regression added with a three-row microsecond budget fixture"
+    "Actual supervisor GO/deadline -> campaign store -> analysis regression added with a three-row microsecond budget fixture",
+    "Authenticated fixed token-embedding assets, recomputed exact-dot index binding and actual query encoding ledger; hand-authored engineering model is explicitly distinct from formal frozen assets",
+    "Trusted generation_probe stage through compiler/context/supervisor; metadata is public-only, fixed-seed reservoir sample is bounded and has real read ledger",
+    "Eleven previously uncovered branches exercised through actual workers; branch unknown exposed and fixed live Nullable memory load confusion",
+    "Evidence auditor binds exact commit/tree, locked dependencies, rebuilt binaries, all result file hashes, 1966 retained IDs and 66 unchanged protected files; 78 requirement test mappings predeclared"
   ],
   "remaining_work": [
+    "Run final exact-commit dispatch/evidence auditor, resolve newly exposed integration failures and bind inherited Python/native gates before delivery; supplementary runs are not final acceptance.",
     "Complete exact-head target Linux rebuild and all inherited/new tests after the R1 repairs; resolve any new failures without changing prior test expectations.",
     "Complete all requirement-level evidence mappings against actual final-head tests and artifacts; prove 56 dispatches and 1440 tiny closures.",
     "Audit final native/runtime measurement identity and prepare exact finite FULL host/service/data/reference approval packages.",

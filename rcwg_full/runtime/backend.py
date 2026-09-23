@@ -433,17 +433,9 @@ class Backend:
             result=await self.finalize(inputs['rows'],scheduler)
             item=self.wrap(result,node['outputs']['result'],instance);self.store.seal(item);return {'result':item}
         if op=='stats':
-            value=await self.value(inputs['source']);table=value.table() if hasattr(value,'table') else value
-            if isinstance(table,SpilledTable):
-                count=0;size=0;sample=[]
-                for batch in table.batches():
-                    count+=batch.num_rows;size+=batch.nbytes
-                    if impl=='sample' and len(sample)<p['sample_size']:sample.extend(batch.select(p['fields']).slice(0,p['sample_size']-len(sample)).to_pylist())
-                result={'rows':count,'bytes':size,'fields':p['fields'],'kind':impl}
-                if impl=='sample':result['sample']=sample
-            else:
-                result={'rows':table.num_rows,'bytes':table.nbytes,'fields':p['fields'],'kind':impl}
-                if impl=='sample':result['sample']=table.select(p['fields']).slice(0,p['sample_size']).to_pylist()
+            from rcwg_full.runtime.probes import probe
+            value=await self.value(inputs['source'])
+            result=await scheduler.compute(instance,node,probe,value,impl,p,lambda k,v:scheduler.event(k,v,instance))
             return output('stats',result)
         if op in {'read_documents','text_retrieve','split_documents','gather_context','evidence_merge','evidence_validate','semantic_extract'}:
             if self.documents is None:raise ExecutionFault('DOCUMENT_ADAPTER_UNAVAILABLE','facility')

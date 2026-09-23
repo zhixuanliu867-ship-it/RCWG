@@ -102,3 +102,14 @@ Five upstream-native entry-point adapters are source-pinned in external_native_v
 Actual CPython/Arrow allocation events are retained, but syncing each dense-graph object separately exceeded an unchanged tiny-test deadline in WSL. Journal batching now writes every original event, synchronizes at most 1 MiB apart and at each completed artifact operation, and never accepts an unsealed crash tail. This is an instrumentation repair, not a timeout increase. The obsolete native external-sort materializing facade is disabled; direct convenience calls use the same bounded state and lazy disk handle as execution. Explicit caller-requested to_pylist/column access is outside the bounded operator path.
 
 All six readiness flags remain false until requirement-level final-head acceptance. Formal BLOCKED_NOT_FROZEN, original N4 888 slots and approved=false remain unchanged. See PROGRESS.json for preserved CI failures, supplementary tests and current remaining work. No paid/count call, real cgroup/stress/calibration, cloud/IAM, system installation, merge or force push was performed.
+
+
+## R1 真实 dispatch 补齐与验收身份
+
+历史 7e 日志只有 45/56 个成功 node_finished 分支，底层单测不作为剩余分支已贯通的替代证据。新增完整 worker 变体覆盖其余 11 个分支；空分支条件测试揭示内存 Nullable(None) 被当成磁盘未封存产物，现按存储类型区分，不修改旧测试 ID、字节或预期。
+
+固定 dense 模型提供本地静态 token embedding / mean pooling，读取明确数值权重，显式 OOV、归一化与 tokenizer，文档向量从原文重算校验；不构造 hash 伪向量，也不回退 BM25。工程测试权重为 HAND_AUTHORED_ENGINEERING_WEIGHTS，正式模型资产、许可与选择仍须冻结。查询编码与精确点积进入实际执行时钟并单列编码账本。
+
+stats 只在可信 generation_probe + I2 入口接受，stage 进入运行上下文身份，不能由 WorkIR 提升阶段。metadata 仅返回公开统计；sample 使用 full001-reservoir-sample-1、Algorithm R、固定 seed 714091，以 O(sample_size + batch_rows) 空间读取指定列，实际完整扫描及哈希完整性读分别入账。probe 的 Stats 输出属于生成探测结果，不改变正式任务 output contract。
+
+验收冻结 b3 审查点的 1966 个旧测试 ID、旧测试源码哈希及其中历史 Linux 1863 项集合。新报告加入 head/tree、依赖、build manifest 和所有测试文件的内容哈希；验收器从有效 journal 的成功 node_finished 和实际 tiny/verifier 产物构建覆盖，不信任进度文件中的 PASS 字样。78 条软件需求的选择器必须解析到实际通过的单项测试；7 个外部门禁另报。

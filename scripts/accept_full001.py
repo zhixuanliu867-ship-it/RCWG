@@ -73,14 +73,28 @@ def main(argv=None):
                 run(name,[py,acceptor,'--build',str(original_build.absolute()),'--output',str((out/name/'results').absolute())])
         code=1 if any(r['status']=='FAIL' for r in stages) else 2 if any(r['status']=='BLOCKED' for r in stages) else 0
     if source_hashes()!=sources:code=1;blockers.append('SOURCE_CHANGED_DURING_ACCEPTANCE')
-    # Requirements require inspectable source-bound coverage, not just a green
-    # unittest count. External phases are listed independently, never skipped PASS.
-    matrix=json.loads((ROOT/'docs/full001/REQUIREMENT_TO_EVIDENCE.json').read_text('utf8'))
-    pending=[r['requirement_id'] for r in matrix['requirements'] if not r['requirement_id'].startswith('EXT-') and r['status']!='PASS']
-    if not blockers and pending:code=1;blockers.append('REQUIREMENT_EVIDENCE_INCOMPLETE')
+    # Derive requirement evidence from this exact run. Progress-file PASS labels
+    # are never accepted as coverage. Delivery failures preserve all test runs.
+    pending=[];software_evidence=None;delivery=None
+    if code==0:
+        try:
+            from rcwg_full.acceptance_evidence import build_evidence
+            from rcwg_full.acceptance_delivery import source_delivery
+            software_evidence=build_evidence(out/'full001/results',build)
+            save(invocation/'SOFTWARE_EVIDENCE.json',software_evidence)
+            delivery=source_delivery(invocation/'delivery')
+            for row in software_evidence['requirements']:
+                if row['requirement_id'].startswith('M00-'):
+                    row['status']='PASS';row['actual_evidence'].append({'clean_application':delivery})
+            save(invocation/'REQUIREMENT_TO_EVIDENCE.json',software_evidence['requirements'])
+        except (ValueError,KeyError,OSError) as exc:
+            code=1;blockers.append('SOFTWARE_EVIDENCE_OR_DELIVERY:'+str(exc))
+    if software_evidence:
+        pending=[r['requirement_id'] for r in software_evidence['requirements'] if not r['requirement_id'].startswith('EXT-') and r['status']!='PASS']
+    else:pending=[r['requirement_id'] for r in json.loads((ROOT/'specs/full001/requirements.json').read_text('utf8'))['requirements'] if not r['requirement_id'].startswith('EXT-')]
     report={'phase':'SOFTWARE_TOTAL_ACCEPTANCE','status':'PASS' if code==0 else 'BLOCKED' if code==2 else 'FAIL',
        'exit_code':code,'blockers':blockers,'pending_software_requirements':pending,'environment':actual,
-       'identity':identity,'stages':stages,'software_accepted':code==0,'formal_ready':False,
+       'identity':identity,'stages':stages,'software_accepted':code==0,'formal_ready':False,'source_delivery':delivery,
        'external_states':{'HOST_CALIBRATED':False,'DATA_FROZEN':False,'SERVICE_READY':False,'FORMAL_READY':False}}
     save(invocation/'ACCEPTANCE.json',report)
     print(json.dumps({k:v for k,v in report.items() if k not in {'identity','stages'}},ensure_ascii=False));return code

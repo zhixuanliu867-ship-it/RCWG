@@ -13,6 +13,7 @@ from rcwg_full.evidence import ROOT,exclusive_directory,source_hashes,write,sha
 FLAGS=['-std=c++20','-O2','-shared','-fPIC','-Wall','-Wextra','-fno-fast-math','-ffp-contract=off']
 
 def build(output,compiler='g++'):
+    from rcwg_full.acceptance_identity import git_identity,dependencies
     out=exclusive_directory(output)
     manifest={'status':'BUILD_STARTED','python':platform.python_version(),'executable':sys.executable,
         'lock_sha256':sha((ROOT/'environments/full001/requirements.lock').read_bytes()),
@@ -21,6 +22,7 @@ def build(output,compiler='g++'):
         manifest['status']='BLOCKED_PYTHON_VERSION';write(out/'BUILD.json',manifest);return 2
     for name,version in [('pyarrow','21.0.0'),('pybind11','3.0.1')]:
         if importlib.metadata.version(name)!=version:raise RuntimeError('DEPENDENCY_VERSION_MISMATCH')
+    manifest.update(git_identity=git_identity(),installed_dependencies=dependencies())
     import pyarrow as pa
     import pybind11
     cc=shutil.which(compiler)
@@ -53,6 +55,7 @@ def build(output,compiler='g++'):
         write(out/'BUILD.json',manifest);return 1
     manifest['binaries']['launcher']={'name':target.name,'sha256':sha(target.read_bytes()),'command':cmd}
     if manifest['source']!=source_hashes():raise RuntimeError('SOURCE_CHANGED_DURING_BUILD')
+    if manifest['git_identity']!=git_identity():raise RuntimeError('CHECKOUT_CHANGED_DURING_BUILD')
     manifest['status']='BUILD_PASS';write(out/'BUILD.json',manifest)
     print('FULL001_BUILD_PASS');return 0
 

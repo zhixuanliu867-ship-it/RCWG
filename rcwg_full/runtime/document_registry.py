@@ -26,7 +26,9 @@ class DocumentRegistry:
                 seen.add(key)
             key=(public['domain'],public['revision'])
             if key in self.adapters:raise ValueError('DOCUMENT_DOMAIN_REVISION_AMBIGUOUS')
-            self.adapters[key]=Documents(documents,native=native,event=event)
+            from rcwg_full.runtime.dense_encoder import bind_encoder
+            encoder=bind_encoder(source,documents)
+            self.adapters[key]=Documents(documents,native=native,event=event,query_encoder=encoder)
 
     async def dispatch(self,op,impl,inputs,p,*,semantic,instance,scheduler,node):
         port='index' if 'index' in node['inputs'] else 'documents' if 'documents' in node['inputs'] else 'chunks' if 'chunks' in node['inputs'] else 'evidence'

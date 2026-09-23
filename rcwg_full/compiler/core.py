@@ -248,7 +248,7 @@ def _compile(task, plan, public, structure, stage):
     result = resolve_root(plan['result'])
     # The foundation permits a produced value as the result, with or without an
     # explicit emit. Check the same public contract without adding a plan node.
-    if result.type.kind != 'Result':
+    if result.type.kind != 'Result' and not (stage=='generation_probe' and result.type.kind=='Stats'):
         output_contract = public['normalized_task']['output_contract']
         check_node = {'operator': 'emit', 'implementation': 'json_artifact',
                       'inputs': {'rows': plan['result']},

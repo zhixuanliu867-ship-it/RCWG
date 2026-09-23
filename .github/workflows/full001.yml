@@ -54,6 +54,12 @@ jobs:
         run: environments/full001/.venv/bin/python scripts/build_full001.py --output runs/full001-build
       - name: Execute independent software tests against this build
         run: environments/full001/.venv/bin/python acceptance/full001/run_tests.py --native-build runs/full001-build --output runs/full001-tests
+      - name: Verify exact source, preserved tests, actual dispatches and tiny closures
+        run: environments/full001/.venv/bin/python scripts/verify_full001_evidence.py --tests runs/full001-tests --build runs/full001-build --output runs/full001-coverage.json
+      - name: Execute inherited Python gates in the same locked interpreter
+        run: environments/full001/.venv/bin/python acceptance/full001/run_tests.py --suite-root tests --output runs/full001-inherited-python
+      - name: Prove clean baseline patch application and source delivery
+        run: environments/full001/.venv/bin/python scripts/package_full001_source.py --output runs/full001-source-delivery
       - name: Preserve build evidence including failures
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,3 +69,9 @@ jobs:
           path: |
             runs/full001-build/
             runs/full001-tests/
+            runs/full001-coverage.json
+            runs/full001-inherited-python/
+            runs/full001-source-delivery/*.json
+            runs/full001-source-delivery/*.bundle
+            runs/full001-source-delivery/*.patch
+            runs/full001-source-delivery/*.zip
