@@ -1,0 +1,109 @@
+{
+  "spec_version": "RCWG-FULL-001/1.0.0",
+  "target_profile": "RCWG_FULL001_COMPAT1",
+  "status": "IMPLEMENTATION_REQUIREMENTS_NOT_RUNTIME_EVIDENCE",
+  "worker": {
+    "python_target": "3.12.14",
+    "native_language": "C++20",
+    "native_bridge": "pybind11_or_equivalent_locked_ABI",
+    "columnar_layout": "Apache Arrow",
+    "default_node_cpu_slots": 1,
+    "default_batch_rows": 1024,
+    "target_batch_bytes": 4194304,
+    "edge_queue_batches": 2,
+    "edge_queue_target_bytes": 8388608,
+    "oversized_row": "one oversized batch subject to explicit run limit",
+    "global_instances": 4096,
+    "recursive_nodes": 48,
+    "region_depth": 2,
+    "loop_iterations": 16,
+    "default_cross_run_cache": false
+  },
+  "compatibility_extensions": [
+    "project_explicit_view_representation_expressions_and_record_pack",
+    "typed_param_bindings",
+    "top_k_partition_by",
+    "text_retrieve_offset",
+    "semantic_extract_public_question"
+  ],
+  "retrieval": {
+    "bm25_k1": 1.2,
+    "bm25_b": 0.75,
+    "bm25_idf": "ln(1+(N-df+0.5)/(df+0.5))",
+    "tie_break": "document_id ascending",
+    "dense": "fixed real encoder/index, exact dot product, explicit query-encoding ledger"
+  },
+  "verifier": {
+    "float_atol": 1e-08,
+    "float_rtol": 1e-06,
+    "field_f1_min": 0.9,
+    "evidence_precision_min": 0.95,
+    "hard_constraints": [
+      "negation",
+      "date",
+      "unit",
+      "relationship",
+      "revision"
+    ]
+  },
+  "reference": {
+    "min_candidates": 8,
+    "max_candidates": 32,
+    "confirmation_initial_repeats": 3,
+    "confirmation_max_repeats": 7,
+    "relative_mad_threshold": 0.05,
+    "selection": "frozen public-data definitions before test generated outcomes",
+    "cost_estimator": "nonnegative additive model fitted to development-only measured costs",
+    "formal_coefficients_available": false
+  },
+  "metrology": {
+    "sampler_interval_ms": 100,
+    "paired_overhead_target": 0.03,
+    "new_cgroup_each_run": true,
+    "raw_counters_retained": true,
+    "remote_gpu_observability": "NOT_OBSERVABLE",
+    "unmeasured_value": null
+  },
+  "hypotheses": {
+    "primary_family_size": 18,
+    "models": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5"
+    ],
+    "comparisons": [
+      "P1_minus_P0_SuccessAtBudget",
+      "P1_minus_P0_EfficientSuccess_0_20",
+      "Adaptive_minus_Frozen_SuccessAtBudget"
+    ],
+    "correction": "Holm",
+    "bootstrap": 10000,
+    "test": "paired_template_sign_flip_10000_two_sided_plus_one",
+    "assumption": "sign exchangeability/symmetry under paired null; no automatic causal attribution"
+  },
+  "extra_planning": {
+    "E2_frozen_exec_slots": 46080,
+    "E3_extra_G_requests": 1440,
+    "E3_exec_slots_max": 11520,
+    "E4_extra_G_requests": 0,
+    "E4_exec_slots_max": 5120,
+    "E5_controlled_pairs": 60,
+    "E5_controlled_plans": 120,
+    "E5_exec_slots": 320,
+    "E7_extra_G_requests": 0,
+    "E7_exec_slots": 1920,
+    "E8_generation_slots": 1440,
+    "E8_nominal_G_requests": 2160,
+    "E8_exec_slots_lower": 2880,
+    "E8_exec_slots_upper": 4320
+  },
+  "dependencies": {
+    "legacy_boot_lock": "preserve byte identity",
+    "full_lock": "resolve from actual compatible packages/build then pin exact hashes; no latest at run time",
+    "target_lock_complete": false,
+    "system_install_authorized": false
+  }
+}

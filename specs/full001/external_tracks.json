@@ -1,0 +1,15 @@
+{
+  "revision": "FULL001_EXTERNAL_TRACKS_1",
+  "checked_date": "2026-09-22",
+  "status": "SOURCE_REGISTER_AND_INTERCHANGE_ONLY",
+  "tracks": [
+    {"id": "TPS-Bench", "upstream_url": "https://github.com/hanwenxu1/mcp-agent", "paper_url": "https://arxiv.org/abs/2511.01527", "original_protocol": "Tool planning and scheduling over compounding MCP tasks; tool selection, completion, token and time evaluations.", "upstream_revision": null, "actual_original_runs": 0, "native_adapter_status": "UPSTREAM_SCHEMA_AND_DEPENDENCY_BINDING_PENDING"},
+    {"id": "WorFEval", "upstream_url": "https://github.com/zjunlp/WorfBench", "paper_url": "https://arxiv.org/abs/2410.07869", "original_protocol": "Workflow node and graph evaluation with sequence and subgraph matching; original datasets and embedding evaluator required.", "upstream_revision": null, "actual_original_runs": 0, "native_adapter_status": "UPSTREAM_SCHEMA_AND_DEPENDENCY_BINDING_PENDING"},
+    {"id": "SemBench", "upstream_url": "https://github.com/SemBench/SemBench", "paper_url": "https://arxiv.org/abs/2511.01716", "original_protocol": "Semantic query processing scenarios and operators using independently configured systems and datasets.", "upstream_revision": null, "actual_original_runs": 0, "native_adapter_status": "UPSTREAM_SCHEMA_AND_DEPENDENCY_BINDING_PENDING"},
+    {"id": "LOTUS", "upstream_url": "https://github.com/lotus-data/lotus", "original_protocol": "LLM semantic operators over tabular data with explicit system/model configuration.", "upstream_revision": null, "actual_original_runs": 0, "native_adapter_status": "UPSTREAM_SCHEMA_AND_DEPENDENCY_BINDING_PENDING"},
+    {"id": "DocETL", "upstream_url": "https://github.com/ucbepic/docetl", "original_protocol": "LLM data-processing and ETL pipelines; upstream pipeline configuration and data are required.", "upstream_revision": null, "actual_original_runs": 0, "native_adapter_status": "UPSTREAM_SCHEMA_AND_DEPENDENCY_BINDING_PENDING"}
+  ],
+  "unavailable_prerequisites": ["exact upstream revisions", "dependency locks", "licensed source datasets", "registered native schema mappings", "explicit paid/host scope when required"],
+  "original_reproduction_claim": false,
+  "formal_ready": false
+}

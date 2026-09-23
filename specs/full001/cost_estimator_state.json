@@ -1,0 +1,15 @@
+{
+  "status": "UNTRAINED_NO_DEVELOPMENT_MEASUREMENTS",
+  "formal_coefficients_available": false,
+  "coefficients": null,
+  "feature_schema": [
+    "scan_bytes",
+    "comparisons",
+    "hash_probes",
+    "edge_visits",
+    "materialized_bytes",
+    "semantic_requests",
+    "reference_tokens",
+    "constant"
+  ]
+}

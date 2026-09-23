@@ -1,0 +1,808 @@
+{
+  "M00-01": {
+    "test_selectors": [
+      "test_acceptance_evidence.Integrity.test_checkout_and_protected_bytes"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M00-02": {
+    "test_selectors": [
+      "test_acceptance_evidence.Integrity.test_retained_old_test_sources"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure",
+      "1966_retained_ids_and_66_protected_files"
+    ]
+  },
+  "M00-03": {
+    "test_selectors": [
+      "test_acceptance_evidence.Integrity.test_checkout_and_protected_bytes"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M00-04": {
+    "test_selectors": [
+      "test_acceptance_recovery."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M00-05": {
+    "test_selectors": [
+      "test_snapshots_forecast.*zip_traversal",
+      "test_seal_closure.*archive_contains"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-01": {
+    "test_selectors": [
+      "test_acceptance_evidence.Integrity.test_registry_and_requirement_mapping"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-02": {
+    "test_selectors": [
+      "test_foundations.CompilerTests.test_legacy_unchanged",
+      "test_compat_types."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-03": {
+    "test_selectors": [
+      "test_templates_f[1-6].F[1-6]Templates.test_"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-04": {
+    "test_selectors": [
+      "test_foundations.CompilerTests.test_parameter_binding",
+      "test_state_runtime."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-05": {
+    "test_selectors": [
+      "test_runtime.Runtime.test_forward_reference",
+      "test_dispatch_completion."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M01-06": {
+    "test_selectors": [
+      "test_native.NativeKernels.test_join_all_modes",
+      "test_reference_runtime.",
+      "test_runtime.Runtime.test_forward_reference"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-01": {
+    "test_selectors": [
+      "test_runtime.Runtime.test_forward_reference",
+      "test_diagnostics.DiagnosticTests.test_e3_schedule"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-02": {
+    "test_selectors": [
+      "test_runtime.Runtime.test_map_order",
+      "test_foundations.StreamTests.test_map_reorder"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-03": {
+    "test_selectors": [
+      "test_dispatch_completion.DispatchCompletion.test_branch_"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-04": {
+    "test_selectors": [
+      "test_runtime.Runtime.test_loop_",
+      "test_formal_stream.FormalStreamBuilders.test_initial_false"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-05": {
+    "test_selectors": [
+      "test_review_r1_native.NativeFailuresR1.test_actual_instance_budget",
+      "test_foundations.StreamTests.test_instance_budget"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-06": {
+    "test_selectors": [
+      "test_foundations.StreamTests.test_backpressure",
+      "test_streaming.StreamingSources.test_four_mib"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-07": {
+    "test_selectors": [
+      "test_supervision.Supervision.test_real_worker",
+      "test_review_r1.HostScopeR1."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M02-08": {
+    "test_selectors": [
+      "test_supervision.Supervision.test_external_deadline",
+      "test_journal_batches.JournalBatches.test_exception",
+      "test_artifacts.Artifacts.test_failed_commit"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-01": {
+    "test_selectors": [
+      "test_dispatch_completion.",
+      "test_templates_f[1-6].F[1-6]Templates.test_"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure",
+      "56_completed_native_dispatches"
+    ]
+  },
+  "M03-02": {
+    "test_selectors": [
+      "test_native.NativeKernels.",
+      "test_temporal.TemporalNative.",
+      "test_review_r1_native.BoundedNativeR1."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-03": {
+    "test_selectors": [
+      "test_acceptance_evidence.Integrity.test_checkout_and_protected_bytes",
+      "test_native.NativeKernels.test_int64"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-04": {
+    "test_selectors": [
+      "test_dispatch_completion.DispatchCompletion.test_scan_index_range",
+      "test_review_r1_native.BoundedNativeR1.test_external_sort",
+      "test_artifacts.Artifacts.test_views"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-05": {
+    "test_selectors": [
+      "test_document_closure.NativeBm25.",
+      "test_dense_probes.",
+      "test_dispatch_completion.DispatchCompletion.test_dense_fixed"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-06": {
+    "test_selectors": [
+      "test_temporal.",
+      "test_native.NativeKernels.test_unicode",
+      "test_streaming.StreamingNative.test_empty"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M03-07": {
+    "test_selectors": [
+      "test_native.NativeKernels."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-01": {
+    "test_selectors": [
+      "test_templates_f[1-6].F[1-6]Templates.test_"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure",
+      "1440_actual_tiny_closures"
+    ]
+  },
+  "M04-02": {
+    "test_selectors": [
+      "test_capacity.",
+      "test_formal_relational.",
+      "test_formal_graph.",
+      "test_formal_stream.",
+      "test_formal_documents."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-03": {
+    "test_selectors": [
+      "test_sealed_analysis.SealedAnalysisTests.test_builder_separates",
+      "test_upstream.UpstreamTests.test_qasper"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-04": {
+    "test_selectors": [
+      "test_upstream.UpstreamTests.test_qasper",
+      "test_formal_documents.",
+      "test_formal_documents_native."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-05": {
+    "test_selectors": [
+      "test_upstream.UpstreamTests.test_scifact",
+      "test_upstream.UpstreamTests.test_cluster_overlap",
+      "test_formal_graph."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-06": {
+    "test_selectors": [
+      "test_templates_f[1-6].*Definitions.",
+      "test_source_validation.ActualSources.test_c3",
+      "test_formal_relational.FormalRelationalTests.test_single_axis"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-07": {
+    "test_selectors": [
+      "test_upstream.UpstreamTests.test_cluster_overlap",
+      "test_snapshots_forecast.SnapshotForecastTests.test_local_hash",
+      "test_formal_documents.FormalDocumentBinding.test_rejects"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M04-08": {
+    "test_selectors": [
+      "test_upstream.ReviewTests."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-01": {
+    "test_selectors": [
+      "test_artifacts.Artifacts.test_views",
+      "test_review_r1.AllocationR1.",
+      "test_review_r1_native.BoundedNativeR1.test_allocation_observer"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-02": {
+    "test_selectors": [
+      "test_artifacts.Artifacts.test_last_view",
+      "test_artifacts.Artifacts.test_scalar_leases",
+      "test_runtime.Runtime.test_last_consumer"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-03": {
+    "test_selectors": [
+      "test_streaming.StreamingSources.test_incremental_source",
+      "test_documents.DocumentTests.test_actual_read",
+      "test_review_r1.AllocationR1.",
+      "test_services.ServicesTests.test_p1"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-04": {
+    "test_selectors": [
+      "test_journal_batches.",
+      "test_foundations.JournalTests.",
+      "test_supervision.Supervision.test_real_worker"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-05": {
+    "test_selectors": [
+      "test_diagnostics.DiagnosticTests.test_ledger_injection",
+      "test_native.NativeKernels.test_topk"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-06": {
+    "test_selectors": [
+      "test_review_r1.HostScopeR1.",
+      "test_review_r1.BudgetR1.test_uncalibrated",
+      "test_output_limit."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-07": {
+    "test_selectors": [
+      "test_review_r1.BudgetR1.",
+      "test_review_r1_native.NativeFailuresR1.test_actual_go_deadline"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M05-08": {
+    "test_selectors": [
+      "test_document_worker.DocumentWorker.test_bound_context",
+      "test_services.ServicesTests.test_real_loopback",
+      "test_frozen_evidence."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-01": {
+    "test_selectors": [
+      "test_formal_relational.",
+      "test_formal_graph_native.",
+      "test_formal_stream_native."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-02": {
+    "test_selectors": [
+      "test_document_closure.DocumentClosure.",
+      "test_templates_f[56].F[56]Templates.test_"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-03": {
+    "test_selectors": [
+      "test_documents.DocumentTests.test_public_span",
+      "test_document_closure.DocumentClosure.test_citation_elsewhere"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-04": {
+    "test_selectors": [
+      "test_verification.Mutations.",
+      "test_verification.Equivalences."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure",
+      "100_wrong_and_100_equivalent_cases"
+    ]
+  },
+  "M06-05": {
+    "test_selectors": [
+      "test_artifacts.Artifacts.test_hash_tamper",
+      "test_source_validation.",
+      "test_sealed_analysis.SealedAnalysisTests.test_changed_artifact"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-06": {
+    "test_selectors": [
+      "test_review_r1.BudgetR1.",
+      "test_review_r1_native.NativeFailuresR1."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M06-07": {
+    "test_selectors": [
+      "test_verification.VerificationBoundaries.test_fidelity",
+      "test_document_closure.DocumentClosure.test_duplicate_support"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-01": {
+    "test_selectors": [
+      "test_reference.References.test_all_f1_grammars",
+      "test_reference_(runtime|graph|stream|documents)."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-02": {
+    "test_selectors": [
+      "test_reference.References.test_rule_only",
+      "test_reference.References.test_nnls",
+      "test_reference.References.test_confirmation"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-03": {
+    "test_selectors": [
+      "test_reference.References.test_confirmation",
+      "test_confirmation_recovery.",
+      "test_supervision.Supervision.test_real_reference"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-04": {
+    "test_selectors": [
+      "test_analysis_pairs.AnalysisPairsTests.test_missing_method",
+      "test_supervision.Supervision.test_real_reference",
+      "test_frozen_evidence."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-05": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_faster_than_reference"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M07-06": {
+    "test_selectors": [
+      "test_native_external.",
+      "test_external_interchange."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-01": {
+    "test_selectors": [
+      "test_services.ServicesTests.test_live_without_exact",
+      "test_services.ServicesTests.test_real_loopback"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-02": {
+    "test_selectors": [
+      "test_services.ServicesTests.test_six_generators"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-03": {
+    "test_selectors": [
+      "test_services.ServicesTests.test_p1",
+      "test_services.ServicesTests.test_failed_logical",
+      "test_services.ServicesTests.test_guided"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-04": {
+    "test_selectors": [
+      "test_services.ServicesTests.test_live_without_exact",
+      "test_services.ServicesTests.test_unknown_or_over_limit"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-05": {
+    "test_selectors": [
+      "test_document_worker.DocumentWorker.test_replay_requires",
+      "test_document_worker.DocumentWorker.test_missing_request",
+      "test_analysis.GoldenAnalysis.test_replay"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-06": {
+    "test_selectors": [
+      "test_control.ControlTests.test_idempotency",
+      "test_control.ControlTests.test_role_cannot",
+      "test_control.ControlTests.test_private_evidence",
+      "test_control.ControlTests.test_wsgi"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M08-07": {
+    "test_selectors": [
+      "test_control.ControlTests.test_nine_views",
+      "test_control.ControlTests.test_actual_private"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-01": {
+    "test_selectors": [
+      "test_foundations.PlanningTests.test_all_primary"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-02": {
+    "test_selectors": [
+      "test_campaign_runner.CampaignRunnerTests.test_upstream_failure",
+      "test_services.ServicesTests.test_failed_logical"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-03": {
+    "test_selectors": [
+      "test_supervision.Supervision.test_real_e2",
+      "test_frozen_evidence.",
+      "test_analysis_pairs.AnalysisPairsTests.test_e2_rebuild"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-04": {
+    "test_selectors": [
+      "test_diagnostics.",
+      "test_campaign_runner.CampaignRunnerTests.test_all_diagnostic"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-05": {
+    "test_selectors": [
+      "test_foundations.TransactionTests.",
+      "test_campaign_runner.CampaignRunnerTests.test_uncertain",
+      "test_services.ServicesTests.test_uncertain_request"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-06": {
+    "test_selectors": [
+      "test_generation_retry.",
+      "test_campaign_runner.CampaignRunnerTests.test_one_facility",
+      "test_confirmation_recovery."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-07": {
+    "test_selectors": [
+      "test_snapshots_forecast.SnapshotForecastTests.test_forecast",
+      "test_services.ServicesTests.test_paid_reservation",
+      "test_services.ServicesTests.test_unknown_or_over_limit"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M09-08": {
+    "test_selectors": [
+      "test_sealed_analysis.",
+      "test_control.ControlTests.test_private_evidence"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-01": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_all_",
+      "test_analysis.GoldenAnalysis.test_half_unknown",
+      "test_analysis.GoldenAnalysis.test_missing_log"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-02": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_repeat_counts",
+      "test_analysis.GoldenAnalysis.test_unbalanced_template"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-03": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_bootstrap",
+      "test_analysis.GoldenAnalysis.test_paired_bootstrap"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-04": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_holm",
+      "test_analysis_pairs.AnalysisPairsTests.test_e2_rebuild"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-05": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_reference_missing",
+      "test_analysis.GoldenAnalysis.test_confirmed_oom",
+      "test_analysis.GoldenAnalysis.test_timing_confirmation"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-06": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_frontier",
+      "test_verification.VerificationBoundaries.test_fidelity"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-07": {
+    "test_selectors": [
+      "test_sealed_analysis.SealedAnalysisTests.test_rebuild_reproducible",
+      "test_analysis_pairs."
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  },
+  "M10-08": {
+    "test_selectors": [
+      "test_analysis.GoldenAnalysis.test_replay_cannot",
+      "test_campaign_runner.CampaignRunnerTests.test_diagnostic_attempt"
+    ],
+    "coverage_checks": [
+      "exact_source_and_binary",
+      "complete_test_outcomes_and_file_closure"
+    ]
+  }
+}

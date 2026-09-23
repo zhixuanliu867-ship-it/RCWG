@@ -175,3 +175,54 @@ Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined;
 ## Active ticket: RCWG-NATIVE-001 / N4
 
 Base 456a30d0d242ec005bfb9e25fdc7a45c72aa9af8; branch rcwg/native-001-n4. Read docs/native001n4/START_HERE_zh.md and DECISIONS.md. Offline counter hardening, receipt-bound finite calibration implementation and independent regression gates. One draft stacked on rcwg/native-001; PR6/7 not merged. Host proposal remains approved=false; real calibration NOT_RUN pending exact owner receipt. No models/count/GCP/IAM/install/cgroup writes. Formal BLOCKED_NOT_FROZEN. Historical evidence above retained.
+
+
+## RCWG-FULL-001 checkpoint
+
+Baseline 2824ee8e7678a39b3bff2ac701ffececd50d1e81, isolated branch rcwg/full-001. Continue from docs/full001/PROGRESS.json, REQUIREMENT_TO_EVIDENCE.json and OWNER_ACTIONS_REQUIRED.json. Software implementation and acceptance remain incomplete. Native CI build passed; the first independent native run found integer-division rounding failure; failed evidence is retained. N4 plan and history unchanged. All six readiness flags remain false; formal BLOCKED_NOT_FROZEN. Owner directly authorized new-branch pushes, offline CI and a draft PR based on rcwg/native-001-n4; no merge or force push. No host, paid API or cloud approvals inferred.
+
+## RCWG-FULL-001 recovery — 2026-09-22
+
+The preceding history is retained. Resume the same total task from docs/full001/PROGRESS.json and SOFTWARE_GAPS.json. The recovered local checkout contains the managed campaign runner, eight fixed service bindings and existing-auth adapters, control outbox, explicit private sealing, source snapshot tooling, paired analysis and total-acceptance dispatcher. Current Windows Python 3.13.4 supplementary integration passed 331 tests with no skips; it is not Linux/native or complete software acceptance. The dispatcher actually refused total acceptance because Linux Python 3.12.14 is unavailable in the current environment. Current WSL access returned E_ACCESSDENIED; repository connector writes returned HTTP 403. Historical CI applies only to its recorded commit. Keep local source and evidence, do not infer permission from an inaccessible environment.
+
+Formal capacity builders, bounded external-sort integration, transformed/graph/JSON allocation accounting, remaining schema/external-adapter coverage and exact-current-source native/inherited acceptance remain software work. All six readiness states stay false. No paid/count/cloud/IAM/install/cgroup/calibration/merge actions were performed in this recovery. N4 original 888 slots and approved=false remain unchanged.
+
+
+## RCWG-FULL-001 continuation checkpoint — 2026-09-22, portable-w05
+
+Current supplementary integration passed 369 tests and 104 subtests, without skips, on Windows Python 3.13.4. Independent JSON Schema validation passed all 1440 plan structures, eight service bindings and three rejection variants; workflow YAML was checked offline. These are not current Linux/native, formal capacity or cloud acceptance.
+
+F1/F2 now have bounded Arrow construction and an independent on-disk SQL oracle. Their 24 templates x four conditions passed small fixture construction, static compilation and independent oracle/condition checks. Formal workload construction still requires exact host admission. F3/F4 formal builders and F5/F6 formal-source binding remain software work.
+
+Reference attempts persist before execution and resume without resend; uncertain outcomes pause their group. New native reference execution uses inherited reference/timing evidence roles. E2's versioned binding now seals the original C0 plan against the target context without rewriting the plan. Controller timing now ends at committed result receipt, before process drain and verification. New Linux integration cases are retained but have not run in this environment. A facility retry must preserve plan, source, data, model, budget and comparison context.
+
+Resume from PROGRESS.json and SOFTWARE_GAPS.json. All six readiness flags remain false, formal BLOCKED_NOT_FROZEN. No host load, paid/count request, cloud/IAM change, system install, cgroup write, merge or force push occurred. N4 and inherited protected bytes are unchanged. Historical failure directories remain; inaccessible historical directories are separately recorded and never inferred as acceptance evidence.
+
+
+## REVIEW-R1 continuation — 2026-09-23
+
+R01-R06 remain under unified exact-head acceptance. The c2ddd71 CI built native modules and passed inherited native gates, but 507 FULL errors exposed a reused global allocation observer (502), concurrent artifact iteration (3), and two new test fixture mistakes. Failure artifacts and original test IDs remain intact. Native observer state is now call-scoped with ContextVar; retirement is serialized. WSL target Python 3.12.14 and hash-locked dependencies are accessible without system installation. CI remains the available native compiler.
+
+F3/F4 formal candidate builders now preserve fixed capacity and use independent disk/stream oracles. The F4-08/10 formal reference uses vector projections instead of millions of dynamic map instances. F4-12 declares a finite public continuation predicate (remaining > 0 AND iterations < 16), returns the current state when that predicate becomes false, and never treats an implicit runtime-limit exception as success. This is versioned FULL001_F4_BOUNDED_REFERENCE_1; old tiny definitions and gold stay unchanged. Formal-scale reference feasibility still needs admitted host evidence.
+
+All 24 F5/F6 source binding contracts accept actual QASPER/SciFact adapter bundles, authenticated original records, public task designs, explicit auxiliary graph rules and separately supplied private derived labels. Section extraction/reordering has exact Unicode-coordinate maps. No parser for the synthetic fixture language is used to create real labels. Blind packages omit prior labels. Real license, two-human review/adjudication, semantic neutrality of C1/C3 and reference confirmation remain pending.
+
+Five upstream-native entry-point adapters are source-pinned in external_native_v1.json, with 13 actual AST signatures checked. TPS scope is its original tool-selection judge/parser, WorFEval its original evaluators, SemBench its movie LOTUS runner, LOTUS its four registered semantic DataFrame operators, and DocETL its DSLRunner. They do not claim complete original-paper reproduction. Existing admitted service bridges, separately locked upstream environments and licensed data are prerequisites; no new default provider/credential route is introduced.
+
+Actual CPython/Arrow allocation events are retained, but syncing each dense-graph object separately exceeded an unchanged tiny-test deadline in WSL. Journal batching now writes every original event, synchronizes at most 1 MiB apart and at each completed artifact operation, and never accepts an unsealed crash tail. This is an instrumentation repair, not a timeout increase. The obsolete native external-sort materializing facade is disabled; direct convenience calls use the same bounded state and lazy disk handle as execution. Explicit caller-requested to_pylist/column access is outside the bounded operator path.
+
+All six readiness flags remain false until requirement-level final-head acceptance. Formal BLOCKED_NOT_FROZEN, original N4 888 slots and approved=false remain unchanged. See PROGRESS.json for preserved CI failures, supplementary tests and current remaining work. No paid/count call, real cgroup/stress/calibration, cloud/IAM, system installation, merge or force push was performed.
+
+
+### FULL001 R1 dispatch closure in progress
+6cc127459ed43f0a75430a67b6dfe829c9ec0a25 rebuilt on Linux Python 3.12.14: all 2014 FULL tests and inherited native gates pass (workflow 35843955586). This remains intermediate evidence. Additional worker dispatch completion, authenticated dense encoder assets, bounded generation probes and exact-commit evidence audit are undergoing integration. Preserve 1966 b3 test IDs and bytes; no formal gate changes. Resume from docs/full001/PROGRESS.json and SOFTWARE_GAPS.json, complete final acceptance/delivery before ending total task.
+
+### FULL001 R2 readiness and source-backed regressions
+
+R2 accepted the post-commit offline delivery for 86d0c4db5ac508bde68cba2d17564eb6bc416de0. The preceding in-repository checkpoints remain historical; the private post-commit evidence establishes that reviewed software state. R2 continues host, service, real-source data, reference and campaign preparation with formal admission closed. The original N4 plan remains byte-identical, approved=false and 888 slots. No new host load or paid/cloud permission is implied by readiness preparation.
+
+Actual candidate rehydration exposed insertion-order-dependent alpha identities: a multi-source plan's candidate ID changed after canonical JSON storage despite an unchanged plan hash. FULL001_REFERENCE_GRAMMAR_4 derives external and capture aliases from their actual bindings, independent of insertion order or alias names. Real official QASPER v0.3 ingestion also exposed null section names. FULL001_UPSTREAM_2 represents those as empty headings, records normalized section indices and preserves the complete original source privately. Four new R2 regression IDs cover canonical round trips, alias/capture renaming versus real edge changes, and null-heading Unicode evidence spans. Existing test IDs and protected specification/prompt bytes remain intact.
+
+This checkpoint requires new exact-source build and affected/full acceptance evidence before inheriting software-complete status. The nine calibration checks, actual service binding/paid receipts, human labels, real reference timings and campaign freeze remain separate external evidence requirements. R2's original 150,880 NOT_RUN slot plan and all failures are retained privately; changed source identities are not silently inserted into that old plan.
+
+Reopening the complete real-source export found a second ordering issue: QASPER's public document arrays followed source object insertion order, while canonical private JSON reordered paper keys, causing authenticated reconstruction to fail. FULL001_UPSTREAM_3 sorts paper identities during adaptation and retains original source bytes. A fifth R2 test authenticates the stored multi-paper round trip and rejects changed public content. Actual source exports are rebuilt and reauthenticated before delivery; the earlier export and reproduced failure remain private evidence.

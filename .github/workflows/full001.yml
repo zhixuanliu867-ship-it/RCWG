@@ -1,0 +1,77 @@
+name: FULL001 exact-head offline engineering
+on:
+  push:
+    branches: ['rcwg/full-001']
+  pull_request:
+    branches: ['rcwg/native-001-n4']
+permissions:
+  contents: read
+jobs:
+  inherited-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Rebuild and execute untouched N0-N3 and N4 offline gates
+        run: |
+          python scripts/build_native001.py --output runs/inherited-native-build
+          python scripts/accept_native001.py --build runs/inherited-native-build --output runs/inherited-native-tests
+          python scripts/build_native001_n4.py --output runs/inherited-n4-build
+          python scripts/accept_native001_n4.py --build runs/inherited-n4-build --output runs/inherited-n4-tests
+      - name: Preserve inherited regression identity and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full001-inherited-native-evidence
+          retention-days: 14
+          path: |
+            runs/inherited-native-build/
+            runs/inherited-native-tests/
+            runs/inherited-n4-build/
+            runs/inherited-n4-tests/
+  full001:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: Explicit isolated dependency preparation
+        run: |
+          python -m venv environments/full001/.venv
+          environments/full001/.venv/bin/python -m pip install --require-hashes -r environments/full001/requirements.lock
+      - name: Build actual Arrow C++20 kernels with existing compiler
+        run: environments/full001/.venv/bin/python scripts/build_full001.py --output runs/full001-build
+      - name: Execute independent software tests against this build
+        run: environments/full001/.venv/bin/python acceptance/full001/run_tests.py --native-build runs/full001-build --output runs/full001-tests
+      - name: Verify exact source, preserved tests, actual dispatches and tiny closures
+        run: environments/full001/.venv/bin/python scripts/verify_full001_evidence.py --tests runs/full001-tests --build runs/full001-build --output runs/full001-coverage.json
+      - name: Execute inherited Python gates in the same locked interpreter
+        run: environments/full001/.venv/bin/python acceptance/full001/run_tests.py --suite-root tests --output runs/full001-inherited-python
+      - name: Prove clean baseline patch application and source delivery
+        run: environments/full001/.venv/bin/python scripts/package_full001_source.py --output runs/full001-source-delivery
+      - name: Preserve build evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full001-offline-evidence
+          retention-days: 14
+          path: |
+            runs/full001-build/
+            runs/full001-tests/
+            runs/full001-coverage.json
+            runs/full001-inherited-python/
+            runs/full001-source-delivery/*.json
+            runs/full001-source-delivery/*.bundle
+            runs/full001-source-delivery/*.patch
+            runs/full001-source-delivery/*.zip
