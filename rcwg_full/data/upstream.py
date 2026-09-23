@@ -4,7 +4,7 @@ from pathlib import Path
 from rcwg_full.evidence import canonical, digest, sha, write, exclusive_directory
 from rcwg_full.runtime.documents import canonical_document, validate_document
 
-REVISION = 'FULL001_UPSTREAM_2'
+REVISION = 'FULL001_UPSTREAM_3'
 SOURCES = {
     'QASPER': 'https://github.com/allenai/qasper-led-baseline',
     'SciFact': 'https://github.com/allenai/scifact/blob/master/doc/data.md',
@@ -62,7 +62,9 @@ def qasper(papers, *, upstream_revision, license_record):
     source = provenance('QASPER', upstream_revision, canonical(papers), license_record)
     documents, questions, annotations = [], [], []
     seen = set()
-    for paper_id, paper in papers.items():
+    # Source JSON objects have no semantic ordering. Export sorts object keys;
+    # rebuilding an authenticated bundle must preserve the public array order.
+    for paper_id, paper in sorted(papers.items(), key=lambda item: str(item[0])):
         sections = []
         null_headings = []
         abstract = _text(paper.get('abstract', ''))

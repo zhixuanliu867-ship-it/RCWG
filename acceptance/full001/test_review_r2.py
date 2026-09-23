@@ -4,11 +4,22 @@ import json
 import unittest
 from rcwg_full.data.templates import f1
 from rcwg_full.data.upstream import qasper
+from rcwg_full.data.formal_documents import validate_bundle
 from rcwg_full.evidence import canonical,digest
 from rcwg_full.reference.candidates import candidates,decision_identity
 
 
 class ReviewR2(unittest.TestCase):
+    def test_qasper_bundle_authentication_survives_canonical_export(self):
+        source={name:{'title':name,'abstract':'','full_text':[{'section_name':'S','paragraphs':['Text '+name]}],'qas':[]} for name in ['z-paper','a-paper']}
+        license={'license_text_sha256':'0'*64,'redistribution_policy':'PRIVATE_REVIEW','annotation_provenance':'original'}
+        bundle=qasper(source,upstream_revision='r',license_record=license)
+        stored=json.loads(canonical(bundle))
+        self.assertEqual(validate_bundle(stored),digest(bundle))
+        self.assertEqual([d['document_id'] for d in stored['public']['documents']],['a-paper','z-paper'])
+        stored['public']['documents'][0]['title']='Changed'
+        with self.assertRaisesRegex(ValueError,'BUNDLE_CHANGED'):validate_bundle(stored)
+
     def test_candidate_ids_survive_canonical_storage_with_multiple_sources(self):
         d=f1('F1-08',0,'C0');generated=candidates(d['task'],d['plan'])
         stored=json.loads(canonical(generated))
