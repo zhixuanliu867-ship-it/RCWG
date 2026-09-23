@@ -4,7 +4,7 @@ from pathlib import Path
 from rcwg_full.evidence import canonical, digest, sha, write, exclusive_directory
 from rcwg_full.runtime.documents import canonical_document, validate_document
 
-REVISION = 'FULL001_UPSTREAM_1'
+REVISION = 'FULL001_UPSTREAM_2'
 SOURCES = {
     'QASPER': 'https://github.com/allenai/qasper-led-baseline',
     'SciFact': 'https://github.com/allenai/scifact/blob/master/doc/data.md',
@@ -64,15 +64,23 @@ def qasper(papers, *, upstream_revision, license_record):
     seen = set()
     for paper_id, paper in papers.items():
         sections = []
+        null_headings = []
         abstract = _text(paper.get('abstract', ''))
         if abstract:
             sections.append({'section_id': 'abstract', 'heading': 'Abstract', 'text': abstract})
         for section_index, section in enumerate(paper['full_text']):
+            # Official v0.3 records include null section names. A missing heading
+            # is an empty heading, never the literal text "None"; raw source is
+            # preserved privately and the normalization is explicitly recorded.
+            heading = section['section_name']
+            if heading is None:
+                heading = ''; null_headings.append(section_index)
             for paragraph_index, paragraph in enumerate(section['paragraphs']):
                 sections.append({'section_id': f's{section_index}-p{paragraph_index}',
-                                 'heading': _text(section['section_name']), 'text': _text(paragraph)})
+                                 'heading': _text(heading), 'text': _text(paragraph)})
         doc = canonical_document(str(paper_id), upstream_revision, _text(paper['title']), sections,
-                                 source_record_id=str(paper_id), metadata={'source': 'QASPER'})
+                                 source_record_id=str(paper_id), metadata={'source': 'QASPER',
+                                 'null_heading_sections': null_headings})
         validate_document(doc)
         documents.append(doc)
         for qa in paper['qas']:

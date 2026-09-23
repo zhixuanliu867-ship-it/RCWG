@@ -3,7 +3,7 @@ from copy import deepcopy
 from itertools import product
 import math
 from rcwg_full.compiler import FullCompiler
-from rcwg_full.evidence import digest
+from rcwg_full.evidence import digest,canonical
 
 CHOICES={'filter':['vectorized','scalar'],'project':['column_view','copy'],
          'top_k':['streaming_heap','full_sort'],'aggregate':['hash_group','sorted_group'],
@@ -18,11 +18,18 @@ CHOICES={'filter':['vectorized','scalar'],'project':['column_view','copy'],
 def decision_identity(plan):
     """Canonicalize all local labels/captures, retaining actual edges and choices."""
     value=deepcopy(plan);value.pop('task_id',None)
-    aliases={name:'e'+str(i) for i,name in enumerate(value['external_inputs'])}
+    # Aliases denote source bindings, not dictionary insertion positions. JSON
+    # serialization sorts object keys, and an alpha rename may reorder them.
+    # Equal bindings intentionally share a canonical alias.
+    def binding_aliases(bindings,prefix):
+        identities=sorted({canonical(v) for v in bindings.values()})
+        ids={v:prefix+str(i) for i,v in enumerate(identities)}
+        return {name:ids[canonical(v)] for name,v in bindings.items()}
+    aliases=binding_aliases(value['external_inputs'],'e')
     value['external_inputs']={aliases[k]:v for k,v in value['external_inputs'].items()}
     def region(nodes,scope,bindings=None):
         ids={n['id']:'n'+str(i) for i,n in enumerate(nodes)}
-        bound={name:'b'+str(i) for i,name in enumerate(bindings or {})}
+        bound=binding_aliases(bindings or {},'b')
         def reference(ref):
             if ref.startswith('$input.'):return '$input.'+aliases[ref[7:]]
             if ref.startswith('$bound.'):return '$bound.'+bound[ref[7:]]
@@ -137,7 +144,7 @@ def candidates(task,baseline,*,max_candidates=32):
             if len(result)==max_candidates:break
         if len(result)>=max_candidates:break
     if len(result)<8:raise ValueError('INSUFFICIENT_DISTINCT_EXECUTABLE_GRAMMAR')
-    return {'profile':'FULL001_REFERENCE_GRAMMAR_3','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
+    return {'profile':'FULL001_REFERENCE_GRAMMAR_4','task_hash':digest(task),'definition_hash':digest([{'id':c['candidate_id'],'decisions':c['decisions']} for c in result]),
         'candidates':result,'statically_rejected':rejected,'data_used':'PUBLIC_TASK_ONLY','measurement_used':False,'formal_frozen':False}
 
 
