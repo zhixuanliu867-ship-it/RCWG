@@ -208,8 +208,10 @@ class PreparedNativeExecutor:
         driver=None
         if self.mode=='FORMAL':
             from rcwg_full.runtime.launch import approved_driver
-            driver=approved_driver(self.host_scope,self.host_receipt,task,'r'+slot['slot_id'][:30],
-                 source_hash=digest(source_hashes()),build_hash=sha(read(self.build/'BUILD.json')))
+            from rcwg_full.runtime.host_scope import run_identity
+            driver=approved_driver(self.host_scope,self.host_receipt,task,run_identity(attempt_id),
+                 source_hash=digest(source_hashes()),build_hash=sha(read(self.build/'BUILD.json')),
+                 build=self.build,slot_id=slot['slot_id'],attempt_id=attempt_id)
         def launch():return execute(task,plan,item['data_manifest'],build=self.build,output=directory/'native',mode=self.mode,
                  condition_id=slot['condition'],verify=verify,driver=driver,admission=self.admission,
                  semantic_replay=item.get('semantic_replay') if self.mode=='ENGINEERING_REPLAY' else None,
@@ -229,20 +231,16 @@ class PreparedNativeExecutor:
         else:report=launch()
         measurements=report.get('measurements') or {};verified=report['verification']['status']
         bound=report.get('binding_validation',{}).get('status')=='EVIDENCE_BOUND'
-        observed=measurements.get('status')=='COUNTERS_OBSERVED' and not report.get('cleanup_failures')
-        budget=None
-        if observed and report['terminal_status']=='COMPLETED' and report.get('exec_elapsed_ns') is not None and measurements.get('oom_kill_delta')==0:
-            budget=measurements['worker_peak_ram_bytes']<=task['resources']['worker_memory_limit_bytes'] and report['exec_elapsed_ns']<=task['resources']['wall_timeout_s']*1e9
-        result={'status':report['terminal_status'],'plan_hash':digest(plan),'data_hash':item['data_manifest_sha256'],
+        from rcwg_full.runtime.measurement import terminal_budget
+        decision=terminal_budget(report,task)
+        result={**decision,'plan_hash':digest(plan),'data_hash':item['data_manifest_sha256'],
             'model_snapshot_hash':generated['model_snapshot_hash'],'profile_hash':digest(task['resources']),
             'semantic':True if verified=='PASS' else False if verified=='FAIL' else None,
-            'budget':budget,'evidence_valid':bound,'comparison_context_hash':report.get('binding_validation',{}).get('comparison_context_hash'),
-            'timing_valid':report['terminal_status']=='COMPLETED' and report.get('exec_elapsed_ns') is not None,
-            'exec_elapsed_ns':report.get('exec_elapsed_ns'),'worker_memory_peak_bytes':measurements.get('worker_peak_ram_bytes'),
+            'evidence_valid':bound,'comparison_context_hash':report.get('binding_validation',{}).get('comparison_context_hash'),
+            'worker_memory_peak_bytes':measurements.get('worker_peak_ram_bytes'),
             'measurement':{'exec_elapsed_ns':'MEASURED' if report.get('exec_elapsed_ns') else 'UNKNOWN',
                            'worker_memory_peak_bytes':'MEASURED' if measurements.get('worker_peak_ram_bytes') is not None else 'UNKNOWN'},
-            'supervisor_report_hash':sha(read(directory/'native/report.json')),
-            'failure_class':'CONFIRMED_PLAN' if report['terminal_status'] in {'PLAN_INVALID','MODEL_FAILURE'} else 'INFRASTRUCTURE' if report['terminal_status']=='INFRA_FAILURE' else None}
+            'supervisor_report_hash':sha(read(directory/'native/report.json'))}
         if frozen_binding is not None:result.update(c0_source_plan_hash=original_plan_hash,frozen_binding=frozen_binding)
         if intervention is not None:result['intervention']=intervention
         if slot.get('experiment_id')=='E5' and report['terminal_status']=='COMPLETED':

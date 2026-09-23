@@ -32,7 +32,7 @@ def capability(observation, reference=None, threshold=.2):
         success=False if observation.get('budget_failure_confirmed') is True else None
     else:
         success=tri_and(observation.get('semantic'),observation.get('budget'))
-        if observation.get('evidence_valid') is not True:success=None
+        if observation.get('evidence_valid') is not True or observation.get('measurement_valid') is False:success=None
     covered=bool(reference and reference.get('confirmed') is True and _positive(reference.get('elapsed_ns'))
                  and reference.get('context_hash')==observation.get('comparison_context_hash'))
     complete=status=='COMPLETED' and observation.get('timing_valid') is True and _positive(observation.get('exec_elapsed_ns'))
@@ -40,8 +40,8 @@ def capability(observation, reference=None, threshold=.2):
     efficient=False if success is False else (rho<=1+threshold if rho is not None else None)
     return {'success':success,'efficient':efficient,'rho':rho,'reference_covered':covered,
             'completed_time_ns':observation.get('exec_elapsed_ns') if complete else None,
-            'censored':status in {'TIMEOUT','OOM'},'observed_elapsed_ns':observation.get('exec_elapsed_ns'),
-            'reason':status,'measurement_valid':observation.get('evidence_valid') is True}
+            'censored':status in {'TIMEOUT','OOM'},'observed_elapsed_ns':observation.get('observed_elapsed_ns',observation.get('exec_elapsed_ns')),
+            'reason':status,'measurement_valid':observation.get('measurement_valid') is True}
 
 
 def normalize(expected, observations, references=None, *, mode='ENGINEERING_NATIVE', ledger_role='PRIMARY'):

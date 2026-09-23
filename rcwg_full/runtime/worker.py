@@ -20,6 +20,7 @@ async def execute(request,build,output):
     out=Path(output);sources=source_hashes();started=time.monotonic_ns()
     journal=Journal(out/'events.jsonl',request['run_id']);journal.append('run_started',{'mode':request['mode']},status='RUNNING')
     result={'run_id':request['run_id'],'terminal_status':'INFRA_FAILURE','failure':None,'formal_ready':False,'source':sources,'paid_calls':0,'measurement_profile':'ENGINEERING_UNCALIBRATED'}
+    result['measurement_profile']=request.get('measurement_profile',{'host_calibrated':False})
     store=None;scheduler=None
     try:
         if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
@@ -43,17 +44,19 @@ async def execute(request,build,output):
             if payload.get('revision')!='full001-engineering-replay-1':raise ExecutionFault('REPLAY_MANIFEST_VERSION','facility')
             semantic=ReplaySemantic(payload['responses'],mode=request['mode'],service_id=payload['service_id'])
         documents=DocumentRegistry(catalog,native=native,event=lambda k,v:journal.append(k,v))
-        store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task'],documents=documents,semantic=semantic);externals={}
+        store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task'],documents=documents,semantic=semantic,result_path=out/'result.json');externals={}
         for alias,meta in report['typed_graph']['input_bindings'].items():
             source=catalog.resolve(meta['source_id']);value=source if meta['type']['kind']=='DatasetRef' else source.value()
             externals[alias]=store.register(value,meta['type'],'external:'+alias,source_refs=[meta['source_id']])
         scheduler=Scheduler(report,request['task'],externals,backend,journal,execution_profile=request.get('execution_profile'))
-        value=await scheduler.run();write(out/'result.json',value)
+        value=await scheduler.run()
+        from rcwg_full.runtime.spilled import JsonResult
+        if not isinstance(value,JsonResult):write(out/'result.json',value)
         if source_hashes()!=sources:raise ExecutionFault('SOURCE_CHANGED_DURING_RUN','facility')
         result['terminal_status']='COMPLETED'
     except BaseException as exc:
         result['terminal_status']='MODEL_FAILURE' if isinstance(exc,ExecutionFault) and exc.attribution=='plan' else 'INFRA_FAILURE'
-        result['failure']={'code':getattr(exc,'code',type(exc).__name__),'attribution':getattr(exc,'attribution','facility'),'detail':str(exc)}
+        result['failure']=exc.record() if isinstance(exc,ExecutionFault) else {'code':type(exc).__name__,'attribution':'facility','detail':str(exc),'stage':'WORKER','node_instance':None,'origin':'python'}
         write(out/'failure.traceback.txt',traceback.format_exc().encode('utf-8'))
     finally:
         finished=time.monotonic_ns();result['worker_exec_wall_ns']=finished-started

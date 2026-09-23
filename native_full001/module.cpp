@@ -2,6 +2,7 @@
 #include "graph.hpp"
 #include "stream_aggregate.hpp"
 #include "text.hpp"
+#include "bounded.hpp"
 namespace py=pybind11;
 using namespace full;
 
@@ -10,7 +11,26 @@ static py::object wrap(const Table&t){auto p=arrow::py::wrap_table(t);if(!p)thro
 
 PYBIND11_MODULE(RCWG_MODULE_NAME,m){
     if(arrow::py::import_pyarrow()!=0)throw py::error_already_set();
+    // Local to this extension: never reinterpret unrelated RuntimeError values.
+    py::register_local_exception_translator([](std::exception_ptr error){
+        try { if(error) std::rethrow_exception(error); }
+        catch(const Fault& fault){
+            auto cls=py::module_::import("rcwg_full.runtime.errors").attr("ExecutionFault");
+            auto value=cls(fault.what(),fault.attribution);
+            value.attr("origin")="native";
+            value.attr("stage")="NATIVE_KERNEL";
+            PyErr_SetObject(cls.ptr(),value.ptr());
+        }
+    });
     m.attr("diagnostic")=bool(RCWG_FULL_DIAGNOSTICS);
+    py::class_<StreamTopK,std::shared_ptr<StreamTopK>>(m,"StreamTopK",py::module_local())
+        .def(py::init([](py::object empty,const std::string&params){return std::make_shared<StreamTopK>(unwrap(empty),Parser(params).parse());}))
+        .def("consume",[](StreamTopK&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})
+        .def("finish",[](StreamTopK&state){std::pair<Table,Counts> result;{py::gil_scoped_release release;result=state.finish();}return py::make_tuple(wrap(result.first),dump(counts_json(result.second)));});
+    py::class_<StreamSort,std::shared_ptr<StreamSort>>(m,"StreamSort",py::module_local())
+        .def(py::init([](py::object empty,const std::string&params,const std::string&directory){return std::make_shared<StreamSort>(unwrap(empty),Parser(params).parse(),directory);}))
+        .def("consume",[](StreamSort&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})
+        .def("finish",[](StreamSort&state){std::pair<std::string,Counts> result;{py::gil_scoped_release release;result=state.finish();}return py::make_tuple(result.first,state.rows(),dump(counts_json(result.second)));});
     py::class_<Bm25Index,std::shared_ptr<Bm25Index>>(m,"Bm25Index",py::module_local())
         .def(py::init([](const std::string&documents){auto docs=Parser(documents).parse();py::gil_scoped_release release;return std::make_shared<Bm25Index>(docs);}))
         .def("query",[](const Bm25Index&index,const std::string&tokens,int64_t limit,int64_t offset){auto terms=Parser(tokens).parse();std::pair<J,Counts> result;{py::gil_scoped_release release;result=index.query(terms,limit,offset);}return py::make_tuple(dump(result.first),dump(counts_json(result.second)));})

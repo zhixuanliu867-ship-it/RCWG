@@ -6,10 +6,7 @@ import time
 from collections import Counter
 from rcwg_full.runtime.streams import CpuAdmission,BoundedStream,bounded_map
 from rcwg_full.runtime.artifacts import Artifact
-
-
-class ExecutionFault(RuntimeError):
-    def __init__(self,code,attribution='plan'):super().__init__(code);self.code=code;self.attribution=attribution
+from rcwg_full.runtime.errors import ExecutionFault
 
 
 class Scheduler:
@@ -118,7 +115,7 @@ class Scheduler:
                 ready=sorted((n for k,n in pending.items() if dependencies[k]<=completed),key=lambda n:n['serialization_position'])
                 for node in ready:
                     name=node['logical_id'];del pending[name]
-                    ordinal=self.admission.admit_instance();instance=instance_prefix+'/'+name+'#'+str(ordinal)
+                    ordinal=self.admission.admit_instance(node_instance=instance_prefix+'/'+name);instance=instance_prefix+'/'+name+'#'+str(ordinal)
                     ready_ns=time.monotonic_ns();self.event('node_ready',{'ready_ns':ready_ns,'serialization_position':node['serialization_position']},instance)
                     inputs={p:resolve(r) for p,r in node['input_references'].items()};params=deepcopy(node['params'])
                     for b in node.get('param_bindings',[]):
@@ -140,7 +137,11 @@ class Scheduler:
                             else:result=await self.backend.dispatch(node,inputs,params,instance,self)
                             self.event('node_finished',{'finish_ns':time.monotonic_ns(),'operator':node['operator'],'implementation':node['implementation']},instance,'COMPLETED')
                             return result
-                        except BaseException as exc:self.event('node_failed',{'cause':getattr(exc,'code',type(exc).__name__)},instance,'FAILED');raise
+                        except BaseException as exc:
+                            if isinstance(exc,ExecutionFault):
+                                exc.node_instance=instance
+                                exc.stage=exc.stage or 'NODE_EXECUTION'
+                            self.event('node_failed',{'cause':getattr(exc,'code',type(exc).__name__)},instance,'FAILED');raise
                         finally:
                             for value in holders:
                                 if value.release_status=='LIVE':self.backend.store.drop_lease(value,instance)

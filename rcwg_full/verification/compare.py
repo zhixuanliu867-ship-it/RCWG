@@ -17,17 +17,8 @@ def bag_equal(actual,expected,**tolerance):
     def floating(x):
         return type(x) is float or (type(x) is dict and any(floating(v) for v in x.values())) or (type(x) is list and any(floating(v) for v in x))
     if not any(floating(x) for x in expected):return Counter(canonical(x) for x in actual)==Counter(canonical(x) for x in expected)
-    # With tolerances an exact-first greedy match is unsound. Find a full matching.
-    remaining=actual;wanted=expected
-    edges=[[j for j,y in enumerate(wanted) if equivalent(x,y,**tolerance)] for x in remaining]
-    assigned={}
-    def match(i,seen):
-        for j in edges[i]:
-            if j in seen:continue
-            seen.add(j)
-            if j not in assigned or match(assigned[j],seen):assigned[j]=i;return True
-        return False
-    return all(match(i,set()) for i in range(len(remaining)))
+    from .bag import capacity_equal
+    return capacity_equal(actual,expected,lambda x,y:equivalent(x,y,**tolerance))
 
 
 def set_equal(actual,expected):

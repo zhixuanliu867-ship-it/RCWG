@@ -64,6 +64,17 @@ class Native:
     def aggregate_finish(self,state):
         result,counts=state.finish();return result,json.loads(counts)
 
+    def topk_begin(self,schema,params):
+        import pyarrow as pa
+        return self.module.StreamTopK(pa.Table.from_batches([],schema=schema),canonical(params).decode())
+
+    def sort_begin(self,schema,params,directory):
+        import pyarrow as pa
+        return self.module.StreamSort(pa.Table.from_batches([],schema=schema),canonical(params).decode(),str(directory))
+
+    def sort_finish(self,state):
+        path,rows,counts=state.finish();return path,rows,json.loads(counts)
+
     def bm25_prepare(self,documents):return self.module.Bm25Index(canonical(documents).decode())
 
     def bm25_query(self,index,terms,limit,offset=0):

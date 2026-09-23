@@ -10,14 +10,16 @@ from rcwg_full.runtime.streams import BoundedStream,StreamClosed,tee
 from rcwg_full.runtime.scheduler import ExecutionFault
 from rcwg_full.runtime.values import arrow_schema,arrow_rows,validate
 from rcwg_full.runtime.batching import arrow_batches
+from rcwg_full.runtime.spilled import SpilledTable,JsonResult
 
 
 class Backend:
-    def __init__(self,native,store,task,*,documents=None,semantic=None):
+    def __init__(self,native,store,task,*,documents=None,semantic=None,result_path=None):
         import pyarrow as pa
         pa.set_cpu_count(1);pa.set_io_thread_count(1)
         self.pa=pa;self.native=native;self.store=store;self.task=task
         self.documents=documents;self.semantic=semantic;self.cache={}
+        self.result_path=Path(result_path) if result_path else None
 
     def check_parameters(self,node,params):
         # Static shape was checked by the compiler; check all dynamically bound ranges.
@@ -48,6 +50,7 @@ class Backend:
         value=item.value if isinstance(item,Artifact) else item
         if hasattr(value,'nbytes'):return value.nbytes
         if isinstance(value,BoundedStream):return 0
+        if isinstance(value,SpilledTable):return 0
         def represent(v):
             if isinstance(v,Artifact):return {'artifact_id':v.artifact_id}
             if isinstance(v,dict):return {k:represent(x) for k,x in v.items()}
@@ -56,6 +59,11 @@ class Backend:
         return len(canonical(represent(value)))
 
     async def records(self,item):
+        if isinstance(item,Artifact) and item.storage=='disk' and item.path is not None and item.format!='json_stream':
+            async def disk_iterator():
+                for batch in self.store.batches(item):
+                    for row in batch.to_pylist():yield json.loads(canonical(row))
+            return disk_iterator()
         value=await self.value(item)
         async def iterator():
             if isinstance(value,BoundedStream):
@@ -68,12 +76,35 @@ class Backend:
                             for row in raw:yield row
                         else:yield raw
                 finally:await value.cancel()
-            elif isinstance(value,(self.pa.Table,self.pa.RecordBatch)):
-                for row in value.to_pylist():yield json.loads(canonical(row))
+            elif isinstance(value,(self.pa.Table,self.pa.RecordBatch,SpilledTable)):
+                batches=value.batches() if isinstance(value,SpilledTable) else arrow_batches(value)
+                for batch in batches:
+                    for row in batch.to_pylist():yield json.loads(canonical(row))
             elif type(value) is list:
                 for row in value:yield row
             else:yield value
         return iterator()
+
+    async def batches(self,item,typ):
+        """No whole-stream collection; at most one conversion batch is local."""
+        if isinstance(item,Artifact) and item.storage=='disk' and item.path is not None:
+            for batch in self.store.batches(item):yield self.pa.Table.from_batches([batch])
+            return
+        value=await self.value(item);schema=arrow_schema(typ)
+        def convert(raw):
+            if not isinstance(raw,(self.pa.Table,self.pa.RecordBatch)):
+                raw=self.pa.Table.from_pylist(arrow_rows(raw if isinstance(raw,list) else [raw],typ),schema=schema)
+            for batch in arrow_batches(raw):yield self.pa.Table.from_batches([batch]).select(schema.names)
+        if isinstance(value,BoundedStream):
+            try:
+                async for batch in value:
+                    for table in convert(await self.value(batch)):yield table
+            finally:await value.cancel()
+        elif isinstance(value,SpilledTable):
+            for batch in value.batches():
+                for table in convert(batch):yield table
+        else:
+            for table in convert(value):yield table
 
     async def table(self,item,typ,limit=None):
         value=await self.value(item)
@@ -101,6 +132,14 @@ class Backend:
 
     async def finalize(self,item,scheduler):
         value=await self.value(item)
+        if isinstance(value,JsonResult):
+            if self.result_path:
+                import shutil,os
+                with value.path.open('rb') as source,self.result_path.open('xb') as target:
+                    shutil.copyfileobj(source,target,1024*1024);target.flush();os.fsync(target.fileno())
+                return JsonResult(self.result_path)
+            return json.loads(value.path.read_bytes())
+        if isinstance(value,SpilledTable):return [row async for row in await self.records(item)]
         if isinstance(value,BoundedStream):return [await self.finalize(x,scheduler) if isinstance(x,Artifact) else x async for x in await self.records(item)]
         if isinstance(value,(self.pa.Table,self.pa.RecordBatch)):
             return json.loads(canonical(value.to_pylist()))
@@ -192,35 +231,55 @@ class Backend:
                     typ=node['outputs']['rows'];typ=typ['item'] if typ['kind']=='Stream' else typ
                     parameters['_field_types']=typ['schema']
                 value,c=await scheduler.compute(instance,node,self.native.relational,op,impl,table,parameters);observed(c);return value
-            if isinstance(source,BoundedStream) and node['outputs']['rows']['kind']=='Stream':
+            if isinstance(source,(BoundedStream,SpilledTable)) and node['outputs']['rows']['kind']=='Stream':
                 async def producer(stream):
                     try:
-                        async for batch in source:
-                            table=self.pa.Table.from_batches([batch]) if isinstance(batch,self.pa.RecordBatch) else batch
+                        async for table in self.batches(inputs['rows'],node['inputs']['rows']):
                             result=await operation(table)
                             for b in arrow_batches(result):await stream.put(b,b.nbytes)
-                    finally:await source.cancel()
+                    finally:
+                        if isinstance(source,BoundedStream):await source.cancel()
                 return output('rows',scheduler.spawn_stream(producer,instance,holds=[inputs['rows']]),parents=[inputs['rows']] if impl=='column_view' else [])
+            if isinstance(source,SpilledTable) and p.get('representation') not in {'record','set'}:
+                from rcwg_full.runtime.disk_sink import DiskSink
+                sink=DiskSink(self.store,node['outputs']['rows'],arrow_schema(node['outputs']['rows']),instance,'arrow_ipc')
+                try:
+                    async for table in self.batches(inputs['rows'],node['inputs']['rows']):
+                        await scheduler.compute(instance,node,sink.append,await operation(table))
+                    return {'rows':await scheduler.compute(instance,node,sink.finish)}
+                except BaseException:sink.abort();raise
             table=await self.table(inputs['rows'],node['inputs']['rows']);result=await operation(table)
             if p.get('representation') in {'record','set'}:result=self._representation(json.loads(canonical(result.to_pylist())),p,node['outputs']['rows'])
             return output('rows',result,parents=[inputs['rows']] if impl=='column_view' else [])
         if op in {'join','aggregate','deduplicate','sort','top_k'}:
+            if op=='top_k' and impl=='streaming_heap':
+                state=await scheduler.compute(instance,node,self.native.topk_begin,arrow_schema(node['inputs']['rows']),p)
+                async for table in self.batches(inputs['rows'],node['inputs']['rows']):
+                    await scheduler.compute(instance,node,self.native.aggregate_consume,state,table)
+                result,c=await scheduler.compute(instance,node,self.native.aggregate_finish,state);observed(c)
+                return output('rows',result)
+            if op=='sort' and impl=='external_merge':
+                directory=self.store.directory/('scratch-'+str(uuid.uuid4()));directory.mkdir()
+                state=await scheduler.compute(instance,node,self.native.sort_begin,arrow_schema(node['inputs']['rows']),p,directory)
+                async for table in self.batches(inputs['rows'],node['inputs']['rows']):
+                    await scheduler.compute(instance,node,self.native.aggregate_consume,state,table)
+                path,rows,c=await scheduler.compute(instance,node,self.native.sort_finish,state);observed(c)
+                typ=node['outputs']['rows'];table_type={'kind':'Table','schema':typ['item']['schema']} if typ['kind']=='Stream' else typ
+                artifact=self.store.adopt_stream(path,table_type,instance,rows)
+                if typ['kind']!='Stream':return {'rows':artifact}
+                async def producer(stream):
+                    for batch in self.store.batches(artifact):await stream.put(batch,batch.nbytes)
+                scheduler.retirement_candidates[artifact.artifact_id]=artifact
+                return output('rows',scheduler.spawn_stream(producer,instance,holds=[artifact]),parents=[artifact])
             if op=='aggregate' and impl=='hash_group':
                 schema=arrow_schema(node['inputs']['rows']);state=await scheduler.compute(instance,node,self.native.aggregate_begin,schema,p)
-                source=await self.value(inputs['rows'])
                 async def consume(batch):
                     raw=await self.value(batch)
                     table=self.pa.Table.from_batches([raw]) if isinstance(raw,self.pa.RecordBatch) else raw
                     if not isinstance(table,self.pa.Table):table=self.pa.Table.from_pylist(arrow_rows(raw if isinstance(raw,list) else [raw],node['inputs']['rows']),schema=schema)
                     await scheduler.compute(instance,node,self.native.aggregate_consume,state,table.select(schema.names))
                     scheduler.event('aggregate_batch_consumed',{'rows':table.num_rows,'bytes':table.nbytes},instance)
-                if isinstance(source,BoundedStream):
-                    try:
-                        async for batch in source:await consume(batch)
-                    finally:await source.cancel()
-                elif isinstance(source,self.pa.Table):
-                    for batch in source.to_batches(max_chunksize=1024):await consume(batch)
-                else:await consume(source)
+                async for batch in self.batches(inputs['rows'],node['inputs']['rows']):await consume(batch)
                 result,c=await scheduler.compute(instance,node,self.native.aggregate_finish,state);observed(c)
                 return output('rows',result)
             port='left' if op=='join' else 'rows';left=await self.table(inputs[port],node['inputs'][port])
@@ -316,6 +375,10 @@ class Backend:
             if impl=='disk':self.store.seal(result)
             self.store.acquire(result,'cache:'+key);self.cache[key]=result;return {'artifact':result}
         if op=='emit':
+            if self.result_path:
+                path=self.store.directory/(str(uuid.uuid4())+'.result.partial')
+                await self.write_json(inputs['rows'],path)
+                return {'result':self.store.adopt_json(path,node['outputs']['result'],instance)}
             result=await self.finalize(inputs['rows'],scheduler)
             item=self.wrap(result,node['outputs']['result'],instance);self.store.seal(item);return {'result':item}
         if op=='stats':
@@ -329,6 +392,38 @@ class Backend:
             result=await self.documents.dispatch(op,impl,values,p,semantic=self.semantic,instance=instance,scheduler=scheduler,node=node)
             return output(next(iter(node['outputs'])),result)
         raise ExecutionFault('UNSUPPORTED_IMPLEMENTATION','facility')
+
+    async def write_json(self,item,path):
+        """Serialize a result with a bounded batch, outside any whole-table load."""
+        import os
+        async def sequence(values,file):
+            file.write(b'[');first=True
+            async for value in values:
+                if not first:file.write(b',')
+                first=False;await emit(value,file)
+            file.write(b']')
+        async def emit(value,file):
+            if isinstance(value,Artifact):
+                if value.storage=='disk' and value.format in {'arrow_stream','arrow_ipc','parquet'}:
+                    await sequence(await self.records(value),file);return
+                value=await self.value(value)
+            if isinstance(value,(BoundedStream,SpilledTable,self.pa.Table,self.pa.RecordBatch)):
+                await sequence(await self.records(value),file)
+            elif isinstance(value,dict):
+                file.write(b'{')
+                for index,key in enumerate(sorted(value)):
+                    if index:file.write(b',')
+                    file.write(canonical(key)+b':');await emit(value[key],file)
+                file.write(b'}')
+            elif isinstance(value,list):
+                file.write(b'[')
+                for index,entry in enumerate(value):
+                    if index:file.write(b',')
+                    await emit(entry,file)
+                file.write(b']')
+            else:file.write(canonical(value))
+        with Path(path).open('xb') as file:
+            await emit(item,file);file.write(b'\n');file.flush();os.fsync(file.fileno())
 
     def _representation(self,rows,params,typ):
         representation=params.get('representation','same')

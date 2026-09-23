@@ -21,26 +21,45 @@ class FullLimits(Limits):
         if type(self.timeout_s) not in {int,float} or not math.isfinite(self.timeout_s) or not 0<self.timeout_s<=3600:raise FacilityFault('FULL001_TIMEOUT')
 
 
-def approved_driver(host_scope,receipt,task,run_id,*,source_hash,build_hash):
-    """No controller enabling, system service mutation or calibration is implicit."""
-    from rcwg_full.evidence import digest,safe_path
-    validate_receipt(receipt,action='HOST',subject_hash=digest(host_scope),actor_role='Owner')
-    if host_scope.get('revision')!='FULL001_HOST_SCOPE_1' or host_scope.get('source_hash')!=source_hash or host_scope.get('build_hash')!=build_hash:
+class FullDriver(Driver):
+    def prepare(self):
+        self.claim.activate()
+        return super().prepare()
+
+    def finish(self, **kwargs):
+        try:
+            report=super().finish(**kwargs)
+        except BaseException as exc:
+            self.claim.finish(getattr(exc,'report',None) or {'cleanup':{'status':'FAILED'}})
+            raise
+        self.claim.finish(report)
+        report['host_claim']=self.claim.snapshot()
+        return report
+
+
+def approved_driver(host_scope,receipt,task,run_id,*,source_hash,build_hash,build=None,
+                    slot_id=None,attempt_id=None,fs_factory=None,identity_reader=None):
+    """Finite claim is durable before any cgroup creation; approval is FULL-only."""
+    from rcwg_full.runtime.host_scope import HostClaim,run_identity
+    from rcwg_full.runtime.measurement import runtime_identity
+    from rcwg_full.evidence import digest,safe_path,source_hashes
+    if build is None or not slot_id or not attempt_id:raise PermissionError('HOST_ATTEMPT_BUILD_REQUIRED')
+    if source_hash!=digest(source_hashes()) or build_hash!=sha(read(Path(build)/'BUILD.json')):
         raise PermissionError('HOST_SOURCE_BUILD_SCOPE')
-    if digest(task) not in host_scope.get('task_hashes',[]):raise PermissionError('HOST_TASK_NOT_APPROVED')
-    if run_id not in host_scope.get('run_ids',[]):raise PermissionError('HOST_RUN_NOT_APPROVED')
-    if os.name!='posix':raise PermissionError('LINUX_CGROUP_REQUIRED')
-    root=safe_path(host_scope['delegated_root'])
-    # LinuxFS's narrow file operations and identity tracking are reused. The
-    # approval here is FULL001's exact receipt, not the historical 888-slot plan.
-    fs=LinuxFS(root,approval={'approved':True,'delegated_root':str(root),'permission':'NATIVE001_N4_PER_RUN_CGROUP'})
+    if run_id!=run_identity(attempt_id):raise PermissionError('HOST_ATTEMPT_RUN_BINDING')
     resources=task['resources'];affinity=tuple(host_scope['affinity'])
     if len(affinity)!=resources['cpu_slots']:raise PermissionError('HOST_CPU_SLOT_BINDING')
     limits=FullLimits(memory_max=resources['worker_memory_limit_bytes'],cpu_quota_us=100000*resources['cpu_slots'],
                       affinity=affinity,threads=resources['cpu_slots'],timeout_s=resources['wall_timeout_s'])
     limits.validate()
-    driver=Driver(fs,run_id,limits);driver.full001_authorization={'scope_hash':digest(host_scope),'receipt_hash':digest(receipt),
-       'pids_max':host_scope['pids_max'],'output_file_max_bytes':host_scope['output_file_max_bytes']}
+    for field in ['pids_max','output_file_max_bytes','per_run_total_output_bytes']:
+        if type(host_scope.get(field)) is not int or host_scope[field]<=0:raise PermissionError('HOST_OUTPUT_PROCESS_LIMITS')
+    claim=HostClaim(host_scope,receipt,task,build,slot_id,attempt_id,identity_reader=identity_reader or runtime_identity)
+    root=safe_path(host_scope['delegated_root'])
+    fs=(fs_factory or LinuxFS)(root,approval={'approved':True,'delegated_root':str(root),'permission':'NATIVE001_N4_PER_RUN_CGROUP'})
+    driver=FullDriver(fs,run_id,limits);driver.claim=claim;driver.calibration=host_scope.get('calibration_package')
+    driver.full001_authorization={**claim.binding,'pids_max':host_scope['pids_max'],
+       'output_file_max_bytes':host_scope['output_file_max_bytes']}
     return driver
 
 
@@ -79,6 +98,7 @@ class Handshake:
         evidence={'pid':proc.pid,'ack':self.ack.decode(),'membership':'NOT_MEASURED_ENGINEERING'}
         if self.driver:
             evidence.update(verify_membership(proc.pid,self.driver.fs.root/run_id,self.driver.limits.affinity))
+            evidence['status']='PASS'
         prepared_ns=time.monotonic_ns()
         write(go_path,{'run_id':run_id,'exec_started_monotonic_ns':prepared_ns,
             'clock_scope':'PREPARE_MARKER_ONLY_CONTROLLER_REPORT_HAS_ACTUAL_GO_CLOCK','launcher':evidence})

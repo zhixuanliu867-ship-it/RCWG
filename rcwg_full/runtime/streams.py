@@ -2,6 +2,7 @@
 import asyncio
 from contextlib import asynccontextmanager
 from collections import deque
+from rcwg_full.runtime.errors import ExecutionFault
 
 
 class StreamClosed(RuntimeError):
@@ -58,8 +59,8 @@ class CpuAdmission:
         self.slots=slots;self.available=slots;self.instances=0;self.instance_limit=instance_limit
         self.condition=asyncio.Condition();self.peak_in_use=0
 
-    def admit_instance(self):
-        if self.instances>=self.instance_limit:raise RuntimeError('DYNAMIC_INSTANCE_LIMIT')
+    def admit_instance(self, *, node_instance=None):
+        if self.instances>=self.instance_limit:raise ExecutionFault('DYNAMIC_INSTANCE_LIMIT',stage='INSTANCE_ADMISSION',node_instance=node_instance)
         self.instances+=1
         return self.instances
 

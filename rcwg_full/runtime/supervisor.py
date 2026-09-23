@@ -14,16 +14,17 @@ from rcwg_native.metrology import unavailable
 from rcwg_full.compiler.public_task import validate_public_task
 from rcwg_full.runtime.binding import build_context,freeze_execution
 from rcwg_spec.binding import seal_events,make_sidecar,validate_evidence,EVENT_TYPES
+from rcwg_full.runtime.measurement import measurement_profile,terminal_budget
 
 
-def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None,execution_profile=None,service_binding=None):
+def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE',verifier_identity='full001-independent-v1',replay_sha256=None,execution_profile=None,service_binding=None,calibration=None,affinity=None):
     checked=validate_public_task(task);manifest=json.loads(read(Path(build)/'BUILD.json'));source=source_hashes()
     from rcwg_full.runtime.scheduling_profile import validate_profile
     profile=validate_profile(task,execution_profile)
     return build_context(task,condition_id=condition_id,data_manifest=catalog.bindings(),
         runtime={'revision':'full001-runtime-1','mode':mode,'semantic_replay_sha256':replay_sha256 or 'NOT_CONFIGURED','data_manifest_sha256':sha(canonical(catalog.manifest)),'native_binaries':{k:v['sha256'] for k,v in manifest['binaries'].items()},'python':manifest['python'],'batch_rows':1024,'batch_target_bytes':4*1024*1024,'queue_batches':2,'queue_bytes':8*1024*1024,**({'scheduling_profile':profile} if profile else {}),**({'semantic_service':service_binding,'semantic_concurrency':4} if service_binding else {})},
         cache_policy={'revision':'full001-cache-1','cross_run':False},verifier={'revision':verifier_identity},
-        metric_spec={'revision':'full001-metric-1'},measurement_profile={'revision':'full001-engineering-uncalibrated-1','event_source_id':'full001-worker','clock_id':'monotonic_ns','host_calibrated':False},
+        metric_spec={'revision':'full001-metric-1'},measurement_profile=measurement_profile(task,build,calibration=calibration,affinity=affinity),
         operator_registry={'revision':'full001-operators-1','sha256':sha(read(ROOT/'specs/full001/operators.json'))},
         source_manifest={'revision':'full001-source-1','files':source,'public_sources':checked['source_manifest']})
 
@@ -39,12 +40,15 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
     def transition(state,**detail):
         record={'sequence':len(states),'state':state,'monotonic_ns':time.monotonic_ns(),**detail};states.append(record);write(out/('lifecycle-%03d.json'%len(states)),record)
     transition('DECLARED');catalog=DataCatalog(data_manifest)
-    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None,execution_profile=execution_profile,service_binding=semantic_service.client.binding if semantic_service else None)
+    calibration=getattr(driver,'calibration',None);affinity=driver.limits.affinity if driver else None
+    metrology=measurement_profile(task,build,calibration=calibration,affinity=affinity)
+    context=context_for(task,catalog,build,condition_id=condition_id,mode=mode,replay_sha256=replay['sha256'] if replay else None,execution_profile=execution_profile,service_binding=semantic_service.client.binding if semantic_service else None,calibration=calibration,affinity=affinity)
     compiler_source=b''.join(read(p) for p in sorted((ROOT/'rcwg_full/compiler').glob('*.py')))
     expected=freeze_execution(context,task,plan,compiler_source,ident,frozen_binding=frozen_binding,
         record_role=record_role,repeat_role=repeat_role,generation_id=generation_id,repeat_id=repeat_id)
     write(out/'expected.json',expected.as_dict())
     request={'run_id':ident,'mode':mode,'task':task,'plan':plan,'data_manifest':str(Path(data_manifest).absolute()),'data_manifest_sha256':sha(read(data_manifest)),'native_mode':'performance','go_record':str((out/'go.json').absolute())}
+    request['measurement_profile']=metrology
     if replay is not None:request['semantic_replay']=replay
     if execution_profile is not None:request['execution_profile']=execution_profile
     if frozen_binding is not None:request['frozen_binding']=frozen_binding
@@ -53,6 +57,9 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         'failure':None,'verification':{'status':'UNKNOWN','reason':'NOT_EXECUTED'},'measurements':unavailable(),'formal_ready':False,'paid_calls':None if semantic_service and semantic_service.mode=='LIVE' else 0}
     timeout_s=task['resources']['wall_timeout_s'] if timeout_s is None else timeout_s
     if not 0<float(timeout_s)<=3600:raise ValueError('WALL_TIMEOUT_RANGE')
+    report.update(measurement_profile=metrology,effective_timeout_ns=int(float(timeout_s)*1e9),
+                  enforced_resources=task['resources'] if driver else None,
+                  measurement_identity_verified=False,exec_elapsed_ns=None)
     proc=None;handshake=None;reason=None;handles=[];worker_report=None;broker=None
     if driver:
         sequence=[0]
@@ -78,15 +85,15 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         from rcwg_full.runtime.launch import Handshake
         handshake=Handshake(driver,build,command)
         proc=subprocess.Popen(handshake.command,cwd=ROOT,stdout=handles[0],stderr=handles[1],env=env,start_new_session=True,close_fds=True,pass_fds=handshake.pass_fds)
-        handshake.spawned();transition('SPAWNED',pid=proc.pid);deadline=time.monotonic()+float(timeout_s);next_sample=time.monotonic()
+        handshake.spawned();transition('SPAWNED',pid=proc.pid);deadline=time.monotonic_ns()+int(max(10,float(timeout_s))*1e9);next_sample=time.monotonic()
         while proc.poll() is None:
             ack=handshake.ready(proc,out/'go.json',ident)
             if ack is not None:
-                report['execution_started']=True;report['launch_ack']=ack
+                report['execution_started']=True;report['launch_ack']=ack;report['exec_started_monotonic_ns']=handshake.go_ns
                 transition('RUNNING',pid=proc.pid,exec_started_monotonic_ns=handshake.go_ns)
-                deadline=time.monotonic()+float(timeout_s)
+                deadline=handshake.go_ns+report['effective_timeout_ns'];report['task_deadline_ns']=deadline
             if cancel and cancel():reason='OWNER_CANCELLED';break
-            if time.monotonic()>=deadline:reason='WALL_TIMEOUT';break
+            if time.monotonic_ns()>=deadline:reason='WALL_TIMEOUT' if handshake.go_ns is not None else 'STARTUP_TIMEOUT';break
             if driver and time.monotonic()>=next_sample:driver.sample();next_sample+=.1
             time.sleep(.005)
         if handshake.go_ns is None:raise ValueError('LAUNCH_GO_MISSING')
@@ -130,6 +137,15 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         if broker:
             broker.close();report['semantic_requests']=broker.snapshot()
             if report['semantic_requests']['inflight']:report['service_reconciliation_required']=True
+    if metrology==measurement_profile(task,build,calibration=calibration,affinity=affinity):
+        report['measurement_identity_verified']=True
+    decision=terminal_budget(report,task)
+    if decision['status']!=report['terminal_status']:
+        report['prior_terminal']={'status':report['terminal_status'],'failure':report['failure']}
+        report.update(terminal_status=decision['status'],failure={'code':'RUN_CGROUP_OOM','attribution':'budget'})
+    report.update(budget_failure_confirmed=decision['budget_failure_confirmed'],exec_elapsed_ns=decision['exec_elapsed_ns'],
+                  measurement_validity={'valid':decision['measurement_valid'],'profile_hash':sha(canonical(metrology))})
+    report['measurements'].update(calibrated=decision['measurement_valid'],budget_within=decision['budget'])
     # Independent verifier is controller-side, after worker exit, and never sent to worker.
     if report['terminal_status']=='COMPLETED' and verify is not None:
         begin=time.monotonic_ns()

@@ -594,5 +594,25 @@
       "LINUX_NATIVE_ACCEPTANCE_ENVIRONMENT_REQUIRED"
     ],
     "reason": "Linux Python 3.12.14 and exact-current-source native build unavailable."
+  },
+  "review_r1": {
+    "phase": "CONCENTRATED_REPAIR_AND_INTEGRATION",
+    "base_head": "b3ddd84ec7687b72d977bddfc2198e13bf0871f3",
+    "review_zip_sha256": "2274ab459897c45a3dac9280d7b4984012fba08b79449fddc1448209c36e3904",
+    "status": "IN_PROGRESS",
+    "implemented_pending_native_verification": [
+      "R01 structured exception bridge",
+      "R02 shared terminal budget interpretation",
+      "R03 compressed iterative matching",
+      "R04 shared runtime measurement identity",
+      "R05 finite persistent host claims",
+      "R06 incremental heap and external-sort path (sorted group/join and allocation pending)"
+    ],
+    "supplementary_evidence": "runs/review-r1-python02/TEST_RESULTS.json",
+    "target_environment": "Ubuntu WSL Python 3.12.14; hash-locked packages installed offline from existing cache; system compiler unavailable",
+    "formal_gate": "BLOCKED_NOT_FROZEN",
+    "prior_reviewed_head_pushed": true,
+    "prior_head_push_from": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "updated_utc": "2026-09-23T08:04:32.007082+00:00"
   }
 }

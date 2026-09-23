@@ -184,9 +184,32 @@ class ArtifactStore:
         if item.value is not None:return item.value
         self.verify_file(item)
         self.read_bytes+=item.serialized_bytes
+        if item.format=='json_stream':
+            from rcwg_full.runtime.spilled import JsonResult
+            return JsonResult(item.path)
+        if item.format=='arrow_stream':
+            from rcwg_full.runtime.spilled import SpilledTable
+            return SpilledTable(item.path,verify=lambda:self.verify_file(item))
         if item.path.suffix=='.json':return json.loads(read(item.path))
         if item.format=='parquet':return pq.read_table(item.path,use_threads=False)
         with pa.memory_map(str(item.path),'r') as f:return pa.ipc.open_file(f).read_all()
+
+    def adopt_stream(self,path,typ,producer,rows):
+        import pyarrow as pa
+        path=safe_path(path)
+        if not path.is_relative_to(self.directory):raise ValueError('SPILL_OUTSIDE_ARTIFACT_STORE')
+        with path.open('rb') as file:schema=pa.ipc.open_stream(file).schema
+        item=self.register(None,typ,producer,storage='disk',format='arrow_stream')
+        item.schema_hash=sha(schema.serialize().to_pybytes());item.logical_rows=rows
+        self._commit_file(item,path,'arrowstream')
+        return item
+
+    def adopt_json(self,path,typ,producer):
+        path=safe_path(path)
+        if not path.is_relative_to(self.directory):raise ValueError('RESULT_OUTSIDE_ARTIFACT_STORE')
+        item=self.register(None,typ,producer,storage='disk',format='json_stream')
+        self._commit_file(item,path,'json')
+        return item
 
     def batches(self,item,batch_size=1024):
         import pyarrow as pa
@@ -210,7 +233,11 @@ class ArtifactStore:
                 self.read_bytes+=b.nbytes;yield b
         elif item.path is not None:
             self.verify_file(item)
-            if item.format=='parquet':
+            if item.format=='arrow_stream':
+                with item.path.open('rb') as file:
+                    for b in pa.ipc.open_stream(file):
+                        for part in arrow_batches(b,max_rows=batch_size):self.read_bytes+=part.nbytes;yield part
+            elif item.format=='parquet':
                 for b in pq.ParquetFile(item.path).iter_batches(batch_size=batch_size,use_threads=False):self.read_bytes+=b.nbytes;yield b
             else:
                 with pa.memory_map(str(item.path),'r') as f:
