@@ -58,15 +58,8 @@ def run_from_manifest(manifest_path,receipts,*,resume=False):
             clients[slot]=ServiceClient(binding,transport,budget,index,mode='LIVE',scope_hash=digest(paid_scope),receipt=receipts['paid_services'])
         templates=artifact('executor_templates')
         executors={slot:FixedSemanticService(clients[slot],templates[slot]) for slot in ['E0','E1']}
-        def generation(slot,attempt_id,dependencies,directory):
-            item=catalog[slot['task_id']];raw=read(item['task_path'])
-            if sha(raw)!=item['task_sha256']:raise ValueError('TASK_SOURCE_CHANGED')
-            task=json.loads(raw)
-            from .transforms import public_guidance
-            result=generate(task,slot,clients[slot['generator']],attempt_id,
-                            guidance=public_guidance(task) if slot.get('generation_stage')=='GUIDED_PHYSICAL' else None)
-            if result['status'] in {'MODEL_FAILURE','PLAN_INVALID'}:result['failure_class']='CONFIRMED_PLAN'
-            return result
+        from rcwg_full.services.generation import PreparedGenerator
+        generation=PreparedGenerator(catalog,clients)
         executor=PreparedNativeExecutor(catalog,build,'FORMAL',host_scope=host_scope,host_receipt=receipts['host'],admission=admission,semantic_services=executors)
         slots=[]
         for item in [manifest['primary'],*manifest['diagnostics'].values()]:
@@ -81,7 +74,18 @@ def run_from_manifest(manifest_path,receipts,*,resume=False):
                 'model_snapshot_hash':digest(clients['E0'].binding),'origin':'PREDECLARED_REFERENCE_CONTROL'}
         runner=CampaignRunner(execution,slots,manifest_hash=manifest['manifest_hash'],spec_hash=manifest['spec_hash'],
                               mode='FORMAL',generate=generation,execute=executor,resume=resume,external_dependencies=external)
-        try:return runner.run()
+        try:
+            report=runner.run()
+            while report['status']=='PAUSED_RECONCILIATION' and len(report['paused'])==1 and report['paused'][0]['reason']=='INFRA_FAILURE':
+                ident=report['paused'][0]['slot_id'];slot=runner.store.slot(ident)
+                from .store import Conflict
+                try:
+                    retried=(runner.retry_failed_generation if slot['definition']['slot_kind']=='generation' else runner.retry_failed_execution)(ident)
+                except (Conflict,ValueError,OSError) as exc:
+                    return {**report,'retry_not_started':str(exc)}
+                if any(r['status']=='INFRA_FAILURE' for r in retried['actual_attempts_this_invocation']):return retried
+                report=runner.run()
+            return report
         finally:runner.close()
     finally:
         for index in indexes:index.close()

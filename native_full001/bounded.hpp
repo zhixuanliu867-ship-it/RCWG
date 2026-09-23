@@ -140,7 +140,7 @@ public:
             if(ordinal_>INT64_MAX-block->num_rows())throw Fault("ROW_ORDINAL_OVERFLOW","plan");
             arrow::Int64Builder ord;for(auto i:order)ok(ord.Append(ordinal_+i));ordinal_+=block->num_rows();
             sorted=take(sorted->AddColumn(sorted->num_columns(),spill_schema_->field(spill_schema_->num_fields()-1),std::make_shared<arrow::ChunkedArray>(take(ord.Finish()))));
-            auto output=path();SpillWriter writer(output,spill_schema_);writer.append_table(sorted);writer.finish();insert(output);
+            auto output=path();SpillWriter writer(output,spill_schema_);writer.append_table(sorted);writer.finish();count(counts_,"spill_write_bytes",std::filesystem::file_size(output));insert(output);
             count(counts_,"sort_runs");count(counts_,"rows_in",block->num_rows());
             if constexpr(RCWG_FULL_DIAGNOSTICS)counts_["peak_sort_run_rows"]=std::max(counts_["peak_sort_run_rows"],block->num_rows());
         }

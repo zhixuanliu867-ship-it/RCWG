@@ -10,12 +10,13 @@ class StreamClosed(RuntimeError):
 
 
 class BoundedStream:
-    def __init__(self, *, max_batches=2, target_bytes=8*1024*1024, max_object_bytes=64*1024*1024, on_event=None):
+    def __init__(self, *, max_batches=2, target_bytes=8*1024*1024, max_object_bytes=64*1024*1024, on_event=None,on_retain=None,on_release=None):
         if min(max_batches,target_bytes,max_object_bytes)<=0:raise ValueError('INVALID_STREAM_LIMIT')
         self.max_batches,self.target_bytes,self.max_object_bytes=max_batches,target_bytes,max_object_bytes
         self.queue=deque();self.bytes=0;self.peak_bytes=0;self.peak_batches=0
         self.condition=asyncio.Condition();self.closed=False;self.error=None;self.started=False
         self.on_event=on_event or (lambda *a,**k:None)
+        self.on_retain=on_retain or (lambda batch:None);self.on_release=on_release or (lambda token:None);self.held=None
 
     async def put(self, batch, size):
         if type(size) is not int or size<0:raise ValueError('INVALID_BATCH_BYTES')
@@ -25,7 +26,7 @@ class BoundedStream:
                 self.on_event('stream_blocked',{'reason':'DOWNSTREAM_CAPACITY'})
                 await self.condition.wait()
             if self.closed:raise StreamClosed('CONSUMER_CLOSED')
-            self.queue.append((batch,size));self.bytes+=size
+            self.queue.append((batch,size,self.on_retain(batch)));self.bytes+=size
             self.peak_bytes=max(self.peak_bytes,self.bytes);self.peak_batches=max(self.peak_batches,len(self.queue))
             self.on_event('batch_enqueued',{'bytes':size,'queued_bytes':self.bytes,'oversized':size>self.target_bytes})
             self.condition.notify_all()
@@ -36,10 +37,11 @@ class BoundedStream:
 
     async def __anext__(self):
         async with self.condition:
+            if self.held is not None:self.on_release(self.held);self.held=None
             while not self.queue and not self.closed:await self.condition.wait()
             if self.error is not None:raise self.error
             if not self.queue:raise StopAsyncIteration
-            batch,size=self.queue.popleft();self.bytes-=size;self.condition.notify_all()
+            batch,size,self.held=self.queue.popleft();self.bytes-=size;self.condition.notify_all()
             return batch
 
     async def finish(self, error=None):
@@ -49,6 +51,9 @@ class BoundedStream:
 
     async def cancel(self):
         async with self.condition:
+            for _,_,token in self.queue:
+                if token is not None:self.on_release(token)
+            if self.held is not None:self.on_release(self.held);self.held=None
             self.closed=True;self.queue.clear();self.bytes=0
             self.condition.notify_all()
 

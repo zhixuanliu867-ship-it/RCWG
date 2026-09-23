@@ -18,6 +18,7 @@ class Backend:
         import pyarrow as pa
         pa.set_cpu_count(1);pa.set_io_thread_count(1)
         self.pa=pa;self.native=native;self.store=store;self.task=task
+        if hasattr(native,'allocation_store'):native.allocation_store=store
         self.documents=documents;self.semantic=semantic;self.cache={}
         self.result_path=Path(result_path) if result_path else None
 
@@ -42,7 +43,11 @@ class Backend:
 
     async def value(self,item):
         if not isinstance(item,Artifact):return item
-        self.store.check(item);value=self.store.load(item)
+        self.store.check(item)
+        if item.storage=='disk' and item.path is not None and item.format in {'arrow_stream','arrow_ipc','parquet'} and item.path.suffix!='.json':
+            self.store.verify_file(item)
+            return SpilledTable(item.path,format=item.format,verify=lambda:self.store.verify_file(item))
+        value=self.store.load(item)
         validate(value,item.type,self.store)
         return value
 
@@ -88,7 +93,9 @@ class Backend:
     async def batches(self,item,typ):
         """No whole-stream collection; at most one conversion batch is local."""
         if isinstance(item,Artifact) and item.storage=='disk' and item.path is not None:
-            for batch in self.store.batches(item):yield self.pa.Table.from_batches([batch])
+            for batch in self.store.batches(item):
+                table=self.pa.Table.from_batches([batch])
+                with self.store.transient(table,'batch-input'):yield table
             return
         value=await self.value(item);schema=arrow_schema(typ)
         def convert(raw):
@@ -98,13 +105,16 @@ class Backend:
         if isinstance(value,BoundedStream):
             try:
                 async for batch in value:
-                    for table in convert(await self.value(batch)):yield table
+                    for table in convert(await self.value(batch)):
+                        with self.store.transient(table,'batch-conversion'):yield table
             finally:await value.cancel()
         elif isinstance(value,SpilledTable):
             for batch in value.batches():
-                for table in convert(batch):yield table
+                for table in convert(batch):
+                    with self.store.transient(table,'spill-read'):yield table
         else:
-            for table in convert(value):yield table
+            for table in convert(value):
+                with self.store.transient(table,'batch-conversion'):yield table
 
     async def table(self,item,typ,limit=None):
         value=await self.value(item)
@@ -139,6 +149,9 @@ class Backend:
                     shutil.copyfileobj(source,target,1024*1024);target.flush();os.fsync(target.fileno())
                 return JsonResult(self.result_path)
             return json.loads(value.path.read_bytes())
+        if self.result_path:
+            await self.write_json(item,self.result_path)
+            return JsonResult(self.result_path)
         if isinstance(value,SpilledTable):return [row async for row in await self.records(item)]
         if isinstance(value,BoundedStream):return [await self.finalize(x,scheduler) if isinstance(x,Artifact) else x async for x in await self.records(item)]
         if isinstance(value,(self.pa.Table,self.pa.RecordBatch)):
@@ -230,7 +243,9 @@ class Backend:
                 if op=='project' and 'expressions' in p:
                     typ=node['outputs']['rows'];typ=typ['item'] if typ['kind']=='Stream' else typ
                     parameters['_field_types']=typ['schema']
-                value,c=await scheduler.compute(instance,node,self.native.relational,op,impl,table,parameters);observed(c);return value
+                value,c=await scheduler.compute(instance,node,self.native.relational,op,impl,table,parameters);observed(c)
+                if op=='project' and impl=='copy':self.store.copied(value,instance,scope='ARROW_PAYLOAD_EXPLICIT_PROJECT_COPY')
+                return value
             if isinstance(source,(BoundedStream,SpilledTable)) and node['outputs']['rows']['kind']=='Stream':
                 async def producer(stream):
                     try:
@@ -252,6 +267,38 @@ class Backend:
             if p.get('representation') in {'record','set'}:result=self._representation(json.loads(canonical(result.to_pylist())),p,node['outputs']['rows'])
             return output('rows',result,parents=[inputs['rows']] if impl=='column_view' else [])
         if op in {'join','aggregate','deduplicate','sort','top_k'}:
+            if (op=='aggregate' and impl=='sorted_group') or (op=='join' and impl=='sort_merge'):
+                intermediates=[]
+                async def sorted_input(port,fields):
+                    directory=self.store.directory/('scratch-'+str(uuid.uuid4()));directory.mkdir()
+                    typ=node['inputs'][port];schema=arrow_schema(typ)
+                    state=await scheduler.compute(instance,node,self.native.sort_begin,schema,
+                        {'keys':[{'field':name,'direction':'asc','nulls':'last'} for name in fields]},directory)
+                    async for table in self.batches(inputs[port],typ):
+                        await scheduler.compute(instance,node,self.native.aggregate_consume,state,table)
+                    path,rows,c=await scheduler.compute(instance,node,self.native.sort_finish,state);observed(c)
+                    while typ['kind'] in {'Stream','DatasetRef','ArtifactRef'}:typ=typ['item']
+                    artifact=self.store.adopt_stream(path,{'kind':'Table','schema':typ['schema']},instance+':sorted-input',rows)
+                    intermediates.append(artifact);return artifact.path
+                directory=self.store.directory/('scratch-'+str(uuid.uuid4()));directory.mkdir()
+                try:
+                    if op=='aggregate':
+                        source=await sorted_input('rows',p['group_by'])
+                        path,rows,c=await scheduler.compute(instance,node,self.native.sorted_group,source,p,directory)
+                    else:
+                        left=await sorted_input('left',[k['left'] for k in p['keys']])
+                        right=await sorted_input('right',[k['right'] for k in p['keys']])
+                        path,rows,c=await scheduler.compute(instance,node,self.native.sorted_join,left,right,p,directory)
+                    observed(c)
+                    typ=node['outputs']['rows'];table_type={'kind':'Table','schema':typ['item']['schema']} if typ['kind']=='Stream' else typ
+                    artifact=self.store.adopt_stream(path,table_type,instance,rows)
+                finally:
+                    for intermediate in intermediates:self.store.release(intermediate)
+                if typ['kind']!='Stream':return {'rows':artifact}
+                async def producer(stream):
+                    for batch in self.store.batches(artifact):await stream.put(batch,batch.nbytes)
+                scheduler.retirement_candidates[artifact.artifact_id]=artifact
+                return output('rows',scheduler.spawn_stream(producer,instance,holds=[artifact]),parents=[artifact])
             if op=='top_k' and impl=='streaming_heap':
                 state=await scheduler.compute(instance,node,self.native.topk_begin,arrow_schema(node['inputs']['rows']),p)
                 async for table in self.batches(inputs['rows'],node['inputs']['rows']):
@@ -310,25 +357,18 @@ class Backend:
             while typ['kind'] in {'ArtifactRef','DatasetRef'}:typ=typ['item']
             graph={**graph,'nodes':[native_temporal(row,{'kind':'Record','schema':caps.get('node_schema',{})}) for row in graph['nodes']],
                    'edges':[native_temporal(row,{'kind':'Record','schema':typ['schema']}) for row in graph['edges']]}
-            result,c=await scheduler.compute(instance,node,self.native.graph,op,impl,graph,seeds,params);result=temporal_json(result);observed(c)
+            with self.store.transient(graph,instance+':graph-conversion'):
+                result,c=await scheduler.compute(instance,node,self.native.graph,op,impl,graph,seeds,params)
+            result=temporal_json(result);observed(c)
             port=next(iter(node['outputs']))
             return output(port,result,parents=[inputs['graph']] if op=='graph_filter' else [])
         if op in {'materialize','collect'}:
             if op=='materialize' and impl=='disk':
                 from rcwg_full.runtime.disk_sink import DiskSink
                 sink=DiskSink(self.store,node['outputs']['rows'],arrow_schema(node['inputs']['rows']),instance,p['format'])
-                source=await self.value(inputs['rows'])
-                async def append(value):
-                    raw=await self.value(value)
-                    if not isinstance(raw,(self.pa.RecordBatch,self.pa.Table)):
-                        raw=self.pa.Table.from_pylist(arrow_rows(raw if isinstance(raw,list) else [raw],node['inputs']['rows']),schema=sink.schema)
-                    await scheduler.compute(instance,node,sink.append,raw)
                 try:
-                    if isinstance(source,BoundedStream):
-                        try:
-                            async for batch in source:await append(batch)
-                        finally:await source.cancel()
-                    else:await append(source)
+                    async for batch in self.batches(inputs['rows'],node['inputs']['rows']):
+                        await scheduler.compute(instance,node,sink.append,batch)
                     result=await scheduler.compute(instance,node,sink.finish)
                     return {'rows':result}
                 except BaseException:sink.abort();raise
@@ -347,7 +387,7 @@ class Backend:
         if op=='broadcast':
             artifact=inputs['artifact'];value=await self.value(artifact)
             if isinstance(value,BoundedStream):
-                streams={port:BoundedStream(on_event=lambda k,v:scheduler.event(k,v,instance)) for port in p['consumers']}
+                streams={port:scheduler.new_stream(instance) for port in p['consumers']}
                 scheduler.live_streams.extend(streams.values())
                 async def distribute():
                     try:
@@ -355,6 +395,7 @@ class Backend:
                             for target in streams.values():
                                 if target.closed:continue
                                 delivered=batch if impl=='shared_ref' else batch.take(self.pa.array(range(batch.num_rows),type=self.pa.int64()))
+                                if impl!='shared_ref':self.store.copied(delivered,instance,scope='ARROW_PAYLOAD_BROADCAST_COPY')
                                 await target.put(delivered,delivered.nbytes)
                     except BaseException as exc:
                         for target in streams.values():await target.finish(exc)
@@ -371,8 +412,19 @@ class Backend:
             key=digest({'run_id':self.store.run_id,'content':artifact.content_sha256,'schema':artifact.schema_hash,'key_fields':p['key_fields'],'storage':impl})
             existing=self.cache.get(key)
             if existing is not None:self.store.check(existing);return {'artifact':existing}
-            result=self.wrap(await self.value(artifact),node['outputs']['artifact'],instance,parents=[artifact] if impl=='memory' else [],storage=impl)
-            if impl=='disk':self.store.seal(result)
+            value=await self.value(artifact)
+            if isinstance(value,SpilledTable):
+                if impl=='disk':
+                    from rcwg_full.runtime.disk_sink import DiskSink
+                    sink=DiskSink(self.store,node['outputs']['artifact'],value.schema,instance,'arrow_ipc')
+                    try:
+                        async for batch in self.batches(artifact,artifact.type):await scheduler.compute(instance,node,sink.append,batch)
+                        result=await scheduler.compute(instance,node,sink.finish)
+                    except BaseException:sink.abort();raise
+                else:result=self.wrap(await self.table(artifact,artifact.type),node['outputs']['artifact'],instance)
+            else:
+                result=self.wrap(value,node['outputs']['artifact'],instance,parents=[artifact] if impl=='memory' else [],storage=impl)
+                if impl=='disk':self.store.seal(result)
             self.store.acquire(result,'cache:'+key);self.cache[key]=result;return {'artifact':result}
         if op=='emit':
             if self.result_path:
@@ -383,8 +435,16 @@ class Backend:
             item=self.wrap(result,node['outputs']['result'],instance);self.store.seal(item);return {'result':item}
         if op=='stats':
             value=await self.value(inputs['source']);table=value.table() if hasattr(value,'table') else value
-            result={'rows':table.num_rows,'bytes':table.nbytes,'fields':p['fields'],'kind':impl}
-            if impl=='sample':result['sample']=table.select(p['fields']).slice(0,p['sample_size']).to_pylist()
+            if isinstance(table,SpilledTable):
+                count=0;size=0;sample=[]
+                for batch in table.batches():
+                    count+=batch.num_rows;size+=batch.nbytes
+                    if impl=='sample' and len(sample)<p['sample_size']:sample.extend(batch.select(p['fields']).slice(0,p['sample_size']-len(sample)).to_pylist())
+                result={'rows':count,'bytes':size,'fields':p['fields'],'kind':impl}
+                if impl=='sample':result['sample']=sample
+            else:
+                result={'rows':table.num_rows,'bytes':table.nbytes,'fields':p['fields'],'kind':impl}
+                if impl=='sample':result['sample']=table.select(p['fields']).slice(0,p['sample_size']).to_pylist()
             return output('stats',result)
         if op in {'read_documents','text_retrieve','split_documents','gather_context','evidence_merge','evidence_validate','semantic_extract'}:
             if self.documents is None:raise ExecutionFault('DOCUMENT_ADAPTER_UNAVAILABLE','facility')
@@ -407,7 +467,10 @@ class Backend:
                 if value.storage=='disk' and value.format in {'arrow_stream','arrow_ipc','parquet'}:
                     await sequence(await self.records(value),file);return
                 value=await self.value(value)
-            if isinstance(value,(BoundedStream,SpilledTable,self.pa.Table,self.pa.RecordBatch)):
+            if isinstance(value,JsonResult):
+                import shutil
+                with value.path.open('rb') as source:shutil.copyfileobj(source,file,1024*1024)
+            elif isinstance(value,(BoundedStream,SpilledTable,self.pa.Table,self.pa.RecordBatch)):
                 await sequence(await self.records(value),file)
             elif isinstance(value,dict):
                 file.write(b'{')
@@ -440,6 +503,7 @@ class Backend:
 
     async def _copy(self,item,node,instance,scheduler):
         value=await self.value(item)
+        if isinstance(value,SpilledTable):value=await self.table(item,item.type)
         if isinstance(value,self.pa.Table):
             result,c=await scheduler.compute(instance,node,self.native.relational,'project','copy',value,{'columns':value.column_names})
             self.store.copy_bytes+=result.nbytes;scheduler.event('copy',{'instrumented_copy_bytes':result.nbytes},instance);return result

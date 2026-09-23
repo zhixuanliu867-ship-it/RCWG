@@ -3,6 +3,7 @@
 #include "stream_aggregate.hpp"
 #include "text.hpp"
 #include "bounded.hpp"
+#include "sorted_relational.hpp"
 namespace py=pybind11;
 using namespace full;
 
@@ -23,6 +24,14 @@ PYBIND11_MODULE(RCWG_MODULE_NAME,m){
         }
     });
     m.attr("diagnostic")=bool(RCWG_FULL_DIAGNOSTICS);
+    m.def("sorted_group_file",[](const std::string&input,const std::string&params,const std::string&directory){
+        auto p=Parser(params).parse();std::tuple<std::string,int64_t,Counts> result;
+        {py::gil_scoped_release release;result=sorted_group_file(input,p,directory);}
+        return py::make_tuple(std::get<0>(result),std::get<1>(result),dump(counts_json(std::get<2>(result))));});
+    m.def("sorted_join_files",[](const std::string&left,const std::string&right,const std::string&params,const std::string&directory){
+        auto p=Parser(params).parse();std::tuple<std::string,int64_t,Counts> result;
+        {py::gil_scoped_release release;result=sorted_join_files(left,right,p,directory);}
+        return py::make_tuple(std::get<0>(result),std::get<1>(result),dump(counts_json(std::get<2>(result))));});
     py::class_<StreamTopK,std::shared_ptr<StreamTopK>>(m,"StreamTopK",py::module_local())
         .def(py::init([](py::object empty,const std::string&params){return std::make_shared<StreamTopK>(unwrap(empty),Parser(params).parse());}))
         .def("consume",[](StreamTopK&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})

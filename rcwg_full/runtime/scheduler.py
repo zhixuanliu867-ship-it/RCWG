@@ -64,8 +64,22 @@ class Scheduler:
                 await asyncio.shield(future);raise
             finally:self.event('cpu_permit_released',{},instance)
 
+    def new_stream(self,instance):
+        import uuid
+        def retain(value):
+            store=self.backend.store
+            if isinstance(value,Artifact):
+                holder='stream:'+str(uuid.uuid4());store.acquire(value,holder);return value,holder
+            return store.register(value,{'kind':'RuntimeBatch'},instance+':batch'),None
+        def release(token):
+            value,holder=token
+            if holder:self.backend.store.drop_lease(value,holder)
+            else:self.backend.store.drop_view(value)
+        return BoundedStream(max_object_bytes=min(64*1024*1024,self.task['resources']['worker_memory_limit_bytes']),
+            on_event=lambda k,p:self.event(k,p,instance),on_retain=retain,on_release=release)
+
     def spawn_stream(self,producer,instance,holds=()):
-        stream=BoundedStream(max_object_bytes=min(64*1024*1024,self.task['resources']['worker_memory_limit_bytes']),on_event=lambda k,p:self.event(k,p,instance))
+        stream=self.new_stream(instance)
         self.live_streams.append(stream)
         holder=instance+':producer:'+str(len(self.live_streams))
         held={v.artifact_id:v for v in holds if isinstance(v,Artifact)}

@@ -151,7 +151,7 @@ class ServiceClient:
         return result
 
     def measure(self,request,*,local_counter=None):
-        method=self.binding['count_method']
+        method=self.binding['count_method'];count_request_id=None
         if method=='LOCAL_TOKENIZER':
             if local_counter is None or getattr(local_counter,'identity',None)!=self.binding['tokenizer']:raise PermissionError('LOCAL_TOKENIZER_IDENTITY')
             count=local_counter(request['body'])
@@ -160,9 +160,11 @@ class ServiceClient:
             count_request={**request,'request_id':str(uuid.uuid4()),'body':body,'body_hash':digest(body)}
             result=self.call(count_request,'COUNT')
             if result['status']!='COMPLETED':return None,result
+            count_request_id=count_request['request_id']
             count=result['response']['estimated_input_tokens']
         else:raise PermissionError('TOKEN_COUNT_METHOD_UNKNOWN')
-        return {'method':method,'tokenizer':self.binding['tokenizer'],'tokens':count,'body_hash':request['body_hash']},None
+        return {'method':method,'tokenizer':self.binding['tokenizer'],'tokens':count,'body_hash':request['body_hash'],
+                **({'count_request_id':count_request_id} if count_request_id else {})},None
 
 
 def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None):
@@ -181,11 +183,13 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None):
         if status!='COMPLETED':records.append({'stage':stage,'status':'NOT_RUN','request_id':None});continue
         request=assemble(task,client.binding,protocol=protocol,stage=stage,attempt_id=attempt_id,
                          request_id=str(uuid.uuid4()),trial_label=slot['trial_label'],logical=logical,guidance=guidance)
+        measurement=None
         try:
             measurement,failure=client.measure(request,local_counter=local_counter)
             response=failure or client.call(request,'G',input_measurement=measurement)
         except PermissionError as exc:response={'status':'NOT_AUTHORIZED','reason':str(exc),'sent':False}
-        record={'stage':stage,'request_id':request['request_id'],'request_hash':digest(request),'response':response};records.append(record)
+        record={'stage':stage,'request_id':request['request_id'],'request_hash':digest(request),'response':response,
+                'input_measurement':measurement};records.append(record)
         if response['status']!='COMPLETED':
             status=response['status'];continue
         try:

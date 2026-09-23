@@ -47,6 +47,9 @@ def approved_driver(host_scope,receipt,task,run_id,*,source_hash,build_hash,buil
     if source_hash!=digest(source_hashes()) or build_hash!=sha(read(Path(build)/'BUILD.json')):
         raise PermissionError('HOST_SOURCE_BUILD_SCOPE')
     if run_id!=run_identity(attempt_id):raise PermissionError('HOST_ATTEMPT_RUN_BINDING')
+    if fs_factory is None:
+        from rcwg_full.runtime.native import Native
+        Native(build)  # Verify actual source, dependency and binary bytes before writes.
     resources=task['resources'];affinity=tuple(host_scope['affinity'])
     if len(affinity)!=resources['cpu_slots']:raise PermissionError('HOST_CPU_SLOT_BINDING')
     limits=FullLimits(memory_max=resources['worker_memory_limit_bytes'],cpu_quota_us=100000*resources['cpu_slots'],

@@ -6,6 +6,7 @@ import importlib.metadata
 import json
 import platform
 import sysconfig
+from contextlib import contextmanager,ExitStack
 from rcwg_full.evidence import ROOT,read,sha,canonical,safe_path
 
 
@@ -33,27 +34,46 @@ class Native:
         spec=importlib.util.spec_from_file_location('_full001_'+mode,path)
         self.module=importlib.util.module_from_spec(spec);spec.loader.exec_module(self.module)
         if self.module.diagnostic!=(mode=='diagnostic'):raise ValueError('BUILD_COUNTER_MODE')
-        self.manifest=manifest;self.mode=mode
+        self.manifest=manifest;self.mode=mode;self.allocation_store=None
+
+    @contextmanager
+    def codec(self):
+        """Observe real boundary objects/copies, without estimating C++ heap/RSS."""
+        with ExitStack() as stack:
+            def observe(value,label):
+                if self.allocation_store is not None:
+                    stack.enter_context(self.allocation_store.transient(value,'native-json:'+label))
+                return value
+            def encode(value):
+                raw=observe(canonical(value),'utf8');text=observe(raw.decode(),'text')
+                if self.allocation_store is not None:self.allocation_store.copied(raw,'native-json',scope='JSON_UTF8_ENCODING_BYTES')
+                return text
+            def decode(raw):
+                observe(raw,'returned-text')
+                return observe(json.loads(raw),'decoded-objects')
+            yield encode,decode
 
     def relational(self,op,impl,data,params,right=None,directory=''):
         table,counts=self.module.relational(op,impl,data,right,canonical(params).decode(),str(directory))
         return table,json.loads(counts)
 
     def graph(self,op,impl,graph,seeds,params):
-        result,counts=self.module.graph(op,impl,canonical(graph).decode(),canonical(seeds).decode(),canonical(params).decode())
-        return json.loads(result),json.loads(counts)
+        with self.codec() as (encode,decode):
+            result,counts=self.module.graph(op,impl,encode(graph),encode(seeds),encode(params))
+            return decode(result),json.loads(counts)
 
     def set_op(self,left,right,mode,impl,item_type=None):
         from rcwg_full.runtime.values import native_temporal,temporal_json
         if item_type:
             left=[native_temporal(v,item_type) for v in left];right=[native_temporal(v,item_type) for v in right]
-        result,counts=self.module.set_op(canonical(left).decode(),canonical(right).decode(),mode,impl)
-        return temporal_json(json.loads(result)),json.loads(counts)
+        with self.codec() as (encode,decode):
+            result,counts=self.module.set_op(encode(left),encode(right),mode,impl)
+            return temporal_json(decode(result)),json.loads(counts)
 
     def expression(self,ast,record,schema=None):
         from rcwg_full.runtime.values import native_temporal,temporal_json
         if schema:record=native_temporal(record,{'kind':'Record','schema':schema})
-        return temporal_json(json.loads(self.module.expression(canonical(ast).decode(),canonical(record).decode())))
+        with self.codec() as (encode,decode):return temporal_json(decode(self.module.expression(encode(ast),encode(record))))
 
     def aggregate_begin(self,schema,params):
         import pyarrow as pa
@@ -75,11 +95,22 @@ class Native:
     def sort_finish(self,state):
         path,rows,counts=state.finish();return path,rows,json.loads(counts)
 
-    def bm25_prepare(self,documents):return self.module.Bm25Index(canonical(documents).decode())
+    def sorted_group(self,path,params,directory):
+        path,rows,counts=self.module.sorted_group_file(str(path),canonical(params).decode(),str(directory))
+        return path,rows,json.loads(counts)
+
+    def sorted_join(self,left,right,params,directory):
+        path,rows,counts=self.module.sorted_join_files(str(left),str(right),canonical(params).decode(),str(directory))
+        return path,rows,json.loads(counts)
+
+    def bm25_prepare(self,documents):
+        with self.codec() as (encode,decode):return self.module.Bm25Index(encode(documents))
 
     def bm25_query(self,index,terms,limit,offset=0):
-        result,counts=index.query(canonical(terms).decode(),limit,offset);return json.loads(result),json.loads(counts)
+        with self.codec() as (encode,decode):
+            result,counts=index.query(encode(terms),limit,offset);return decode(result),json.loads(counts)
 
     def dense(self,docs,query,params):
-        result,counts=self.module.dense(canonical(docs).decode(),canonical(query).decode(),canonical(params).decode())
-        return json.loads(result),json.loads(counts)
+        with self.codec() as (encode,decode):
+            result,counts=self.module.dense(encode(docs),encode(query),encode(params))
+            return decode(result),json.loads(counts)

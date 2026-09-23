@@ -96,7 +96,9 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
             if time.monotonic_ns()>=deadline:reason='WALL_TIMEOUT' if handshake.go_ns is not None else 'STARTUP_TIMEOUT';break
             if driver and time.monotonic()>=next_sample:driver.sample();next_sample+=.1
             time.sleep(.005)
-        if handshake.go_ns is None:raise ValueError('LAUNCH_GO_MISSING')
+        if handshake.go_ns is None:
+            from rcwg_full.runtime.errors import ExecutionFault
+            raise ExecutionFault(reason or 'LAUNCH_GO_MISSING','facility',stage='STARTUP')
         report['observed_elapsed_ns']=time.monotonic_ns()-handshake.go_ns
         if reason is None:
             # Receipt of the committed worker report is the FULL001 timing end.
@@ -120,7 +122,8 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
             report.update(terminal_status=worker_report['terminal_status'],failure=worker_report['failure'],worker=worker_report)
             report['worker_prepare_to_computation_finish_ns']=worker_report.get('exec_elapsed_ns')
     except BaseException as exc:
-        report.update(terminal_status='INFRA_FAILURE',failure={'code':type(exc).__name__,'detail':str(exc),'attribution':'facility'})
+        from rcwg_full.runtime.errors import ExecutionFault
+        report.update(terminal_status='INFRA_FAILURE',failure=exc.record() if isinstance(exc,ExecutionFault) else {'code':type(exc).__name__,'detail':str(exc),'attribution':'facility'})
     finally:
         for handle in handles:handle.close()
         if handshake is not None:handshake.close()
@@ -137,8 +140,10 @@ def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',con
         if broker:
             broker.close();report['semantic_requests']=broker.snapshot()
             if report['semantic_requests']['inflight']:report['service_reconciliation_required']=True
-    if metrology==measurement_profile(task,build,calibration=calibration,affinity=affinity):
-        report['measurement_identity_verified']=True
+    try:
+        report['measurement_identity_verified']=metrology==measurement_profile(task,build,calibration=calibration,affinity=affinity)
+    except Exception as exc:
+        report['measurement_identity_failure']={'code':type(exc).__name__,'detail':str(exc)}
     decision=terminal_budget(report,task)
     if decision['status']!=report['terminal_status']:
         report['prior_terminal']={'status':report['terminal_status'],'failure':report['failure']}

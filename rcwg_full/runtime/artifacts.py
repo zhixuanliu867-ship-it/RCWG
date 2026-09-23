@@ -7,6 +7,9 @@ import uuid
 import json
 import hashlib
 import threading
+import sys
+from contextlib import contextmanager
+from functools import wraps
 from rcwg_full.evidence import canonical,digest,sha,write,read,safe_path
 
 
@@ -32,6 +35,13 @@ class Artifact:
     release_status:str='LIVE'
 
 
+def serialized(method):
+    @wraps(method)
+    def locked(self,*args,**kwargs):
+        with self.lock:return method(self,*args,**kwargs)
+    return locked
+
+
 class ArtifactStore:
     def __init__(self, directory, run_id, journal):
         self.directory=safe_path(directory);self.directory.mkdir(mode=0o700,exist_ok=False)
@@ -40,6 +50,7 @@ class ArtifactStore:
 
     def _emit(self,kind,payload):return self.journal.append(kind,payload)
 
+    @serialized
     def register(self, value, typ, producer, *, source_refs=(), storage='memory', format='arrow_ipc', parents=()):
         import pyarrow as pa
         aid=str(uuid.uuid4());ids=set()
@@ -60,6 +71,27 @@ class ArtifactStore:
                                 'created_ns':time.monotonic_ns(),'released_ns':None,'leases':set(),'artifacts':set()}
                             self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':buf.size,'storage_kind':'arrow_memory'})
                         ids.add(bid)
+        else:
+            # CPython's actual shallow object sizes, deduplicated by identity.
+            # These are observed live objects, not estimates of C++ allocator
+            # traffic or node RSS. Arrow backing storage remains a separate kind.
+            def visit(obj,seen):
+                if id(obj) in seen or type(obj) not in {dict,list,tuple,set,str,bytes,int,float,bool,type(None)}:return
+                seen.add(id(obj));key=('python',id(obj));bid=self.addresses.get(key)
+                if bid is None:
+                    bid=str(uuid.uuid4());self.addresses[key]=bid
+                    self.buffers[bid]={'buffer_id':bid,'run_id':self.run_id,'allocation_instance':producer,
+                        'storage_kind':'python_heap','parent_buffer_id':None,'view_ranges':[],
+                        'backing_file_id':None,'replica_id':bid,'key':key,'value':obj,'capacity_bytes':sys.getsizeof(obj),
+                        'created_ns':time.monotonic_ns(),'released_ns':None,'leases':set(),'artifacts':set(),
+                        'observation_scope':'CPYTHON_SHALLOW_SIZE_AT_REGISTRATION'}
+                    self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':sys.getsizeof(obj),'storage_kind':'python_heap'})
+                ids.add(bid)
+                if type(obj) is dict:
+                    for k,v in obj.items():visit(k,seen);visit(v,seen)
+                elif type(obj) in {list,tuple,set}:
+                    for v in obj:visit(v,seen)
+            visit(value,set())
         for parent in parents:
             self.check(parent);ids.update(parent.buffer_ids)
         item=Artifact(aid,self.run_id,producer,value,typ,typ.get('domain'),list(source_refs),ids,storage,format)
@@ -72,10 +104,26 @@ class ArtifactStore:
         self._emit('artifact_created',{'artifact_id':aid,'buffer_ids':sorted(ids),'producer':producer,'schema_hash':item.schema_hash})
         return item
 
+    @contextmanager
+    def transient(self,value,producer):
+        item=self.register(value,{'kind':'RuntimeAllocation'},producer)
+        try:yield item
+        finally:self.drop_view(item)
+
+    @serialized
+    def copied(self,value,producer,*,scope):
+        """Payload bytes actually produced by an explicit copy/encoding operation."""
+        size=value.nbytes if hasattr(value,'nbytes') else len(value) if isinstance(value,bytes) else None
+        if size is None:raise ValueError('COPY_BYTE_OBSERVATION_REQUIRED')
+        self.copy_bytes+=size
+        self._emit('copy',{'producer':producer,'instrumented_copy_bytes':size,'scope':scope})
+
+    @serialized
     def check(self,item):
         if not isinstance(item,Artifact) or item.run_id!=self.run_id or self.artifacts.get(item.artifact_id) is not item:raise ValueError('CAPABILITY_INVALID')
         if item.release_status!='LIVE':raise ValueError('ARTIFACT_RELEASED')
 
+    @serialized
     def acquire(self,item,holder):
         self.check(item)
         if holder in self.leases[item.artifact_id]:raise ValueError('LEASE_DUPLICATE')
@@ -83,6 +131,7 @@ class ArtifactStore:
         for bid in item.buffer_ids:self.buffers[bid]['leases'].add((item.artifact_id,holder))
         self._emit('lease_acquired',{'artifact_id':item.artifact_id,'holder':holder})
 
+    @serialized
     def drop_lease(self,item,holder):
         self.check(item)
         if holder not in self.leases[item.artifact_id]:raise ValueError('LEASE_UNKNOWN')
@@ -102,6 +151,7 @@ class ArtifactStore:
                 buf['value']=None
                 self._emit('buffer_released',{'buffer_id':bid,'released_ns':buf['released_ns']})
 
+    @serialized
     def release(self,item):
         self.check(item)
         if self.leases[item.artifact_id] or any(self.buffers[bid]['leases'] for bid in item.buffer_ids):raise ValueError('RELEASE_BEFORE_LAST_USE')
@@ -116,6 +166,7 @@ class ArtifactStore:
         item.value=None;item.release_status='RELEASED'
         self._emit('artifact_released',{'artifact_id':item.artifact_id})
 
+    @serialized
     def drop_view(self,item):
         self.check(item)
         if self.leases[item.artifact_id]:raise ValueError('LIVE_VIEW_LEASE')
@@ -248,12 +299,19 @@ class ArtifactStore:
                             self.read_bytes+=part.nbytes;yield part
         else:raise ValueError('ARTIFACT_UNAVAILABLE')
 
+    @serialized
     def lifetime_metrics(self,at_ns=None):
-        at_ns=at_ns or time.monotonic_ns();events=[]
-        for b in self.buffers.values():
-            if b['storage_kind']!='arrow_memory':continue
-            events.extend([(b['created_ns'],1,b['capacity_bytes']),(b['released_ns'] or at_ns,0,-b['capacity_bytes'])])
-        events.sort();live=peak=area=0;previous=events[0][0] if events else at_ns
-        for ns,_,delta in events:area+=live*(ns-previous);live+=delta;peak=max(peak,live);previous=ns
-        return {'registered_buffer_peak_bytes':peak,'registered_buffer_byte_seconds':area/1e9,
+        at_ns=at_ns or time.monotonic_ns()
+        def integral(kinds):
+            events=[]
+            for b in self.buffers.values():
+                if b['storage_kind'] not in kinds:continue
+                events.extend([(b['created_ns'],1,b['capacity_bytes']),(b['released_ns'] or at_ns,0,-b['capacity_bytes'])])
+            events.sort();live=peak=area=0;previous=events[0][0] if events else at_ns
+            for ns,_,delta in events:area+=live*(ns-previous);live+=delta;peak=max(peak,live);previous=ns
+            return {'peak_bytes':peak,'byte_seconds':area/1e9}
+        arrow=integral({'arrow_memory'});python=integral({'python_heap'});combined=integral({'arrow_memory','python_heap'})
+        return {'registered_buffer_peak_bytes':arrow['peak_bytes'],'registered_buffer_byte_seconds':arrow['byte_seconds'],
+            'registered_python_heap':python,'registered_combined':combined,'instrumented_copy_bytes':self.copy_bytes,
+            'scope':'REGISTERED_LIVE_ARROW_AND_PYTHON_OBJECTS_NOT_TOTAL_ALLOCATOR_TRAFFIC',
             'worker_cgroup_memory_peak':None,'worker_cgroup_status':'NOT_CALIBRATED','node_ram_status':'NOT_ATTRIBUTABLE'}

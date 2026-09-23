@@ -41,10 +41,39 @@ class NativeFailuresR1(unittest.TestCase):
         self.assertEqual(result['failure']['code'],'DIVISION_BY_ZERO');self.assertEqual(result['failure']['origin'],'native')
         self.assertTrue(result['failure']['node_instance']);self.assertEqual(result['failure']['attribution'],'plan')
     def test_actual_instance_budget_reaches_worker_as_plan(self):
-        task,plan,sources=self.relational();plan['limits']['max_node_instances']=1
+        import pyarrow as pa
+        from rcwg_full.data.stream_templates import f4
+        from rcwg_full.compiler import FullCompiler
+        case=f4('F4-08',0,'C0');task,plan=case['task'],case['plan']
+        plan['limits']['max_node_instances']=len(plan['nodes'])+1
+        self.assertEqual(FullCompiler().compile(task,plan)['status'],'IR_VALIDATED')
+        sources={'dataset:'+k:pa.Table.from_pylist(v) for k,v in case['rows'].items()}
         result=self.worker(task,plan,sources)
         self.assertEqual(result['terminal_status'],'MODEL_FAILURE',result['failure'])
         self.assertEqual(result['failure']['code'],'DYNAMIC_INSTANCE_LIMIT')
+
+    def test_real_worker_plan_failures_do_not_pause_campaign(self):
+        from rcwg_full.campaign.runner import PreparedNativeExecutor,CampaignRunner
+        from rcwg_full.evidence import write,digest
+        task,plan,sources=self.relational()
+        plan['nodes'][1]['params']['predicate']={'op':'gt','left':{'op':'div','left':{'field':'score'},'right':{'literal':0.0}},'right':{'literal':1.0}}
+        task,manifest,path=prepare(task,sources,self.root/'data')
+        private=self.root/'private.json';write(private,{'expected':[],'comparison':'bag'})
+        item={'task_path':str(path.parent/'task_public.json'),'data_manifest':str(path),'private_verifier':str(private)}
+        for name in list(item):item['task_sha256' if name=='task_path' else name+'_sha256']=sha(read(item[name]))
+        base={'task_id':task['task_id'],'condition':'C0','family':'F1','protocol':'P0','ledger_role':'PRIMARY'}
+        slots=[{**base,'slot_id':'g','slot_kind':'generation','expected_dependencies':[]},
+               *[{**base,'slot_id':f'e{i}','slot_kind':'execution','execution_repeat':i,'generation_slot_id':'g','expected_dependencies':['g']} for i in range(2)]]
+        executor=PreparedNativeExecutor({task['task_id']:item},self.build,'ENGINEERING_NATIVE')
+        runner=CampaignRunner(self.root/'campaign',slots,manifest_hash='a'*64,spec_hash='b'*64,mode='ENGINEERING_NATIVE',
+            generate=lambda *a:{'status':'COMPLETED','plan':plan,'plan_hash':digest(plan),'model_snapshot_hash':'c'*64},execute=executor)
+        try:
+            result=runner.run();observations=runner.store.observations('ENGINEERING_NATIVE')
+        finally:runner.close()
+        self.assertEqual(result['status'],'TERMINAL',result)
+        attempts=[r for r in observations if r['slot_kind']=='execution']
+        self.assertEqual(len(attempts),2)
+        self.assertTrue(all(r['status']=='MODEL_FAILURE' and r['failure_class']=='CONFIRMED_PLAN' for r in attempts))
     def test_actual_dynamic_graph_target_reaches_worker_as_plan(self):
         from rcwg_full.data.graph_templates import f3
         case=f3('F3-03',0,'C0');plan=case['plan']
@@ -86,3 +115,43 @@ class BoundedNativeR1(unittest.TestCase):
         self.assertEqual([r for b in batches for r in b.to_pylist()],sorted(rows,key=lambda r:(-r['score'],r['id'])))
         self.assertLessEqual(counts['peak_merge_readers'],8);self.assertGreater(counts['merge_passes'],2)
         self.assertEqual([p for p in self.root.glob('*.arrowstream')],[Path(path)])
+
+    def sorted_file(self,rows,fields,directory):
+        directory.mkdir();table=self.pa.Table.from_pylist(rows)
+        state=self.native.sort_begin(table.schema,{'keys':[{'field':k,'direction':'asc','nulls':'last'} for k in fields]},directory)
+        for batch in table.to_batches(max_chunksize=3):self.native.aggregate_consume(state,self.pa.Table.from_batches([batch]))
+        return self.native.sort_finish(state)[0]
+
+    def test_sorted_group_keeps_one_group_and_global_empty_count(self):
+        rows=[{'g':i%13,'v':None if i%7==0 else i} for i in range(131)]
+        path=self.sorted_file(rows,['g'],self.root/'sort');out=self.root/'out';out.mkdir()
+        params={'group_by':['g'],'aggregates':[{'function':'sum','field':'v','as':'sum'},{'function':'count','field':None,'as':'n'}]}
+        file,n,counts=self.native.sorted_group(path,params,out)
+        actual=[r for b in SpilledTable(file).batches() for r in b.to_pylist()]
+        expected=[{'g':g,'sum':sum(r['v'] for r in rows if r['g']==g and r['v'] is not None),'n':sum(r['g']==g for r in rows)} for g in range(13)]
+        self.assertEqual(actual,expected);self.assertEqual(counts['peak_group_states'],1)
+        empty=self.root/'empty';empty.mkdir();schema=self.pa.schema([('v',self.pa.int64())])
+        state=self.native.sort_begin(schema,{'keys':[]},empty);path,_,_=self.native.sort_finish(state)
+        file,n,_=self.native.sorted_group(path,{'group_by':[],'aggregates':[{'function':'count','field':None,'as':'n'}]},empty)
+        self.assertEqual([r for b in SpilledTable(file).batches() for r in b.to_pylist()],[{'n':0}])
+
+    def test_sorted_join_spills_duplicate_groups_and_preserves_all_join_modes(self):
+        from collections import Counter
+        left=[{'id':i,'k':k} for i,k in enumerate([1,1,10,2,None,-3])]
+        right=[{'rid':i,'k':k} for i,k in enumerate([1,1,1,3,None,-3])]
+        lpath=self.sorted_file(left,['k'],self.root/'left');rpath=self.sorted_file(right,['k'],self.root/'right')
+        matches=[(l,r) for l in left for r in right if l['k'] is not None and l['k']==r['k']]
+        ml={l['id'] for l,r in matches};mr={r['rid'] for l,r in matches}
+        for mode in ['inner','left','right','full','semi','anti']:
+            directory=self.root/mode;directory.mkdir()
+            file,n,counts=self.native.sorted_join(lpath,rpath,{'keys':[{'left':'k','right':'k'}],'join_type':mode},directory)
+            actual=[r for b in SpilledTable(file).batches() for r in b.to_pylist()]
+            if mode in {'semi','anti'}:expected=[l for l in left if (l['id'] in ml)==(mode=='semi')]
+            else:
+                pairs=list(matches)
+                if mode in {'left','full'}:pairs.extend((l,{'rid':None,'k':None}) for l in left if l['id'] not in ml)
+                if mode in {'right','full'}:pairs.extend(({'id':None,'k':None},r) for r in right if r['rid'] not in mr)
+                expected=[{'id':l['id'],'left.k':l['k'],'rid':r['rid'],'right.k':r['k']} for l,r in pairs]
+            self.assertEqual(Counter(tuple(sorted(r.items())) for r in actual),Counter(tuple(sorted(r.items())) for r in expected))
+            self.assertEqual(counts['peak_join_cursors'],3)
+            self.assertFalse(list(directory.glob('join-group-*')))

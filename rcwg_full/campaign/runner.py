@@ -112,6 +112,24 @@ class CampaignRunner:
         self.retry_claims[slot_id]={**claim,'reconciliation':reconciliation,'reconciliation_evidence':proof}
         return self.run(selected_slots=[slot_id])
 
+    def retry_failed_generation(self,slot_id):
+        slot=self.store.slot(slot_id)
+        if slot['definition']['slot_kind']!='generation' or slot['status']!='INFRA_FAILURE':raise Conflict('RETRY_NOT_ALLOWED')
+        if source_hashes()!=self.identity:raise Conflict('RETRY_SOURCE_CHANGED')
+        parent=slot['active_attempt'];directory=self.root/'attempts'/parent
+        stored=self.store.db.execute('SELECT evidence FROM attempts WHERE id=?',(parent,)).fetchone()
+        evidence=json.loads(stored[0]);raw=read(relative_file(self.root,evidence['result_file']))
+        if sha(raw)!=evidence['result_sha256']:raise Conflict('RETRY_ARTIFACT_CHANGED')
+        outcome=json.loads(raw)
+        if outcome.get('status')!='INFRA_FAILURE' or outcome.get('attempt_id')!=parent:raise Conflict('RETRY_NOT_ALLOWED')
+        if not callable(getattr(self.generate,'reconcile',None)):raise Conflict('GENERATION_RECONCILER_REQUIRED')
+        proof=self.generate.reconcile(slot['definition'],outcome,directory)
+        reconciliation={'worker_stopped':True,'request_uncertain':False}
+        if any(proof.get(k)!=v for k,v in reconciliation.items()):raise Conflict('RECONCILIATION_INCOMPLETE')
+        claim=self.store.retry(slot_id,self.owner,slot['version'],reconciliation={**reconciliation,'evidence':proof})
+        self.retry_claims[slot_id]={**claim,'reconciliation':reconciliation,'reconciliation_evidence':proof}
+        return self.run(selected_slots=[slot_id])
+
     def run(self,*,cancel=lambda:False,selected_slots=None):
         selected=set(self.slots) if selected_slots is None else set(selected_slots)
         if not selected<=self.slots.keys():raise ValueError('SELECTED_SLOT_UNKNOWN')

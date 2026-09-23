@@ -3,6 +3,7 @@ import json
 import sqlite3
 import uuid
 from contextlib import contextmanager
+from copy import deepcopy
 from rcwg_full.evidence import digest, safe_path, canonical
 from rcwg_full.runtime.measurement import runtime_identity
 from rcwg_full.campaign.sealing import validate_receipt
@@ -14,7 +15,8 @@ def run_identity(attempt_id):
 
 class HostClaim:
     def __init__(self, scope, receipt, task, build, slot_id, attempt_id, *, identity_reader=runtime_identity):
-        self.scope, self.task, self.build = scope, task, build
+        self.scope, self.task, self.build = deepcopy(scope), deepcopy(task), build
+        self.receipt=deepcopy(receipt)
         self.identity_reader = identity_reader
         self.attempt_id = str(uuid.UUID(attempt_id)); self.run_id = run_identity(attempt_id)
         self.receipt_hash = validate_receipt(receipt, action='HOST', subject_hash=digest(scope), actor_role='Owner')
@@ -36,6 +38,8 @@ class HostClaim:
             db.execute('BEGIN IMMEDIATE')
             if db.execute('SELECT 1 FROM claims WHERE run_id=? OR attempt_id=?', (self.run_id, self.attempt_id)).fetchone():
                 raise PermissionError('HOST_CLAIM_ALREADY_CONSUMED_OR_UNCERTAIN')
+            if db.execute("SELECT 1 FROM claims WHERE scope_hash=? AND slot_id=? AND state!='CONSUMED'",(digest(scope),slot_id)).fetchone():
+                raise PermissionError('HOST_PREVIOUS_CLAIM_UNRECONCILED')
             used = db.execute('SELECT count(*) FROM claims WHERE scope_hash=? AND slot_id=?', (digest(scope), slot_id)).fetchone()[0]
             if used >= limit: raise PermissionError('HOST_FINITE_SCOPE_EXHAUSTED')
             db.execute('INSERT INTO claims VALUES (?,?,?,?,?,?,NULL)',
@@ -51,6 +55,7 @@ class HostClaim:
         finally: db.close()
 
     def recheck(self):
+        validate_receipt(self.receipt,action='HOST',subject_hash=digest(self.scope),actor_role='Owner')
         actual = self.identity_reader(self.task, self.build, affinity=self.scope['affinity'])
         if actual != self.scope.get('runtime_identity'): raise PermissionError('HOST_RUNTIME_APPLICABILITY_CHANGED')
         if actual['host'].get('system') != 'Linux' or any(actual['host'].get(k) in {None, 'UNAVAILABLE'} for k in ('machine_id_sha256','boot_id_sha256','kernel')):

@@ -130,6 +130,8 @@ class HostScopeR1(unittest.TestCase):
     def test_no_replay_or_lease_expiry_and_finite_attempts(self):
         first=self.claim();first.activate()
         with self.assertRaisesRegex(PermissionError,'CONSUMED_OR_UNCERTAIN'):self.claim(first.attempt_id)
+        with self.assertRaisesRegex(PermissionError,'UNRECONCILED'):self.claim()
+        first.finish({'cleanup':{'status':'REMOVED'}})
         second=self.claim();second.activate();second.finish({'cleanup':{'status':'REMOVED'}})
         self.assertEqual(second.snapshot()['state'],'CONSUMED')
         with self.assertRaisesRegex(PermissionError,'EXHAUSTED'):self.claim()
@@ -137,3 +139,35 @@ class HostScopeR1(unittest.TestCase):
         first=self.claim();first.identity_reader=lambda *a,**k:{'host':{'system':'Linux'}}
         with self.assertRaisesRegex(PermissionError,'APPLICABILITY'):first.activate()
         self.assertEqual(first.snapshot()['state'],'CLAIMED')
+
+
+class AllocationR1(unittest.IsolatedAsyncioTestCase):
+    async def test_stream_conversion_buffers_live_until_consumer_advance(self):
+        import pyarrow as pa
+        from rcwg_full.runtime.artifacts import ArtifactStore
+        from rcwg_full.runtime.events import Journal
+        from rcwg_full.runtime.streams import BoundedStream
+        tmp=EvidenceDirectory(self.id());self.addCleanup(tmp.cleanup);root=Path(tmp.name)
+        journal=Journal(root/'events.jsonl','allocation-r1');self.addCleanup(journal.close)
+        store=ArtifactStore(root/'artifacts','allocation-r1',journal)
+        stream=BoundedStream(on_retain=lambda batch:store.register(batch,{'kind':'RuntimeBatch'},'transform'),on_release=store.drop_view)
+        batch=pa.record_batch({'value':[1,2,3]})
+        await stream.put(batch,batch.nbytes);await stream.finish()
+        iterator=stream.__aiter__();actual=await iterator.__anext__()
+        self.assertEqual(actual,batch);self.assertTrue(any(b['released_ns'] is None for b in store.buffers.values()))
+        with self.assertRaises(StopAsyncIteration):await iterator.__anext__()
+        self.assertTrue(all(b['released_ns'] is not None for b in store.buffers.values()))
+        self.assertGreaterEqual(store.lifetime_metrics()['registered_buffer_peak_bytes'],batch.nbytes)
+
+    async def test_graph_json_object_aliases_are_counted_once_and_released(self):
+        from rcwg_full.runtime.artifacts import ArtifactStore
+        from rcwg_full.runtime.events import Journal
+        tmp=EvidenceDirectory(self.id());self.addCleanup(tmp.cleanup);root=Path(tmp.name)
+        journal=Journal(root/'events.jsonl','json-r1');self.addCleanup(journal.close)
+        store=ArtifactStore(root/'artifacts','json-r1',journal)
+        payload={'nodes':[{'node_id':1001}],'edges':[]}
+        a=store.register(payload,{'kind':'Graph'},'graph');b=store.register(payload,{'kind':'Graph'},'view')
+        self.assertEqual(a.buffer_ids,b.buffer_ids);self.assertGreater(len(a.buffer_ids),1)
+        store.drop_view(a);self.assertTrue(all(store.buffers[k]['released_ns'] is None for k in b.buffer_ids))
+        store.drop_view(b);self.assertTrue(all(v['released_ns'] is not None for v in store.buffers.values()))
+        metrics=store.lifetime_metrics();self.assertGreater(metrics['registered_python_heap']['peak_bytes'],0)
