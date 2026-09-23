@@ -33,6 +33,7 @@ def parameter_table():
             if number==2:item['C0']['left_hot_key_ratio']=[1,100];item['C1']['left_hot_key_ratio']=[4,5]
             if number==10:item['C0']['eligible_true_ratio']=[3,4];item['C1']['eligible_true_ratio']=[1,8]
         elif family=='F3':
+            item['builder_status']='STREAMING_GRAPH_BUILDER_AND_DISK_SQL_ORACLE_IMPLEMENTED_NATIVE_CAPACITY_UNVERIFIED'
             item.update(c1_axis='node_count',row_width_candidate_bytes=256,C0={'nodes':10000},C1={'nodes':100000})
             if number==11:
                 item['edge_density']={'kind':'FIXED_DIRECTED_NON_SELF_DENSITY','numerator':1,'denominator':128}
@@ -42,15 +43,16 @@ def parameter_table():
                 item['edge_density']={'kind':'FIXED_AVERAGE_DEGREE','edges_per_node':8}
                 for condition in ['C0','C1']:item[condition]['edges_upper']=item[condition]['nodes']*8
         elif family=='F4':
+            item['builder_status']='BOUNDED_OBJECT_BUILDER_AND_INDEPENDENT_STREAM_ORACLE_IMPLEMENTED_NATIVE_CAPACITY_UNVERIFIED'
             large=number in {1,2,7,11};size=GIB if large else 256*MIB if number in {9,10} else 64*MIB
             item.update(c1_axis='object_bytes',row_width_candidate_bytes=4096 if large else 32 if number in {3,5,12} else 256,
                         C0={'object_target_bytes':size},C1={'object_target_bytes':min(4*size,4*GIB)},
                         simultaneous_source_objects=2 if number==11 else 1,
-                        reference_dynamic_instances='REQUIRES_BOUNDED_FORMAL_REFERENCE_DESIGN' if number in {8,10,12} else 'TO_VALIDATE')
+                        reference_dynamic_instances='FULL001_F4_BOUNDED_REFERENCE_1_NATIVE_CAPACITY_UNVERIFIED' if number in {8,10,12} else 'TO_VALIDATE')
             if large:item.update(worker_ram_C0_C1_C3_bytes=32*GIB,worker_ram_C2_bytes=8*GIB)
         else:
             item.update(C0={'reviewed_source_units':None,'canonical_text_bytes':None},C1={'reviewed_source_units':None,'canonical_text_bytes':None},
-                builder_status='UPSTREAM_ADAPTER_PRESENT_FORMAL_TEMPLATE_BINDING_PENDING',
+                builder_status='SOURCE_BOUND_TEMPLATE_AND_REVIEW_EXPORT_IMPLEMENTED_REAL_REVIEW_PENDING',
                 required_source='QASPER' if family=='F5' else 'SCIFACT_WITH_CONTROLLED_GRAPH',
                 source_status='SOURCE_LICENSE_REVIEW_AND_REAL_LABELS_REQUIRED')
         item['parameter_hash']=digest(item);rows.append(item)

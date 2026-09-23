@@ -7,6 +7,7 @@ import json
 import platform
 import sysconfig
 from contextlib import contextmanager,ExitStack
+from contextvars import ContextVar
 from rcwg_full.evidence import ROOT,read,sha,canonical,safe_path
 
 
@@ -34,7 +35,16 @@ class Native:
         spec=importlib.util.spec_from_file_location('_full001_'+mode,path)
         self.module=importlib.util.module_from_spec(spec);spec.loader.exec_module(self.module)
         if self.module.diagnostic!=(mode=='diagnostic'):raise ValueError('BUILD_COUNTER_MODE')
-        self.manifest=manifest;self.mode=mode;self.allocation_store=None
+        self.manifest=manifest;self.mode=mode;self._allocation_store=ContextVar('full001_native_allocations',default=None)
+
+    @property
+    def allocation_store(self):return self._allocation_store.get()
+
+    @contextmanager
+    def allocation_context(self,store):
+        token=self._allocation_store.set(store)
+        try:yield
+        finally:self._allocation_store.reset(token)
 
     @contextmanager
     def codec(self):
@@ -54,6 +64,39 @@ class Native:
             yield encode,decode
 
     def relational(self,op,impl,data,params,right=None,directory=''):
+        if (op,impl)==('top_k','streaming_heap'):
+            from .batching import arrow_batches
+            import pyarrow as pa
+            state=self.topk_begin(data.schema,params)
+            for batch in arrow_batches(data):state.consume(pa.Table.from_batches([batch]))
+            return self.aggregate_finish(state)
+        if (op,impl) in {('sort','external_merge'),('aggregate','sorted_group'),('join','sort_merge')}:
+            from .batching import arrow_batches
+            from .spilled import SpilledTable
+            import pyarrow as pa
+            import tempfile
+            import uuid
+            owner=tempfile.TemporaryDirectory(prefix='full001-native-') if not directory else None
+            root=Path(owner.name if owner else directory);counts={};intermediates=[]
+            def add(values):
+                for k,v in values.items():counts[k]=max(counts.get(k,0),v) if k.startswith('peak_') else counts.get(k,0)+v
+            def sort(table,keys):
+                scratch=root/('sort-'+str(uuid.uuid4()));scratch.mkdir()
+                state=self.sort_begin(table.schema,{'keys':keys},scratch)
+                for batch in arrow_batches(table):state.consume(pa.Table.from_batches([batch]))
+                path,rows,c=self.sort_finish(state);add(c);return path,rows
+            try:
+                if op=='sort':path,rows=sort(data,params['keys'])
+                elif op=='aggregate':
+                    inp,_=sort(data,[{'field':k,'direction':'asc','nulls':'last'} for k in params['group_by']]);intermediates.append(Path(inp))
+                    path,rows,c=self.sorted_group(inp,params,root);add(c)
+                else:
+                    left,_=sort(data,[{'field':k['left'],'direction':'asc','nulls':'last'} for k in params['keys']]);intermediates.append(Path(left))
+                    other,_=sort(right,[{'field':k['right'],'direction':'asc','nulls':'last'} for k in params['keys']]);intermediates.append(Path(other))
+                    path,rows,c=self.sorted_join(left,other,params,root);add(c)
+                return SpilledTable(path,owner=owner,rows=rows),counts
+            finally:
+                for path in intermediates:path.unlink()
         table,counts=self.module.relational(op,impl,data,right,canonical(params).decode(),str(directory))
         return table,json.loads(counts)
 

@@ -605,14 +605,21 @@
       "R06 actual Python/Arrow object lifetimes including conversion queues and graph/JSON codec boundaries; explicit copy byte scopes",
       "R05 unfinished host claim blocks a new attempt; actual native identity is rechecked before real driver writes",
       "Facility generation retry with immutable actual G/COUNT request evidence, same context, one linked attempt, no uncertain resend",
-      "R01 statically valid dynamic budget regression and actual native campaign continuation"
+      "R01 statically valid dynamic budget regression and actual native campaign continuation",
+      "F3 fixed graph builders and independent disk SQLite reachability/path oracle; all 48 fixture conditions pass",
+      "F4 fixed object-size builders and bounded formal reference recipes; all 48 fixture conditions pass",
+      "All 24 F5/F6 real-source binding contracts, canonical section/citation maps, private derived labels and blind review export; test-only source-shaped fixtures pass",
+      "Five exact upstream source pins and native API adapters; 13 real source AST signatures checked, TPS original parser/normalizer exercised without judge calls",
+      "Call-scoped native allocation observer and serialized retirement; 1 MiB maximum journal sync coalescing without dropping events",
+      "Direct native convenience methods for external sort/sorted group/sort-merge now use bounded states and lazy disk handles; obsolete materializing C++ entry rejects calls",
+      "Actual supervisor GO/deadline -> campaign store -> analysis regression added with a three-row microsecond budget fixture"
     ],
     "supplementary_evidence": "runs/review-r1-python06/TEST_RESULTS.json",
     "target_environment": "WSL Ubuntu accessible: Python 3.12.14 and offline hash-locked dependencies ready; no system compiler. Authorized GitHub Ubuntu 24.04 Python 3.12.14 CI builds and tests actual native modules.",
     "formal_gate": "BLOCKED_NOT_FROZEN",
     "prior_reviewed_head_pushed": true,
     "prior_head_push_from": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
-    "updated_utc": "2026-09-23T08:36:52.200372+00:00",
+    "updated_utc": "2026-09-23T09:33:45.757085+00:00",
     "ci_repair_7e245a5": {
       "head": "7e245a5f26c3813b3de25b373e8fe7f37cf8b52c",
       "run_id": 35835192042,
@@ -629,6 +636,54 @@
       "result_file": "runs/review-r1-publication/range-TEST_RESULTS.json",
       "result_sha256": "139c53d167b94296a2c7bd18d9a8fc62d783fdde85efeee4c359ceced91a8aae"
     },
-    "supplementary_tests_passed": 62
+    "supplementary_tests_passed": 62,
+    "ci_repair_c2ddd71": {
+      "head": "c2ddd712284b1808041aaa576b477e9bc874b370",
+      "run_id": 35838298843,
+      "native_build": "PASS",
+      "inherited_native": "PASS",
+      "full_tests": {
+        "run": 1993,
+        "pass": 1486,
+        "errors": 507,
+        "skip": 0
+      },
+      "causes": {
+        "JOURNAL_CLOSED": 502,
+        "dictionary_changed_during_iteration": 3,
+        "test_output_directory_collision": 1,
+        "test_missing_limits_dictionary": 1
+      },
+      "report": "runs/review-r1-publication/range-c2ddd71-TEST_RESULTS.json",
+      "report_sha256": "4786129ec65785b2e1a8038f271e027b821b186278451d36b2af60e3e3c2f31f",
+      "status": "FAILURE_PRESERVED_FIXES_PENDING_EXACT_HEAD_ACCEPTANCE"
+    },
+    "latest_supplementary_evidence": [
+      {
+        "report": "runs/review-r1-formal-f3-01/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 3
+      },
+      {
+        "report": "runs/review-r1-formal-f4-02/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 3
+      },
+      {
+        "report": "runs/review-r1-formal-documents01/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 4
+      },
+      {
+        "report": "runs/r1-ej02/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 31
+      }
+    ],
+    "wsl_native_followup": {
+      "report": "runs/review-r1-linux-native01",
+      "status": "RUNNING_PRE_BATCHING_SOURCE",
+      "finding": "Dense F3 allocation-event fsync overhead exceeded unchanged 20s test budget. Bounded durable journal batching implemented on Windows source, not changed in the running WSL clone."
+    }
   }
 }

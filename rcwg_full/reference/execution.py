@@ -28,8 +28,8 @@ class NativeReferenceExecutor:
         ident=str(uuid.UUID(request['attempt_id']))
         if (sha(read(self.data_manifest))!=self.data_sha256 or sha(read(self.private_verifier))!=self.verifier_sha256 or
             self._context().comparison_context_hash!=self.context.comparison_context_hash):raise ValueError('REFERENCE_SOURCE_CHANGED')
-        private=json.loads(read(self.private_verifier))
-        def verify(actual,out):return check_output(actual,private['expected'],{'comparison':private['comparison']})
+        from rcwg_full.verification.prepared import check_prepared
+        def verify(actual,out):return check_prepared(actual,self.private_verifier)
         driver=self.driver_factory(request,self.task) if self.driver_factory else None
         report=execute(self.task,plan,self.data_manifest,build=self.build,output=self.directory/ident,
             mode=self.mode,condition_id=self.condition,verify=verify,driver=driver,admission=self.admission,

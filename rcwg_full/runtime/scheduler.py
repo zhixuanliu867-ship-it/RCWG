@@ -25,6 +25,9 @@ class Scheduler:
         self.background=set();self.live_streams=[];self.timings=[];self.reference_roots={};self.retirement_candidates={}
 
     def retire(self):
+        with self.backend.store.lock:self._retire_locked()
+
+    def _retire_locked(self):
         """Destroy unreachable wrappers, retaining explicit captures, cache and streams."""
         store=self.backend.store
         def nested(value,seen=None):
@@ -56,7 +59,12 @@ class Scheduler:
         self.event('node_waiting_cpu',{'blocked_reason':'CPU_PERMIT'},instance)
         async with self.kernel_gate,self.admission.acquire(node.get('resources',{}).get('cpu_slots',1)):
             self.event('cpu_permit_acquired',{'resource_ready_ns':time.monotonic_ns()},instance)
-            future=asyncio.get_running_loop().run_in_executor(self.pool,fn,*args)
+            def compute_bound():
+                native=getattr(self.backend,'native',None)
+                if hasattr(native,'allocation_context'):
+                    with native.allocation_context(self.backend.store):return fn(*args)
+                return fn(*args)
+            future=asyncio.get_running_loop().run_in_executor(self.pool,compute_bound)
             try:return await asyncio.shield(future)
             except asyncio.CancelledError:
                 # Do not release a permit while the native function still runs.

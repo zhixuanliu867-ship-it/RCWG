@@ -71,7 +71,6 @@ def _row_recipe(row):
 def verify_rows(actual,expected,documents):
     if type(actual) is not list or len(actual)!=len(expected):return {'status':'FAIL','reason':'ROW_MULTIPLICITY'}
     originals={(d['document_id'],d['revision']):d['canonical_text'] for d in documents}
-    adjacency=[]
     for row in actual:
         if type(row) is not dict:return {'status':'FAIL','reason':'ROW_FORMAT'}
         for c in row.get('evidence',[]):
@@ -79,24 +78,18 @@ def verify_rows(actual,expected,documents):
                 text=originals[(c['document_id'],c['revision'])];a,b=c['start_cp'],c['end_cp']
                 if type(a) is not int or type(b) is not int or not 0<=a<b<=len(text) or text[a:b]!=c['quote']:raise ValueError()
             except (KeyError,TypeError,ValueError):return {'status':'FAIL','reason':'SOURCE_CITATION'}
+    def equal(row,gold):
         fields={k:v for k,v in row.items() if k not in {'evidence','public_span_check','discarded_alternatives'}}
-        edges=[]
-        for i,gold in enumerate(expected):
-            if verify_semantics({'fields':fields,'evidence':row.get('evidence',[])},_row_recipe(gold))['status']!='PASS':continue
-            if not gold.get('evidence') and row.get('evidence'):continue
-            if 'discarded_alternatives' in gold:
-                if verify_rows(row.get('discarded_alternatives'),gold['discarded_alternatives'],documents)['status']!='PASS':continue
-            elif row.get('discarded_alternatives'):continue
-            edges.append(i)
-        adjacency.append(edges)
-    assigned={}
-    def match(i,seen):
-        for j in adjacency[i]:
-            if j in seen:continue
-            seen.add(j)
-            if j not in assigned or match(assigned[j],seen):assigned[j]=i;return True
-        return False
-    return {'status':'PASS' if all(match(i,set()) for i in range(len(actual))) else 'FAIL','rows_checked':len(actual),'source_quotes_checked':True}
+        if verify_semantics({'fields':fields,'evidence':row.get('evidence',[])},_row_recipe(gold))['status']!='PASS':return False
+        if not gold.get('evidence') and row.get('evidence'):return False
+        if 'discarded_alternatives' in gold:
+            return verify_rows(row.get('discarded_alternatives'),gold['discarded_alternatives'],documents)['status']=='PASS'
+        return not row.get('discarded_alternatives')
+    # Citation coordinates can differ while satisfying the same witness; do not
+    # partition on coordinates or materialize the complete candidate graph.
+    from .bag import capacity_equal
+    passed=capacity_equal(actual,expected,equal,partition=lambda row:None)
+    return {'status':'PASS' if passed else 'FAIL','rows_checked':len(actual),'source_quotes_checked':True}
 
 
 def verify_document_result(actual,expected,documents,*,events=None,required_stages=None):

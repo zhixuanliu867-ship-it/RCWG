@@ -45,7 +45,7 @@ class NativeFailuresR1(unittest.TestCase):
         from rcwg_full.data.stream_templates import f4
         from rcwg_full.compiler import FullCompiler
         case=f4('F4-08',0,'C0');task,plan=case['task'],case['plan']
-        plan['limits']['max_node_instances']=len(plan['nodes'])+1
+        plan.setdefault('limits',{})['max_node_instances']=len(plan['nodes'])+1
         self.assertEqual(FullCompiler().compile(task,plan)['status'],'IR_VALIDATED')
         sources={'dataset:'+k:pa.Table.from_pylist(v) for k,v in case['rows'].items()}
         result=self.worker(task,plan,sources)
@@ -87,6 +87,37 @@ class NativeFailuresR1(unittest.TestCase):
         with self.assertRaises(ExecutionFault) as error:native.module.expression('{','{}')
         self.assertEqual(error.exception.attribution,'facility');self.assertEqual(error.exception.origin,'native')
 
+    def test_actual_go_deadline_supervisor_adapter_store_and_analysis(self):
+        from rcwg_full.campaign.runner import PreparedNativeExecutor,CampaignRunner
+        from rcwg_full.analysis.metrics import capability
+        from rcwg_full.evidence import write,digest
+        task,plan,sources=self.relational()
+        # An intentionally tiny task budget exercises real GO/cancel/drain on a
+        # three-row fixture. No stress workload, cgroup write or OOM injection.
+        task['resources']['wall_timeout_s']=0.000001
+        task,manifest,path=prepare(task,sources,self.root/'data')
+        private=self.root/'private.json';write(private,{'expected':[],'comparison':'bag'})
+        item={'task_path':str(path.parent/'task_public.json'),'data_manifest':str(path),'private_verifier':str(private)}
+        for name in list(item):item['task_sha256' if name=='task_path' else name+'_sha256']=sha(read(item[name]))
+        base={'task_id':task['task_id'],'condition':'C0','family':'F1','protocol':'P0','ledger_role':'PRIMARY'}
+        slots=[{**base,'slot_id':'g','slot_kind':'generation','expected_dependencies':[]},
+            {**base,'slot_id':'e','slot_kind':'execution','execution_repeat':0,'generation_slot_id':'g','expected_dependencies':['g']}]
+        runner=CampaignRunner(self.root/'campaign',slots,manifest_hash='a'*64,spec_hash='b'*64,mode='ENGINEERING_NATIVE',
+            generate=lambda *a:{'status':'COMPLETED','plan':plan,'plan_hash':digest(plan),'model_snapshot_hash':'c'*64},
+            execute=PreparedNativeExecutor({task['task_id']:item},self.build,'ENGINEERING_NATIVE'))
+        try:
+            result=runner.run();rows=runner.store.observations('ENGINEERING_NATIVE')
+        finally:runner.close()
+        self.assertEqual(result['status'],'TERMINAL',result)
+        row=next(r for r in rows if r['slot_kind']=='execution');scored=capability(row)
+        self.assertEqual(row['status'],'TIMEOUT');self.assertEqual(row['failure_class'],'CONFIRMED_BUDGET')
+        self.assertFalse(scored['success']);self.assertIsNone(scored['completed_time_ns'])
+        self.assertGreaterEqual(scored['observed_elapsed_ns'],1000)
+        report=json.loads(read(next((self.root/'campaign/attempts').glob('*/native/report.json'))))
+        self.assertTrue(report['execution_started']);self.assertEqual(report['effective_timeout_ns'],1000)
+        self.assertEqual(report['task_deadline_ns'],report['exec_started_monotonic_ns']+1000)
+        self.assertEqual(report['process_group_final']['live'],[]);self.assertEqual(report['cleanup_failures'],[])
+
 
 class BoundedNativeR1(unittest.TestCase):
     def setUp(self):
@@ -94,6 +125,24 @@ class BoundedNativeR1(unittest.TestCase):
         self.pa=pa;self.native=Native(os.environ['RCWG_FULL_BUILD'],'diagnostic')
         self.tmp=EvidenceDirectory(self.id());self.root=Path(self.tmp.name)
     def tearDown(self):self.tmp.cleanup()
+    def test_allocation_observer_is_call_scoped_across_reused_native_and_threads(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from rcwg_full.runtime.artifacts import ArtifactStore
+        from rcwg_full.runtime.events import Journal
+        journals=[Journal(self.root/f'events-{i}.jsonl',f'run-{i}') for i in range(2)]
+        stores=[ArtifactStore(self.root/f'artifacts-{i}',f'run-{i}',journals[i]) for i in range(2)]
+        def call(index):
+            with self.native.allocation_context(stores[index]):
+                for value in range(12):self.assertEqual(self.native.expression({'literal':value},{}),value)
+            self.assertIsNone(self.native.allocation_store)
+        try:
+            with ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(call,range(2)))
+            for i,store in enumerate(stores):
+                self.assertTrue(store.buffers)
+                self.assertTrue(all(b['run_id']==f'run-{i}' and b['released_ns'] is not None for b in store.buffers.values()))
+        finally:
+            for journal in journals:journal.close()
+        self.assertEqual(self.native.expression({'literal':17},{}),17)
     def test_grouped_topk_retains_k_rows_per_group_across_batches(self):
         rows=[{'id':i,'g':i%3,'score':float((i*37)%71)} for i in range(8209)]
         table=self.pa.Table.from_pylist(rows);params={'k':5,'partition_by':['g'],'keys':[{'field':'score','direction':'desc'}]}
@@ -143,7 +192,7 @@ class BoundedNativeR1(unittest.TestCase):
         matches=[(l,r) for l in left for r in right if l['k'] is not None and l['k']==r['k']]
         ml={l['id'] for l,r in matches};mr={r['rid'] for l,r in matches}
         for mode in ['inner','left','right','full','semi','anti']:
-            directory=self.root/mode;directory.mkdir()
+            directory=self.root/('join-'+mode);directory.mkdir()
             file,n,counts=self.native.sorted_join(lpath,rpath,{'keys':[{'left':'k','right':'k'}],'join_type':mode},directory)
             actual=[r for b in SpilledTable(file).batches() for r in b.to_pylist()]
             if mode in {'semi','anti'}:expected=[l for l in left if (l['id'] in ml)==(mode=='semi')]

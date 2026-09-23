@@ -18,7 +18,6 @@ class Backend:
         import pyarrow as pa
         pa.set_cpu_count(1);pa.set_io_thread_count(1)
         self.pa=pa;self.native=native;self.store=store;self.task=task
-        if hasattr(native,'allocation_store'):native.allocation_store=store
         self.documents=documents;self.semantic=semantic;self.cache={}
         self.result_path=Path(result_path) if result_path else None
 

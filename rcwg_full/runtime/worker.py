@@ -43,8 +43,9 @@ async def execute(request,build,output):
             payload=json.loads(raw)
             if payload.get('revision')!='full001-engineering-replay-1':raise ExecutionFault('REPLAY_MANIFEST_VERSION','facility')
             semantic=ReplaySemantic(payload['responses'],mode=request['mode'],service_id=payload['service_id'])
-        documents=DocumentRegistry(catalog,native=native,event=lambda k,v:journal.append(k,v))
-        store=ArtifactStore(out/'artifacts',request['run_id'],journal);backend=Backend(native,store,request['task'],documents=documents,semantic=semantic,result_path=out/'result.json');externals={}
+        store=ArtifactStore(out/'artifacts',request['run_id'],journal)
+        with native.allocation_context(store):documents=DocumentRegistry(catalog,native=native,event=lambda k,v:journal.append(k,v))
+        backend=Backend(native,store,request['task'],documents=documents,semantic=semantic,result_path=out/'result.json');externals={}
         for alias,meta in report['typed_graph']['input_bindings'].items():
             source=catalog.resolve(meta['source_id']);value=source if meta['type']['kind']=='DatasetRef' else source.value()
             externals[alias]=store.register(value,meta['type'],'external:'+alias,source_refs=[meta['source_id']])

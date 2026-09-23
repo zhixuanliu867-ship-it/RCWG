@@ -17,10 +17,23 @@ def prepare_streams(task,sources,directory,*,profile,provenance,batch_rows=1024,
     if type(batch_rows) is not int or not 1<=batch_rows<=1024:raise ValueError('BUILD_BATCH_ROWS')
     if fragment_rows is not None and (type(fragment_rows) is not int or fragment_rows<1):raise ValueError('BUILD_FRAGMENT_ROWS')
     if set(sources)!={d['id'] for d in task['datasets']}:raise ValueError('BUILD_SOURCE_SET')
-    if any(d.get('indexes') for d in task['datasets']):raise ValueError('STREAM_INDEX_BUILDER_REQUIRED')
+    if any(d.get('indexes') and d.get('kind','table')=='table' for d in task['datasets']):raise ValueError('STREAM_INDEX_BUILDER_REQUIRED')
     out=exclusive_directory(directory);task=deepcopy(task)
     manifest={'revision':'full001-data-manifest-1','profile':profile,'sources':[],'formal_frozen':False}
     for index,public in enumerate(task['datasets']):
+        if public.get('kind','table')!='table':
+            from .json_stream import JsonRows,write_json_stream
+            value=sources[public['id']];name=f'source-{index}.json'
+            logical,physical,size,observed=write_json_stream(out/name,value,fragmented=fragment_rows is not None)
+            files=[{'path':name,'sha256':physical,'bytes':size}];content=digest([{k:f[k] for k in ['sha256','bytes']} for f in files])
+            public['data_sha256']=content
+            manifest['sources'].append({'source_id':public['id'],'kind':public['kind'],'domain':public.get('domain'),
+                'revision':public['revision'],'content_sha256':content,'logical_content_sha256':logical,
+                'format':'json','logical_rows':value.count if isinstance(value,JsonRows) else len(value) if isinstance(value,list) else None,
+                'physical_files':files,'indexes':[],'source':provenance,
+                'license':{'status':'GENERATED_RECIPE_ONLY_NO_UPSTREAM_TEXT'},
+                'provenance':{'profile':profile,'layout':'fragmented' if fragment_rows else 'contiguous'},'builder_observations':observed})
+            continue
         schema=arrow_schema({'kind':'Table','schema':public['schema']})
         logical=hashlib.sha256(b'[');count=0;files=[];peak_rows=0;peak_arrow_bytes=0
         handle=writer=name=None;part_count=0;part=0

@@ -8,7 +8,7 @@ import json
 import hashlib
 import threading
 import sys
-from contextlib import contextmanager
+from contextlib import contextmanager,nullcontext
 from functools import wraps
 from rcwg_full.evidence import canonical,digest,sha,write,read,safe_path
 
@@ -38,7 +38,9 @@ class Artifact:
 def serialized(method):
     @wraps(method)
     def locked(self,*args,**kwargs):
-        with self.lock:return method(self,*args,**kwargs)
+        with self.lock:
+            with self.journal.batch() if hasattr(self.journal,'batch') else nullcontext():
+                return method(self,*args,**kwargs)
     return locked
 
 

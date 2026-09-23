@@ -221,8 +221,8 @@ class PreparedNativeExecutor:
             from .diagnostics import bind_control,controls
             definition=next(d for d in controls() if d['control_plan_id']==slot['control_plan_id'])
             intervention=bind_control(definition,task,plan);plan=intervention['plan']
-        private=json.loads(read(item['private_verifier']))
-        def verify(actual,out):return check_output(actual,private['expected'],{'comparison':private['comparison']})
+        from rcwg_full.verification.prepared import check_prepared
+        def verify(actual,out):return check_prepared(actual,item['private_verifier'])
         driver=None
         if self.mode=='FORMAL':
             from rcwg_full.runtime.launch import approved_driver

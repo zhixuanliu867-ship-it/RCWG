@@ -80,14 +80,26 @@
     {
       "id": "ENV-LINUX-ACCESS",
       "kind": "execution_environment",
-      "status": "BLOCKED_BY_CURRENT_SANDBOX",
-      "rule": "WSL enumeration returned E_ACCESSDENIED. Current Windows interpreter is supplementary. Restore an accessible approved Linux Python 3.12.14 environment; no system install or host changes inferred."
+      "status": "RESOLVED_FOR_OFFLINE_SOFTWARE",
+      "rule": "WSL Ubuntu Python 3.12.14 with isolated hash-locked dependencies is accessible. Actual native rebuilds run in authorized GitHub Ubuntu CI; no system compiler installed in WSL.",
+      "historical_observations": [
+        {
+          "status": "BLOCKED_BY_CURRENT_SANDBOX",
+          "rule": "WSL enumeration returned E_ACCESSDENIED. Current Windows interpreter is supplementary. Restore an accessible approved Linux Python 3.12.14 environment; no system install or host changes inferred."
+        }
+      ]
     },
     {
       "id": "ENV-PUBLIC-WRITE",
       "kind": "repository_access",
-      "status": "WRITE_PERMISSION_UNAVAILABLE",
-      "rule": "Existing authorization covers public branch push/draft PR, but GitHub integration write returned HTTP 403 Resource not accessible by integration. Preserve local commits/bundle; no permission bypass or merge."
+      "status": "RESOLVED_BRANCH_PUSH_DRAFT_PENDING",
+      "rule": "Existing credential path successfully pushed independent rcwg/full-001 through c2ddd71. Draft stacked PR remains authorized and pending final reviewable source. No merge or force push.",
+      "historical_observations": [
+        {
+          "status": "WRITE_PERMISSION_UNAVAILABLE",
+          "rule": "Existing authorization covers public branch push/draft PR, but GitHub integration write returned HTTP 403 Resource not accessible by integration. Preserve local commits/bundle; no permission bypass or merge."
+        }
+      ]
     },
     {
       "id": "ENV-HISTORICAL-EVIDENCE-ACCESS",
@@ -106,5 +118,6 @@
     "merge": false,
     "force_push": false,
     "source": "direct owner response in current task"
-  }
+  },
+  "software_acceptance_status": "IN_PROGRESS"
 }

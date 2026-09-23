@@ -49,6 +49,8 @@ PYBIND11_MODULE(RCWG_MODULE_NAME,m){
         .def("consume",[](StreamAggregate&state,py::object data){auto batch=unwrap(data);py::gil_scoped_release release;state.consume(batch);})
         .def("finish",[](StreamAggregate&state){std::pair<Table,Counts> result;{py::gil_scoped_release release;result=state.finish();}return py::make_tuple(wrap(result.first),dump(counts_json(result.second)));});
     m.def("relational",[](const std::string&op,const std::string&impl,py::object data,py::object right,const std::string&params,const std::string&directory){
+        if((op=="top_k"&&impl=="streaming_heap")||(op=="aggregate"&&impl=="sorted_group")||(op=="join"&&impl=="sort_merge"))
+            throw Fault("BOUNDED_STREAM_ENTRYPOINT_REQUIRED","facility");
         auto t=unwrap(data);Table r=right.is_none()?nullptr:unwrap(right);auto p=Parser(params).parse();Counts c;Table out;
         {py::gil_scoped_release release;
             if(op=="filter")out=filtering(t,p.at("predicate"),impl=="vectorized",c);

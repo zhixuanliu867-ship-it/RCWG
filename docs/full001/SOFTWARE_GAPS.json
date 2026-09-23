@@ -1,6 +1,6 @@
 {
   "status": "SOFTWARE_IN_PROGRESS_NOT_EXTERNAL_BLOCKED",
-  "updated_utc": "2026-09-22T12:56:08.710603+00:00",
+  "updated_utc": "2026-09-23T09:33:45.757085+00:00",
   "implemented_since_previous_checkpoint": [
     "Source-bound finite campaign runner, diagnostic dependency graph and E2 unchanged-plan target binding.",
     "Existing Vertex/Windows/Cloud transport adapters, eight-slot registry, durable requests, fixed semantic IPC and explicit billing upper bounds.",
@@ -18,28 +18,37 @@
     "Durable reference screening/confirmation, source-bound resume and no resend after interruption or uncertainty; native supervisor adapter added but native integration not run here.",
     "Versioned E2 evidence builder retains C0 plan bytes against target context; reference timing roles bind inherited evidence validators.",
     "Controller GO-to-committed-result receipt timing; Linux-native assertions added, not executed in current Windows environment.",
-    "Acceptance stage recovery preserves incomplete records, detects changed/extra files, and runs independent regression branches."
+    "Acceptance stage recovery preserves incomplete records, detects changed/extra files, and runs independent regression branches.",
+    "R06 disk-backed sorted grouping/joins; one-group state and duplicate-group spool; downstream readers and output remain streamed",
+    "R06 actual Python/Arrow object lifetimes including conversion queues and graph/JSON codec boundaries; explicit copy byte scopes",
+    "R05 unfinished host claim blocks a new attempt; actual native identity is rechecked before real driver writes",
+    "Facility generation retry with immutable actual G/COUNT request evidence, same context, one linked attempt, no uncertain resend",
+    "R01 statically valid dynamic budget regression and actual native campaign continuation",
+    "F3 fixed graph builders and independent disk SQLite reachability/path oracle; all 48 fixture conditions pass",
+    "F4 fixed object-size builders and bounded formal reference recipes; all 48 fixture conditions pass",
+    "All 24 F5/F6 real-source binding contracts, canonical section/citation maps, private derived labels and blind review export; test-only source-shaped fixtures pass",
+    "Five exact upstream source pins and native API adapters; 13 real source AST signatures checked, TPS original parser/normalizer exercised without judge calls",
+    "Call-scoped native allocation observer and serialized retirement; 1 MiB maximum journal sync coalescing without dropping events",
+    "Direct native convenience methods for external sort/sorted group/sort-merge now use bounded states and lazy disk handles; obsolete materializing C++ entry rejects calls",
+    "Actual supervisor GO/deadline -> campaign store -> analysis regression added with a three-row microsecond budget fixture"
   ],
   "remaining_work": [
-    "Complete formal F3/F4 builders and F5/F6 real-source template binding; validate formal F1/F2 builder capacity and native reference feasibility after exact approval.",
-    "Complete genuinely bounded end-to-end native external merge, sorted grouping/joins and transformed-batch/graph/JSON allocation accounting.",
-    "Complete real upstream-native external benchmark adapters; the source registry and private interchange do not reproduce their original protocols.",
-    "Complete facility-generation retry integration, finite host-run scope integration and calibration applicability for the final binaries.",
-    "Run exact current source on accessible Linux Python 3.12.14: native build, 56 dispatches, all 1440 engineering tiny cases, new E2/reference/timing integrations and inherited gates.",
-    "Complete requirement-level evidence and complete historical private archive after access restoration; publish the authorized branch/draft PR when repository write access is available."
+    "Complete exact-head target Linux rebuild and all inherited/new tests after the R1 repairs; resolve any new failures without changing prior test expectations.",
+    "Complete all requirement-level evidence mappings against actual final-head tests and artifacts; prove 56 dispatches and 1440 tiny closures.",
+    "Audit final native/runtime measurement identity and prepare exact finite FULL host/service/data/reference approval packages.",
+    "Complete historical private archive, current/final source/binary/dependency hashes, clean application and file-mode proof, authorized branch/draft PR and unified public/private delivery."
   ],
   "known_implementation_limits": [
-    "Formal F1/F2 code is exercised only at bounded fixture scale. Formal F3/F4 builders and real F5/F6 formal binding remain incomplete.",
-    "Sorted-group, sort and joins still collect input; the current external sort is not bounded end-to-end.",
-    "Arrow buffer registration does not yet account for all transformed batches, graph and JSON allocations.",
-    "New native launcher, E2 seal path, native reference adapter and controller timing have no current Linux execution evidence.",
-    "External source/protocol registry and interchange are preparatory software; actual upstream adapters/executions remain pending.",
-    "Complete exact-current-source software acceptance, formal host/data/service receipts, real human labels/license proofs and Auditor release remain unavailable."
+    "Formal builders have fixture-scale software evidence only; no admitted formal-scale workload, real human labels or data freeze.",
+    "External native adapter scopes are explicitly registered; full original papers/datasets are not reproduced. Pinned dependencies, real licensed data, admitted existing-service bridges and finite host/service scope remain external prerequisites.",
+    "Graph/JSON accounting observes CPython shallow object sizes and Arrow backing buffers; it does not claim complete C++ allocator traffic or remote RSS.",
+    "WSL native regression on the pre-batching source exposed dense-graph journal overhead; final-head native regression is pending.",
+    "Exact final-head software acceptance and all formal host/data/service/campaign release gates remain pending."
   ],
   "latest_supplementary_tests": {
-    "report": "runs/portable-w05/TEST_RESULTS.json",
-    "passed": 369,
-    "subtests_passed": 104,
-    "source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3"
+    "report": "runs/r1-ej02/TEST_RESULTS.json",
+    "tests_run": 31,
+    "status": "PASS",
+    "environment": "Windows Python 3.13.4 supplementary"
   }
 }

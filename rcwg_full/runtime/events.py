@@ -5,6 +5,7 @@ import threading
 import time
 import uuid
 import json
+from contextlib import contextmanager
 from rcwg_full.evidence import canonical,digest,sha,read,write,safe_path
 
 
@@ -12,7 +13,7 @@ class Journal:
     def __init__(self, path, run_id, *, attempt_id=None, source_id='full001-worker', clock_id='monotonic_ns'):
         self.path=safe_path(path);self.run_id=run_id;self.attempt_id=attempt_id or run_id
         self.source_id=source_id;self.clock_id=clock_id;self.previous=None;self.sequence=0
-        self.lock=threading.Lock();self.closed=False
+        self.lock=threading.RLock();self.closed=False;self.batch_depth=0;self.pending_bytes=0
         self.fd=os.open(self.path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|getattr(os,'O_NOFOLLOW',0),0o600)
 
     def append(self, kind, payload, *, node_instance=None, operation_id=None, status='OBSERVED'):
@@ -29,11 +30,32 @@ class Journal:
                     n=os.write(self.fd,view)
                     if n<=0:raise OSError('JOURNAL_SHORT_WRITE')
                     view=view[n:]
-                os.fsync(self.fd)
+                self.pending_bytes+=len(raw)
+                if not self.batch_depth or self.pending_bytes>=1024*1024:
+                    os.fsync(self.fd);self.pending_bytes=0
             except BaseException:
                 self.closed=True;os.close(self.fd);raise
             self.previous=event['event_hash'];self.sequence+=1
             return event
+
+    @contextmanager
+    def batch(self):
+        """Durable operation boundary; at most 1 MiB between syncs.
+
+        Events retain individual IDs, times and chain hashes. The caller holds
+        no in-memory list of events; writes happen immediately, with bounded
+        sync coalescing. A crash leaves an unsealed journal, never accepted PASS.
+        """
+        with self.lock:
+            if self.closed:raise RuntimeError('JOURNAL_CLOSED')
+            self.batch_depth+=1
+            try:yield
+            finally:
+                self.batch_depth-=1
+                if not self.closed and not self.batch_depth and self.pending_bytes:
+                    try:os.fsync(self.fd);self.pending_bytes=0
+                    except BaseException:
+                        self.closed=True;os.close(self.fd);raise
 
     def close(self):
         with self.lock:

@@ -16,18 +16,18 @@ def _shape(value):
     return [type(value).__name__, value]
 
 
-def _groups(rows):
+def _groups(rows, partition):
     groups = defaultdict(dict)
     for row in rows:
-        bucket = groups[canonical(_shape(row))]
+        bucket = groups[canonical(partition(row))]
         key = canonical(row)
         if key not in bucket: bucket[key] = [row, 0]
         bucket[key][1] += 1
     return groups
 
 
-def capacity_equal(actual, expected, equal):
-    left, right = _groups(actual), _groups(expected)
+def capacity_equal(actual, expected, equal, *, partition=_shape):
+    left, right = _groups(actual, partition), _groups(expected, partition)
     if left.keys() != right.keys(): return False
     for key, values in left.items():
         a, b = list(values.values()), list(right[key].values())
