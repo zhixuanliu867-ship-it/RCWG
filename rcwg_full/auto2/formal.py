@@ -23,6 +23,7 @@ def load_stage(raw):return json.loads(raw)['stage']
 def continue_references_and_formal(pipeline):
     p=pipeline;root=p.root;pre=load(root/'FORMAL_PREREQUISITES.json');blocks=p.plan.get('formal_blocks',[])
     blockers=list(pre['blockers'])
+    if p.state.summary()['state']=='PAUSED_BUDGET':blockers.append('CUMULATIVE_BUDGET_PAUSED')
     if p.config['measurement_profile']!='FORMAL_RESOURCE':blockers.append('RESOURCE_CALIBRATION_NOT_CLOSED')
     result={'status':'NOT_ADMITTED','blockers':sorted(set(blockers)),'references':[],'formal_blocks':[],
         'formal_generation':0,'formal_execution':0,'original_planned_generation':23040,'original_planned_execution':61440,
@@ -82,6 +83,8 @@ def continue_references_and_formal(pipeline):
             generations=[];executions=[]
             for job in block['generations']:
                 generation=p.generation(job,live);generations.append({'job_id':job['id'],'status':generation['status']})
+                if generation['status'] in {'INFRA_FAILURE','SENT_UNCONFIRMED','UNKNOWN','SERVICE_DRIFT'}:
+                    raise PermissionError('FORMAL_GENERATION_REQUIRES_RECONCILIATION')
                 for item in job['executions']:
                     item=deepcopy(item);item.update(execution_mode='FORMAL',admission=admitted)
                     outcome=p.execution(item,generation['plan'] if generation['status']=='COMPLETED' else None,live)
