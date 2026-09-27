@@ -12,10 +12,23 @@ def save(path,value):
         json.dump(value,f,ensure_ascii=False,sort_keys=True,indent=2,allow_nan=False);f.write('\n');f.flush();os.fsync(f.fileno())
 
 
+def negative_fixture_link(directory,path,target):
+    relative=path.relative_to(directory).as_posix()
+    expected='results/test_source_symlink_rejected_without_spawn/alias.jsonl'
+    referent=directory/'results/test_source_symlink_rejected_without_spawn/fixture/records.jsonl'
+    if directory.name!='native-original' or relative!=expected or target!=str(referent):
+        raise ValueError('STAGE_SYMLINK')
+    # Preserve the inherited rejection-test evidence without following it.
+    return {'kind':'EXPECTED_NEGATIVE_TEST_SYMLINK','target':target,
+            'target_text_sha256':hashlib.sha256(os.fsencode(target)).hexdigest()}
+
+
 def files(directory):
     result={}
     for path in directory.rglob('*'):
-        if path.is_symlink():raise ValueError('STAGE_SYMLINK')
+        if path.is_symlink():
+            result[path.relative_to(directory).as_posix()]=negative_fixture_link(directory,path,os.readlink(path))
+            continue
         if path.is_file() and path!=directory/'stage.json':
             with path.open('rb') as f:result[path.relative_to(directory).as_posix()]=hashlib.file_digest(f,'sha256').hexdigest()
     return result
