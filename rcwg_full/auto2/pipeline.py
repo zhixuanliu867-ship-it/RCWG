@@ -27,8 +27,9 @@ class Pipeline:
         for key in ['boot','host','build','dependencies']:identity[key]=live[key]
         return identity
 
-    def scope(self,stage,limits,ceiling):
-        file=self.root/(stage+'-'+digest(self.current_identity())+'-scope.json')
+    def scope(self,stage,limits,ceiling,*,scope_key=None):
+        suffix='-'+digest(scope_key) if scope_key is not None else ''
+        file=self.root/(stage+suffix+'-'+digest(self.current_identity())+'-scope.json')
         if file.exists():
             scope=load(file)
             self.state.validate_scope(scope,self.current_identity());return scope
@@ -78,6 +79,11 @@ class Pipeline:
         if plan is None:return self.save_once('private/executions/'+job['id']+'.json',{'status':'NOT_RUN','reason':'GENERATION_NOT_VALID','job':job})
         service=None
         if job.get('executor'):
+            if scope['stage']=='B_DEVELOPMENT':
+                bound=self.plan['development_semantic_requests_per_execution']
+                if type(bound) is not int or not 1<=bound<=8:raise PermissionError('SEMANTIC_JOB_FINITE_BOUND')
+                rates=self.plan['reservation_microusd'][job['executor']]
+                scope=self.scope('B_DEVELOPMENT',{'E':bound,'COUNT':bound},bound*(rates['E']+rates['COUNT']),scope_key=job['id'])
             counter=[0]
             def rid(request):
                 counter[0]+=1
