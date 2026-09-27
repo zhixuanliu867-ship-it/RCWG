@@ -65,7 +65,10 @@ class Pipeline:
     def generation(self,job,scope):
         file=self.root/'private/generations'/(job['id']+'.json')
         if file.exists():return load(file)
-        task=load(self.root/job['task_file']);client=self.client(job['generator'],scope)
+        raw=read(self.root/job['task_file'])
+        if sha(raw)!=job['task_file_sha256']:raise PermissionError('FROZEN_PUBLIC_TASK_CHANGED')
+        from rcwg_full.auto2.data import public_export
+        task=public_export({'task':json.loads(raw)})['task'];client=self.client(job['generator'],scope)
         result=generate(task,job,client,job['id'],request_id_factory=lambda stage:self.request_id(job['id']+':'+stage))
         return self.save_once('private/generations/'+job['id']+'.json',result)
 

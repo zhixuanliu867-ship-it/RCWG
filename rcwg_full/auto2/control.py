@@ -157,6 +157,12 @@ class TaskState:
             if used+amount>self.authority['ceiling_microusd']-cleanup or scope_used+amount>scope['ceiling_microusd']:
                 raise PermissionError('NO_AFFORDABLE_NEXT_COMPLETE_BLOCK')
             if count>=scope['limits'].get(kind,0):raise PermissionError('SCOPE_REQUEST_LIMIT')
+            stages=['A_INFRA'] if scope['stage']=='A_INFRA' else ['B_DEVELOPMENT','B_REFERENCE','B_FORMAL'] if scope['stage']!='B_INITIAL' else []
+            if stages:
+                rows=db.execute('SELECT s.body,r.amount FROM reservations r JOIN scopes s ON r.scope=s.id').fetchall()
+                used_phase=sum(value for body,value in rows if json.loads(body)['stage'] in stages)
+                allocation=self.policy['budget']['phase_a_infrastructure_allocation' if scope['stage']=='A_INFRA' else 'remaining_live_and_reference_allocation']
+                if used_phase+amount>int(allocation*1_000_000):raise PermissionError('CUMULATIVE_PHASE_ALLOCATION')
             if scope['stage']=='B_INITIAL':
                 # A new scope or boot must not reset B1's task-wide allowance.
                 rows=db.execute('SELECT r.kind,r.amount FROM reservations r JOIN scopes s ON r.scope=s.id WHERE json_extract(s.body,\'$.stage\')=\'B_INITIAL\'').fetchall()

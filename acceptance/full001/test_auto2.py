@@ -80,3 +80,8 @@ class Auto2Control(unittest.TestCase):
     def test_legacy_receipt_rejects_auto_scope(self):
         from rcwg_full.campaign.sealing import validate_receipt
         with self.assertRaises((ValueError,PermissionError,KeyError)):validate_receipt(self.scope,action='PAID_SERVICES',subject_hash=digest(self.scope),actor_role='Owner')
+    def test_new_scope_cannot_reset_infrastructure_allocation(self):
+        a=self.state.derive_scope(stage='A_INFRA',identity=self.identity,limits={'VM':1},ceiling_microusd=25000000,expires_at=self.expiry)
+        self.state.reserve(a,'vm','VM',25000000,self.identity)
+        b=self.state.derive_scope(stage='A_INFRA',identity={**self.identity,'boot':'next'},limits={'STORAGE':1},ceiling_microusd=1000000,expires_at=self.expiry)
+        with self.assertRaisesRegex(PermissionError,'PHASE_ALLOCATION'):self.state.reserve(b,'storage','STORAGE',1,b['identity'])

@@ -36,7 +36,10 @@ class RemoteExecutor:
         ident=str(uuid.uuid5(uuid.NAMESPACE_URL,'AUTO2-WORKER:'+job['id']));out=self.root/'private/worker'/ident
         pending=self.root/'private/dispatch'/(ident+'.json');pending.parent.mkdir(parents=True,exist_ok=True)
         if pending.exists():return {'status':'SENT_UNCONFIRMED','reason':'WORKER_DISPATCH_ALREADY_ATTEMPTED_NO_REPLAY','job':job,'attempt_id':ident}
-        self.identity();task=json.loads(read(self.root/job['task_file']))
+        self.identity();raw=read(self.root/job['task_file'])
+        if sha(raw)!=job['task_file_sha256']:raise PermissionError('FROZEN_PUBLIC_TASK_CHANGED')
+        task=json.loads(raw)
+        if sha(read(self.root/job['private_verifier']))!=job['private_verifier_sha256']:raise PermissionError('FROZEN_PRIVATE_GOLD_CHANGED')
         req={'source_hash':digest(source_hashes()),'task_hash':digest(task),'data_directory':job['remote_data_directory'],
              'manifest_hash':job['remote_manifest_hash'],'condition':job['condition'],'plan':plan,'attempt_id':ident,
              'output':self.remote['run_directory']+'/'+ident,'build':self.remote['build'],'generation_id':job.get('generation_id'),

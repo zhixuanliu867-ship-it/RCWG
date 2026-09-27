@@ -231,12 +231,14 @@ def build_qasper(template,base,condition,directory,bundle,question_id):
     source_hash=validate_bundle(bundle)
     q=next(q for q in bundle['public']['questions'] if q['question_id']==question_id)
     doc=deepcopy(next(d for d in bundle['public']['documents'] if d['document_id']==q['paper_id']))
+    original_doc=deepcopy(doc)
     annotation=next(a for a in bundle['private']['annotations'] if a['question_id']==question_id)
     if condition=='C1':
-        doc=canonical_document(doc['document_id'],doc['revision'],doc['title'],
+        doc=canonical_document(doc['document_id'],doc['revision']+'-auto2-neutral1',doc['title'],
             [{'section_id':s['section_id'],'heading':s['heading'],'text':s['text']} for s in doc['sections']]+
             [{'section_id':'auto2-neutral-layout-annex','heading':'Formatting annex',
               'text':'This formatting annex contains no evidence about the research question. '*80}],source_record_id=doc['source_record_id'],metadata=doc['metadata'])
+        if not doc['canonical_text'].startswith(original_doc['canonical_text']):raise ValueError('SOURCE_VIEW_PREFIX_CHANGED')
     fields={**BASE_FIELDS,'answer':'Utf8','evidence':EVIDENCE};domain='auto2-qasper';rev=doc['revision']
     instruction='Answer the original QASPER question using the supplied paper. Return one row with query_id='+q['question_id']+', paper_id='+q['paper_id']+', entity_id='+q['paper_id']+'. The answer field is a string: yes/no for a boolean question; verbatim span(s) joined with ; for extractive answers; a concise answer otherwise. Cite complete source evidence with Unicode codepoint coordinates. Question: '+q['question']
     output={'id':'result','type':'evidence','mode':'evidence_supported','domain':domain,'revision':rev,'fields':list(fields),'schema':fields}
@@ -259,13 +261,17 @@ def build_qasper(template,base,condition,directory,bundle,question_id):
         answer='unknown' if a['answer_type']=='unanswerable' else ('yes' if value else 'no') if a['answer_type']=='boolean' else ';'.join(value) if a['answer_type']=='extractive' else value
         expected={'query_id':q['question_id'],'paper_id':q['paper_id'],'entity_id':q['paper_id'],'answer':answer}
         alternatives.append({'fields':{k:{'acceptable_values':[v],'critical':True} for k,v in expected.items()},'exact_fields':True,
-            'evidence_obligations':[{'id':str(i),'acceptable_witness_sets':[[{k:v for k,v in c.items() if k!='canonical_text_sha256'}] for c in e['candidates']]} for i,e in enumerate(a['evidence'])]})
+            'evidence_obligations':[{'id':str(i),'acceptable_witness_sets':[[{**{k:v for k,v in c.items() if k!='canonical_text_sha256'},'revision':doc['revision']}] for c in e['candidates']]} for i,e in enumerate(a['evidence'])]})
     label=label_record('SOURCE_ANNOTATED',{'dataset':'QASPER','question_id':question_id,'paper_id':q['paper_id'],'bundle_hash':source_hash})
     task,manifest,path=prepare(task,{'dataset:documents':[doc],'dataset:ids':[doc['document_id']]},directory,profile='formal_candidate_v1',layout='fragmented' if condition=='C3' else 'contiguous',provenance=label)
     source_license_manifest(path,manifest,bundle['provenance'])
     private=exclusive_directory(path.parent.with_name(path.parent.name+'-private'))
     recipe={'comparison':'auto2_source_answers_v1','document':doc,'alternatives':alternatives,'label_provenance':label}
     write(private/'private_verifier_recipe.json',recipe);write(private/'source_annotation.json',annotation)
+    write(private/'source_view_mapping.json',{'source_revision':original_doc['revision'],'view_revision':doc['revision'],
+        'source_text_hash':sha(original_doc['canonical_text'].encode('utf8')),'view_text_hash':sha(doc['canonical_text'].encode('utf8')),
+        'codepoint_mapping':'IDENTITY_ON_ORIGINAL_PREFIX','source_codepoints':len(original_doc['canonical_text']),
+        'append_only_controlled_neutral_annex':condition=='C1','original_answer_annotations_changed':False})
     proof=FullCompiler().compile(task,plan)
     if proof['status']!='IR_VALIDATED':raise ValueError('SOURCE_REFERENCE_INVALID:'+str(proof['diagnostics']))
     write(path.parent/'reference_plan.json',plan);write(path.parent/'representation_proof.json',proof)
