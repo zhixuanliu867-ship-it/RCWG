@@ -89,3 +89,11 @@ class Auto2Services(unittest.TestCase):
             return client.call(request,'G',input_measurement=measurement)['status']
         with ThreadPoolExecutor(max_workers=4) as pool:statuses=list(pool.map(node,range(4)))
         self.assertEqual(statuses,['COMPLETED']*4);self.assertEqual(observed['peak'],1)
+    def test_token_near_expiry_is_refreshed_by_existing_credential_owner(self):
+        from rcwg_full.auto2.services import ExistingWindowsIdentity
+        owner=ExistingWindowsIdentity.__new__(ExistingWindowsIdentity)
+        owner.binding={};owner.audit=[];owner.cached='old-token-near-expiry';owner.at=0
+        tokens=iter([b'valid-near-expiry-token-12345',b'refreshed-provider-token-67890'])
+        owner.sdk_call=lambda *args:(next(tokens),{})
+        self.assertEqual(owner(),'valid-near-expiry-token-12345')
+        self.assertEqual(owner(),'refreshed-provider-token-67890')

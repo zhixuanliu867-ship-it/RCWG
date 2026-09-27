@@ -94,7 +94,9 @@ class ExistingWindowsIdentity:
             if sha(read(binding[pathkey]))!=binding[hashkey]:raise PermissionError('EXISTING_AUTH_SOURCE_CHANGED')
         self.identity=auth_preflight(binding,self.audit)
     def __call__(self):
-        if self.cached and time.monotonic()-self.at<1800:return self.cached
+        # gcloud owns the refresh token and knows the access token's expiry.
+        # Its printed token may already be near expiry: starting a new local
+        # 30-minute TTL here incorrectly extends the credential's lifetime.
         raw,_=self.sdk_call(self.binding,['auth','print-access-token'],self.audit,True)
         token=raw.decode('ascii').strip()
         if not 20<=len(token)<=8192 or re.search(r'\s',token):raise PermissionError('AUTH_TOKEN_INVALID')
