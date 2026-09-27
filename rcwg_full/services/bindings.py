@@ -12,7 +12,7 @@ FIELDS = {'slot','role','provider','endpoint','api_version','requested_model','r
           'valid_from','valid_until','decoding','idempotency','template_hash'}
 
 
-def validate_binding(value, *, live=False, now=None):
+def validate_binding(value, *, live=False, now=None, require_reported_revision=True):
     if type(value) is not dict or set(value)!=FIELDS:raise ValueError('SERVICE_BINDING_FIELDS')
     b=deepcopy(value);slot=b['slot']
     if slot not in SLOTS or b['role']!=('GENERATOR' if slot.startswith('G') else 'EXECUTOR'):raise ValueError('SERVICE_SLOT_ROLE')
@@ -39,7 +39,7 @@ def validate_binding(value, *, live=False, now=None):
     # Provider key support is registered as data, but no header is invented here.
     if b['idempotency']=='REGISTERED_PROVIDER_KEY':raise ValueError('IDEMPOTENCY_ADAPTER_NOT_REGISTERED')
     if live:
-        if not b['reported_revision'] or not b['data_policy'] or b['count_method']=='UNKNOWN' or not b['tokenizer']:
+        if (require_reported_revision and not b['reported_revision']) or not b['data_policy'] or b['count_method']=='UNKNOWN' or not b['tokenizer']:
             raise PermissionError('SERVICE_NOT_FROZEN')
         if any(v=='UNKNOWN' for v in caps.values()):raise PermissionError('SERVICE_CAPABILITY_UNKNOWN')
         price=b['price_snapshot']

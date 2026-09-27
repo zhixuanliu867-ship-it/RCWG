@@ -6,6 +6,12 @@ from .compare import check_output
 
 def check_prepared(actual,path):
     recipe=json.loads(read(path))
+    if recipe['comparison']=='auto2_source_set_v1':
+        from rcwg_full.auto2.data import check_source_set
+        return check_source_set(actual,recipe)
+    if recipe['comparison']=='auto2_source_answers_v1':
+        from rcwg_full.auto2.data import check_source_answers
+        return check_source_answers(actual,recipe)
     if recipe['comparison'] in {'source_document_semantics_v1','source_mixed_semantics_v1'}:
         if recipe['comparison']=='source_document_semantics_v1':
             from .document_oracle import verify_document_result as verify

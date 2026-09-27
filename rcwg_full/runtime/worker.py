@@ -23,7 +23,7 @@ async def execute(request,build,output):
     result['measurement_profile']=request.get('measurement_profile',{'host_calibrated':False})
     store=None;scheduler=None
     try:
-        if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
+        if request['mode'] not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','LIVE_DEVELOPMENT','FORMAL'}:raise ExecutionFault('RUNNER_MODE_NOT_ADMITTED','facility')
         if sha(read(request['data_manifest']))!=request['data_manifest_sha256']:raise ExecutionFault('DATA_MANIFEST_CHANGED','facility')
         native=Native(build,request.get('native_mode','performance'));catalog=DataCatalog(request['data_manifest']).bind(request['task'])
         report=FullCompiler().compile(request['task'],request['plan'],frozen_binding=request.get('frozen_binding'),stage=request.get('stage','primary_execution'));write(out/'compiler.json',report)
@@ -34,7 +34,7 @@ async def execute(request,build,output):
         if request.get('semantic_connection'):
             from rcwg_full.services.broker import RemoteSemantic
             semantic=RemoteSemantic(request['semantic_connection'])
-            if (request['mode']=='FORMAL')!=(semantic.mode=='LIVE'):raise ExecutionFault('SEMANTIC_MODE_BINDING','facility')
+            if (request['mode'] in {'FORMAL','LIVE_DEVELOPMENT'})!=(semantic.mode=='LIVE'):raise ExecutionFault('SEMANTIC_MODE_BINDING','facility')
             result['paid_calls']=None if semantic.mode=='LIVE' else 0
         if request.get('semantic_replay'):
             if request['mode']!='ENGINEERING_REPLAY':raise ExecutionFault('REPLAY_MODE_FORBIDDEN','facility')

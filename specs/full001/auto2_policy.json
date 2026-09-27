@@ -1,0 +1,194 @@
+{
+  "policy_id": "RCWG-FULL-001-AUTO2",
+  "version": "1.0.0",
+  "created_on": "2026-09-27",
+  "artifact_kind": "IMPLEMENTATION_POLICY_NOT_A_RUN_RECEIPT",
+  "software_baseline": {
+    "repository": "zhixuanliu867-ship-it/RCWG",
+    "head": "fa7a020b0e7692ca7a83f5ccc7e0f421a59c7429",
+    "tree": "73f0ac8192ffe41dd45d0f0053d0c2a9ad51d018",
+    "source_closure_sha256": "a23b5c1ff242f36208ff5b4cb9486dcfac55f0337057f8bded20dbb8f39ea0f1"
+  },
+  "authority": {
+    "basis": "CURRENT_EXPLICIT_USER_REQUEST",
+    "kind": "USER_TASK_DELEGATION",
+    "scope_generator": "CODEX",
+    "per_module_human_reapproval": false,
+    "auto_derive_finite_scopes": true,
+    "preserve_legacy_receipts": true,
+    "legacy_profile_unchanged": true,
+    "new_profile_required": true,
+    "do_not_fabricate_manual_signature": true,
+    "merge_or_force_push_authorized": false
+  },
+  "phases": [
+    "A_PREPARATION",
+    "B_LIVE_TESTING"
+  ],
+  "auto_transition": {
+    "from": "PREP_READY_FOR_LIVE",
+    "to": "LIVE_RUNNING",
+    "human_confirmation_required": false,
+    "on_gate_failure": "REPAIR_AND_RETEST_OR_PAUSE_WITH_EVIDENCE",
+    "next_action": "ACTUAL_PROVIDER_REQUEST",
+    "must_not_stop_at_dry_run": true
+  },
+  "budget": {
+    "currency": "USD",
+    "planning_ceiling": 100,
+    "basis": "CONSERVATIVE_LOWER_END_OF_PREVIOUS_100_TO_200_RANGE",
+    "lower_existing_limit_wins": true,
+    "reset_on_resume": false,
+    "subtract_existing_spend_and_open_reservations": true,
+    "phase_a_infrastructure_allocation": 25,
+    "initial_live_api_allocation": 15,
+    "remaining_live_and_reference_allocation": 50,
+    "cleanup_and_billing_lag_reserve": 10,
+    "alerts_are_not_enforcement": true,
+    "automatic_increase_to_200": false,
+    "reservation_before_action": true,
+    "unknown_send_releases_reservation": false
+  },
+  "infrastructure": {
+    "existing_research_project_only": true,
+    "primary_provider": "EXISTING_GCP_PROJECT",
+    "actual_project_id": "RESOLVE_FROM_EXISTING_VERIFIED_CONFIGURATION",
+    "max_new_vms_simultaneously": 1,
+    "max_vcpu": 16,
+    "max_ram_gib": 64,
+    "max_managed_disk_gib": 200,
+    "gpu_count": 0,
+    "resource_lease_hours": 24,
+    "idle_stop_minutes": 15,
+    "only_owned_scope_fault_injection": true,
+    "target_profile_must_not_be_silently_reduced": true,
+    "history_n4_slots": 888,
+    "history_n4_plan_mutable": false
+  },
+  "data": {
+    "profile": "RCWG_DATA_AUTO2_1",
+    "main_gold_classes": [
+      "SOURCE_ANNOTATED",
+      "PROGRAM_DERIVED",
+      "CONTROLLED_TEXT_GRAPH"
+    ],
+    "human_review_required_for_these_classes": false,
+    "unresolved_semantic_cases": "UNREVIEWED_EXTENSION",
+    "report_natural_and_controlled_panels_separately": true,
+    "split_before_deriving": true,
+    "unknown_is_not_negative": true,
+    "source_response_is_not_gold": true,
+    "source_priority": [
+      "VERIFIED_EXISTING_LOCAL_SNAPSHOTS",
+      "AUTHOR_RELEASES",
+      "AUTHOR_HUGGING_FACE_DATASETS",
+      "LICENSED_ALTERNATIVES_WITH_FROZEN_PROVENANCE"
+    ]
+  },
+  "research_design": {
+    "generators": 6,
+    "semantic_executors": [
+      "E0",
+      "E1"
+    ],
+    "operators": 32,
+    "implementation_branches": 56,
+    "families": 6,
+    "templates": 72,
+    "base_instances_per_template": 5,
+    "conditions": [
+      "C0",
+      "C1",
+      "C2",
+      "C3"
+    ],
+    "development_conditions": 480,
+    "test_conditions": 960,
+    "protocols": [
+      "P0",
+      "P1"
+    ],
+    "trial_labels": [
+      17,
+      29
+    ],
+    "main_generation_slots": 23040,
+    "main_execution_slots": 61440,
+    "historical_total_planned_slots": 150880,
+    "full_campaign_must_not_be_silently_shrunk": true
+  },
+  "generation": {
+    "max_input_tokens": 12288,
+    "p0_max_output_tokens": 16384,
+    "p1_logical_max_output_tokens": 4096,
+    "p1_physical_max_output_tokens": 12288,
+    "max_final_json_bytes": 65536,
+    "api_seed_if_unsupported": "TRIAL_LABEL_ONLY",
+    "g_slots_must_be_distinct_model_identities": true,
+    "real_response_only_fields_are_phase_b": true
+  },
+  "initial_live": {
+    "max_g_requests": 24,
+    "max_e_requests": 4,
+    "max_count_requests": 28,
+    "max_total_requests": 56,
+    "provider_retries": 0,
+    "concurrency": 1,
+    "g_capability_discovery_max": 6,
+    "g_p0_requests_if_all_six": 6,
+    "g_p1_physical_requests_if_all_six": 12,
+    "cost_subcap_usd": 15,
+    "not_a_new_total_budget": true
+  },
+  "development_live": {
+    "default_families": 6,
+    "conditions": [
+      "C0",
+      "C2"
+    ],
+    "bases_per_family": 1,
+    "protocols": [
+      "P0",
+      "P1"
+    ],
+    "trial_labels": [
+      17
+    ],
+    "generation_slots_if_all_six": 144,
+    "g_http_requests_if_p1_both_stages": 216,
+    "execution_slots_if_all_six": 384,
+    "fallback_before_outcomes": "C0_ONLY_THEN_FROZEN_COMPLETE_COMPARISON_BLOCKS",
+    "full_matrix_replaced_by_development": false
+  },
+  "formal": {
+    "human_launch_reapproval_required": false,
+    "requires_actual_technical_evidence": true,
+    "requires_frozen_test_data": true,
+    "requires_consistent_calibrated_context": true,
+    "requires_full_registered_model_coverage": true,
+    "requires_reference_coverage_report": true,
+    "requires_affordable_reserved_block": true,
+    "partial_results_must_be_labelled": true,
+    "a_new_freeze_manifest_required": true,
+    "replay_or_mock_allowed_as_measured_results": false
+  },
+  "external_pause_reasons": [
+    "AUTHENTICATION_OR_MFA_REQUIRES_OWNER",
+    "PLATFORM_PERMISSION_UNAVAILABLE",
+    "CONTRACT_OR_SUBSCRIPTION_REQUIRES_OWNER",
+    "NO_AFFORDABLE_NEXT_COMPLETE_BLOCK",
+    "DATA_RIGHTS_UNRESOLVED_WITHOUT_VALID_ALTERNATIVE",
+    "USER_STOP"
+  ],
+  "deliverables": [
+    "PREPARATION_REPORT.md",
+    "LIVE_TEST_REPORT.md",
+    "RUN_STATE.json",
+    "ROOT_DELEGATION_RECORD.json",
+    "EXECUTION_SCOPES.jsonl",
+    "DATA_MODEL_RUNTIME_LOCKS",
+    "EXPECTED_AND_ACTUAL_LEDGER",
+    "PRIVATE_EVIDENCE_AND_PUBLIC_SUMMARY",
+    "RESOURCE_CLEANUP_REPORT"
+  ]
+}

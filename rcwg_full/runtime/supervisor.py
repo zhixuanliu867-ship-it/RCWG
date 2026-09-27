@@ -32,9 +32,10 @@ def context_for(task,catalog,build,*,condition_id='C0',mode='ENGINEERING_NATIVE'
 def execute(task,plan,data_manifest,*,build,output,mode='ENGINEERING_NATIVE',condition_id='C0',verify=None,cancel=None,driver=None,timeout_s=None,semantic_replay=None,execution_profile=None,semantic_service=None,admission=None,frozen_binding=None,record_role='MODEL',repeat_role='PRIMARY_REPEAT',generation_id=None,repeat_id='r1',stage='primary_execution',engineering_output_limit_bytes=None):
     if stage not in {'primary_execution','generation_probe'}:raise ValueError('STAGE_INVALID')
     if stage=='generation_probe' and frozen_binding is not None:raise ValueError('FROZEN_STAGE_BINDING')
-    if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','FORMAL'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
+    if mode not in {'ENGINEERING_NATIVE','ENGINEERING_REPLAY','LIVE_DEVELOPMENT','FORMAL'}:raise ValueError('MODE_REQUIRES_SEPARATE_ADMISSION')
     if mode=='FORMAL' and (not admission or admission.get('status')!='ADMITTED' or driver is None or not getattr(driver,'full001_authorization',None)):raise PermissionError('FORMAL_ADMISSION_REQUIRED')
-    if semantic_service is not None and ((mode=='FORMAL')!=(semantic_service.mode=='LIVE')):raise ValueError('SERVICE_MODE_BINDING')
+    if semantic_service is not None and ((mode in {'FORMAL','LIVE_DEVELOPMENT'})!=(semantic_service.mode=='LIVE')):raise ValueError('SERVICE_MODE_BINDING')
+    if mode=='LIVE_DEVELOPMENT' and (admission is not None or frozen_binding is not None):raise PermissionError('DEVELOPMENT_CANNOT_INHERIT_FORMAL_FREEZE')
     if semantic_service is not None and semantic_replay is not None:raise ValueError('MULTIPLE_SEMANTIC_SERVICES')
     if semantic_replay is not None and mode!='ENGINEERING_REPLAY':raise ValueError('REPLAY_MODE_FORBIDDEN')
     if engineering_output_limit_bytes is not None and (mode=='FORMAL' or driver is not None):raise ValueError('OUTPUT_LIMIT_OVERRIDE_FORBIDDEN')

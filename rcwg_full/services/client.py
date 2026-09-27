@@ -91,6 +91,14 @@ class ServiceClient:
         self.budget=budget;self.index=index;self.mode=mode;self.scope_hash=scope_hash;self.receipt=receipt
         if getattr(transport,'mode',None)!=mode:raise ValueError('TRANSPORT_MODE_MISMATCH')
 
+    def authorize_live(self):
+        validate_receipt(self.receipt,action='PAID_SERVICES',subject_hash=self.scope_hash,actor_role='Owner')
+        if self.budget.manifest_hash!=self.scope_hash:raise PermissionError('BUDGET_SCOPE_BINDING')
+        validate_binding(self.binding,live=True)
+
+    def revision_drift(self,returned):
+        return returned!=self.binding['reported_revision']
+
     def call(self,request,kind,*,input_measurement=None):
         with self.index.operation():return self._call(request,kind,input_measurement=input_measurement)
 
@@ -108,9 +116,7 @@ class ServiceClient:
             self.index.record(rid,status,result);return result
         try:
             if self.mode=='LIVE':
-                validate_receipt(self.receipt,action='PAID_SERVICES',subject_hash=self.scope_hash,actor_role='Owner')
-                if self.budget.manifest_hash!=self.scope_hash:raise PermissionError('BUDGET_SCOPE_BINDING')
-                validate_binding(self.binding,live=True)
+                self.authorize_live()
             if kind!='COUNT':
                 m=input_measurement or {}
                 if (m.get('body_hash')!=request['body_hash'] or m.get('tokenizer')!=self.binding['tokenizer'] or
@@ -140,7 +146,7 @@ class ServiceClient:
                 parsed=parse_generation(response,{'pricing':prices or {'input_usd_per_million':'0','output_usd_per_million':'0'}})
                 if prices is None:parsed['usage']['cost_usd_list_price_upper_estimate']=None
                 status='COMPLETED' if parsed['status']=='PROVIDER_TEXT_READY' else 'MODEL_FAILURE'
-                if self.mode=='LIVE' and parsed['reported_model_version']!=self.binding['reported_revision']:status='SERVICE_DRIFT'
+                if self.mode=='LIVE' and self.revision_drift(parsed['reported_model_version']):status='SERVICE_DRIFT'
         except ApiError as exc:
             # A malformed provider envelope or HTTP error is not a bad WorkIR.
             # WorkIR parse failures are classified only after valid text delivery.
@@ -167,7 +173,7 @@ class ServiceClient:
                 **({'count_request_id':count_request_id} if count_request_id else {})},None
 
 
-def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None):
+def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,request_id_factory=None):
     protocol=slot['protocol'];stages=['physical'] if protocol=='P0' else ['logical','physical']
     if protocol not in {'P0','P1'}:raise ValueError('GENERATION_PROTOCOL')
     records=[];logical=None;plan=None;status='COMPLETED'
@@ -182,7 +188,7 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None):
     for stage in stages:
         if status!='COMPLETED':records.append({'stage':stage,'status':'NOT_RUN','request_id':None});continue
         request=assemble(task,client.binding,protocol=protocol,stage=stage,attempt_id=attempt_id,
-                         request_id=str(uuid.uuid4()),trial_label=slot['trial_label'],logical=logical,guidance=guidance)
+                         request_id=request_id_factory(stage) if request_id_factory else str(uuid.uuid4()),trial_label=slot['trial_label'],logical=logical,guidance=guidance)
         measurement=None
         try:
             measurement,failure=client.measure(request,local_counter=local_counter)
@@ -211,9 +217,10 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None):
 
 class FixedSemanticService:
     """The runner binds E0/E1. WorkIR never supplies a model or decoding setting."""
-    def __init__(self,client,template,*,local_counter=None):
+    def __init__(self,client,template,*,local_counter=None,request_id_factory=None):
         if client.binding['slot'] not in {'E0','E1'} or digest(template)!=client.binding['template_hash']:raise ValueError('EXECUTOR_TEMPLATE_BINDING')
         self.client=client;self.template=template;self.local_counter=local_counter
+        self.request_id_factory=request_id_factory
         self.service_id=client.binding['slot'];self.mode=client.mode
 
     async def extract(self,request):
@@ -226,7 +233,7 @@ class FixedSemanticService:
               'generationConfig':{'candidateCount':1,'maxOutputTokens':self.client.binding['max_output_tokens'],'responseMimeType':'application/json'}}
         for key,wire in [('temperature','temperature'),('top_k','topK'),('thinking','thinkingConfig')]:
             if self.client.binding['decoding'].get(key) is not None:body['generationConfig'][wire]=self.client.binding['decoding'][key]
-        assembled={'request_id':str(uuid.uuid4()),'body':body,'body_hash':digest(body),'binding_hash':digest(self.client.binding),'max_input_tokens':12288,'kind':'E'}
+        assembled={'request_id':self.request_id_factory(request) if self.request_id_factory else str(uuid.uuid4()),'body':body,'body_hash':digest(body),'binding_hash':digest(self.client.binding),'max_input_tokens':12288,'kind':'E'}
         # HTTP waits run outside the event-loop and hold no CPU kernel slot.
         measurement,failure=self.client.measure(assembled,local_counter=self.local_counter)
         response=failure or self.client.call(assembled,'E',input_measurement=measurement)
