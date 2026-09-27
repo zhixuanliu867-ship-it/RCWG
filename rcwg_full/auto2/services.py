@@ -7,6 +7,7 @@ import json
 import re
 import ssl
 import time
+import threading
 import urllib.request
 import uuid
 from urllib.parse import urlsplit
@@ -15,6 +16,8 @@ from rcwg_full.services.bindings import validate_binding,account_hash
 from rcwg_full.services.client import ServiceClient
 from rcwg_full.services.transport import ExistingVertexTransport
 from rcwg_api.vertex import NoRedirect
+
+_PROVIDER_ADMISSION=threading.RLock()
 
 
 def validate_requested(binding):
@@ -37,6 +40,12 @@ class ScopeBudget:
 
 
 class DelegatedClient(ServiceClient):
+    def call(self,request,kind,*,input_measurement=None):
+        # The legacy semantic worker may schedule four node RPCs. AUTO2's
+        # task-wide provider limit remains one, including COUNT and other slots.
+        with _PROVIDER_ADMISSION:
+            return super().call(request,kind,input_measurement=input_measurement)
+
     def __init__(self,binding,transport,budget,index):
         self.binding=validate_requested(binding);self.transport=transport;self.budget=budget
         self.index=index;self.mode='LIVE';self.scope_hash=budget.manifest_hash;self.receipt=None

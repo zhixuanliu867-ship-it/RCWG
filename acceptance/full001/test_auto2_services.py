@@ -69,3 +69,23 @@ class Auto2Services(unittest.TestCase):
     def test_mock_mode_is_rejected_before_any_call(self):
         client,wire=self.client([]);wire.mode='ENGINEERING_REPLAY'
         with self.assertRaisesRegex(ValueError,'ACTUAL_PROVIDER'):DelegatedClient(client.binding,wire,client.budget,client.index)
+    def test_parallel_semantic_nodes_never_overlap_provider_requests(self):
+        import threading,time
+        from concurrent.futures import ThreadPoolExecutor
+        client,wire=self.client([('r1','{}')]*4)
+        original=wire.send;guard=threading.Lock();observed={'active':0,'peak':0}
+        def measured(*args,**kwargs):
+            with guard:
+                observed['active']+=1;observed['peak']=max(observed['peak'],observed['active'])
+            try:
+                time.sleep(.01)
+                return original(*args,**kwargs)
+            finally:
+                with guard:observed['active']-=1
+        wire.send=measured
+        def node(_):
+            request=self.request(client);measurement,failure=client.measure(request)
+            self.assertIsNone(failure)
+            return client.call(request,'G',input_measurement=measurement)['status']
+        with ThreadPoolExecutor(max_workers=4) as pool:statuses=list(pool.map(node,range(4)))
+        self.assertEqual(statuses,['COMPLETED']*4);self.assertEqual(observed['peak'],1)

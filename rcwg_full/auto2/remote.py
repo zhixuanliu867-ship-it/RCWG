@@ -11,7 +11,8 @@ class RemoteExecutor:
     def __init__(self,root):
         self.root=Path(root).absolute();self.config=json.loads(read(self.root/'RUN_CONFIG.json'));self.remote=self.config['remote']
         self.target=self.remote['user']+'@127.0.0.1'
-        self.common=['-batch','-P',str(self.remote['port']),'-hostkey',self.remote['host_key'],'-i',self.remote['key_reference']]
+        session=['-load',self.remote['ssh_session']] if self.remote.get('ssh_session') else []
+        self.common=[*session,'-batch','-P',str(self.remote['port']),'-hostkey',self.remote['host_key'],'-i',self.remote['key_reference']]
         self.cached=None;self.cached_at=0
 
     def ssh(self,command,*,reverse=None,timeout=120):
