@@ -63,6 +63,14 @@ class Pipeline:
         if path.exists():return load(path)
         write(path,value);return value
 
+    def require_resolved_facility(self,record,job_id):
+        status=record.get('status')
+        if status in {'INFRA_FAILURE','SENT_UNCONFIRMED','UNKNOWN','SERVICE_DRIFT','NOT_AUTHORIZED'}:
+            self.state.transition('PAUSED_EXTERNAL',{'job_id':job_id,'status':status,
+                'record_sha256':digest(record),'reason':'ACTUAL_FACILITY_REQUIRES_RECONCILIATION',
+                'provider_retry_permitted':False})
+            raise PermissionError('ACTUAL_FACILITY_REQUIRES_RECONCILIATION:'+job_id+':'+str(status))
+
     def generation(self,job,scope):
         file=self.root/'private/generations'/(job['id']+'.json')
         if file.exists():return load(file)
@@ -115,13 +123,24 @@ class Pipeline:
         for slot in ['G1','G2','G3','G4','G5']:capabilities[slot]=self.capability(slot,initial)
         self.save_once('CAPABILITIES.json',capabilities)
         self.available=[s for s,r in capabilities.items() if r['status'] in {'COMPLETED','MODEL_FAILURE'} and r.get('http_status')==200]
+        for slot,record in capabilities.items():
+            # A resolved model-specific HTTP refusal may reduce coverage. An
+            # uncertain send or local authorization failure cannot be retried.
+            if record.get('status') in {'SENT_UNCONFIRMED','UNKNOWN','SERVICE_DRIFT','NOT_AUTHORIZED'}:
+                self.require_resolved_facility(record,'capability:'+slot)
+        if not self.available:
+            self.require_resolved_facility({'status':'INFRA_FAILURE','reason':'NO_AVAILABLE_GENERATOR'},'capabilities')
         for job in self.plan['initial_generations']:
             if job['generator'] in self.available:
                 generated=self.generation(job,initial)
-                for execution in job['executions']:self.execution(execution,generated['plan'] if generated['status']=='COMPLETED' else None,initial)
+                self.require_resolved_facility(generated,job['id'])
+                for execution in job['executions']:
+                    outcome=self.execution(execution,generated['plan'] if generated['status']=='COMPLETED' else None,initial)
+                    self.require_resolved_facility(outcome,execution['id'])
             else:self.save_once('private/generations/'+job['id']+'.json',{'status':'NOT_RUN','reason':'MODEL_FACILITY_UNAVAILABLE','plan':None})
         for job in self.plan['initial_semantic_references']:
-            self.execution(job,load(self.root/job['reference_plan_file']),initial,reference=True)
+            outcome=self.execution(job,load(self.root/job['reference_plan_file']),initial,reference=True)
+            self.require_resolved_facility(outcome,job['id'])
         # Selection was frozen from bounds before seeing any model outcomes.
         for block in self.plan['development_blocks']:
             block_file=self.root/'private/blocks'/(block['id']+'.json')
@@ -133,7 +152,10 @@ class Pipeline:
                 if job['generator'] not in self.available:
                     self.save_once('private/generations/'+job['id']+'.json',{'status':'NOT_RUN','reason':'MODEL_FACILITY_UNAVAILABLE','plan':None});continue
                 generated=self.generation(job,scope)
-                for execution in job['executions']:self.execution(execution,generated['plan'] if generated['status']=='COMPLETED' else None,scope)
+                self.require_resolved_facility(generated,job['id'])
+                for execution in job['executions']:
+                    outcome=self.execution(execution,generated['plan'] if generated['status']=='COMPLETED' else None,scope)
+                    self.require_resolved_facility(outcome,execution['id'])
             self.save_once('private/blocks/'+block['id']+'.json',{'status':'ATTEMPTS_RECORDED','block_id':block['id']})
         from .formal import continue_references_and_formal
         self.save_once('FORMAL_GATE_RESULT.json',continue_references_and_formal(self))
