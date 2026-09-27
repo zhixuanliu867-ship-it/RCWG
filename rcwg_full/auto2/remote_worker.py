@@ -21,9 +21,17 @@ def run(request):
         scope=json.loads(read(request['host_scope']));authority=json.loads(read(request['authority']))
         if digest(scope)!=request['host_scope_hash']:raise PermissionError('HOST_SCOPE_CHANGED')
         driver=delegated_driver(scope,authority,task,request['build'],request['attempt_id'])
-    report=execute(task,request['plan'],manifest,build=request['build'],output=request['output'],mode='LIVE_DEVELOPMENT',
+    mode=request.get('mode','LIVE_DEVELOPMENT')
+    if mode not in {'LIVE_DEVELOPMENT','FORMAL'}:raise PermissionError('REMOTE_MODE')
+    if mode=='FORMAL' and (driver is None or not driver.calibration or scope.get('stage') not in {'B_REFERENCE','B_FORMAL'}
+                          or request.get('admission',{}).get('profile') not in {'AUTO2','AUTO2_REFERENCE'}):
+        raise PermissionError('REMOTE_FORMAL_EVIDENCE_REQUIRED')
+    if mode=='FORMAL' and request['admission']['profile']!=('AUTO2_REFERENCE' if scope['stage']=='B_REFERENCE' else 'AUTO2'):
+        raise PermissionError('REMOTE_FORMAL_STAGE_BINDING')
+    report=execute(task,request['plan'],manifest,build=request['build'],output=request['output'],mode=mode,
         condition_id=request['condition'],driver=driver,semantic_service=service,verify=None,
-        record_role=request.get('record_role','MODEL'),generation_id=request.get('generation_id'))
+        record_role=request.get('record_role','MODEL'),generation_id=request.get('generation_id'),
+        admission=request.get('admission'),frozen_binding=request.get('frozen_binding'))
     # This process cannot read gold. The controller verifies result.json afterward.
     return {'terminal_status':report['terminal_status'],'output':request['output'],'report_hash':sha(read(Path(request['output'])/'report.json'))}
 

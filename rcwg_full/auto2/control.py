@@ -246,3 +246,12 @@ def formal_gate(evidence,identity,*,scope,state):
     state.validate_scope(scope,identity)
     if not state.affordable(scope['ceiling_microusd']):raise PermissionError('NO_AFFORDABLE_NEXT_COMPLETE_BLOCK')
     return {'status':'ADMITTED','profile':'AUTO2','new_freeze_hash':digest(checked),'manual_signature':False}
+
+
+def reference_gate(evidence,identity,*,scope,state):
+    preparation_gate(evidence,identity,'FORMAL_RESOURCE')
+    checked={key:verify_evidence(evidence[key],identity) for key in ['frozen_data','analysis_freeze']}
+    if checked['frozen_data'].get('test_conditions')!=960:raise PermissionError('TEST_DATA_NOT_COMPLETE')
+    if scope['stage']!='B_REFERENCE':raise PermissionError('REFERENCE_SCOPE_REQUIRED')
+    state.validate_scope(scope,identity)
+    return {'status':'ADMITTED','profile':'AUTO2_REFERENCE','new_freeze_hash':digest(checked),'manual_signature':False}

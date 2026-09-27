@@ -1,5 +1,21 @@
 # RCWG project state — 2026-09-18
 
+## 2026-09-27 AUTO2 continuation in progress
+
+The current user explicitly delegates preparation and bounded real cloud work
+through the new AUTO2 profile. Historical receipts and policies below are
+preserved. The current cumulative ceiling is USD100, including historical
+holds, with no automatic increase. PR #9 remains draft.
+
+The AUTO2 controller, separate host claims, label provenance, live transition,
+per-job service bounds and conditional calibration/reference/formal adapters
+are implemented. Forty-seven additional offline regression tests pass. The
+final source requires complete Linux acceptance before any model inference;
+partial and failed earlier runs remain preserved and do not count as passes.
+The task-owned cloud executor and original-scale dataset preparation are real
+operations, not mock evidence. Two private reports will record actual final
+preparation and live outcomes, budgets, identities and cleanup.
+
 Ticket: **RCWG-BOOT-001**
 
 Repository: `zhixuanliu867-ship-it/RCWG`

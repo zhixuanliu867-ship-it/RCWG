@@ -46,7 +46,11 @@ def delegated_driver(scope,authority,task,build,attempt_id,*,fs_factory=None,ide
         affinity=affinity,threads=r['cpu_slots'],timeout_s=r['wall_timeout_s']);limits.validate()
     root=Path(scope['delegated_root'])
     fs=(fs_factory or LinuxFS)(root,approval={'approved':True,'delegated_root':str(root),'permission':'NATIVE001_N4_PER_RUN_CGROUP'})
-    driver=FullDriver(fs,claim.run_id,limits);driver.claim=claim;driver.calibration=None
+    calibration=scope.get('calibration_package')
+    if calibration:
+        from .calibration import validate_auto2_calibration
+        validate_auto2_calibration(calibration,scope['runtime_identity'],authority_hash=digest(authority))
+    driver=FullDriver(fs,claim.run_id,limits);driver.claim=claim;driver.calibration=calibration
     driver.full001_authorization={**claim.binding,'pids_max':scope['pids_max'],'output_file_max_bytes':scope['output_file_max_bytes'],
                                  'per_run_total_output_bytes':scope['per_run_total_output_bytes']}
     return driver

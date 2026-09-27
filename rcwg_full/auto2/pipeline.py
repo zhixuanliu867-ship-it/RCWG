@@ -89,7 +89,12 @@ class Pipeline:
                 counter[0]+=1
                 return self.request_id(job['id']+':E:'+str(counter[0])+':'+digest(request))
             service=FixedSemanticService(self.client(job['executor'],scope),self.models['executor_template'],request_id_factory=rid)
+        host_request=None
+        if scope['stage'] in {'B_REFERENCE','B_FORMAL'}:
+            host_request=self.request_id('host:'+job['id'])
+            self.state.reserve(scope,host_request,'HOST',0,self.current_identity())
         result=self.executor.execute(job,plan,service,reference=reference)
+        if host_request:self.state.observe(host_request,result['status'],{'result_sha256':digest(result)})
         return self.save_once('private/executions/'+job['id']+'.json',result)
 
     def run(self):
@@ -130,9 +135,8 @@ class Pipeline:
                 generated=self.generation(job,scope)
                 for execution in job['executions']:self.execution(execution,generated['plan'] if generated['status']=='COMPLETED' else None,scope)
             self.save_once('private/blocks/'+block['id']+'.json',{'status':'ATTEMPTS_RECORDED','block_id':block['id']})
-        self.save_once('FORMAL_GATE_RESULT.json',self.executor.formal_readiness(self.available))
-        # Exact formal dispatch is a separate versioned block and cannot be
-        # inferred merely from successful development or HTTP responses.
+        from .formal import continue_references_and_formal
+        self.save_once('FORMAL_GATE_RESULT.json',continue_references_and_formal(self))
         final=self.state.summary()
         if final['state']=='LIVE_RUNNING':self.state.transition('RESULTS_SEALED',{'available_generators':self.available,'formal':load(self.root/'FORMAL_GATE_RESULT.json')})
         return self.state.summary()

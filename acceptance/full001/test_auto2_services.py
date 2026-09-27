@@ -14,12 +14,13 @@ from test_services import binding
 
 class Auto2Services(unittest.TestCase):
     setUp=test_auto2.Auto2Control.setUp
-    def client(self,responses):
+    def client(self,responses,slot='G0'):
         b=binding();b.update(reported_revision=None,count_method='PROVIDER_COUNT',data_policy={'fixture_only':True},
             valid_from=(datetime.now(timezone.utc)-timedelta(minutes=1)).isoformat(),valid_until=self.expiry,
             price_snapshot={'as_of':'fixture','source':'offline-fixture','input_usd_per_million':'0.1','output_usd_per_million':'0.4',
              'evidence_sha256':'c'*64,'billing_policy':{'revision':'FULL001_BILLING_BOUND_1','rates_are_upper_bounds':True,
                'output_cap_includes_thinking':True,'count_request_microusd_upper':0}})
+        if slot=='E0':b.update(slot=slot,role='EXECUTOR',template_hash=digest({'revision':'offline-semantic-fixture'}))
         models={'bindings':[b]};write(self.root/'MODEL_LOCK.json',models);self.identity['models']=digest(models)
         scope=self.state.derive_scope(stage='B_INITIAL',identity=self.identity,limits={'G':24,'E':4,'COUNT':28},ceiling_microusd=15_000_000,expires_at=self.expiry)
         class WireFixture:
@@ -97,3 +98,23 @@ class Auto2Services(unittest.TestCase):
         owner.sdk_call=lambda *args:(next(tokens),{})
         self.assertEqual(owner(),'valid-near-expiry-token-12345')
         self.assertEqual(owner(),'refreshed-provider-token-67890')
+    def test_semantic_job_cannot_consume_the_next_jobs_allowance(self):
+        from rcwg_full.auto2.pipeline import Pipeline
+        from types import SimpleNamespace
+        client,wire=self.client([('r1','[]')]*2,slot='E0')
+        pipeline=Pipeline.__new__(Pipeline);pipeline.root=self.root;pipeline.state=self.state
+        pipeline.current_identity=lambda:self.identity
+        pipeline.models={'executor_template':{'revision':'offline-semantic-fixture'}}
+        rates={'G':100000,'E':100000,'COUNT':1}
+        pipeline.plan={'development_semantic_requests_per_execution':1,'reservation_microusd':{'E0':rates}}
+        pipeline.client=lambda slot,scope:DelegatedClient(client.binding,wire,ScopeBudget(self.state,scope,lambda:self.identity,rates),client.index)
+        def execute(job,plan,service,reference=False):
+            request={'service_id':'E0','question':'fixture','field_schema':{},'contexts':[]}
+            self.assertEqual(service.extract_sync(request),[])
+            with self.assertRaisesRegex(ValueError,'SEMANTIC_NOT_AUTHORIZED'):service.extract_sync(request)
+            return {'status':'COMPLETED','fixture':True}
+        pipeline.executor=SimpleNamespace(execute=execute)
+        parent=pipeline.scope('B_DEVELOPMENT',{'E':16,'COUNT':16},2_000_000)
+        for name in ['first','second']:pipeline.execution({'id':name,'executor':'E0'},{'fixture':True},parent)
+        self.assertEqual(wire.calls,['COUNT','E','COUNT','E'])
+        self.assertEqual(sum(r['kind']=='E' for r in self.state.summary()['reservations']),2)

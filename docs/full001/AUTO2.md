@@ -21,6 +21,12 @@ reserved before network I/O; deterministic request identities and the existing
 durable request index prevent automatic retransmission after uncertain sends.
 Unreconciled reservations are retained and are not represented as invoices.
 
+AUTO2 serializes provider traffic across generator, executor and count clients.
+Gcloud retains ownership of credential expiry and refresh. Each semantic
+development execution has a predeclared maximum of at most eight E requests;
+its derived scope cannot consume another execution's allowance. All such scopes
+also share the later-phase USD50 allocation.
+
 AUTO2 source labels are original annotations, explicit deterministic derivatives,
 controlled text/graphs, or unreviewed extensions. Whole-corpus duplicate human
 review is no longer an automatic-track prerequisite. Original answer alternatives
@@ -38,6 +44,16 @@ requires applicable calibration; service-only mode retains null resource-budget
 claims and cannot be admitted as formal work. Formal admission still requires
 frozen test data, six observed distinct generator identities, calibrated runtime,
 reference common coverage, frozen analysis and an affordable complete block.
+
+`AUTO2_CALIBRATION_1` checks all nine calibration evidence classes, original
+raw-file hashes, the delegated root, actual runtime identity, 100ms sampling,
+20 pairs for each of six workload families, the 3% upper confidence bound and
+minimum off-batch duration. Legacy calibration receipt requirements remain in
+place for the legacy profile. Applicable automatic calibration can admit
+predeclared deterministic reference conditions: one independent screen, three
+confirmations, and four additional confirmations only under the original MAD
+rule. Formal blocks retain both protocols, all six observed generators and both
+trial labels. Failed or missing technical evidence prevents dispatch.
 
 All observed failures, fixed denominators, unrun slots, source/build identities
 and cleanup evidence belong in the private preparation and live reports. Offline

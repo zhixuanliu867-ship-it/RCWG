@@ -46,6 +46,7 @@ class RemoteExecutor:
              'output':self.remote['run_directory']+'/'+ident,'build':self.remote['build'],'generation_id':job.get('generation_id'),
              'record_role':'REFERENCE' if reference else 'MODEL','host_scope':job.get('host_scope'),
              'host_scope_hash':job.get('host_scope_hash'),'authority':self.remote.get('authority')}
+        if job.get('execution_mode')=='FORMAL':req.update(mode='FORMAL',admission=job['admission'],frozen_binding=job.get('frozen_binding'))
         broker=None
         try:
             reverse=None
@@ -80,7 +81,11 @@ class RemoteExecutor:
             return {'status':report['terminal_status'],'verification':verification,'job':job,'attempt_id':ident,
                     'report_sha256':sha(read(out/'files/report.json')),'archive_sha256':sha(read(archive)),
                     'measurement_validity':report['measurement_validity'],'budget_within':report['measurements'].get('budget_within'),
-                    'exec_elapsed_ns':report.get('exec_elapsed_ns'),'measurement_profile':'SERVICE_ONLY','formal_ready':False}
+                    'comparison_context_hash':report.get('binding_validation',{}).get('comparison_context_hash'),
+                    'evidence_bound':report.get('binding_validation',{}).get('status')=='EVIDENCE_BOUND',
+                    'exec_elapsed_ns':report.get('exec_elapsed_ns'),
+                    'measurement_profile':'FORMAL_RESOURCE' if report['measurement_validity']['valid'] else 'SERVICE_ONLY',
+                    'formal_ready':job.get('execution_mode')=='FORMAL' and report['measurement_validity']['valid']}
         finally:
             if broker:broker.close()
 
