@@ -4,6 +4,7 @@ from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 import time
 from collections import Counter
+from contextlib import nullcontext
 from rcwg_full.runtime.streams import CpuAdmission,BoundedStream,bounded_map
 from rcwg_full.runtime.artifacts import Artifact
 from rcwg_full.runtime.errors import ExecutionFault
@@ -103,6 +104,13 @@ class Scheduler:
         return stream
 
     async def run(self):
+        # Persist every event immediately, coalescing syncs at the existing
+        # 1 MiB bound and flushing before the scheduler returns or raises.
+        # The worker's journal seal and committed result remain in timed scope.
+        with self.journal.batch() if hasattr(self.journal,'batch') else nullcontext():
+            return await self._run()
+
+    async def _run(self):
         try:
             out=await self.scope('root','root',{}, {'result':self.report['typed_graph']['result']['reference']})
             result=await self.backend.finalize(out['result'],self)

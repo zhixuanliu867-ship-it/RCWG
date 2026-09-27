@@ -1,11 +1,22 @@
 """Durable bounded batching retains every original chain event and failure."""
 from pathlib import Path
 from unittest.mock import patch
-import os,tempfile,unittest
+import os,tempfile,unittest,asyncio
 from rcwg_full.runtime.events import Journal,verify_journal
 
 
 class JournalBatches(unittest.TestCase):
+    def test_batch_does_not_hold_thread_lock_across_await(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            journal=Journal(Path(tmp)/'events.jsonl','async-batch')
+            async def exercise():
+                with journal.batch():
+                    journal.append('controller',{})
+                    await asyncio.wait_for(asyncio.to_thread(journal.append,'native-thread',{}),2)
+                    journal.append('controller-finished',{})
+            asyncio.run(exercise());self.assertEqual(journal.pending_bytes,0)
+            journal.close();self.assertEqual([e['event_kind'] for e in verify_journal(journal.path)],['controller','native-thread','controller-finished'])
+
     def test_all_events_preserved_nested_boundaries_and_bounded_sync(self):
         with tempfile.TemporaryDirectory() as tmp:
             journal=Journal(Path(tmp)/'events.jsonl','batch')

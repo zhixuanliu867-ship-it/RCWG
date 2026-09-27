@@ -49,8 +49,12 @@ class Journal:
         with self.lock:
             if self.closed:raise RuntimeError('JOURNAL_CLOSED')
             self.batch_depth+=1
-            try:yield
-            finally:
+        # A scope can span asyncio scheduling or a native worker future. Never
+        # retain a thread lock across that boundary: append still serializes
+        # each chain update and the shared 1 MiB durability bound.
+        try:yield
+        finally:
+            with self.lock:
                 self.batch_depth-=1
                 if not self.closed and not self.batch_depth and self.pending_bytes:
                     try:os.fsync(self.fd);self.pending_bytes=0
