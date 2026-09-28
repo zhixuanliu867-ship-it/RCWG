@@ -236,7 +236,7 @@ def model_deferred(state,model):
     with state.db() as db:
         return _exists(db) and any(json.loads(r[0])['model']==model and json.loads(r[0])['state']=='DEFERRED' for r in db.execute('SELECT body FROM next_live_requests'))
 
-from .services import DelegatedClient
+from .services import DelegatedClient,_PROVIDER_ADMISSION
 class NextLiveClient(DelegatedClient):
     def measure(self,request,*,local_counter=None):
         if 'responseSchema' in request['body'].get('generationConfig',{}):raise PermissionError('RESPONSE_SCHEMA_FULL_INPUT_MEASUREMENT_NOT_VALIDATED')
@@ -251,7 +251,10 @@ class NextLiveClient(DelegatedClient):
         physical=deepcopy(request)
         while True:
             bind(self.budget.state,physical,kind,self.index)
-            result=super().call(physical,kind,input_measurement=input_measurement)
+            with _PROVIDER_ADMISSION:
+                with self.budget.state.db() as db:bound=_row(db,physical['request_id'])
+                self.budget.config['reservation_microusd'][kind]=bound['amount']
+                result=super().call(physical,kind,input_measurement=input_measurement)
             with self.budget.state.db() as db:row=_row(db,physical['request_id'])
             if row['state'] not in {'CAPACITY','RETRIED','DEFERRED'}:return result
             child=retry_or_defer(self.budget.state,self.index,physical['request_id'])
