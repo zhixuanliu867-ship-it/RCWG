@@ -82,7 +82,6 @@ class ExistingVertexTransport:
             try:response=self.existing.opener.open(request,timeout=policy['connect_seconds'] if absolute else timeout)
             except urllib.error.HTTPError as exc:response=exc
             with response:
-                if absolute:absolute.remaining()
                 code=response.code;headers={}
                 for key,value in response.headers.items():
                     key=key.lower()
@@ -92,6 +91,7 @@ class ExistingVertexTransport:
                             headers[key]=value
                 state.update(phase='RESPONSE_HEADERS',sent=True,http_status=code,response_headers=headers)
                 emit('RESPONSE_HEADERS')
+                if absolute:absolute.remaining()
                 limit=self.existing.config['max_response_bytes']
                 state['phase']='RESPONSE_BODY'
                 while True:
@@ -103,9 +103,11 @@ class ExistingVertexTransport:
                     except http.client.IncompleteRead as exc:
                         raw.extend(exc.partial[:limit+1-len(raw)]);state['received_bytes']=len(raw)
                         emit('PARTIAL_BODY');raise
-                    if absolute:absolute.remaining()
-                    if not chunk:break
+                    if not chunk:
+                        if absolute:absolute.remaining()
+                        break
                     raw.extend(chunk);state['received_bytes']=len(raw);emit('BODY_CHUNK')
+                    if absolute:absolute.remaining()
                     if len(raw)>limit:fail('RESPONSE_BYTE_LIMIT')
                 if 'content-length' in headers and not (headers['content-length'].isascii() and headers['content-length'].isdigit()):
                     raise ValueError('INVALID_CONTENT_LENGTH')

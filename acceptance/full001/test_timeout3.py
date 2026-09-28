@@ -62,7 +62,18 @@ class Timeout3(unittest.TestCase):
         t=fixtures.transport(lambda *a,**kw:stream);t.existing.config['timeout_profile']=PROFILE
         with patch('time.monotonic',c),patch.object(Deadline,'start'),self.assertRaises(TransportFailure) as caught:t.send('G',b'{}','id',reservation=1)
         self.assertFalse(caught.exception.transport_evidence['response_complete'])
+        self.assertEqual(caught.exception.transport_evidence['received_bytes'],7)
         self.assertEqual(c.now,750)
+    def test_late_headers_archived_but_never_accepted_as_complete(self):
+        c=Clock();events=[]
+        def opening(request,**kw):c.now=601;return fixtures.Stream([b'{}'])
+        t=fixtures.transport(opening);t.existing.config['timeout_profile']=PROFILE
+        with patch('time.monotonic',c),patch.object(Deadline,'start'),self.assertRaises(TransportFailure) as caught:
+            t.send_with_evidence('G',b'{}','id',reservation=1,evidence_sink=lambda r,p:events.append(r))
+        self.assertEqual(caught.exception.transport_evidence['http_status'],200)
+        self.assertIs(caught.exception.transport_evidence['sent'],True)
+        self.assertFalse(caught.exception.transport_evidence['response_complete'])
+        self.assertTrue(any(e['event']=='RESPONSE_HEADERS' for e in events))
     def test_count_keeps_ninety_and_e_not_admitted(self):
         def opening(request,**kw):self.assertAlmostEqual(request._rcwg_deadline.remaining(),90,delta=1);return fixtures.Stream([b'{}'])
         t=fixtures.transport(opening);t.existing.config['timeout_profile']=PROFILE
