@@ -253,3 +253,9 @@ one conditional independent fixed-E epoch, and opt-in public request grammar v2.
 See docs/full001/AUTO2_RECOVERY_R1.md. Target-environment full acceptance is being
 rerun on the current source; Windows supplementary passes alone are not full
 acceptance. No new calibration/formal efficiency claim or merge is made.
+
+## AUTO2-RECOVERY-R1 real E checkpoint and independent development
+
+Exact commit 339d2bc7 passed Linux Python 3.12.14 FULL001 CI: 2,138 tests and 270 subtests, preserving all prior 2,094 test IDs. The first independent SERVICE_ONLY diagnostic completed four actual E and four COUNT requests on the existing account/route. All eight responses were complete HTTP 200; semantic correctness was 0/4 (one non-array response and three invalid citation-coordinate responses). No new unknown send occurred; no response was manually repaired. Original unknown and USD0.251904 reservation remain isolated.
+
+The same epoch now supports appending complete independent nonsemantic development blocks, preserving original family/method order, task lineage, dynamic P1 logical dependencies, exact body commitments, root budget and dispatch fuse. This does not reopen the original batch or create another epoch. F1's complete API upper bound fits the remaining USD5 recovery subcap; subsequent blocks must pass actual remaining-budget checks. The existing WSL host and verified CI binaries are being checked for native SERVICE_ONLY execution. Formal measurement and T_ref remain unadmitted. PR9 remains draft.

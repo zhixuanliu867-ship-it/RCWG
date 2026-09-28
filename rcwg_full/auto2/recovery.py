@@ -75,6 +75,8 @@ def install_epoch(state, amendment, scope):
 def check_dispatch(db, request_id, kind, body_hash, scope_hash):
     epoch=active_epoch(db)
     if epoch is None:return set()
+    from .recovery_development import check_development
+    if check_development(db,request_id,kind,body_hash,scope_hash):return set(epoch['isolated_request_ids'])
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)
     if planned is None or planned['kind']!=kind or planned['body_sha256']!=body_hash or epoch['scope_sha256']!=scope_hash:
         raise PermissionError('RECOVERY_REQUEST_NOT_PREREGISTERED')
@@ -87,8 +89,10 @@ def check_dispatch(db, request_id, kind, body_hash, scope_hash):
 def check_reservation(db, request_id, kind, amount, scope_hash):
     epoch=active_epoch(db)
     if epoch is None:return
+    from .recovery_development import check_development
+    development=check_development(db,request_id,kind,None,scope_hash,amount)
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)
-    if planned is None or planned['kind']!=kind or planned['microusd']!=amount or scope_hash!=epoch['scope_sha256']:
+    if not development and (planned is None or planned['kind']!=kind or planned['microusd']!=amount or scope_hash!=epoch['scope_sha256']):
         raise PermissionError('RECOVERY_RESERVATION_NOT_PREREGISTERED')
     total=db.execute('SELECT COALESCE(SUM(amount),0) FROM reservations').fetchone()[0]
     if total+amount-epoch['baseline_reserved_microusd']>epoch['maximum_additional_microusd']:

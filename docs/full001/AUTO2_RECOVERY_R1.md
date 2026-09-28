@@ -25,8 +25,7 @@ also a total HTTP body deadline; it was not enlarged and is not a root-cause cla
 An optional, one-time independent SERVICE_ONLY epoch requires explicit source
 authority, preserved reservation-row identity, stopped old clients, cleanup,
 pure generation without external side effects, tested transport, and a frozen
-request/body/scope/order list. Only the four original unstarted fixed E checks
-and their COUNT calls can be admitted by this implementation. Any scope requiring
+request/body/scope/order list. The original four unstarted fixed E checks and their COUNT calls are admitted first. Complete independent development blocks may then be appended to that same epoch, in original order, with frozen public recipes and cumulative budget checks. Any scope requiring
 proof of at most one active *server* inference remains blocked while provider
 activity is unknown. A second unknown fuses this epoch; there is no third epoch.
 The original batch is never declared repaired or complete by an independent run.
@@ -39,7 +38,7 @@ defects, not proof that they caused every observed model failure. Opt-in
 FULL001_REQUEST_2 adds public grammar and task capability/contract identifiers.
 The compiler and protected legacy files remain unchanged. No output is repaired.
 Corrected comparisons require an entire new registered block, never selective
-retries. The original C0 block reservation exceeds this recovery's USD5 subcap.
+retries. The six-family C0 sum is USD24.188454; one complete F1 block is USD2.484657 and fits after the USD0.275666 fixed-E reservations. Each next block is admitted against the actual cumulative ledger.
 
 Calibration remains SERVICE_ONLY: the short-family mean overhead is 1.1084%,
 with original 95% interval [-1.2343%, 3.6308%], not a measured mean of 3.63%.
