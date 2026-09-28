@@ -14,7 +14,7 @@ from .requests import assemble
 DETAILS={
  'scan':('source:DatasetRef[Table]','rows:Stream[Record]','columns:nonempty unique field array; predicate:Bool expression AST'),
  'filter':('rows:Table|Stream|EvidenceTable|DocumentStream|ChunkStream','rows:same representation','predicate:Bool/Nullable[Bool] AST; retain only true'),
- 'project':('rows:row-readable, or named inputs with field_map','rows:same|Table|Record|Set|NodeSet|IDSet','columns:field array; source_view:rows|nodes|edges|ids|paths; representation:same|table|record|set; expressions:field->typed AST; field_map:output field->input port (record packing only)'),
+ 'project':('rows:row-readable, or named inputs with field_map','rows:same|Table|Record|Set|NodeSet|IDSet','columns:field array (nonempty columns and/or expressions unless field_map packing); source_view:rows|nodes|edges|ids|paths; representation:same|table|record|set; expressions:field->typed AST; field_map:output field->input port (record packing only)'),
  'join':('left,right:Table|Stream|EvidenceTable','rows:Table','keys:nonempty [{left:field,right:field}]; join_type:inner|left|right|full|semi|anti; build_side:left|right'),
  'aggregate':('rows:Table|Stream|EvidenceTable','rows:Table','group_by:field array (may be empty); aggregates:nonempty [{function:count|sum|min|max|mean,field:field or null,as:unique name}]'),
  'deduplicate':('rows:Table|Stream|EvidenceTable','rows:same representation','keys:nonempty field array; keep:first|last'),
@@ -53,7 +53,7 @@ def operator_cards():
     for name,(implementations,required,optional) in REGISTRY.items():
         inputs,outputs,params=DETAILS[name]
         cards.append({'operator':name,'implementations':list(implementations),'inputs':inputs,'outputs':outputs,
-            'required_parameters':list(required),'optional_parameters':list(optional)+EXTRA.get(name,[]),
+            'required_parameters':[] if name=='project' else list(required),'optional_parameters':list(optional)+EXTRA.get(name,[]),
             'parameter_contract':params,'bindable_value_parameters':BINDABLE.get(name,{})})
     return cards
 
