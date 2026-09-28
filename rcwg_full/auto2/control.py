@@ -109,7 +109,7 @@ class TaskState:
             with db:yield db
         finally:db.close()
 
-    def derive_scope(self, *, stage, identity, limits, ceiling_microusd, expires_at):
+    def derive_scope(self, *, stage, identity, limits, ceiling_microusd, expires_at, capacity_profile=None):
         if set(identity)!=IDENTITIES or any(not isinstance(v,str) or not v for v in identity.values()):
             raise ValueError('SCOPE_IDENTITIES_REQUIRED')
         if stage not in {'A_INFRA','B_INITIAL','B_DEVELOPMENT','B_REFERENCE','B_FORMAL'}:raise ValueError('SCOPE_STAGE')
@@ -129,6 +129,10 @@ class TaskState:
                'root_sha256':digest(self.authority),'policy_sha256':digest(self.policy),'project_id':self.authority['project_id'],
                'stage':stage,'identity':identity,'limits':limits,'ceiling_microusd':ceiling_microusd,'expires_at':expires_at,
                'retries':0,'concurrency':1,'manual_signature':False}
+        if capacity_profile is not None:
+            if capacity_profile!='CAPACITY_RETRY_1' or stage!='B_DEVELOPMENT':raise PermissionError('CAPACITY_SCOPE_PROFILE')
+            scope.update(retries=2,capacity_retry_profile=capacity_profile,tranche_extra_attempt_pool=2,
+                         retry_scope='EXPLICIT_PHYSICAL_ATTEMPTS_COMPLETE_429_ONLY_NO_SDK_RETRIES')
         sid=digest(scope)
         with self.db() as db:db.execute('INSERT OR IGNORE INTO scopes VALUES(?,?)',(sid,canonical(scope).decode()))
         path=self.root/('scope-'+sid+'.json')

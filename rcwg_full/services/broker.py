@@ -51,7 +51,8 @@ class SemanticBroker:
     def connection(self):
         return {'revision':'FULL001_SEMANTIC_IPC_1','host':'127.0.0.1','port':self.server.server_address[1],
                 'token':self.token,'service_id':self.service.service_id,'mode':self.service.mode,
-                'binding_hash':digest(self.service.client.binding),'concurrency':4}
+                'binding_hash':digest(self.service.client.binding),'concurrency':4,
+                **({'evidence_profile':self.service.evidence_profile} if hasattr(self.service,'evidence_profile') else {})}
 
     def snapshot(self):
         with self.lock:return {'requests':self.requests,'responses':self.responses,'failures':self.failures,
@@ -67,6 +68,10 @@ class RemoteSemantic:
         if (connection.get('revision')!='FULL001_SEMANTIC_IPC_1' or connection.get('host')!='127.0.0.1' or
             type(connection.get('port')) is not int or not 1<=connection['port']<=65535 or connection.get('service_id') not in {'E0','E1'}):raise ValueError('IPC_BINDING')
         self.connection=connection;self.service_id=connection['service_id'];self.mode=connection['mode']
+        if 'evidence_profile' in connection:
+            from .quotes import PROFILES
+            if connection['evidence_profile'] not in PROFILES:raise ValueError('IPC_QUOTE_PROFILE')
+            self.evidence_profile=connection['evidence_profile']
 
     async def extract(self,request):return await asyncio.to_thread(self._extract,request)
 

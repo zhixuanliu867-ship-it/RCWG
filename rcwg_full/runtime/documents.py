@@ -255,7 +255,17 @@ class Documents:
         if sum(len(tokens(c['text'])) for c in contexts)>p['context_budget']:raise ExecutionFault('CONTEXT_LIMIT_EXCEEDED')
         request={'service_id':semantic.service_id,'question':p.get('question',self.task_question()),'field_schema':p['field_schema'],'contexts':contexts}
         self.event('semantic_request',{'request_hash':digest(request),'origin':semantic.mode,'context_tokens':sum(len(tokens(c['text'])) for c in contexts)})
-        result=await semantic.extract(request)
+        quote_profile=getattr(semantic,'evidence_profile',None)
+        if quote_profile is not None:
+            from rcwg_full.services.quotes import PROFILES,prepare_fragments,public_fragments,resolve_rows
+            if quote_profile not in PROFILES:raise ExecutionFault('SEMANTIC_PROFILE','facility')
+            sent,sources=prepare_fragments(contexts,self)
+            quote_request={**request,'contexts':public_fragments(sent)}
+            self.event('semantic_fragment_binding',{'profile':quote_profile,'request_hash':digest(quote_request),
+                'fragments':public_fragments(sent),'processing_location':'WORKER','visibility':'PRIVATE_EXECUTION_EVIDENCE'})
+            result=resolve_rows(await semantic.extract(quote_request),sent,sources)
+        else:
+            result=await semantic.extract(request)
         if not isinstance(result,list):raise ExecutionFault('SEMANTIC_RESPONSE_SCHEMA','service')
         from rcwg_full.runtime.values import validate
         for row in result:

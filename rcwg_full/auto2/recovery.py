@@ -75,6 +75,8 @@ def install_epoch(state, amendment, scope):
 def check_dispatch(db, request_id, kind, body_hash, scope_hash):
     epoch=active_epoch(db)
     if epoch is None:return set()
+    from .next_live import check
+    if check(db,request_id,kind,body_hash,scope_hash):return set(epoch['isolated_request_ids'])
     from .recovery_development import check_development
     if check_development(db,request_id,kind,body_hash,scope_hash):return set(epoch['isolated_request_ids'])
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)
@@ -90,7 +92,8 @@ def check_reservation(db, request_id, kind, amount, scope_hash):
     epoch=active_epoch(db)
     if epoch is None:return
     from .recovery_development import check_development
-    development=check_development(db,request_id,kind,None,scope_hash,amount)
+    from .next_live import check
+    development=check(db,request_id,kind,None,scope_hash,amount) or check_development(db,request_id,kind,None,scope_hash,amount)
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)
     if not development and (planned is None or planned['kind']!=kind or planned['microusd']!=amount or scope_hash!=epoch['scope_sha256']):
         raise PermissionError('RECOVERY_RESERVATION_NOT_PREREGISTERED')

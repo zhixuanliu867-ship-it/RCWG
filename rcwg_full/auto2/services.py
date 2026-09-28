@@ -88,6 +88,8 @@ class DelegatedClient(ServiceClient):
         return False
 
     def measure(self,request,*,local_counter=None):
+        if 'responseSchema' in request['body'].get('generationConfig',{}):
+            raise PermissionError('RESPONSE_SCHEMA_FULL_INPUT_MEASUREMENT_NOT_VALIDATED')
         if self.binding['count_method']!='PROVIDER_COUNT':return super().measure(request,local_counter=local_counter)
         body={k:v for k,v in request['body'].items() if k in {'contents','systemInstruction'}}
         rid=str(uuid.uuid5(uuid.UUID(request['request_id']),'COUNT'))

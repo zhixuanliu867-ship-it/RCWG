@@ -94,6 +94,9 @@ class DispatchGate:
             current, detail = db.execute('SELECT status,detail FROM dispatch_control WHERE id=1').fetchone()
             if current != 'ACTIVE' or json.loads(detail)['request_id'] != request_id:
                 raise PermissionError('DISPATCH_PERMIT_MISMATCH')
+            from .next_live import finish
+            capacity=finish(self.state,db,request_id,result)
+            if capacity:fused=False
             self._record(db, 'FUSED' if fused else 'OPEN', {'request_id': request_id,
                          'result_status': status, 'result_sha256': digest(result),
-                         'provider_active_count': None})
+                         'provider_active_count': None,**({'capacity_profile':'CAPACITY_RETRY_1'} if capacity else {})})

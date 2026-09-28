@@ -178,6 +178,8 @@ class ServiceClient:
         return result
 
     def measure(self,request,*,local_counter=None):
+        if 'responseSchema' in request['body'].get('generationConfig',{}):
+            raise PermissionError('RESPONSE_SCHEMA_FULL_INPUT_MEASUREMENT_NOT_VALIDATED')
         method=self.binding['count_method'];count_request_id=None
         if method=='LOCAL_TOKENIZER':
             if local_counter is None or getattr(local_counter,'identity',None)!=self.binding['tokenizer']:raise PermissionError('LOCAL_TOKENIZER_IDENTITY')
@@ -198,11 +200,14 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,requ
     protocol=slot['protocol'];stages=['physical'] if protocol=='P0' else ['logical','physical']
     if protocol not in {'P0','P1'}:raise ValueError('GENERATION_PROTOCOL')
     profile=slot.get('request_profile','FULL001_REQUEST_1')
-    if profile not in {'FULL001_REQUEST_1','FULL001_REQUEST_2'}:raise ValueError('REQUEST_PROFILE')
+    if profile not in {'FULL001_REQUEST_1','FULL001_REQUEST_2','FULL001_REQUEST_3'}:raise ValueError('REQUEST_PROFILE')
     assembler=assemble
     if profile=='FULL001_REQUEST_2':
         from .requests import assemble_recovery2
         assembler=assemble_recovery2
+    if profile=='FULL001_REQUEST_3':
+        from .request3 import assemble_request3
+        assembler=assemble_request3
     records=[];logical=None;plan=None;status='COMPLETED'
     if slot.get('generation_stage')=='GUIDED_PHYSICAL':
         from rcwg_full.campaign.transforms import public_guidance
