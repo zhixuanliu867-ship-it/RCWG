@@ -98,11 +98,18 @@ def append_packet(state, scope, manifest, *, original_block):
         epoch = active_epoch(db)
         if epoch is None or db.execute('SELECT status FROM dispatch_control WHERE id=1').fetchone()[0] != 'OPEN':
             raise PermissionError('CONTINUATION_FUSED_OR_NO_EPOCH')
-        statuses = [json.loads(row[0])['state'] for row in db.execute('SELECT body FROM next_live_requests')]
-        if any(s not in {'DONE','SKIPPED','DEFERRED','RETRIED'} for s in statuses):
+        from .independent_resume import excluded_pending,active as resume_active,PROFILE as RESUME_PROFILE
+        prior_rows = [json.loads(row[0]) for row in db.execute('SELECT body FROM next_live_requests')]
+        if any(r['state'] not in {'DONE','SKIPPED','DEFERRED','RETRIED'} and not excluded_pending(db,r) for r in prior_rows):
             raise PermissionError('CONTINUATION_PREVIOUS_PACKET_INCOMPLETE')
         unresolved = db.execute("SELECT id,status FROM reservations WHERE kind IN ('G','E','COUNT') AND status IN ('UNKNOWN','SENT_UNCONFIRMED','RESERVED_BEFORE_IO')").fetchall()
-        if ({rid for rid,status in unresolved} != set(epoch['isolated_request_ids'])
+        isolated=set(epoch['isolated_request_ids']);resume=resume_active(db)
+        if resume and parent[0]==resume['decision']['manifest_sha256'] and expected_family=='F3':
+            d=resume['decision']
+            if (manifest.get('resume_decision_sha256')!=digest(d) or scope['identity']['source']!=d['execution_identity']['source']
+                or scope['identity']['dependencies']!=d['execution_identity']['dependencies']):raise PermissionError('CONTINUATION_RESUME_PROFILE')
+            isolated=set(d['isolated_holds'])
+        if ({rid for rid,status in unresolved} != isolated
             or any(status=='RESERVED_BEFORE_IO' for _,status in unresolved)):
             raise PermissionError('CONTINUATION_NEW_UNRESOLVED')
         if any(db.execute('SELECT 1 FROM reservations WHERE id=?',(r['id'],)).fetchone() or

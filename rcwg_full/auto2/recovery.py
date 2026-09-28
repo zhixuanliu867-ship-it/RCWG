@@ -77,7 +77,10 @@ def check_dispatch(db, request_id, kind, body_hash, scope_hash):
     epoch=active_epoch(db)
     if epoch is None:return set()
     from .next_live import check
-    if check(db,request_id,kind,body_hash,scope_hash):return set(epoch['isolated_request_ids'])
+    if check(db,request_id,kind,body_hash,scope_hash):
+        from .independent_resume import isolation_for
+        from .next_live import _row
+        return isolation_for(db,_row(db,request_id)['manifest'],scope_hash) or set(epoch['isolated_request_ids'])
     from .recovery_development import check_development
     if check_development(db,request_id,kind,body_hash,scope_hash):return set(epoch['isolated_request_ids'])
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)

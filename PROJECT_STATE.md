@@ -381,3 +381,17 @@ and the original claim-ledger ownership was restored. The initial sealed
 checkpoint is intact; a separate recovery checkpoint preserves raw evidence,
 controller provenance and the explicit authorization. Executable source and
 its exact CI remain unchanged. Formal metrics stay null; PR9 stays draft.
+
+### HTTP_TIMEOUT_3 prospective independent continuation
+
+The owner explicitly adopted retention of both unknown requests and their
+holds, no retries of either, and resumption of fresh independent F2 slots
+followed by the original independent F3. HTTP_TIMEOUT_3 separates 20-second
+connection operations from G's 600-second absolute HTTP budget and adds a
+720-second physical-call process watchdog. COUNT retains its 90-second HTTP
+budget; new E is not admitted. A one-time append-only recovery decision
+binds the fresh-slot allowlist, new execution identity and remaining budget.
+Any new unknown stops again; old provider activity remains unobservable.
+See docs/full001/TRANSPORT_003.md. Exact-source CI, WSL acceptance and actual
+future calls are separate evidence. Existing unknowns have not been retried,
+and no new live dispatch is claimed by this implementation checkpoint.

@@ -14,8 +14,9 @@ class TransportFailure(ApiError):
 
 
 class EvidenceHTTPSConnection(http.client.HTTPSConnection):
-    def __init__(self, *args, observer=None, **kwargs):
+    def __init__(self, *args, observer=None, deadline=None, connect_timeout=None, **kwargs):
         self.observer = observer or (lambda *a: None)
+        self.deadline=deadline;self.connect_timeout=connect_timeout
         self.inside_connect = False
         self.request_write_started = False
         super().__init__(*args, **kwargs)
@@ -24,10 +25,12 @@ class EvidenceHTTPSConnection(http.client.HTTPSConnection):
         self.observer('CONNECTING', self.request_write_started)
         self.inside_connect = True
         try:
+            if self.deadline:self.timeout=min(self.connect_timeout,self.deadline.remaining())
             super().connect()
         finally:
             self.inside_connect = False
         self.observer('CONNECTED', self.request_write_started)
+        if self.deadline:self.deadline.bind(self.sock)
 
     def send(self, data):
         # Proxy CONNECT bytes are not the inference POST. A connection failure
@@ -36,11 +39,13 @@ class EvidenceHTTPSConnection(http.client.HTTPSConnection):
             return super().send(data)
         if self.sock is None:
             self.connect()
+        if self.deadline:self.sock.settimeout(self.deadline.remaining())
         self.request_write_started = True
         self.observer('REQUEST_WRITE', True)
         return super().send(data)
 
     def getresponse(self):
+        if self.deadline:self.sock.settimeout(self.deadline.remaining())
         self.observer('WAIT_RESPONSE', True)
         return super().getresponse()
 
@@ -49,7 +54,9 @@ class EvidenceHTTPSHandler(urllib.request.HTTPSHandler):
     def https_open(self, request):
         observer = getattr(request, '_rcwg_transport_observer', None)
         def connection(host, **kwargs):
-            return EvidenceHTTPSConnection(host, observer=observer, **kwargs)
+            return EvidenceHTTPSConnection(host, observer=observer,
+                deadline=getattr(request,'_rcwg_deadline',None),
+                connect_timeout=getattr(request,'_rcwg_connect_timeout',None),**kwargs)
         return self.do_open(connection, request, context=self._context)
 
 

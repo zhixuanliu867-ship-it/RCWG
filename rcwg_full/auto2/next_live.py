@@ -175,10 +175,12 @@ def check(db,rid,kind,body_hash,scope_hash,amount=None):
     row=_row(db,rid)
     if row is None:return False
     manifest,scope=_manifest(db,row['manifest'])
+    from .independent_resume import check_allowed,excluded_pending
+    check_allowed(db,row,scope_hash)
     if row['kind']!=kind or scope!=scope_hash or row['state']!='BOUND' or (body_hash is not None and body_hash!=row['bound_hash']) or (amount is not None and amount!=row['amount']):raise PermissionError('NEXT_LIVE_BINDING')
     if time.time()<row['not_before']:raise PermissionError('NEXT_LIVE_BACKOFF_NOT_ELAPSED')
     # A capacity parent stays pending until retried or explicitly deferred.
-    unresolved=[r for r in _rows(db,row['manifest']) if r['state'] not in {'DONE','SKIPPED','DEFERRED','RETRIED'}]
+    unresolved=[r for r in _rows(db,row['manifest']) if r['state'] not in {'DONE','SKIPPED','DEFERRED','RETRIED'} and not excluded_pending(db,r)]
     if not unresolved or unresolved[0]['id']!=rid:raise PermissionError('NEXT_LIVE_FROZEN_ORDER')
     return True
 
@@ -249,6 +251,8 @@ def model_deferred(state,model,*,manifest_id=None):
 
 from .services import DelegatedClient,_PROVIDER_ADMISSION
 class NextLiveClient(DelegatedClient):
+    def physical_call(self,request,kind,input_measurement):
+        return super().call(request,kind,input_measurement=input_measurement)
     def measure(self,request,*,local_counter=None):
         if 'responseSchema' in request['body'].get('generationConfig',{}):raise PermissionError('RESPONSE_SCHEMA_FULL_INPUT_MEASUREMENT_NOT_VALIDATED')
         if self.binding['count_method']!='PROVIDER_COUNT':return super().measure(request,local_counter=local_counter)
@@ -265,7 +269,7 @@ class NextLiveClient(DelegatedClient):
             with _PROVIDER_ADMISSION:
                 with self.budget.state.db() as db:bound=_row(db,physical['request_id'])
                 self.budget.config['reservation_microusd'][kind]=bound['amount']
-                result=super().call(physical,kind,input_measurement=input_measurement)
+                result=self.physical_call(physical,kind,input_measurement)
             with self.budget.state.db() as db:row=_row(db,physical['request_id'])
             if row['state'] not in {'CAPACITY','RETRIED','DEFERRED'}:return result
             child=retry_or_defer(self.budget.state,self.index,physical['request_id'])

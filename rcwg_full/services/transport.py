@@ -12,6 +12,7 @@ from rcwg_api.common import fail
 from rcwg_api.vertex import Response
 from .bindings import validate_binding,account_hash
 from .transport_evidence import PROFILE,TransportFailure,exception_fields
+from .timeout3 import validate as validate_timeout,Deadline
 
 
 class ExistingVertexTransport:
@@ -34,7 +35,7 @@ class ExistingVertexTransport:
                'request_body_sha256':hashlib.sha256(body).hexdigest(),'phase':'CREDENTIALS',
                'sent':False,'http_status':None,'response_headers':{},'response_complete':False,
                'received_bytes':0,'provider_response_id':None,'model_version':None,'usage':None}
-        raw=bytearray();token=None;sequence=0;prefix_saved=0
+        raw=bytearray();token=None;sequence=0;prefix_saved=0;absolute=None
         def emit(event):
             nonlocal sequence,prefix_saved
             if evidence_sink is None:return
@@ -60,15 +61,28 @@ class ExistingVertexTransport:
                   'Content-Type':'application/json','Accept':'application/json','Accept-Encoding':'identity',
                   'x-goog-user-project':self.existing.config['project_id']},method='POST')
             request._rcwg_transport_observer=observe
+            timeout=self.existing.config['request_timeout_s']
+            policy=self.existing.config.get('timeout_profile')
+            if policy is not None:
+                policy=validate_timeout(policy)
+                if kind=='E':raise PermissionError('HTTP_TIMEOUT_3_E_NOT_ADMITTED')
+                timeout=policy[kind+'_http_seconds']
+                absolute=Deadline(timeout)
+                request._rcwg_deadline=absolute
+                request._rcwg_connect_timeout=policy['connect_seconds']
+                state['timeout_profile']=policy['revision']
+                state['connect_timeout_seconds']=policy['connect_seconds']
             # An uninstrumented legacy opener cannot distinguish connect/write/wait.
             # Only the traced connection may subsequently prove zero POST bytes.
             state.update(phase='OPEN_SEND_OR_WAIT',sent=None)
-            deadline=time.monotonic()+self.existing.config['request_timeout_s']
-            state['http_deadline_seconds']=self.existing.config['request_timeout_s']
+            deadline=absolute.end if absolute else time.monotonic()+timeout
+            state['http_deadline_seconds']=timeout
             emit('HTTP_DISPATCH_ENTERED');self.existing.dispatch_count+=1
-            try:response=self.existing.opener.open(request,timeout=self.existing.config['request_timeout_s'])
+            if absolute:absolute.start()
+            try:response=self.existing.opener.open(request,timeout=policy['connect_seconds'] if absolute else timeout)
             except urllib.error.HTTPError as exc:response=exc
             with response:
+                if absolute:absolute.remaining()
                 code=response.code;headers={}
                 for key,value in response.headers.items():
                     key=key.lower()
@@ -85,13 +99,16 @@ class ExistingVertexTransport:
                     if remaining<=0:raise TimeoutError('HTTP_TOTAL_DEADLINE')
                     sock=getattr(getattr(getattr(response,'fp',None),'raw',None),'_sock',None)
                     if sock is not None:sock.settimeout(remaining)
-                    try:chunk=response.read(min(16384,limit+1-len(raw)))
+                    try:chunk=(getattr(response,'read1',response.read) if absolute else response.read)(min(16384,limit+1-len(raw)))
                     except http.client.IncompleteRead as exc:
                         raw.extend(exc.partial[:limit+1-len(raw)]);state['received_bytes']=len(raw)
                         emit('PARTIAL_BODY');raise
+                    if absolute:absolute.remaining()
                     if not chunk:break
                     raw.extend(chunk);state['received_bytes']=len(raw);emit('BODY_CHUNK')
                     if len(raw)>limit:fail('RESPONSE_BYTE_LIMIT')
+                if 'content-length' in headers and not (headers['content-length'].isascii() and headers['content-length'].isdigit()):
+                    raise ValueError('INVALID_CONTENT_LENGTH')
                 if headers.get('content-length','').isdigit() and len(raw)!=int(headers['content-length']):
                     raise http.client.IncompleteRead(b'',int(headers['content-length'])-len(raw))
                 state['response_complete']=True
@@ -118,6 +135,8 @@ class ExistingVertexTransport:
             except Exception:state['evidence_persistence_failed']=True
             code='TRANSPORT_UNCERTAIN_NO_RETRY' if state['sent'] is None else 'TRANSPORT_CONFIRMED_NOT_SENT' if state['sent'] is False else 'RESPONSE_INCOMPLETE_OR_REJECTED'
             raise TransportFailure(code,state) from None
+        finally:
+            if absolute:absolute.close()
 
 
 class ExistingWindowsTransport:

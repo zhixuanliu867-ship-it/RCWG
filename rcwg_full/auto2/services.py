@@ -124,10 +124,13 @@ class ExistingWindowsIdentity:
         token=raw.decode('ascii').strip()
         if not 20<=len(token)<=8192 or re.search(r'\s',token):raise PermissionError('AUTH_TOKEN_INVALID')
         self.cached=token;self.at=time.monotonic();return token
-    def existing_transport(self):
+    def existing_transport(self,*,timeout_profile=None):
         config={'auth_mode':'GCLOUD_USER','project_id':self.identity['project_id'],
                 'login_account':self.identity['principal'],'service_account':None,'location':'global',
                 'request_timeout_s':90,'max_response_bytes':1048576,'transport_profile':TRANSPORT_PROFILE}
+        if timeout_profile is not None:
+            from rcwg_full.services.timeout3 import validate
+            config['timeout_profile']=validate(timeout_profile)
         proxy=self.binding['proxy'];url=f"http://{proxy['address']}:{proxy['port']}"
         opener=urllib.request.build_opener(urllib.request.ProxyHandler({'https':url}),NoRedirect(),
                                           EvidenceHTTPSHandler(context=ssl.create_default_context()))
