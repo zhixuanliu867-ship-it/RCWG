@@ -395,3 +395,49 @@ Any new unknown stops again; old provider activity remains unobservable.
 See docs/full001/TRANSPORT_003.md. Exact-source CI, WSL acceptance and actual
 future calls are separate evidence. Existing unknowns have not been retried,
 and no new live dispatch is claimed by this implementation checkpoint.
+
+
+### HTTP_TIMEOUT_3 actual SERVICE_ONLY checkpoint
+
+Executable commit db25dc717439cde71b41cbb6b173f6238ef246c0 passed exact-source
+CI: 2,240 FULL001 tests / 292 subtests, preserving all 2,219 prior test IDs;
+239 affected WSL Python 3.12.14 tests passed against the verified CI build.
+This checkpoint changes documentation only; its executable source is unchanged.
+
+All 11 eligible F2 logical slots were processed: five valid plans produced
+15 independently verified native passes; one model-format failure and five
+invalid plans remain failures. The original unknown F2 slot and its three
+dependent X slots remain missing in the original 12/36 denominators.
+
+F3 retains all original 12 logical and 36 native slots. Its current logical
+statuses are {'COMPLETED': 8, 'MODEL_FAILURE': 1, 'PLAN_INVALID': 3}; native statuses are
+{'INFRA_FAILURE': 1, 'TIMEOUT': 23, 'NOT_RUN': 12}. Continuation stop reason: None.
+The first F3 native execution exhausted its original 64 MiB per-file event
+journal cap while registering the complete input. The attempt remains a
+facility failure and was never replayed. A versioned prospective host profile
+raised only engineering evidence storage to a 1 GiB per-file limit and 2 GiB
+observed per-run threshold, after a bounded disk-capacity check. Task CPU,
+RAM, wall time, data, WorkIR, source and verifier remained unchanged. This
+storage threshold is not a hard filesystem quota or a formal measurement pass.
+
+A pre-dispatch boot-identity mismatch stopped without model execution. The
+subsequent host-scope record retained the same root/epoch and packet, deducted
+all prior spend and kind counts, and preserved the old scope and finite retry
+pool. The archived first plan was used only for its still-unattempted original
+repeat IDs. Old/new host profiles are retained as separate evidence strata.
+TIMEOUT is the observed whole-worker deadline, not proof of intrinsic kernel
+slowness or a calibrated model-efficiency comparison.
+
+This turn recorded 67 physical API attempts ({'COUNT': 33, 'G': 34}).
+Statuses: {'COMPLETED': 66, 'INFRA_FAILURE': 1}. New unknown request count: 0.
+Both prior unknowns and their holds remain unchanged; neither was retried.
+Incremental conservative reservations are USD5.283065;
+cumulative USD61.588263; same recovery-subcap remainder
+USD6.000803. These are holds, not invoices.
+Provider active-request count remains unobservable. Task checkpoint:
+RESULTS_SEALED; all task executors exited and task cgroups were removed.
+
+F4 still lacks the frozen 32 GiB worker capacity. Formal metrics remain null;
+no new E, cloud deployment, IAM change, task downsizing, merge or force push.
+Private raw responses, full slot tables, native seals, prior-evidence checks,
+controller provenance and the budget-continuity proof are retained separately.

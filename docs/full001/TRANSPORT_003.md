@@ -47,3 +47,11 @@ choices, not provider latency guarantees or a proven diagnosis of the proxy.
 Formal efficiency and reference metrics remain unadmitted. Private runtime
 reports, source/host locks, authorization and raw transport evidence are kept
 outside public Git. No new cloud deployment is part of this implementation.
+
+## Real execution checkpoint
+
+The private live report records the completed eligible F2 slots, F3 results,
+preserved unknowns, and the separately versioned F3 evidence-storage profile.
+See the HTTP_TIMEOUT_3 actual SERVICE_ONLY checkpoint in PROJECT_STATE.md.
+The first F3 native failure is retained; no consumed execution or unknown
+provider request is replayed. Source code remains the exact accepted build.
