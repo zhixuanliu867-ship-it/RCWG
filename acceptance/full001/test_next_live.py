@@ -86,6 +86,15 @@ class QuoteTests(unittest.TestCase):
         b={**binding('E0'),'template_hash':digest(TEMPLATE)};req={'service_id':'E0','question':'Read','field_schema':{'answer':'Utf8'},'contexts':public_fragments(self.sent)}
         a=assemble_quote(req,b,TEMPLATE,str(uuid.uuid4()),profile='E_QUOTE_1')
         with self.assertRaisesRegex(PermissionError,'FULL_INPUT_MEASUREMENT'):ServiceClient.measure(SimpleNamespace(),a)
+    def test_existing_five_field_citation_schema_is_versioned_not_duplicated(self):
+        fields={'answer':'Utf8','evidence':{'kind':'List','max_length':256,'item':{'kind':'Record','schema':{
+            'document_id':'Utf8','revision':'Utf8','start_cp':'Int64','end_cp':'Int64','quote':'Utf8'}}}}
+        schema=response_schema(fields);e=schema['items']['properties']['evidence']
+        self.assertEqual(e['maxItems'],256);self.assertEqual(set(e['items']['properties']),{'fragment_id','quote'})
+        b={**binding('E0'),'template_hash':digest(TEMPLATE)}
+        a=assemble_quote({'service_id':'E0','question':'Read','field_schema':fields,'contexts':public_fragments(self.sent)},b,TEMPLATE,str(uuid.uuid4()))
+        prompt=json.loads(a['body']['contents'][0]['parts'][0]['text'])
+        self.assertNotIn('evidence',prompt['field_schema'])
     def test_async_worker_mapping_preserves_business_answer_for_independent_verifier(self):
         class Semantic:
             evidence_profile='E_QUOTE_PROMPT_1';service_id='E0';mode='ENGINEERING_REPLAY'

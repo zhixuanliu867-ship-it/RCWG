@@ -79,9 +79,12 @@ def response_schema(field_schema):
         if t.kind=='List':return {'type':'ARRAY','items':convert(t.item),'maxItems':t.metadata['max_length']}
         if t.kind=='Record':return {'type':'OBJECT','properties':{k:convert(v) for k,v in t.schema},'required':[k for k,v in t.schema]}
         raise ValueError('SEMANTIC_FIELD_TYPE')
-    props={k:convert(v) for k,v in parse_schema(field_schema).items()}
-    if 'evidence' in props:raise ValueError('RESERVED_EVIDENCE_FIELD')
+    fields=parse_schema(field_schema);citation=fields.pop('evidence',None)
+    if citation is not None and (citation.kind!='List' or citation.item.kind!='Record' or
+        set(dict(citation.item.schema))!={'document_id','revision','start_cp','end_cp','quote'}):raise ValueError('EVIDENCE_SCHEMA_UNSUPPORTED')
+    props={k:convert(v) for k,v in fields.items()}
     props['evidence']={'type':'ARRAY','items':{'type':'OBJECT','properties':{'fragment_id':{'type':'STRING'},'quote':{'type':'STRING'}},'required':['fragment_id','quote']}}
+    if citation is not None:props['evidence']['maxItems']=citation.metadata['max_length']
     return {'type':'ARRAY','items':{'type':'OBJECT','properties':props,'required':list(props)}}
 
 def assemble_quote(request,binding,template,request_id,*,profile='E_QUOTE_PROMPT_1'):
@@ -91,7 +94,7 @@ def assemble_quote(request,binding,template,request_id,*,profile='E_QUOTE_PROMPT
     for f in request['contexts']:
         if set(f)!=set(SentFragment.__dataclass_fields__):raise ValueError('SENT_FRAGMENT_FIELDS')
     config={'candidateCount':1,'maxOutputTokens':binding['max_output_tokens'],'responseMimeType':'application/json'}
-    prompt={'question':request['question'],'field_schema':request['field_schema'],'fragments':request['contexts']}
+    prompt={'question':request['question'],'field_schema':{k:v for k,v in request['field_schema'].items() if k!='evidence'},'fragments':request['contexts']}
     if profile=='E_QUOTE_1':config['responseSchema']=schema
     else:prompt['response_contract']=schema
     for key,wire in [('temperature','temperature'),('top_k','topK'),('thinking','thinkingConfig')]:
