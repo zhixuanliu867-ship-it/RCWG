@@ -17,9 +17,11 @@ def host_identity():
             'system': platform.system(), 'uid': os.getuid() if hasattr(os, 'getuid') else 'UNAVAILABLE'}
 
 
-def runtime_identity(task, build, *, affinity=None):
+def runtime_identity(task, build, *, affinity=None, observation_profile=None):
     manifest = json.loads(read(Path(build) / 'BUILD.json'))
-    return {'host': host_identity(), 'source_hash': digest(source_hashes()),
+    from rcwg_full.runtime.observation import validate_observation
+    observation=validate_observation(observation_profile)
+    return {**({'observation_profile':observation} if observation else {}), 'host': host_identity(), 'source_hash': digest(source_hashes()),
             'build_hash': sha(read(Path(build) / 'BUILD.json')),
             'binaries': {k: v['sha256'] for k, v in manifest['binaries'].items()},
             'dependencies': manifest['dependencies'], 'lock_sha256': manifest['lock_sha256'],
@@ -31,8 +33,8 @@ def runtime_identity(task, build, *, affinity=None):
                                    'MKL_NUM_THREADS': '1', 'ARROW_NUM_THREADS': '1'}}
 
 
-def measurement_profile(task, build, *, calibration=None, affinity=None):
-    identity = runtime_identity(task, build, affinity=affinity)
+def measurement_profile(task, build, *, calibration=None, affinity=None, observation_profile=None):
+    identity = runtime_identity(task, build, affinity=affinity, **({'observation_profile':observation_profile} if observation_profile else {}))
     profile = {'revision': 'full001-measurement-2', 'event_source_id': 'full001-worker',
                'clock_id': 'monotonic_ns', 'identity': identity, 'identity_hash': digest(identity),
                'host_calibrated': False, 'calibration_hash': 'NOT_PROVIDED',

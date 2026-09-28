@@ -31,7 +31,8 @@ class DelegatedHostClaim(HostClaim):
     def recheck(self):
         from datetime import datetime,timezone
         if datetime.now(timezone.utc)>=datetime.fromisoformat(self.scope['expires_at']):raise PermissionError('HOST_SCOPE_EXPIRED')
-        actual=self.identity_reader(self.task,self.build,affinity=self.scope['affinity'])
+        observation=self.scope.get('observation_profile')
+        actual=self.identity_reader(self.task,self.build,affinity=self.scope['affinity'],**({'observation_profile':observation} if observation else {}))
         if actual!=self.scope['runtime_identity']:raise PermissionError('HOST_RUNTIME_APPLICABILITY_CHANGED')
         if digest(self.task) not in self.scope['task_hashes']:raise PermissionError('HOST_TASK_NOT_IN_FINITE_SCOPE')
         if not 0<self.scope['max_attempts']<=6114:raise PermissionError('HOST_ATTEMPT_BOUND')

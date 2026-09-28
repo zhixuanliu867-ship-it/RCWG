@@ -441,3 +441,13 @@ F4 still lacks the frozen 32 GiB worker capacity. Formal metrics remain null;
 no new E, cloud deployment, IAM change, task downsizing, merge or force push.
 Private raw responses, full slot tables, native seals, prior-evidence checks,
 controller provenance and the budget-continuity proof are retained separately.
+
+
+## 2026-09-29 FORMAL_READINESS_1
+
+Versioned compact observation, streamed journal validation, safe worker finalization,
+exact Python alias guards and online Arrow lifetime metrics. New bounded budget
+amendment and calibration-v2 admission retain the existing root/epoch and all
+unknown holds. See docs/full001/FORMAL_READINESS_1.md. Native development tests
+passed; final CI, real cloud calibration and conditional formal entry pending.
+PR9 remains draft; no merge or force push.

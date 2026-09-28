@@ -97,7 +97,8 @@ def check_reservation(db, request_id, kind, amount, scope_hash):
     if epoch is None:return
     from .recovery_development import check_development
     from .next_live import check
-    development=check(db,request_id,kind,None,scope_hash,amount) or check_development(db,request_id,kind,None,scope_hash,amount)
+    from .readiness_budget import check_host
+    development=check_host(db,request_id,kind,amount,scope_hash) or check(db,request_id,kind,None,scope_hash,amount) or check_development(db,request_id,kind,None,scope_hash,amount)
     planned=next((p for p in epoch['planned_requests'] if p['request_id']==request_id),None)
     if not development and (planned is None or planned['kind']!=kind or planned['microusd']!=amount or scope_hash!=epoch['scope_sha256']):
         raise PermissionError('RECOVERY_RESERVATION_NOT_PREREGISTERED')

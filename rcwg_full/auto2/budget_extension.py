@@ -31,6 +31,9 @@ def _stored(db):
 
 
 def effective_recovery_cap(db, epoch):
+    from .readiness_budget import amendment
+    prospective=amendment(db)
+    if prospective is not None:return prospective['new_epoch_cap_microusd']
     old = epoch['maximum_additional_microusd']
     value = _stored(db)
     if value is None:

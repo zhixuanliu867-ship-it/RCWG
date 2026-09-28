@@ -168,6 +168,9 @@ class TaskState:
                 rows=db.execute('SELECT s.body,r.amount FROM reservations r JOIN scopes s ON r.scope=s.id').fetchall()
                 used_phase=sum(value for body,value in rows if json.loads(body)['stage'] in stages)
                 allocation=self.policy['budget']['phase_a_infrastructure_allocation' if scope['stage']=='A_INFRA' else 'remaining_live_and_reference_allocation']
+                from .readiness_budget import amendment
+                prospective=amendment(db)
+                if prospective:allocation=prospective['allocation_a_microusd' if scope['stage']=='A_INFRA' else 'allocation_b_microusd']/1_000_000
                 if used_phase+amount>int(allocation*1_000_000):raise PermissionError('CUMULATIVE_PHASE_ALLOCATION')
             if scope['stage']=='B_INITIAL':
                 # A new scope or boot must not reset B1's task-wide allowance.

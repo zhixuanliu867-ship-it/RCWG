@@ -13,8 +13,11 @@ def load(path):return json.loads(read(path))
 def phase_affordable(state,amount):
     with state.db() as db:
         rows=db.execute('SELECT s.body,r.amount FROM reservations r JOIN scopes s ON r.scope=s.id').fetchall()
+        from .readiness_budget import amendment
+        prospective=amendment(db)
     used=sum(cost for raw,cost in rows if load_stage(raw) in {'B_DEVELOPMENT','B_REFERENCE','B_FORMAL'})
-    return state.affordable(amount) and used+amount<=int(state.policy['budget']['remaining_live_and_reference_allocation']*1_000_000)
+    cap=prospective['allocation_b_microusd'] if prospective else int(state.policy['budget']['remaining_live_and_reference_allocation']*1_000_000)
+    return state.affordable(amount) and used+amount<=cap
 
 
 def load_stage(raw):return json.loads(raw)['stage']

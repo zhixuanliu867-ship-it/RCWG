@@ -33,6 +33,8 @@ class Artifact:
     created_ns:int=field(default_factory=time.monotonic_ns)
     sealed_ns:int|None=None
     release_status:str='LIVE'
+    python_ids:set=field(default_factory=set)
+    python_roots:tuple=()
 
 
 def serialized(method):
@@ -45,17 +47,42 @@ def serialized(method):
 
 
 class ArtifactStore:
-    def __init__(self, directory, run_id, journal):
+    def __init__(self, directory, run_id, journal, *, observation_profile=None):
         self.directory=safe_path(directory);self.directory.mkdir(mode=0o700,exist_ok=False)
         self.run_id=run_id;self.journal=journal;self.artifacts={};self.buffers={};self.addresses={}
+        from rcwg_full.runtime.observation import validate_observation,Lifetime
+        self.observation_profile=validate_observation(observation_profile)
+        self.lifetimes={kind:Lifetime() for kind in ('arrow_memory','disk')}
         self.copy_bytes=0;self.read_bytes=0;self.leases={};self.lock=threading.RLock()
 
-    def _emit(self,kind,payload):return self.journal.append(kind,payload)
+    def _emit(self,kind,payload):
+        if self.observation_profile and kind in {'buffer_created','buffer_released'}:
+            buf=self.buffers[payload['buffer_id']]
+            self.lifetimes[buf['storage_kind']].change(buf['created_ns'] if kind=='buffer_created' else buf['released_ns'],
+                buf['capacity_bytes'] if kind=='buffer_created' else -buf['capacity_bytes'])
+        return self.journal.append(kind,payload)
+
+    def _python_reachable(self,value):
+        # Exact identity guard, not a heap-size estimate. Only live artifacts
+        # retain this compact set; no per-object dictionaries, UUIDs or events.
+        seen=set();pending=[value]
+        while pending:
+            obj=pending.pop();kind=type(obj);key=id(obj)
+            if key in seen or kind not in {dict,list,tuple,set,str,bytes,int,float,bool,type(None)}:continue
+            seen.add(key)
+            if kind is dict:
+                pending.extend(obj.keys());pending.extend(obj.values())
+            elif kind in {list,tuple,set}:pending.extend(obj)
+        return seen
+
+    def _python_aliases(self,item):
+        return [other for other in self.artifacts.values() if other is not item and other.release_status=='LIVE'
+                and not item.python_ids.isdisjoint(other.python_ids)]
 
     @serialized
     def register(self, value, typ, producer, *, source_refs=(), storage='memory', format='arrow_ipc', parents=()):
         import pyarrow as pa
-        aid=str(uuid.uuid4());ids=set()
+        aid=str(uuid.uuid4());ids=set();python_ids=set()
         if isinstance(value,(pa.Table,pa.RecordBatch)):
             for col in value.columns:
                 chunks=col.chunks if isinstance(col,pa.ChunkedArray) else [col]
@@ -73,6 +100,8 @@ class ArtifactStore:
                                 'created_ns':time.monotonic_ns(),'released_ns':None,'leases':set(),'artifacts':set()}
                             self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':buf.size,'storage_kind':'arrow_memory'})
                         ids.add(bid)
+        elif self.observation_profile:
+            python_ids=self._python_reachable(value)
         else:
             # CPython's actual shallow object sizes, deduplicated by identity.
             # These are observed live objects, not estimates of C++ allocator
@@ -95,8 +124,10 @@ class ArtifactStore:
                     for v in obj:visit(v,seen)
             visit(value,set())
         for parent in parents:
-            self.check(parent);ids.update(parent.buffer_ids)
+            self.check(parent);ids.update(parent.buffer_ids);python_ids.update(parent.python_ids)
         item=Artifact(aid,self.run_id,producer,value,typ,typ.get('domain'),list(source_refs),ids,storage,format)
+        item.python_ids=python_ids
+        if self.observation_profile:item.python_roots=(value,)+tuple(root for parent in parents for root in parent.python_roots)
         if isinstance(value,(pa.Table,pa.RecordBatch)):
             item.schema_hash=sha(value.schema.serialize().to_pybytes());item.logical_rows=value.num_rows
         else:item.schema_hash=digest(typ)
@@ -152,12 +183,15 @@ class ArtifactStore:
                 if buf['key'] is not None:self.addresses.pop(buf['key'],None)
                 buf['value']=None
                 self._emit('buffer_released',{'buffer_id':bid,'released_ns':buf['released_ns']})
+                if self.observation_profile:del self.buffers[bid]
 
     @serialized
     def release(self,item):
         self.check(item)
+        aliases=self._python_aliases(item) if self.observation_profile else []
+        if any(self.leases[other.artifact_id] for other in aliases):raise ValueError('RELEASE_BEFORE_LAST_USE')
         if self.leases[item.artifact_id] or any(self.buffers[bid]['leases'] for bid in item.buffer_ids):raise ValueError('RELEASE_BEFORE_LAST_USE')
-        if any(self.buffers[bid]['artifacts']-{item.artifact_id} for bid in item.buffer_ids):raise ValueError('RELEASE_HAS_LIVE_ALIAS')
+        if aliases or any(self.buffers[bid]['artifacts']-{item.artifact_id} for bid in item.buffer_ids):raise ValueError('RELEASE_HAS_LIVE_ALIAS')
         # An unlink failure must preserve the actual lifetime and original result.
         try:
             if item.path is not None:item.path.unlink()
@@ -165,7 +199,7 @@ class ArtifactStore:
             self._emit('artifact_cleanup_failed',{'artifact_id':item.artifact_id,'cause':type(exc).__name__})
             raise
         self._detach_buffers(item)
-        item.value=None;item.release_status='RELEASED'
+        item.value=None;item.python_ids.clear();item.python_roots=();item.release_status='RELEASED'
         self._emit('artifact_released',{'artifact_id':item.artifact_id})
 
     @serialized
@@ -174,7 +208,7 @@ class ArtifactStore:
         if self.leases[item.artifact_id]:raise ValueError('LIVE_VIEW_LEASE')
         if item.path is not None:return self.release(item)
         self._detach_buffers(item)
-        item.value=None;item.release_status='VIEW_DROPPED'
+        item.value=None;item.python_ids.clear();item.python_roots=();item.release_status='VIEW_DROPPED'
         self._emit('artifact_view_dropped',{'artifact_id':item.artifact_id})
 
     def seal(self,item):
@@ -207,7 +241,7 @@ class ArtifactStore:
         if path.exists():raise ValueError('ARTIFACT_ALREADY_EXISTS')
         os.rename(temporary,path);item.path=path
         if item.storage=='disk':
-            self._detach_buffers(item);item.value=None
+            self._detach_buffers(item);item.value=None;item.python_ids.clear();item.python_roots=()
             bid=str(uuid.uuid4());now=time.monotonic_ns()
             self.buffers[bid]={'buffer_id':bid,'run_id':self.run_id,'allocation_instance':item.producer_instance,
                 'storage_kind':'disk','parent_buffer_id':None,'view_ranges':[],
@@ -217,7 +251,7 @@ class ArtifactStore:
             item.buffer_ids={bid}
             self._emit('buffer_created',{'buffer_id':bid,'capacity_bytes':item.serialized_bytes,'storage_kind':'disk'})
         committed_ns=time.monotonic_ns()
-        metadata={k:v for k,v in vars(item).items() if k not in {'value','buffer_ids','path'}}
+        metadata={k:v for k,v in vars(item).items() if k not in {'value','buffer_ids','python_ids','python_roots','path'}}
         metadata.update(buffer_ids=sorted(item.buffer_ids),filename=path.name,sealed_ns=committed_ns)
         write(self.directory/(item.artifact_id+'.metadata.json'),metadata)
         self._emit('artifact_sealed',metadata)
@@ -306,6 +340,14 @@ class ArtifactStore:
     @serialized
     def lifetime_metrics(self,at_ns=None):
         at_ns=at_ns or time.monotonic_ns()
+        if self.observation_profile:
+            arrow=self.lifetimes['arrow_memory'].snapshot(at_ns)
+            omitted={'status':'NOT_MEASURED','peak_bytes':None,'byte_seconds':None}
+            return {'registered_buffer_peak_bytes':arrow['peak_bytes'],'registered_buffer_byte_seconds':arrow['byte_seconds'],
+                'registered_python_heap':dict(omitted),'registered_combined':dict(omitted),
+                'instrumented_copy_bytes':self.copy_bytes,'instrumented_read_bytes':self.read_bytes,
+                'scope':'REGISTERED_ARROW_BUFFERS_NOT_TOTAL_PHYSICAL_RAM','observation_profile':self.observation_profile,
+                'worker_cgroup_memory_peak':None,'worker_cgroup_status':'EXTERNAL_COUNTER','node_ram_status':'NOT_ATTRIBUTABLE'}
         def integral(kinds):
             events=[]
             for b in self.buffers.values():

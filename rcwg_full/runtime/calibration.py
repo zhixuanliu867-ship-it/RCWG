@@ -13,7 +13,7 @@ REQUIRED = {'cpu_accounting', 'peak_memory', 'descendants', 'timeout', 'oom_attr
 
 def validate_calibration(path, identity):
     path = safe_path(path); package = json.loads(read(path)); root = path.parent
-    if package.get('revision')=='AUTO2_CALIBRATION_1':
+    if package.get('revision') in {'AUTO2_CALIBRATION_1','AUTO2_CALIBRATION_2'}:
         from rcwg_full.auto2.calibration import validate_auto2_calibration
         return validate_auto2_calibration(path,identity)
     if package.get('revision') != 'FULL001_CALIBRATION_1' or package.get('runtime_identity') != identity:
