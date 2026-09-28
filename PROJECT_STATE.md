@@ -327,3 +327,28 @@ isolated worktree. The prescribed 113 related tests passed on the existing
 WSL Python 3.12.14. Exact-source full CI and real outcomes remain separate
 evidence. See docs/full001/NEXT_LIVE_002.md. Formal admission stays closed;
 no old answers, protected specification bytes or historical holds are changed.
+
+### NEXT-LIVE-002 real execution checkpoint
+
+The executable source at 8e9bb3f208fb2da5a9d5085863bf9a4c4add5961 passed
+exact-head CI (2,219 FULL001 tests / 288 subtests) and 218 affected WSL
+Python 3.12.14 tests against the verified CI native build. The existing
+database received the one append-only USD15 recovery subcap extension;
+the original root, epoch and all prior reservations remain unchanged.
+
+F2 was started, but its first COUNT failed during TLS connection with
+TRANSPORT_CONFIRMED_NOT_SENT. No G/E request was sent and no model plan was
+executed. The original dispatcher fused; F2 is incomplete, F3 is unstarted,
+and F4 also lacks the required host memory. A separate read-only handshake
+diagnostic reproduced intermittent TLS EOF. No IAM error was observed.
+The capacity-only retry rule has not been broadened and the fuse remains
+closed pending an explicit prospective recovery decision. The ordinary-uid
+executor exited and its task cgroup was removed. Current cumulative holds
+are USD56.115757, retaining the original unknown and cleanup reserve.
+
+All four old E diagnostics were audited against actual sent contexts and
+source labels. Witnesses were present; extraction/annotation granularity
+and incomplete multi-field support remain distinct findings, with no old
+score relabeling or new E calls. Private reports preserve the raw failure,
+full slot denominators, budget continuity and cleanup evidence. Formal
+metrics remain null; PR9 remains draft and unmerged.
