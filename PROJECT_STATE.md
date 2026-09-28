@@ -318,3 +318,12 @@ Two separate native reference correctness probes on existing WSL passed independ
 ## NEXT-LIVE-001 integration — 2026-09-28
 
 Owner adopted the next-live instructions. New prospective REQUEST_3, exact worker-side quote citations and capacity-only bounded retries are implemented; target acceptance and actual comparison evidence remain required. See docs/full001/NEXT_LIVE_001.md. Historical outcomes and the original budget root are retained. PR #9 remains draft.
+
+## NEXT-LIVE-002 integration — 2026-09-29
+
+Owner adopted the attached execution task. REQUEST_4, append-only recovery
+subcap extension and complete F2/F3/F4 continuation are integrated on an
+isolated worktree. The prescribed 113 related tests passed on the existing
+WSL Python 3.12.14. Exact-source full CI and real outcomes remain separate
+evidence. See docs/full001/NEXT_LIVE_002.md. Formal admission stays closed;
+no old answers, protected specification bytes or historical holds are changed.

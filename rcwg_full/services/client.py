@@ -200,7 +200,7 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,requ
     protocol=slot['protocol'];stages=['physical'] if protocol=='P0' else ['logical','physical']
     if protocol not in {'P0','P1'}:raise ValueError('GENERATION_PROTOCOL')
     profile=slot.get('request_profile','FULL001_REQUEST_1')
-    if profile not in {'FULL001_REQUEST_1','FULL001_REQUEST_2','FULL001_REQUEST_3'}:raise ValueError('REQUEST_PROFILE')
+    if profile not in {'FULL001_REQUEST_1','FULL001_REQUEST_2','FULL001_REQUEST_3','FULL001_REQUEST_4'}:raise ValueError('REQUEST_PROFILE')
     assembler=assemble
     if profile=='FULL001_REQUEST_2':
         from .requests import assemble_recovery2
@@ -208,6 +208,9 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,requ
     if profile=='FULL001_REQUEST_3':
         from .request3 import assemble_request3
         assembler=assemble_request3
+    if profile=='FULL001_REQUEST_4':
+        from .request4 import assemble_request4
+        assembler=assemble_request4
     records=[];logical=None;plan=None;status='COMPLETED'
     if slot.get('generation_stage')=='GUIDED_PHYSICAL':
         from rcwg_full.campaign.transforms import public_guidance

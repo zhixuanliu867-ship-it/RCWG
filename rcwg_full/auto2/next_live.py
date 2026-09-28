@@ -13,6 +13,7 @@ from rcwg_full.services.requests import parse_final
 from rcwg_full.services.request3 import assemble_request3
 from rcwg_full.services.quotes import assemble_quote
 from .dispatch import DispatchGate
+from .budget_extension import effective_recovery_cap
 from .recovery import active_epoch
 
 PROFILE='NEXT_LIVE_001_1'
@@ -76,7 +77,7 @@ def _limits(state,db,cost):
     epoch=active_epoch(db)
     if epoch is None:raise PermissionError('NEXT_LIVE_REQUIRES_EXISTING_EPOCH')
     used=db.execute('SELECT COALESCE(SUM(amount),0) FROM reservations').fetchone()[0]
-    if used+cost-epoch['baseline_reserved_microusd']>epoch['maximum_additional_microusd']:raise PermissionError('NEXT_LIVE_RECOVERY_SUBCAP')
+    if used+cost-epoch['baseline_reserved_microusd']>effective_recovery_cap(db,epoch):raise PermissionError('NEXT_LIVE_RECOVERY_SUBCAP')
     if used+cost>state.authority['ceiling_microusd']-int(state.policy['budget']['cleanup_and_billing_lag_reserve']*1e6):raise PermissionError('NEXT_LIVE_ROOT_BUDGET')
     phase=db.execute("SELECT COALESCE(SUM(r.amount),0) FROM reservations r JOIN scopes s ON s.id=r.scope WHERE json_extract(s.body,'$.stage') IN ('B_DEVELOPMENT','B_REFERENCE','B_FORMAL')").fetchone()[0]
     if phase+cost>int(state.policy['budget']['remaining_live_and_reference_allocation']*1e6):raise PermissionError('NEXT_LIVE_PHASE_BUDGET')
@@ -153,7 +154,13 @@ def bind(state,request,kind,index):
                 prior=_terminal_result(db,index,q['logical_request_id'])
                 if not prior or prior['status']!='COMPLETED':raise PermissionError('NEXT_LIVE_LOGICAL_DEPENDENCY')
                 logical=parse_final(prior['response']['text'].encode(),'logical')['value']
-            expected=assemble_request3(q['task'],q['binding'],protocol=q['protocol'],stage=q['stage'],attempt_id=q['attempt_id'],
+            profile=q.get('request_profile','FULL001_REQUEST_3')
+            assembler=assemble_request3
+            if profile=='FULL001_REQUEST_4':
+                from rcwg_full.services.request4 import assemble_request4
+                assembler=assemble_request4
+            elif profile!='FULL001_REQUEST_3':raise PermissionError('NEXT_LIVE_REQUEST_PROFILE')
+            expected=assembler(q['task'],q['binding'],protocol=q['protocol'],stage=q['stage'],attempt_id=q['attempt_id'],
               request_id=q['request_id'],trial_label=q['trial_label'],logical=logical)
         else:expected=assemble_quote(q['semantic_request'],q['binding'],q['template'],q['request_id'],profile=q['profile'])
         body=expected['body'] if kind!='COUNT' else {k:v for k,v in expected['body'].items() if k in {'contents','systemInstruction'}}
@@ -232,9 +239,13 @@ def skip_failed_logical(state,index,attempt_id):
         for row in rows:row.update(state='SKIPPED',skip_reason='LOGICAL_MODEL_FAILURE');_put(db,row)
         _event(db,'DEPENDENCY_SKIPPED',{'logical_slot':attempt_id})
 
-def model_deferred(state,model):
+def model_deferred(state,model,*,manifest_id=None):
+    # Keep the historical default for old callers. New development controllers
+    # scope a capacity deferral to the packet in which it actually occurred.
     with state.db() as db:
-        return _exists(db) and any(json.loads(r[0])['model']==model and json.loads(r[0])['state']=='DEFERRED' for r in db.execute('SELECT body FROM next_live_requests'))
+        if not _exists(db):return False
+        rows=_rows(db,manifest_id) if manifest_id is not None else [json.loads(r[0]) for r in db.execute('SELECT body FROM next_live_requests')]
+        return any(r['model']==model and r['state']=='DEFERRED' for r in rows)
 
 from .services import DelegatedClient,_PROVIDER_ADMISSION
 class NextLiveClient(DelegatedClient):

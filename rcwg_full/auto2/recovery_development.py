@@ -6,6 +6,7 @@ The original epoch, unknown reservation and task-wide fuse are never reset.
 import json
 import uuid
 from .dispatch import DispatchGate
+from .budget_extension import effective_recovery_cap
 from .recovery import active_epoch
 from rcwg_full.evidence import canonical,digest
 from rcwg_full.services.requests import assemble_recovery2,parse_final
@@ -70,7 +71,7 @@ def install_block(state,scope,block,recipes,*,original_blocks,original_manifest_
                 raise PermissionError('RECOVERY_DEVELOPMENT_MANIFEST_CHANGED')
             used=db.execute('SELECT SUM(amount) FROM reservations').fetchone()[0]
             cost=sum(p[3] for p in planned)
-            if used+cost-epoch['baseline_reserved_microusd']>epoch['maximum_additional_microusd']:
+            if used+cost-epoch['baseline_reserved_microusd']>effective_recovery_cap(db,epoch):
                 raise PermissionError('RECOVERY_COMPLETE_BLOCK_UNAFFORDABLE')
             cleanup=int(state.policy['budget']['cleanup_and_billing_lag_reserve']*1e6)
             if used+cost>state.authority['ceiling_microusd']-cleanup or cost>scope['ceiling_microusd']:

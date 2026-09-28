@@ -1,5 +1,6 @@
 """One bounded independent SERVICE_ONLY epoch; the old trial remains unknown."""
 import json
+from .budget_extension import effective_recovery_cap
 from rcwg_full.evidence import digest, canonical, sha
 from .dispatch import DispatchGate
 
@@ -98,5 +99,5 @@ def check_reservation(db, request_id, kind, amount, scope_hash):
     if not development and (planned is None or planned['kind']!=kind or planned['microusd']!=amount or scope_hash!=epoch['scope_sha256']):
         raise PermissionError('RECOVERY_RESERVATION_NOT_PREREGISTERED')
     total=db.execute('SELECT COALESCE(SUM(amount),0) FROM reservations').fetchone()[0]
-    if total+amount-epoch['baseline_reserved_microusd']>epoch['maximum_additional_microusd']:
+    if total+amount-epoch['baseline_reserved_microusd']>effective_recovery_cap(db,epoch):
         raise PermissionError('RECOVERY_CUMULATIVE_SUBCAP')
