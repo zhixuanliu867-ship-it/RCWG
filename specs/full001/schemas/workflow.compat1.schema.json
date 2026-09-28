@@ -1,0 +1,1142 @@
+{
+  "$comment": "This schema checks wire structure only. FullCompiler enforces types, public source capabilities, limits, dependencies and all operator parameter semantics.",
+  "$defs": {
+    "node": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "scan"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "sequential",
+                  "index_range"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "filter"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "vectorized",
+                  "scalar"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "project"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "column_view",
+                  "copy"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "join"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "hash",
+                  "sort_merge",
+                  "block_nested"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "aggregate"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "hash_group",
+                  "sorted_group"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "deduplicate"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "hash",
+                  "sort_unique"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "sort"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "in_memory",
+                  "external_merge"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "top_k"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "full_sort",
+                  "streaming_heap"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "k"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "set_op"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "hash",
+                  "sorted_merge"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "graph_neighbors"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "csr",
+                  "indexed_adjacency"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "graph_reachability"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bfs",
+                  "dfs"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "max_hops"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "graph_shortest_path"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bfs",
+                  "dijkstra"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "graph_filter"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "edge_mask",
+                  "index_filter"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "graph_subgraph"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "induced",
+                  "edge_selected"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "read_documents"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "batched",
+                  "per_document"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "batch_size"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "text_retrieve"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bm25",
+                  "dense_fixed"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "query",
+                            "limit",
+                            "offset"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 3,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "split_documents"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "section",
+                  "token_window"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "size",
+                            "overlap"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 2,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "gather_context"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "neighbors",
+                  "section_header"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "window"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "semantic_extract"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "fixed_e0"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "question",
+                            "context_budget"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 2,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "evidence_merge"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "by_entity",
+                  "by_document"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "evidence_validate"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "span_check"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "materialize"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "memory",
+                  "disk"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "stream_read"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "arrow_batches"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "batch_size"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "broadcast"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "shared_ref",
+                  "copy_each"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "release"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "explicit"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "cache"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "memory",
+                  "disk"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "map"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bounded_map"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "branch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "predicate_branch"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "loop"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bounded_loop"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "collect"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "bounded_collect"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "limit"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "emit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "json_artifact"
+                ]
+              },
+              "param_bindings": {
+                "maxItems": 0,
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operator": {
+                "const": "stats"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "implementation": {
+                "enum": [
+                  "metadata",
+                  "sample"
+                ]
+              },
+              "param_bindings": {
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/parameter_binding"
+                    },
+                    {
+                      "properties": {
+                        "parameter": {
+                          "enum": [
+                            "sample_size"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "maxItems": 1,
+                "type": "array"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "after": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "id": {
+          "pattern": "^[a-z][a-z0-9_]{0,47}$",
+          "type": "string"
+        },
+        "implementation": {
+          "type": "string"
+        },
+        "inputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "operator": {
+          "enum": [
+            "scan",
+            "filter",
+            "project",
+            "join",
+            "aggregate",
+            "deduplicate",
+            "sort",
+            "top_k",
+            "set_op",
+            "graph_neighbors",
+            "graph_reachability",
+            "graph_shortest_path",
+            "graph_filter",
+            "graph_subgraph",
+            "read_documents",
+            "text_retrieve",
+            "split_documents",
+            "gather_context",
+            "semantic_extract",
+            "evidence_merge",
+            "evidence_validate",
+            "materialize",
+            "stream_read",
+            "broadcast",
+            "release",
+            "cache",
+            "map",
+            "branch",
+            "loop",
+            "collect",
+            "emit",
+            "stats"
+          ],
+          "type": "string"
+        },
+        "outputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "type": "object"
+        },
+        "param_bindings": {
+          "items": {
+            "$ref": "#/$defs/parameter_binding"
+          },
+          "type": "array"
+        },
+        "params": {
+          "type": "object"
+        },
+        "regions": {
+          "additionalProperties": false,
+          "properties": {
+            "body": {
+              "$ref": "#/$defs/region"
+            },
+            "else": {
+              "$ref": "#/$defs/region"
+            },
+            "then": {
+              "$ref": "#/$defs/region"
+            }
+          },
+          "type": "object"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "batch_rows": {
+              "maximum": 1048576,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "cpu_slots": {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "max_parallelism": {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "storage": {
+          "enum": [
+            "stream",
+            "memory",
+            "disk",
+            "shared_ref"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "operator",
+        "implementation",
+        "inputs",
+        "params",
+        "outputs"
+      ],
+      "type": "object"
+    },
+    "parameter_binding": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "parameter": {
+          "pattern": "^[a-z][a-z0-9_]{0,47}$",
+          "type": "string"
+        },
+        "ref": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "parameter",
+        "ref"
+      ],
+      "type": "object"
+    },
+    "region": {
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "maxItems": 48,
+          "type": "array"
+        },
+        "yield": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "bindings",
+        "nodes",
+        "yield"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:rcwg:workflow:full001:compat1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "type": "array"
+    },
+    "external_inputs": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "ir_version": {
+      "const": "1.0"
+    },
+    "limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_loop_iterations": {
+          "maximum": 16,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_node_instances": {
+          "maximum": 4096,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "nodes": {
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "maxItems": 48,
+      "minItems": 1,
+      "type": "array"
+    },
+    "result": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "ir_version",
+    "task_id",
+    "external_inputs",
+    "nodes",
+    "result"
+  ],
+  "title": "RCWG_FULL001_COMPAT1 WorkIR structural schema",
+  "type": "object"
+}

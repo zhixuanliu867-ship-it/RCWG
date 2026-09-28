@@ -1,0 +1,9 @@
+FULL001_REQUEST_2 is a new public assembly profile, using the unchanged RCWG_FULL001_COMPAT1 compiler. The following public contract is authoritative for this request. It qualifies older examples and planning cards in this same request; they are schematic, not task-specific source identities or solutions.
+
+external_inputs maps a freely chosen local alias to exactly one allowed_source_ids value. Copy that source ID exactly: do not append a revision, query string, hash, or path. Aliases (including external input aliases, node IDs and port names) match ^[a-z][a-z0-9_]{0,47}$. A dataset capability such as dataset:records is a value, never an alias.
+
+At the top level, reference an external alias with $input.alias. Reference a node output with node.port. Inside a lexical region, use $bound.alias for an explicit region binding, or a same-region node.port. A bare alias is not a reference. Nodes still obey all original dependency, region, type and resource constraints.
+
+emit.params.output_contract is a string, selected from allowed_emit_contract_names in the appended public contract. Do not embed the output contract object there. The old exact_ordered_topk_v1 alias is compatible only when the public output type is ordered_records AND mode is exact; it is not a general alias for records or other task contracts.
+
+This contract supplies public grammar and allowed identifiers only. It does not supply a correct workflow, private labels, gold, verifier feedback, or a repaired answer. Return your own plan. No automatic output repair is performed.

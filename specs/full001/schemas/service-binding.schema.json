@@ -1,0 +1,249 @@
+{
+  "$id": "urn:rcwg:services:full001:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "else": {
+        "properties": {
+          "role": {
+            "const": "EXECUTOR"
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "slot": {
+            "pattern": "^G"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "max_output_tokens": {
+            "minimum": 16384
+          },
+          "role": {
+            "const": "GENERATOR"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "account_binding_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "api_version": {
+      "const": "v1"
+    },
+    "count_method": {
+      "enum": [
+        "PROVIDER_COUNT",
+        "LOCAL_TOKENIZER",
+        "UNKNOWN"
+      ]
+    },
+    "data_policy": {
+      "type": [
+        "string",
+        "object",
+        "null"
+      ]
+    },
+    "decoding": {
+      "additionalProperties": false,
+      "properties": {
+        "temperature": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "thinking": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "top_k": {
+          "minimum": 1,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "endpoint": {
+      "pattern": "^https://",
+      "type": "string"
+    },
+    "idempotency": {
+      "enum": [
+        "UNSUPPORTED",
+        "UNKNOWN"
+      ]
+    },
+    "max_input_tokens": {
+      "minimum": 12288,
+      "type": "integer"
+    },
+    "max_output_tokens": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "price_snapshot": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "provider": {
+      "const": "VERTEX"
+    },
+    "region": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "reported_revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "requested_model": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "role": {
+      "enum": [
+        "GENERATOR",
+        "EXECUTOR"
+      ]
+    },
+    "slot": {
+      "enum": [
+        "G0",
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G5",
+        "E0",
+        "E1"
+      ]
+    },
+    "structured_json": {
+      "type": "boolean"
+    },
+    "supported_parameters": {
+      "additionalProperties": false,
+      "properties": {
+        "json": {
+          "enum": [
+            "SUPPORTED",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        },
+        "seed": {
+          "enum": [
+            "SUPPORTED",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        },
+        "temperature": {
+          "enum": [
+            "SUPPORTED",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        },
+        "thinking": {
+          "enum": [
+            "SUPPORTED",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        },
+        "top_k": {
+          "enum": [
+            "SUPPORTED",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "seed",
+        "temperature",
+        "top_k",
+        "thinking",
+        "json"
+      ],
+      "type": "object"
+    },
+    "template_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "thinking": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "tokenizer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "valid_from": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "valid_until": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "slot",
+    "role",
+    "provider",
+    "endpoint",
+    "api_version",
+    "requested_model",
+    "reported_revision",
+    "region",
+    "account_binding_hash",
+    "supported_parameters",
+    "max_input_tokens",
+    "max_output_tokens",
+    "thinking",
+    "structured_json",
+    "tokenizer",
+    "count_method",
+    "price_snapshot",
+    "data_policy",
+    "valid_from",
+    "valid_until",
+    "decoding",
+    "idempotency",
+    "template_hash"
+  ],
+  "title": "FULL001 service binding; live validation and receipts are separate",
+  "type": "object"
+}

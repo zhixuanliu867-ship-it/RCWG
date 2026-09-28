@@ -1,0 +1,56 @@
+{
+  "$comment": "Schema validity is not authorization. Trusted receipt provenance, exact action/role/scope and current validity must be checked separately.",
+  "$id": "urn:rcwg:receipt:full001:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "HOST",
+        "PAID_SERVICES",
+        "FORMAL_LAUNCH",
+        "AUDIT_UNSEAL"
+      ]
+    },
+    "actor_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "actor_role": {
+      "enum": [
+        "Owner",
+        "Auditor"
+      ]
+    },
+    "approved": {
+      "const": true
+    },
+    "receipt_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "subject_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "valid_from": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "valid_until": {
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "approved",
+    "action",
+    "subject_hash",
+    "actor_role",
+    "actor_id",
+    "receipt_id",
+    "valid_from",
+    "valid_until"
+  ],
+  "type": "object"
+}

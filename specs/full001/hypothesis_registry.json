@@ -1,0 +1,191 @@
+{
+  "version": "FULL001_STATISTICS_COMPAT1",
+  "status": "CANDIDATE_NOT_FORMALLY_FROZEN",
+  "family_size": 18,
+  "correction": "Holm",
+  "draws": 10000,
+  "bootstrap_seed": 170029,
+  "sign_seed": 290017,
+  "tests": [
+    {
+      "id": "G0.SuccessBudget",
+      "generator": "G0",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G0.EfficientSuccess020",
+      "generator": "G0",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G0.AdaptiveFrozen",
+      "generator": "G0",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G1.SuccessBudget",
+      "generator": "G1",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G1.EfficientSuccess020",
+      "generator": "G1",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G1.AdaptiveFrozen",
+      "generator": "G1",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G2.SuccessBudget",
+      "generator": "G2",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G2.EfficientSuccess020",
+      "generator": "G2",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G2.AdaptiveFrozen",
+      "generator": "G2",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G3.SuccessBudget",
+      "generator": "G3",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G3.EfficientSuccess020",
+      "generator": "G3",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G3.AdaptiveFrozen",
+      "generator": "G3",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G4.SuccessBudget",
+      "generator": "G4",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G4.EfficientSuccess020",
+      "generator": "G4",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G4.AdaptiveFrozen",
+      "generator": "G4",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G5.SuccessBudget",
+      "generator": "G5",
+      "contrast": "P1-P0",
+      "metric": "SuccessBudget",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G5.EfficientSuccess020",
+      "generator": "G5",
+      "contrast": "P1-P0",
+      "metric": "EfficientSuccess020",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    },
+    {
+      "id": "G5.AdaptiveFrozen",
+      "generator": "G5",
+      "contrast": "Adaptive-Frozen",
+      "metric": "AdaptiveFrozen",
+      "null": "template-family-macro paired difference = 0",
+      "alternative": "two-sided",
+      "p_method": "paired template sign randomization",
+      "ci_method": "paired within-family template cluster bootstrap"
+    }
+  ]
+}

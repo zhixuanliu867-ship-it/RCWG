@@ -1,0 +1,119 @@
+{
+  "schema_version": "FULL001_EXTERNAL_NATIVE_ADAPTERS_1",
+  "checked_date": "2026-09-23",
+  "tracks": {
+    "TPS-Bench": {
+      "repository": "https://github.com/hanwenxu1/mcp-agent",
+      "revision": "dd95edf02649a32d02b7bdbb35bbd44f3a294029",
+      "tree": "760bbfb9d52d3bc40bb2c3164cd06a0a2a14a0fb",
+      "entrypoint": "eval/gemini-tool-selection.py",
+      "files": {
+        "config_test.yaml": "ba92d174f1080d2c19b7291cbcf0a86e47df8259d2c3e90864ab7373f86c3963",
+        "eval/gemini-tool-selection.py": "79cb8018387f04d65f22d5afbc18ddc754deb90372d0c824b4f5883649259cd5",
+        "eval/gemini_test.py": "c431161640e55ce965ccc597b293b289d3fd6209aecc9355e023518938839332",
+        "eval/reward_prompt.py": "49e34355449dd51a0d51f33cdd3f9bfdc3bf76a810246f7bd5f41706c8cd17e9",
+        "mcp_client.py": "00aabdad4e5b7a6d76ec3f2f1e95e05b8f2375733e07aab5fb7695c99ced7733",
+        "README.md": "447d3e64a2f4aab4592b234704756028d433a61aa3e5598545db8e75f5b15bc5",
+        "requirements.txt": "3cadd9979933cbd170de0a3513f846b8702c39e74c3907da0821a09e72d85b05"
+      },
+      "scope": "ORIGINAL_TOOL_SELECTION_JUDGE_ONLY_MCP_TASK_EXECUTION_SEPARATE",
+      "dependency_binding": "EXACT_INSTALLED_ENVIRONMENT_MANIFEST_REQUIRED_SEPARATELY",
+      "upstream_lock_present": false,
+      "upstream_license_file": null,
+      "license_approval": "PENDING",
+      "actual_native_runs": 0,
+      "status": "ADAPTER_IMPLEMENTED_EXECUTION_NOT_AUTHORIZED"
+    },
+    "WorFEval": {
+      "repository": "https://github.com/zjunlp/WorfBench",
+      "revision": "38a6455557128dffceae9a08ffd745f04a4a9d03",
+      "tree": "0b520583ab65be747d4fa798f4ac3e276c8dbdda",
+      "entrypoint": "evaluator/graph_evaluator.py",
+      "files": {
+        "eval.sh": "08055cdb35d1d8c1cbb4523359313bee4bdfd104df77c7b3deac1d27516f0926",
+        "evaluator/graph_evaluator.py": "92e3a6643ab89a4eb9dcb2e7b7678663ee1b4969d69d85e6ca8c9e7bbbb468ef",
+        "LICENSE": "4f101b153c67c842941e560cdf8fc9c41b1e47851d9645486e95f6cd39aeba9e",
+        "node_eval.py": "f5c0c0bfb3ade30dd4f3ffd3b6bd4e019c08238733656bfc8c2f929096d6fc7b",
+        "README.md": "323773f89278abdc59f2b314336b2f8302c661843915c39822f12c9660ccab75",
+        "requirements.txt": "ed8c2ae7c29e37588f481de7fcc11d574bbd1d06ce3be0f322a14c46d3302e48"
+      },
+      "scope": "ORIGINAL_NODE_GRAPH_PLAN_EVALUATORS",
+      "dependency_binding": "EXACT_INSTALLED_ENVIRONMENT_MANIFEST_REQUIRED_SEPARATELY",
+      "upstream_lock_present": false,
+      "upstream_license_file": "LICENSE",
+      "license_approval": "PENDING",
+      "actual_native_runs": 0,
+      "status": "ADAPTER_IMPLEMENTED_EXECUTION_NOT_AUTHORIZED"
+    },
+    "SemBench": {
+      "repository": "https://github.com/SemBench/SemBench",
+      "revision": "c814e3807e72d4cf876b852b17e77f3cc94575c2",
+      "tree": "955f8197e42540a13e06c88c65055059c327af5f",
+      "entrypoint": "src/scenario/movie/runner/lotus_runner/lotus_runner.py",
+      "files": {
+        "README.md": "4f841de445b76a96fe92294a0bf5147e20b27a0edb76f6bae8f5625a9ba5a93c",
+        "requirements.txt": "98632ad6e920da91c6c1f78e81f1c31ab8be1eb6f3ea7b17c83b529f3bd88d0e",
+        "src/evaluator/generic_evaluator.py": "86ecdcc408e86fb95eaa81bdc01cf2b274c80784a0d915f8943190a427dead3d",
+        "src/runner/generic_lotus_runner/generic_lotus_runner.py": "57c272a5461ea309ffa38ee6a23c0dae7d06505afe04cce4b541bd4b4dbff154",
+        "src/runner/generic_runner.py": "8adf80b5817de78bd6f182d2d850815675140151498e5139d2c6024f01dcda96",
+        "src/scenario/movie/evaluation/evaluate.py": "10308033fcc4b298905d90536a882dbdba95577d60fff40c3d1501c106a38576",
+        "src/scenario/movie/runner/lotus_runner/lotus_runner.py": "943e29556b94ad5ef5e81c8c8bc43146d07b7144834868f3ab526e19392d3de5"
+      },
+      "scope": "ORIGINAL_MOVIE_LOTUS_QUERY_RUNNER",
+      "dependency_binding": "EXACT_INSTALLED_ENVIRONMENT_MANIFEST_REQUIRED_SEPARATELY",
+      "upstream_lock_present": false,
+      "upstream_license_file": null,
+      "license_approval": "PENDING",
+      "actual_native_runs": 0,
+      "status": "ADAPTER_IMPLEMENTED_EXECUTION_NOT_AUTHORIZED"
+    },
+    "LOTUS": {
+      "repository": "https://github.com/lotus-data/lotus",
+      "revision": "136ae4f4a344a2f75d89f811e516dfcb0de30e46",
+      "tree": "68e0461658f36d9af4fb56f596d34e4ad4606c9c",
+      "entrypoint": "lotus/sem_ops/sem_extract.py",
+      "files": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "lotus/sem_ops/sem_extract.py": "0f58eda86d645b85b8659591d61366a86809a4d189dbec6c491fe5b4628c163a",
+        "lotus/sem_ops/sem_filter.py": "ae20bcb11b8750a9283a988ad2233d2f9a8b755f57a65c47b37029b1e70be7c7",
+        "lotus/sem_ops/sem_join.py": "9d1c1cc9af03ef4446c31cf607ed26dacef572c89d72746b0a351d8421edbd01",
+        "lotus/sem_ops/sem_topk.py": "69099f0ca8b959e1c545ce09168e9cf75284d280ce6a28dc1bf1ea6f364b331e",
+        "lotus/settings.py": "1724d0820190e6585fa3504946734eb5964b7b1d8ea727540ac49815f186bf6e",
+        "pyproject.toml": "bb18a7274b31fc21eb6d1498a40246f61e910a9ef905edd2b1d1b89e5210e90f",
+        "README.md": "1326b9c07e71b8cd59a10f019ab1a552ab5d9bdb1553cd5d4a4f9b280c225746",
+        "uv.lock": "537a72476b77261a9d3f08e72a5f9dc86efe765a29cd3f70c0fcb960aa144e15"
+      },
+      "scope": "ORIGINAL_DATAFRAME_SEM_FILTER_EXTRACT_JOIN_TOPK",
+      "dependency_binding": "EXACT_INSTALLED_ENVIRONMENT_MANIFEST_REQUIRED_SEPARATELY",
+      "upstream_lock_present": true,
+      "upstream_license_file": "LICENSE",
+      "license_approval": "PENDING",
+      "actual_native_runs": 0,
+      "status": "ADAPTER_IMPLEMENTED_EXECUTION_NOT_AUTHORIZED"
+    },
+    "DocETL": {
+      "repository": "https://github.com/ucbepic/docetl",
+      "revision": "0b1f0f15956c822531a17955f584073b9d1bcd72",
+      "tree": "aceba322351bc8abae0e241ef10a794c3e8674e0",
+      "entrypoint": "docetl/runner.py",
+      "files": {
+        "docetl/runner.py": "1207f05bd8ccd1ab979ef28ea89d38d57c511db3418bb410f2d297762387bf0c",
+        "docetl/schemas.py": "2ce511d5bf263c2f123ba542f2b03a71fae027fb821d0359148ceab12317fad7",
+        "LICENSE": "3c670c93788866408ca017fde83b8db088c2e1fb44bda6fbde3fef0d07588fd9",
+        "pyproject.toml": "ebe90086423e4c4669f35f80390209b68b1d69179394ef418b4bc2691939dbce",
+        "README.md": "13d3fc393ae971eba4f8b4cf214d7ab2377e1e5ee8666ac39332ab709025a3c9",
+        "tests/tui_demo/pipeline.yaml": "718d6d8ed7e164b05e027be25a3d10d0a9b8cf0935fa67751be485365f9d5dc6",
+        "uv.lock": "d31cfa40c3c669d34f9000c97dd65bfe1d5b9287134328891930977aa7319a8a"
+      },
+      "scope": "ORIGINAL_DSLRUNNER_LOAD_RUN",
+      "dependency_binding": "EXACT_INSTALLED_ENVIRONMENT_MANIFEST_REQUIRED_SEPARATELY",
+      "upstream_lock_present": true,
+      "upstream_license_file": "LICENSE",
+      "license_approval": "PENDING",
+      "actual_native_runs": 0,
+      "status": "ADAPTER_IMPLEMENTED_EXECUTION_NOT_AUTHORIZED"
+    }
+  },
+  "formal_ready": false,
+  "original_reproduction_claim": false
+}

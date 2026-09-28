@@ -1,6 +1,8 @@
-* text=auto eol=lf
-*.sh text eol=lf
-*.ps1 text eol=crlf
-
-# Preserve the exact owner-approved proposal byte hash across platforms.
-configs/cloud001/change_plan.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+rcwg_full/** text eol=lf
+native_full001/** text eol=lf
+acceptance/full001/** text eol=lf
+docs/full001/** text eol=lf
+specs/full001/** text eol=lf
+environments/full001/*.in text eol=lf
+environments/full001/*.lock text eol=lf
+scripts/build_full001.py text eol=lf

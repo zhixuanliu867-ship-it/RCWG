@@ -1,0 +1,298 @@
+{
+  "extensions": [
+    "project.views_expressions_record_pack",
+    "typed_parameter_bindings",
+    "top_k.partition_by",
+    "text_retrieve.offset",
+    "semantic_extract.question"
+  ],
+  "formal_ready": false,
+  "legacy_schema_sha256": "be8f295c7f3381af4e869e2b7e8b4280d9f9d922c6c4d6d940e6d61ea5d191d9",
+  "limits": {
+    "cumulative_node_instances": 4096,
+    "final_json_bytes": 65536,
+    "loop_iterations": 16,
+    "recursive_nodes": 48,
+    "region_depth": 2
+  },
+  "operators": [
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "sequential",
+        "index_range"
+      ],
+      "operator": "scan"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "vectorized",
+        "scalar"
+      ],
+      "operator": "filter"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "column_view",
+        "copy"
+      ],
+      "operator": "project"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "hash",
+        "sort_merge",
+        "block_nested"
+      ],
+      "operator": "join"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "hash_group",
+        "sorted_group"
+      ],
+      "operator": "aggregate"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "hash",
+        "sort_unique"
+      ],
+      "operator": "deduplicate"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "in_memory",
+        "external_merge"
+      ],
+      "operator": "sort"
+    },
+    {
+      "bindable_value_parameters": {
+        "k": "Int64"
+      },
+      "implementations": [
+        "full_sort",
+        "streaming_heap"
+      ],
+      "operator": "top_k"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "hash",
+        "sorted_merge"
+      ],
+      "operator": "set_op"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "csr",
+        "indexed_adjacency"
+      ],
+      "operator": "graph_neighbors"
+    },
+    {
+      "bindable_value_parameters": {
+        "max_hops": "Int64"
+      },
+      "implementations": [
+        "bfs",
+        "dfs"
+      ],
+      "operator": "graph_reachability"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "bfs",
+        "dijkstra"
+      ],
+      "operator": "graph_shortest_path"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "edge_mask",
+        "index_filter"
+      ],
+      "operator": "graph_filter"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "induced",
+        "edge_selected"
+      ],
+      "operator": "graph_subgraph"
+    },
+    {
+      "bindable_value_parameters": {
+        "batch_size": "Int64"
+      },
+      "implementations": [
+        "batched",
+        "per_document"
+      ],
+      "operator": "read_documents"
+    },
+    {
+      "bindable_value_parameters": {
+        "limit": "Int64",
+        "offset": "Int64",
+        "query": "Utf8"
+      },
+      "implementations": [
+        "bm25",
+        "dense_fixed"
+      ],
+      "operator": "text_retrieve"
+    },
+    {
+      "bindable_value_parameters": {
+        "overlap": "Int64",
+        "size": "Int64"
+      },
+      "implementations": [
+        "section",
+        "token_window"
+      ],
+      "operator": "split_documents"
+    },
+    {
+      "bindable_value_parameters": {
+        "window": "Int64"
+      },
+      "implementations": [
+        "neighbors",
+        "section_header"
+      ],
+      "operator": "gather_context"
+    },
+    {
+      "bindable_value_parameters": {
+        "context_budget": "Int64",
+        "question": "Utf8"
+      },
+      "implementations": [
+        "fixed_e0"
+      ],
+      "operator": "semantic_extract"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "by_entity",
+        "by_document"
+      ],
+      "operator": "evidence_merge"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "span_check"
+      ],
+      "operator": "evidence_validate"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "operator": "materialize"
+    },
+    {
+      "bindable_value_parameters": {
+        "batch_size": "Int64"
+      },
+      "implementations": [
+        "arrow_batches"
+      ],
+      "operator": "stream_read"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "shared_ref",
+        "copy_each"
+      ],
+      "operator": "broadcast"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "explicit"
+      ],
+      "operator": "release"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "memory",
+        "disk"
+      ],
+      "operator": "cache"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "bounded_map"
+      ],
+      "operator": "map"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "predicate_branch"
+      ],
+      "operator": "branch"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "bounded_loop"
+      ],
+      "operator": "loop"
+    },
+    {
+      "bindable_value_parameters": {
+        "limit": "Int64"
+      },
+      "implementations": [
+        "bounded_collect"
+      ],
+      "operator": "collect"
+    },
+    {
+      "bindable_value_parameters": {},
+      "implementations": [
+        "json_artifact"
+      ],
+      "operator": "emit"
+    },
+    {
+      "bindable_value_parameters": {
+        "sample_size": "Int64"
+      },
+      "implementations": [
+        "metadata",
+        "sample"
+      ],
+      "operator": "stats"
+    }
+  ],
+  "original_profile_entrypoint": "rcwg_spec.compiler.validate_workflow",
+  "profile": "RCWG_FULL001_COMPAT1",
+  "schema_version": "FULL001_CAPABILITY_MANIFEST_1",
+  "select_profile_outside_model_output": true,
+  "status": "DECLARED_SOFTWARE_CAPABILITIES_NOT_DISPATCH_EVIDENCE",
+  "validation_entrypoint": "rcwg_full.compiler.FullCompiler.compile"
+}

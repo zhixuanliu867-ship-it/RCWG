@@ -1,5 +1,131 @@
 # RCWG project state — 2026-09-18
 
+## FORMAL_READINESS_1 verified live checkpoint — 2026-09-29
+
+The observation/finalization repair ran at executable commit
+164bb4469baa7bd80986cbc0818b336d7468da42. Exact-source Python 3.12.14 CI
+passed 2,267 FULL001 tests and 299 subtests, plus inherited software/native
+gates. The versioned profile uses bounded event blocks, streaming validation,
+online lifetime accounting and independent failure finalization. Fine Python
+heap inventory is NOT_MEASURED; real cgroup resource counters remain measured.
+
+All 23 historical F3 timeout logs were examined: 15 contained node completion
+events and eight did not. They remain unchanged. The original eight legal
+plans and one public reference completed nine new WSL diagnostic runs with
+independent correctness, original 8 CPU / 8 GiB / 30-second limits, zero new
+G requests, 3.610–3.786 seconds and 7,726–10,014-byte journals. Changed host,
+boot, source and profile prevent a single-factor causal speedup claim.
+
+A single 8-vCPU, 64-GiB-class Linux VM passed all nine final calibration checks
+at the frozen source/profile/boot. The preregistered campaign recorded 318
+slots and 1,452 invocations; all seven workload families passed the fixed
+20-pair, 100ms-sampler CI95 upper <=3% rule (largest upper about 1.969%).
+Actual-scale graph registration/release/sealing was included. Mandatory
+observation cost remains on both sides of the sampler comparison.
+
+The previously selected held-out F1-05-b0-C0 reference pool retained 32
+candidates, separate screening and the original 3+4 confirmation rule.
+112 reference attempts produced 22 stable candidates;
+the chosen reference time is 1.089004416 seconds. All reference
+commitments and native evidence seals were checked locally.
+
+One reference wrapper initially escalated an expected absent answer after a
+confirmed 30-second timeout. Its controller error and all raw files remain
+unchanged; an explicitly linked derived projection retains that budget failure
+and resumes only unused slots, deducting the 36 consumed claims. No run was
+replayed. The external result-projection guard now distinguishes confirmed
+budget failure from genuinely unresolved verification; nine targeted checks
+and 20 finite-dispatch checks passed. Measured worker source/timing is unchanged.
+
+After technical admission the preauthorized finite formal block entered with
+six generators, P0/P1 and trial labels 17/29: 24 logical generations and 72
+fixed execution slots. Generation statuses: {'COMPLETED': 18, 'PLAN_INVALID': 4, 'MODEL_FAILURE': 2}.
+Execution statuses: {'COMPLETED': 54, 'NOT_RUN_UPSTREAM_PLAN_FAILURE': 18}. Success@Budget has
+54 true / 18 false / 0 unknown slots;
+EfficientSuccess at rho <=1.2 has 18 true /
+54 false / 0 unknown slots.
+Stop reason: none; finite block recorded.
+Unknowns retain their fixed denominators. This is one held-out F1 template,
+not a completed six-family study or a 48-template population p-value.
+
+Both historical uncertain requests and their holds remain unchanged; no
+uncertain request was replayed. New uncertain requests: 0.
+Root/epoch and all 180 earlier reservations are preserved. One append-only
+allocation revision uses A30/B45/initial15/cleanup10 under the same USD100
+root. Cumulative conservative reservations are USD71.494209,
+including the retained USD4.5 VM hold; invoice costs and provider active count
+remain unknown. Evidence was exported and hash-verified, owned cgroups removed,
+and the sole VM and auto-delete disk deleted with absence readback.
+
+No new E was sent. Existing E witnesses were available in the sent input;
+one controlled-text result had correct fields but incomplete witness coverage.
+Old business 0/4 is not evidence that all extracted fields were wrong. The
+natural panel has not run. Private raw responses, gold, host identities and
+full slot evidence stay outside Git. PR9 remains draft, unmerged, no force push.
+
+
+## NEXT-LIVE-001 completed finite packet — 2026-09-28
+
+The user-authorized A-to-B continuation ran at code commit
+797c5b4cf1bf2f11e637bfa5bc616c85f3ade0d6. Exact-head Python 3.12.14 CI passed
+2,184 FULL001 tests and 286 subtests, retaining all prior 2,149 IDs. Inherited
+Python 936, native N0-N3 115 and N4 82 passed; affected WSL tests passed 183.
+Selected CI artifact members were retained with CRC/hash/source checks.
+
+Real dispatches were 14 G, 4 E and 17 COUNT: all 35 HTTP responses were complete,
+with 34 HTTP200 and one qualifying HTTP429. G2/P0 recovered after one bounded
+5-second-minimum retry using the identical body and actual COUNT, a separate
+physical ID and separate reservation. No new unknown or model deferral occurred.
+The original unknown and its USD0.251904 hold remain unchanged.
+
+All 12 F1 logical slots settled. Six legal plans (G1/G2/G3/G4/G5 P0 and G3 P1)
+ran three times each on existing WSL; all 18 native executions passed the
+independent verifier. Five P1 logical outputs wrapped logical_contract and
+failed the unchanged root schema. G0/P0 wrapped wire_schema and failed shape
+validation. Their 18 dependent X slots stayed NOT_RUN. No output was unwrapped,
+rewritten, or regenerated. Prompt wording names these containers and may
+contribute to wrapper ambiguity; this single block cannot establish causation
+or general model/protocol rankings.
+
+Fixed E public field/citation validity improved to 3/4, but independent business
+correctness remained 0/4: two source-label answer/witness failures, one invalid
+JSON response, and one controlled-text response with correct fields but
+incomplete evidence coverage. These are fixed-reference diagnostics, not
+model-generated semantic workflows. E_QUOTE_PROMPT_1 stays separate from the
+unadmitted schema-constrained E_QUOTE_1/P5 tracks; no contents-only schema count
+is claimed. The natural panel has not run.
+
+Incremental conservative reservations are USD2.667133; cumulative reservations
+are USD56.115756, not invoice costs. The original recovery subcap has only
+USD1.473310 left. The next whole F2 packet requires USD3.606142 including two
+capacity retries (USD2.709118 before retries), so it was not dispatched. No
+scope/epoch reset or new funding was assumed. Later families, natural panel,
+reference confirmation and formal runs remain NOT_RUN under the original order.
+
+All 23,702 original AUTO2 files and 1,448 R1 files passed full preservation hashes.
+All native execution seals and independent results were rechecked; the finite
+executor exited and its task cgroup was removed. No new VM, disk or account was
+created. Private reports, attempts, budgets, output/gold and source locks remain
+outside public Git. SERVICE_ONLY and formal_ready=false remain in force;
+formal Success@Budget, EfficientSuccess and T_ref are null. The original research
+matrix is unchanged. PR9 remains draft; no merge or history rewrite.
+
+## 2026-09-27 AUTO2 continuation in progress
+
+The current user explicitly delegates preparation and bounded real cloud work
+through the new AUTO2 profile. Historical receipts and policies below are
+preserved. The current cumulative ceiling is USD100, including historical
+holds, with no automatic increase. PR #9 remains draft.
+
+The AUTO2 controller, separate host claims, label provenance, live transition,
+per-job service bounds and conditional calibration/reference/formal adapters
+are implemented. Forty-seven additional offline regression tests pass. The
+final source requires complete Linux acceptance before any model inference;
+partial and failed earlier runs remain preserved and do not count as passes.
+The task-owned cloud executor and original-scale dataset preparation are real
+operations, not mock evidence. Two private reports will record actual final
+preparation and live outcomes, budgets, identities and cleanup.
+
 Ticket: **RCWG-BOOT-001**
 
 Repository: `zhixuanliu867-ship-it/RCWG`
@@ -175,3 +301,217 @@ Current scope: docs/native001/START_HERE_zh.md and SCOPE.json. N0–N3 combined;
 ## Active ticket: RCWG-NATIVE-001 / N4
 
 Base 456a30d0d242ec005bfb9e25fdc7a45c72aa9af8; branch rcwg/native-001-n4. Read docs/native001n4/START_HERE_zh.md and DECISIONS.md. Offline counter hardening, receipt-bound finite calibration implementation and independent regression gates. One draft stacked on rcwg/native-001; PR6/7 not merged. Host proposal remains approved=false; real calibration NOT_RUN pending exact owner receipt. No models/count/GCP/IAM/install/cgroup writes. Formal BLOCKED_NOT_FROZEN. Historical evidence above retained.
+
+
+## RCWG-FULL-001 checkpoint
+
+Baseline 2824ee8e7678a39b3bff2ac701ffececd50d1e81, isolated branch rcwg/full-001. Continue from docs/full001/PROGRESS.json, REQUIREMENT_TO_EVIDENCE.json and OWNER_ACTIONS_REQUIRED.json. Software implementation and acceptance remain incomplete. Native CI build passed; the first independent native run found integer-division rounding failure; failed evidence is retained. N4 plan and history unchanged. All six readiness flags remain false; formal BLOCKED_NOT_FROZEN. Owner directly authorized new-branch pushes, offline CI and a draft PR based on rcwg/native-001-n4; no merge or force push. No host, paid API or cloud approvals inferred.
+
+## RCWG-FULL-001 recovery — 2026-09-22
+
+The preceding history is retained. Resume the same total task from docs/full001/PROGRESS.json and SOFTWARE_GAPS.json. The recovered local checkout contains the managed campaign runner, eight fixed service bindings and existing-auth adapters, control outbox, explicit private sealing, source snapshot tooling, paired analysis and total-acceptance dispatcher. Current Windows Python 3.13.4 supplementary integration passed 331 tests with no skips; it is not Linux/native or complete software acceptance. The dispatcher actually refused total acceptance because Linux Python 3.12.14 is unavailable in the current environment. Current WSL access returned E_ACCESSDENIED; repository connector writes returned HTTP 403. Historical CI applies only to its recorded commit. Keep local source and evidence, do not infer permission from an inaccessible environment.
+
+Formal capacity builders, bounded external-sort integration, transformed/graph/JSON allocation accounting, remaining schema/external-adapter coverage and exact-current-source native/inherited acceptance remain software work. All six readiness states stay false. No paid/count/cloud/IAM/install/cgroup/calibration/merge actions were performed in this recovery. N4 original 888 slots and approved=false remain unchanged.
+
+
+## RCWG-FULL-001 continuation checkpoint — 2026-09-22, portable-w05
+
+Current supplementary integration passed 369 tests and 104 subtests, without skips, on Windows Python 3.13.4. Independent JSON Schema validation passed all 1440 plan structures, eight service bindings and three rejection variants; workflow YAML was checked offline. These are not current Linux/native, formal capacity or cloud acceptance.
+
+F1/F2 now have bounded Arrow construction and an independent on-disk SQL oracle. Their 24 templates x four conditions passed small fixture construction, static compilation and independent oracle/condition checks. Formal workload construction still requires exact host admission. F3/F4 formal builders and F5/F6 formal-source binding remain software work.
+
+Reference attempts persist before execution and resume without resend; uncertain outcomes pause their group. New native reference execution uses inherited reference/timing evidence roles. E2's versioned binding now seals the original C0 plan against the target context without rewriting the plan. Controller timing now ends at committed result receipt, before process drain and verification. New Linux integration cases are retained but have not run in this environment. A facility retry must preserve plan, source, data, model, budget and comparison context.
+
+Resume from PROGRESS.json and SOFTWARE_GAPS.json. All six readiness flags remain false, formal BLOCKED_NOT_FROZEN. No host load, paid/count request, cloud/IAM change, system install, cgroup write, merge or force push occurred. N4 and inherited protected bytes are unchanged. Historical failure directories remain; inaccessible historical directories are separately recorded and never inferred as acceptance evidence.
+
+
+## REVIEW-R1 continuation — 2026-09-23
+
+R01-R06 remain under unified exact-head acceptance. The c2ddd71 CI built native modules and passed inherited native gates, but 507 FULL errors exposed a reused global allocation observer (502), concurrent artifact iteration (3), and two new test fixture mistakes. Failure artifacts and original test IDs remain intact. Native observer state is now call-scoped with ContextVar; retirement is serialized. WSL target Python 3.12.14 and hash-locked dependencies are accessible without system installation. CI remains the available native compiler.
+
+F3/F4 formal candidate builders now preserve fixed capacity and use independent disk/stream oracles. The F4-08/10 formal reference uses vector projections instead of millions of dynamic map instances. F4-12 declares a finite public continuation predicate (remaining > 0 AND iterations < 16), returns the current state when that predicate becomes false, and never treats an implicit runtime-limit exception as success. This is versioned FULL001_F4_BOUNDED_REFERENCE_1; old tiny definitions and gold stay unchanged. Formal-scale reference feasibility still needs admitted host evidence.
+
+All 24 F5/F6 source binding contracts accept actual QASPER/SciFact adapter bundles, authenticated original records, public task designs, explicit auxiliary graph rules and separately supplied private derived labels. Section extraction/reordering has exact Unicode-coordinate maps. No parser for the synthetic fixture language is used to create real labels. Blind packages omit prior labels. Real license, two-human review/adjudication, semantic neutrality of C1/C3 and reference confirmation remain pending.
+
+Five upstream-native entry-point adapters are source-pinned in external_native_v1.json, with 13 actual AST signatures checked. TPS scope is its original tool-selection judge/parser, WorFEval its original evaluators, SemBench its movie LOTUS runner, LOTUS its four registered semantic DataFrame operators, and DocETL its DSLRunner. They do not claim complete original-paper reproduction. Existing admitted service bridges, separately locked upstream environments and licensed data are prerequisites; no new default provider/credential route is introduced.
+
+Actual CPython/Arrow allocation events are retained, but syncing each dense-graph object separately exceeded an unchanged tiny-test deadline in WSL. Journal batching now writes every original event, synchronizes at most 1 MiB apart and at each completed artifact operation, and never accepts an unsealed crash tail. This is an instrumentation repair, not a timeout increase. The obsolete native external-sort materializing facade is disabled; direct convenience calls use the same bounded state and lazy disk handle as execution. Explicit caller-requested to_pylist/column access is outside the bounded operator path.
+
+All six readiness flags remain false until requirement-level final-head acceptance. Formal BLOCKED_NOT_FROZEN, original N4 888 slots and approved=false remain unchanged. See PROGRESS.json for preserved CI failures, supplementary tests and current remaining work. No paid/count call, real cgroup/stress/calibration, cloud/IAM, system installation, merge or force push was performed.
+
+
+### FULL001 R1 dispatch closure in progress
+6cc127459ed43f0a75430a67b6dfe829c9ec0a25 rebuilt on Linux Python 3.12.14: all 2014 FULL tests and inherited native gates pass (workflow 35843955586). This remains intermediate evidence. Additional worker dispatch completion, authenticated dense encoder assets, bounded generation probes and exact-commit evidence audit are undergoing integration. Preserve 1966 b3 test IDs and bytes; no formal gate changes. Resume from docs/full001/PROGRESS.json and SOFTWARE_GAPS.json, complete final acceptance/delivery before ending total task.
+
+### FULL001 R2 readiness and source-backed regressions
+
+R2 accepted the post-commit offline delivery for 86d0c4db5ac508bde68cba2d17564eb6bc416de0. The preceding in-repository checkpoints remain historical; the private post-commit evidence establishes that reviewed software state. R2 continues host, service, real-source data, reference and campaign preparation with formal admission closed. The original N4 plan remains byte-identical, approved=false and 888 slots. No new host load or paid/cloud permission is implied by readiness preparation.
+
+Actual candidate rehydration exposed insertion-order-dependent alpha identities: a multi-source plan's candidate ID changed after canonical JSON storage despite an unchanged plan hash. FULL001_REFERENCE_GRAMMAR_4 derives external and capture aliases from their actual bindings, independent of insertion order or alias names. Real official QASPER v0.3 ingestion also exposed null section names. FULL001_UPSTREAM_2 represents those as empty headings, records normalized section indices and preserves the complete original source privately. Four new R2 regression IDs cover canonical round trips, alias/capture renaming versus real edge changes, and null-heading Unicode evidence spans. Existing test IDs and protected specification/prompt bytes remain intact.
+
+This checkpoint requires new exact-source build and affected/full acceptance evidence before inheriting software-complete status. The nine calibration checks, actual service binding/paid receipts, human labels, real reference timings and campaign freeze remain separate external evidence requirements. R2's original 150,880 NOT_RUN slot plan and all failures are retained privately; changed source identities are not silently inserted into that old plan.
+
+Reopening the complete real-source export found a second ordering issue: QASPER's public document arrays followed source object insertion order, while canonical private JSON reordered paper keys, causing authenticated reconstruction to fail. FULL001_UPSTREAM_3 sorts paper identities during adaptation and retains original source bytes. A fifth R2 test authenticates the stored multi-paper round trip and rejects changed public content. Actual source exports are rebuilt and reauthenticated before delivery; the earlier export and reproduced failure remain private evidence.
+
+## AUTO2-RECOVERY-R1 — 2026-09-28
+
+The explicit user recovery delegation supersedes historical per-module approval
+text within AUTO2. Continue the same two-phase task and USD100 budget root, with
+a USD5 recovery subcap. The sealed initial run, unresolved request and all holds
+remain intact. Recovery adds durable task dispatch fencing, phased HTTP evidence,
+one conditional independent fixed-E epoch, and opt-in public request grammar v2.
+See docs/full001/AUTO2_RECOVERY_R1.md. Target-environment full acceptance is being
+rerun on the current source; Windows supplementary passes alone are not full
+acceptance. No new calibration/formal efficiency claim or merge is made.
+
+## AUTO2-RECOVERY-R1 real E checkpoint and independent development
+
+Exact commit 339d2bc7 passed Linux Python 3.12.14 FULL001 CI: 2,138 tests and 270 subtests, preserving all prior 2,094 test IDs. The first independent SERVICE_ONLY diagnostic completed four actual E and four COUNT requests on the existing account/route. All eight responses were complete HTTP 200; semantic correctness was 0/4 (one non-array response and three invalid citation-coordinate responses). No new unknown send occurred; no response was manually repaired. Original unknown and USD0.251904 reservation remain isolated.
+
+The same epoch now supports appending complete independent nonsemantic development blocks, preserving original family/method order, task lineage, dynamic P1 logical dependencies, exact body commitments, root budget and dispatch fuse. This does not reopen the original batch or create another epoch. F1's complete API upper bound fits the remaining USD5 recovery subcap; subsequent blocks must pass actual remaining-budget checks. The existing WSL host and verified CI binaries are being checked for native SERVICE_ONLY execution. Formal measurement and T_ref remain unadmitted. PR9 remains draft.
+
+## AUTO2-RECOVERY-R1 final bounded checkpoint
+
+The development implementation at fe934ee280c8e0ff47b932b7e82abcd354030dcd passed exact-head Linux Python 3.12.14 CI: 2,149 FULL001 tests / 270 subtests, all 2,094 original IDs retained, inherited Python 936 and native 115. Selected CI artifacts were downloaded and checked against source/build hashes and ZIP CRCs. Subsequent changes in this checkpoint are documentation only; the tested executable source closure is unchanged.
+
+Recovery actually dispatched 5 G, 4 E and 9 COUNT requests. Fixed E returned four complete HTTP 200 responses but passed semantic correctness 0/4. The first F1 development block recorded two G2 plans with invalid scan output types, then a complete G0 P1 physical HTTP 429 RESOURCE_EXHAUSTED response. The durable facility fuse stopped the remaining nine logical trials; all 36 model execution slots remain NOT_RUN. This confirmed 429 is not a second unknown send. Original unknown and its USD0.251904 hold remain unchanged. No failed or uncertain trial was retried.
+
+Two separate native reference correctness probes on existing WSL passed independent verification; neither is a formal T_ref or model execution. The bounded native executor exited, its task cgroups were removed, and preparation failures/claims were preserved. No new cloud VM or disk was created. Incremental recovery reservations total USD0.859557; original cumulative reservations total USD53.448623, retaining USD10 cleanup margin and the USD5 recovery subcap. Funds are not the immediate blocker: actual service capacity refusal stopped this incomplete block. Formal calibration/reference/efficiency remain unadmitted. Private PREPARATION_REPORT.md, LIVE_TEST_REPORT.md, budget continuity and sealed evidence are delivered in the separate AUTO2_RECOVERY_R1 output. PR9 remains draft.
+
+
+## NEXT-LIVE-001 integration — 2026-09-28
+
+Owner adopted the next-live instructions. New prospective REQUEST_3, exact worker-side quote citations and capacity-only bounded retries are implemented; target acceptance and actual comparison evidence remain required. See docs/full001/NEXT_LIVE_001.md. Historical outcomes and the original budget root are retained. PR #9 remains draft.
+
+## NEXT-LIVE-002 integration — 2026-09-29
+
+Owner adopted the attached execution task. REQUEST_4, append-only recovery
+subcap extension and complete F2/F3/F4 continuation are integrated on an
+isolated worktree. The prescribed 113 related tests passed on the existing
+WSL Python 3.12.14. Exact-source full CI and real outcomes remain separate
+evidence. See docs/full001/NEXT_LIVE_002.md. Formal admission stays closed;
+no old answers, protected specification bytes or historical holds are changed.
+
+### NEXT-LIVE-002 real execution checkpoint
+
+The executable source at 8e9bb3f208fb2da5a9d5085863bf9a4c4add5961 passed
+exact-head CI (2,219 FULL001 tests / 288 subtests) and 218 affected WSL
+Python 3.12.14 tests against the verified CI native build. The existing
+database received the one append-only USD15 recovery subcap extension;
+the original root, epoch and all prior reservations remain unchanged.
+
+F2 was started, but its first COUNT failed during TLS connection with
+TRANSPORT_CONFIRMED_NOT_SENT. No G/E request was sent and no model plan was
+executed. The original dispatcher fused; F2 is incomplete, F3 is unstarted,
+and F4 also lacks the required host memory. A separate read-only handshake
+diagnostic reproduced intermittent TLS EOF. No IAM error was observed.
+The capacity-only retry rule has not been broadened and the fuse remains
+closed pending an explicit prospective recovery decision. The ordinary-uid
+executor exited and its task cgroup was removed. Current cumulative holds
+are USD56.115757, retaining the original unknown and cleanup reserve.
+
+All four old E diagnostics were audited against actual sent contexts and
+source labels. Witnesses were present; extraction/annotation granularity
+and incomplete multi-field support remain distinct findings, with no old
+score relabeling or new E calls. Private reports preserve the raw failure,
+full slot denominators, budget continuity and cleanup evidence. Formal
+metrics remain null; PR9 remains draft and unmerged.
+
+### NEXT-LIVE-002 explicitly authorized finite COUNT recovery
+
+The owner explicitly authorized one new COUNT attempt for the proven unsent
+TLS failure above. A private versioned controller passed 12 offline tests,
+including one-time installation, preserved reservations and refusal of sent,
+unknown, advanced-packet, altered-binding and reset-budget cases. The one
+new COUNT consumed one of the original two extra attempts without raising
+the whole-packet cap. The original failure and its hold remain unchanged.
+The revalidated ordinary-uid worker used the same executable source/build
+and data; its new boot identity was bound to the remaining scope ceiling.
+
+The recovery COUNT returned complete HTTP 200. The first G then timed out
+in WAIT_RESPONSE with zero response bytes, no HTTP status, response ID or
+usage. It is SENT_UNCONFIRMED, not proof that the provider did or did not
+complete generation. Its USD0.189440 hold is retained and it was not retried.
+The durable dispatcher fused again. F2 has one unresolved logical attempt,
+11 unstarted logical slots and all 36 native slots NOT_RUN; F3 remains
+unstarted. F4's separate frozen-profile memory shortfall also remains.
+
+The current cumulative conservative reservations are USD56.305198;
+USD11.283868 remains under the same USD15 recovery subcap. The original
+root, epoch, all earlier reservation rows and both unknown holds are retained.
+Actual invoice cost and provider active-request count are unobservable.
+The task is PAUSED_EXTERNAL. The worker exited, task cgroups were removed,
+and the original claim-ledger ownership was restored. The initial sealed
+checkpoint is intact; a separate recovery checkpoint preserves raw evidence,
+controller provenance and the explicit authorization. Executable source and
+its exact CI remain unchanged. Formal metrics stay null; PR9 stays draft.
+
+### HTTP_TIMEOUT_3 prospective independent continuation
+
+The owner explicitly adopted retention of both unknown requests and their
+holds, no retries of either, and resumption of fresh independent F2 slots
+followed by the original independent F3. HTTP_TIMEOUT_3 separates 20-second
+connection operations from G's 600-second absolute HTTP budget and adds a
+720-second physical-call process watchdog. COUNT retains its 90-second HTTP
+budget; new E is not admitted. A one-time append-only recovery decision
+binds the fresh-slot allowlist, new execution identity and remaining budget.
+Any new unknown stops again; old provider activity remains unobservable.
+See docs/full001/TRANSPORT_003.md. Exact-source CI, WSL acceptance and actual
+future calls are separate evidence. Existing unknowns have not been retried,
+and no new live dispatch is claimed by this implementation checkpoint.
+
+
+### HTTP_TIMEOUT_3 actual SERVICE_ONLY checkpoint
+
+Executable commit db25dc717439cde71b41cbb6b173f6238ef246c0 passed exact-source
+CI: 2,240 FULL001 tests / 292 subtests, preserving all 2,219 prior test IDs;
+239 affected WSL Python 3.12.14 tests passed against the verified CI build.
+This checkpoint changes documentation only; its executable source is unchanged.
+
+All 11 eligible F2 logical slots were processed: five valid plans produced
+15 independently verified native passes; one model-format failure and five
+invalid plans remain failures. The original unknown F2 slot and its three
+dependent X slots remain missing in the original 12/36 denominators.
+
+F3 retains all original 12 logical and 36 native slots. Its current logical
+statuses are {'COMPLETED': 8, 'MODEL_FAILURE': 1, 'PLAN_INVALID': 3}; native statuses are
+{'INFRA_FAILURE': 1, 'TIMEOUT': 23, 'NOT_RUN': 12}. Continuation stop reason: None.
+The first F3 native execution exhausted its original 64 MiB per-file event
+journal cap while registering the complete input. The attempt remains a
+facility failure and was never replayed. A versioned prospective host profile
+raised only engineering evidence storage to a 1 GiB per-file limit and 2 GiB
+observed per-run threshold, after a bounded disk-capacity check. Task CPU,
+RAM, wall time, data, WorkIR, source and verifier remained unchanged. This
+storage threshold is not a hard filesystem quota or a formal measurement pass.
+
+A pre-dispatch boot-identity mismatch stopped without model execution. The
+subsequent host-scope record retained the same root/epoch and packet, deducted
+all prior spend and kind counts, and preserved the old scope and finite retry
+pool. The archived first plan was used only for its still-unattempted original
+repeat IDs. Old/new host profiles are retained as separate evidence strata.
+TIMEOUT is the observed whole-worker deadline, not proof of intrinsic kernel
+slowness or a calibrated model-efficiency comparison.
+
+This turn recorded 67 physical API attempts ({'COUNT': 33, 'G': 34}).
+Statuses: {'COMPLETED': 66, 'INFRA_FAILURE': 1}. New unknown request count: 0.
+Both prior unknowns and their holds remain unchanged; neither was retried.
+Incremental conservative reservations are USD5.283065;
+cumulative USD61.588263; same recovery-subcap remainder
+USD6.000803. These are holds, not invoices.
+Provider active-request count remains unobservable. Task checkpoint:
+RESULTS_SEALED; all task executors exited and task cgroups were removed.
+
+F4 still lacks the frozen 32 GiB worker capacity. Formal metrics remain null;
+no new E, cloud deployment, IAM change, task downsizing, merge or force push.
+Private raw responses, full slot tables, native seals, prior-evidence checks,
+controller provenance and the budget-continuity proof are retained separately.
+
+
+## 2026-09-29 FORMAL_READINESS_1
+
+Versioned compact observation, streamed journal validation, safe worker finalization,
+exact Python alias guards and online Arrow lifetime metrics. New bounded budget
+amendment and calibration-v2 admission retain the existing root/epoch and all
+unknown holds. See docs/full001/FORMAL_READINESS_1.md. Native development tests
+passed; final CI, real cloud calibration and conditional formal entry pending.
+PR9 remains draft; no merge or force push.

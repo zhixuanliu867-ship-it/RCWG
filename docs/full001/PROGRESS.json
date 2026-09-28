@@ -1,0 +1,712 @@
+{
+  "task": "RCWG-FULL-001",
+  "spec_hash": "e06d3f0e9e7cef1b47a46aa9b86793068bf316d834acd6a6a4bd8438d122103b",
+  "baseline": "2824ee8e7678a39b3bff2ac701ffececd50d1e81",
+  "baseline_tree": "dfe9986aaae1f1bf3315a0baa4325dcf140a4904",
+  "branch": "rcwg/full-001",
+  "stacked_base": "rcwg/native-001-n4",
+  "status": "IN_PROGRESS",
+  "states": {
+    "IMPLEMENTATION_COMPLETE": false,
+    "SOFTWARE_ACCEPTED": false,
+    "HOST_CALIBRATED": false,
+    "DATA_FROZEN": false,
+    "SERVICE_READY": false,
+    "FORMAL_READY": false
+  },
+  "formal_status": "BLOCKED_NOT_FROZEN",
+  "modules": {
+    "M00": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M01": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M02": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M03": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M04": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M05": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M06": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M07": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M08": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M09": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    },
+    "M10": {
+      "status": "IN_PROGRESS",
+      "evidence": []
+    }
+  },
+  "next_actions": [
+    "Complete final 56 dispatch and 1440 closure evidence audit on rebuilt exact commit",
+    "Bind inherited gates, requirement evidence and unified public/private delivery",
+    "Preserve external host/data/service/freeze gates closed and issue exact-runtime finite approval packages"
+  ],
+  "commands": [],
+  "external_actions_performed": {
+    "paid_generation": 0,
+    "paid_count": 0,
+    "cloud_mutations": 0,
+    "iam_mutations": 0,
+    "system_install": 0,
+    "cgroup_write": 0,
+    "calibration_load": 0,
+    "merge": 0
+  },
+  "updated_utc": "2026-09-22T12:56:08.710603+00:00",
+  "publication": {
+    "authorized": true,
+    "branch_pushed": true,
+    "draft_pr_created": false,
+    "ci_build_run": 35615748615,
+    "ci_build_status": "PASS",
+    "ci_legacy_api_run": 35615748906,
+    "ci_legacy_api_status": "PASS",
+    "ci_full001_tests": 1863,
+    "git_transport": "Windows Git with existing per-command system proxy",
+    "latest_source_pushed": false,
+    "local_changes_pending_publication": true,
+    "last_remote_commit": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "write_status": "CONNECTOR_HTTP_403; GIT_DRY_RUN_TRANSPORT_STALLED_AND_STOPPED_WITHOUT_PUSH",
+    "ci_applies_to_historical_remote_only": true
+  },
+  "verified_scopes": [
+    {
+      "scope": "foundations",
+      "platform": "Windows",
+      "passed": 16,
+      "report": "runs/full001-foundations-win-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "foundations",
+      "platform": "WSL",
+      "passed": 16,
+      "report": "runs/full001-foundations-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "artifact_lifetimes",
+      "platform": "WSL",
+      "passed": 7,
+      "report": "runs/full001-artifacts-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "native_independent_first_pass",
+      "platform": "WSL",
+      "passed": 8,
+      "failed": 1,
+      "report": "runs/full001-native-wsl-001/TEST_RESULTS.json",
+      "failure": "Int64 division double rounding; exact integer rounding fix awaiting new build"
+    },
+    {
+      "scope": "native_and_runtime_ci",
+      "passed": 39,
+      "report": "runs/full001-ci-86c89f1/full001-tests/TEST_RESULTS.json",
+      "run_id": 35592821248
+    },
+    {
+      "scope": "document_unicode_provenance_replay",
+      "platform": "Windows",
+      "passed": 8,
+      "report": "runs/full001-documents-win-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "worker_supervision_identity_and_data",
+      "platform": "WSL",
+      "passed": 4,
+      "report": "runs/full001-supervision-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "all_current_full001_modules",
+      "platform": "WSL",
+      "passed": 51,
+      "report": "runs/full001-integrated-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_full_software",
+      "platform": "WSL Linux immutable checkout",
+      "source_commit": "17b5b293ba36d876112958081fe417e3317d00cb",
+      "passed": 936,
+      "exact_historical_ids": true,
+      "report": "runs/full001-inherited-linux-17b5b29-r2/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_native_N0_N3",
+      "platform": "GitHub Ubuntu 24.04",
+      "passed": 115,
+      "report": "runs/ci-inherited-17b5b29/inherited-native-tests/ACCEPTANCE.json"
+    },
+    {
+      "scope": "inherited_N4_offline",
+      "platform": "GitHub Ubuntu 24.04",
+      "passed": 82,
+      "report": "runs/ci-inherited-17b5b29/inherited-n4-tests/ACCEPTANCE.json"
+    },
+    {
+      "scope": "runtime_last_consumer",
+      "platform": "WSL",
+      "passed": 7,
+      "report": "runs/full001-runtime-lifetime-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "independent_verifier_mutations_equivalences_boundaries",
+      "platform": "Windows",
+      "passed": 208,
+      "wrong_variants": 105,
+      "legal_variants": 100,
+      "boundary_cases": 3,
+      "report": "runs/full001-verifier-win-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "all_current_full001_modules",
+      "platform": "WSL",
+      "passed": 260,
+      "report": "runs/full001-integrated-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "inherited_Windows_native_helper",
+      "platform": "Windows Python 3.13.4",
+      "passed": 12,
+      "exact_historical_ids": true,
+      "report": "runs/full001-windows-001/ACCEPTANCE.json"
+    },
+    {
+      "platform": "WSL Python 3.12.14",
+      "passed": 289,
+      "scope": "bounded_state_and_analysis_integrated",
+      "report": "runs/full001-integrated-wsl-003/TEST_RESULTS.json"
+    },
+    {
+      "template_instances": 240,
+      "platform": "WSL Python 3.12.14",
+      "passed": 242,
+      "scope": "F1_full_tiny_template_closure",
+      "report": "runs/full001-f1-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "reference_grammar_nnls_confirmation_golden",
+      "platform": "Windows",
+      "passed": 6,
+      "report": "runs/full001-reference-win-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F2_first_pass",
+      "platform": "WSL",
+      "passed": 222,
+      "errors": 20,
+      "report": "runs/full001-f2-wsl-001/TEST_RESULTS.json",
+      "failure": "F2-12 Table-to-materialize bridge absent; explicit stream_read inserted, pending rerun"
+    },
+    {
+      "scope": "immutable_integrated_c273c54",
+      "passed": 779,
+      "errors": 24,
+      "report": "runs/full001-integrated-linux-c273c54/TEST_RESULTS.json",
+      "failure": "Automatic retirement attempted sealed owners with live child views; historical failure retained"
+    },
+    {
+      "scope": "F1_F2_candidate_real_native_variants",
+      "passed": 24,
+      "actual_plan_executions": 192,
+      "report": "runs/full001-candidate-runtime-wsl-002/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F3_all_tiny_templates_and_conditions",
+      "passed": 242,
+      "template_instances": 240,
+      "report": "runs/full001-f3-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F3_candidate_real_native_variants",
+      "passed": 12,
+      "actual_plan_executions": 96,
+      "report": "runs/full001-candidate-graph-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F1_F2_F3_physical_C2_C3_invariants",
+      "passed_groups": 180,
+      "actual_instances": 720,
+      "report": "runs/full001-condition-audit-001/CONDITION_AUDIT.json"
+    },
+    {
+      "scope": "immutable_complete_current_f464d76",
+      "passed": 1057,
+      "source_commit": "f464d7620b9646adfe6d2b957a28504840a4c5ba",
+      "platform": "WSL Python 3.12.14",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-f464d76/runs/full001-integrated-linux-f464d76/TEST_RESULTS.json",
+      "ci_run": 35602068673
+    },
+    {
+      "scope": "incremental_native_first_integration",
+      "tests_executed": 1052,
+      "errors": 7,
+      "report": "runs/ci-full001-a132905/full001-tests/TEST_RESULTS.json",
+      "failure": "pybind global state class registration conflict between perf/diagnostic and lowercase schema aliases; fixes pending rebuild"
+    },
+    {
+      "scope": "F4_first_actual_native_smoke",
+      "passed": 12,
+      "platform": "WSL Python 3.12.14",
+      "report": "runs/full001-f4-smoke-001/unittest.log",
+      "coverage": "all 12 templates, base 0, C0 only"
+    },
+    {
+      "scope": "F4_integrated_with_all_prior_full001",
+      "tests_executed": 1319,
+      "passed": 1318,
+      "failed": 1,
+      "ci_run": 35605078685,
+      "report": "runs/ci-full001-5ee72c9-log-only.txt",
+      "failure": "Arrow pool actual bytes returned to 0 but baseline included 110720 bytes of unreachable prior-test objects; collect before baseline, retain exact equality assertion"
+    },
+    {
+      "scope": "document_context_response_boundaries",
+      "passed": 6,
+      "platform": "Windows Python 3.13.4",
+      "formal_ready": false,
+      "evidence_note": "unittest console; rerun in full source-frozen CI required"
+    },
+    {
+      "scope": "latest_native_document_integration",
+      "tests_executed": 1333,
+      "passed": 1329,
+      "errors": 4,
+      "ci_run": 35607917609,
+      "report": "runs/ci-full001-17752c3/full001-tests/TEST_RESULTS.json",
+      "artifact_sha256": "675935126b40092f1c84831874d031ed9a1dc95c07f21006b5c5299c91062bc9",
+      "failure": "Four worker tests failed setup because document_index fixture omitted required indexes; corrected"
+    },
+    {
+      "scope": "supervised_document_worker_repair",
+      "passed": 4,
+      "report": "runs/full001-document-worker-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F5_first_all_engineering_instances",
+      "tests_executed": 243,
+      "passed": 238,
+      "errors": 5,
+      "report": "runs/full001-f5-wsl-001/TEST_RESULTS.json",
+      "failure": "C1 boundary chunks redundantly restored neutral background and hit context limit; explicit public section block selection added"
+    },
+    {
+      "scope": "F5_five_boundary_C1_repairs",
+      "passed": 5,
+      "report": "runs/full001-f5-boundary-smoke-002/unittest.log",
+      "evidence_note": "Actual native smoke; full immutable rerun pending"
+    },
+    {
+      "scope": "F1_F5_full_current_CI",
+      "tests_executed": 1588,
+      "passed": 1588,
+      "ci_run": 35612125606,
+      "report": "runs/ci-full001-e1aa305-job.log",
+      "artifact_sha256": "83c7b84a1858cf1e3e3143298ffdb9a569aaa5cb6a5b8a5b5f38c28fde5e4d56"
+    },
+    {
+      "scope": "F6_first_actual_twelve_templates",
+      "passed": 12,
+      "report": "runs/full001-f6-smoke-002/unittest.log"
+    },
+    {
+      "scope": "F6_actual_reference_candidates",
+      "passed": 12,
+      "actual_plan_executions": 96,
+      "report": "runs/full001-f6-candidates-smoke-001/unittest.log"
+    },
+    {
+      "scope": "F1_F6_all_current_CI",
+      "tests_executed": 1855,
+      "passed": 1855,
+      "ci_run": 35613332065,
+      "ci_job": 106377669702,
+      "artifact_sha256": "af672a6618bf3bff749ce9abf21575c2edf5f02625599261d1f5388134e668d3",
+      "artifact_id": 10645661235,
+      "artifact_download_status": "VERIFIED_SHA256_AND_ALL_CRC",
+      "report": "runs/ci-full001-cbd55f6/full001-tests/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F6_all_instances_and_independent_conditions",
+      "passed": 255,
+      "template_instances": 240,
+      "source_commit": "cbd55f6f49ba4780a66a819a4fd2b6eb561bb597",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-cbd55f6/runs/full001-f6-cbd55f6/TEST_RESULTS.json"
+    },
+    {
+      "scope": "F1_F5_all_current_WSL",
+      "passed": 1588,
+      "source_commit": "e1aa305fe739534dcaa2fd166f4c70fa8e1f12d4",
+      "report": "/home/zhixuan/projects/RCWG-full001-integration-e1aa305/runs/full001-integrated-e1aa305/TEST_RESULTS.json"
+    },
+    {
+      "scope": "typed_temporal_conversion_pure_tests",
+      "passed": 2,
+      "evidence_note": "WSL unittest console; actual native build and integration pending"
+    },
+    {
+      "scope": "Temporal_actual_native_and_all_prior_CI",
+      "tests_executed": 1863,
+      "passed": 1863,
+      "ci_run": 35615748615,
+      "ci_job": 106385884665,
+      "artifact_sha256": "ab6f5e5da0f519bf69b98c79cccf12df74d5cade4c004d6f4048e7e8170a7c49",
+      "artifact_id": 10646029115
+    },
+    {
+      "scope": "Actual_source_tamper_and_schema_validation",
+      "passed": 14,
+      "report": "runs/full001-source-validation-wsl-001/TEST_RESULTS.json"
+    },
+    {
+      "scope": "Actual_all_source_schema_and_C2_C3_identity_base0",
+      "passed_groups": 72,
+      "instances": 288,
+      "source_unchanged": true,
+      "report": "runs/full001-all-family-source-audit-001/SOURCE_AUDIT.json"
+    },
+    {
+      "scope": "upstream_adapters_and_blind_reviews",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-upstream-win-001/TEST_RESULTS.json",
+      "report_sha256": "01e9991224bad35c702213ead3b135138066ceca7431f64f83b7f6a0da7423e1",
+      "passed": 7
+    },
+    {
+      "scope": "diagnostic_transforms_and_E5_E8_planning",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-diagnostics-win-001/TEST_RESULTS.json",
+      "report_sha256": "edf5e77bffe101653481a3404180ea495d6070087a81a3e7b3b473b4a49de6f5",
+      "passed": 7
+    },
+    {
+      "scope": "sealed_rebuild_and_separate_private_data",
+      "platform": "Windows Python 3.13.4 supplementary",
+      "report": "runs/resume-sealed-analysis-win-001/TEST_RESULTS.json",
+      "report_sha256": "ec6f904885fad0e71275e54c95ed958135b386556631c7298e3869051f9dd1be",
+      "passed": 5
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 322,
+      "report": "runs/portable-w02/TEST_RESULTS.json",
+      "report_sha256": "7d213d26e715db03c8ccb60fa03e2a3097635878877b0aecd0ebecd22f34d042",
+      "source_hash": "8c17413750cf426630303145784b198e0fbe5c196b05ab4aad83ed3857f42c62",
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 331,
+      "report": "runs/portable-w03/TEST_RESULTS.json",
+      "report_sha256": "71993e908b161ed18708d4bcb397f030db69afb18f028638dd37d74da713907b",
+      "source_hash": "648369747eeaf3998f1f3ea2a905469984cd9ec3068f62cc9d170ad13089dd3d",
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 31,
+      "report": "runs/control-seal-w01/TEST_RESULTS.json",
+      "report_sha256": "912caa648d9719d504035e41680ac34995d96acda2cb624e60715475e7100067",
+      "source_hash": "784ae5e8a0188a530eecb3f3209084ddc2a976cec6dbe723fd8730ac35a44d63",
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/portable-w04/TEST_RESULTS.json",
+      "report_sha256": "0848af3f2117bfeca185ab339a1e3b2a05648dd4b0d75374438ee24c45b03de6",
+      "source_hash": "c1e2b7b0762ba12df3737af0d460e00637b263aa894f75c9cbdb042e2c9be9dd",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 338,
+      "tests_run": 338,
+      "subtests": 2,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/control-wire-w01/TEST_RESULTS.json",
+      "report_sha256": "13a66fcf78756af227860624b01e531462b4792ab06219fec384dfe10c7eb711",
+      "source_hash": "e5591975384274a9cee33a1d80dc4e2d8dd072a846979ccad456237533f8e440",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 30,
+      "tests_run": 30,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/retry-control-w01/TEST_RESULTS.json",
+      "report_sha256": "dd0dce1144734cc0639c613e3843ff4b7525b064b64d4556e3477d41a2cb4a51",
+      "source_hash": "c1e2b7b0762ba12df3737af0d460e00637b263aa894f75c9cbdb042e2c9be9dd",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 42,
+      "tests_run": 42,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/external-w01/TEST_RESULTS.json",
+      "report_sha256": "8c292a919b8f6cfcfd54663584cae806e895a88a9a202208f0ace1e75615137b",
+      "source_hash": "8e4f79c66f241afdf2a96188d0547a449fd60621c2c126f1522f03f9d5507bf3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 3,
+      "tests_run": 3,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "FAIL",
+      "report": "runs/formal-build-w01/TEST_RESULTS.json",
+      "report_sha256": "5518267d6352b44efcfd1892d6e74ace33b54d305ec23005703c1f1ffb8ffff4",
+      "source_hash": "82b1bfd7cccbe3c28aaa4721c02f0085cad440c5a2400707f9a678ff616a9aa3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 3,
+      "tests_run": 4,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/formal-build-w02/TEST_RESULTS.json",
+      "report_sha256": "37edf93ba920433193b7f8f0112c40f445d5c4fd63f68a4979aba3daf9208b7f",
+      "source_hash": "b971504151cf9e00e3edc6e73ee82ba8d4fdaceb616e96f5c225efc96d85a806",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 7,
+      "tests_run": 7,
+      "subtests": 96,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/confirmation-w01/TEST_RESULTS.json",
+      "report_sha256": "a5d1e071cf46a8d4bd37b018376cccc52b0d2946c916c3467c36b41aa2803954",
+      "source_hash": "bd0aaeecb9e8b2c2cce307a8f6748bac0ccd65009e878fa8585fa2716043cd43",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 33,
+      "tests_run": 33,
+      "subtests": 6,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/acceptance-recovery-w01/TEST_RESULTS.json",
+      "report_sha256": "1779f8b3f436210e1bd2b81fc72c4daac8a8e88b81a0cb673e2dafd9e789d4a4",
+      "source_hash": "4ea631cc0dd7406e4d3555e79cd987bef2e55ddb7d8457a0d8e8c8d941a3b5fe",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 4,
+      "tests_run": 4,
+      "subtests": 0,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "TESTS_EXECUTED_ONLY_NOT_FULL001_ACCEPTANCE",
+      "status": "PASS",
+      "report": "runs/portable-w05/TEST_RESULTS.json",
+      "report_sha256": "02e647da8aafdd5a35cc8b13ee62fb2b2d8aea2c677615cdafa960eff224c188",
+      "source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
+      "platform": "Windows-11-10.0.26200-SP0 Python 3.13.4 supplementary only",
+      "passed": 369,
+      "tests_run": 369,
+      "subtests": 104,
+      "not_full_acceptance": true
+    },
+    {
+      "scope": "WIRE_SCHEMAS_AND_WORKFLOW_SYNTAX_ONLY",
+      "status": "PASS",
+      "report": "runs/schema-wire-w02/REPORT.json",
+      "report_sha256": "9f5e8494fae9e160024737efb20676dfa292e9d2cc3d0d85ddc16d6e8a1a14fc",
+      "source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
+      "template_plan_checks": 1440,
+      "service_bindings": 8,
+      "invalid_variants_rejected": 3,
+      "not_native_execution": true,
+      "not_cloud_deployment": true
+    }
+  ],
+  "recovery": {
+    "source_checkpoint": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "checkpoint_tree": "71621d2f312d2772fc038a4d08d98faa2cf79d59",
+    "previous_worktree_preserved": true,
+    "recovered_uncommitted_files": [
+      "runtime/scheduler.py",
+      "runtime/supervisor.py",
+      "runtime/worker.py",
+      "runtime/scheduling_profile.py",
+      "campaign/transforms.py"
+    ],
+    "wsl_status": "ACCESS_DENIED_BY_CURRENT_SANDBOX",
+    "latest_exact_head_ci": {
+      "full001": 35618135593,
+      "legacy": 35618135588,
+      "status": "success"
+    },
+    "read_entire_spec_and_all_json": true,
+    "historical_evidence_scope": "Original prior worktree preserved. Nine historical Windows evidence directories currently deny enumeration; remaining accessible history is separately indexed. No missing history is treated as current acceptance."
+  },
+  "checkpoint_parent_commit": "68dd53d1335cbf63212d1cd82bef6c7acc4e77ca",
+  "working_source_hash": "c7bc91366102a739434e88cc5b9de779a295cdf171254a0c9fd35229330110f3",
+  "total_acceptance": {
+    "status": "BLOCKED",
+    "report": "runs/total-w03/invocation-1790081513222006200/ACCEPTANCE.json",
+    "sha256": "a000f67bdf02ba618a603a5956be93659c5fb66b48299fa7dff56858391973d5",
+    "exit_code": 2,
+    "blockers": [
+      "TARGET_PYTHON_3_12_14_REQUIRED",
+      "LINUX_NATIVE_ACCEPTANCE_ENVIRONMENT_REQUIRED"
+    ],
+    "reason": "Linux Python 3.12.14 and exact-current-source native build unavailable."
+  },
+  "review_r1": {
+    "phase": "CONCENTRATED_REPAIR_AND_INTEGRATION",
+    "base_head": "b3ddd84ec7687b72d977bddfc2198e13bf0871f3",
+    "review_zip_sha256": "2274ab459897c45a3dac9280d7b4984012fba08b79449fddc1448209c36e3904",
+    "status": "IN_PROGRESS",
+    "implemented_pending_native_verification": [
+      "R06 disk-backed sorted grouping/joins; one-group state and duplicate-group spool; downstream readers and output remain streamed",
+      "R06 actual Python/Arrow object lifetimes including conversion queues and graph/JSON codec boundaries; explicit copy byte scopes",
+      "R05 unfinished host claim blocks a new attempt; actual native identity is rechecked before real driver writes",
+      "Facility generation retry with immutable actual G/COUNT request evidence, same context, one linked attempt, no uncertain resend",
+      "R01 statically valid dynamic budget regression and actual native campaign continuation",
+      "F3 fixed graph builders and independent disk SQLite reachability/path oracle; all 48 fixture conditions pass",
+      "F4 fixed object-size builders and bounded formal reference recipes; all 48 fixture conditions pass",
+      "All 24 F5/F6 real-source binding contracts, canonical section/citation maps, private derived labels and blind review export; test-only source-shaped fixtures pass",
+      "Five exact upstream source pins and native API adapters; 13 real source AST signatures checked, TPS original parser/normalizer exercised without judge calls",
+      "Call-scoped native allocation observer and serialized retirement; 1 MiB maximum journal sync coalescing without dropping events",
+      "Direct native convenience methods for external sort/sorted group/sort-merge now use bounded states and lazy disk handles; obsolete materializing C++ entry rejects calls",
+      "Actual supervisor GO/deadline -> campaign store -> analysis regression added with a three-row microsecond budget fixture"
+    ],
+    "supplementary_evidence": "runs/review-r1-python06/TEST_RESULTS.json",
+    "target_environment": "WSL Ubuntu accessible: Python 3.12.14 and offline hash-locked dependencies ready; no system compiler. Authorized GitHub Ubuntu 24.04 Python 3.12.14 CI builds and tests actual native modules.",
+    "formal_gate": "BLOCKED_NOT_FROZEN",
+    "prior_reviewed_head_pushed": true,
+    "prior_head_push_from": "9ae6dfd90fc91698d19135197bd00b330cbe90ed",
+    "updated_utc": "2026-09-23T09:33:45.757085+00:00",
+    "ci_repair_7e245a5": {
+      "head": "7e245a5f26c3813b3de25b373e8fe7f37cf8b52c",
+      "run_id": 35835192042,
+      "native_build": "PASS",
+      "inherited_native": "PASS",
+      "full_tests": {
+        "run": 1984,
+        "pass": 1983,
+        "fail": 1,
+        "skip": 0
+      },
+      "failing_id": "test_review_r1_native.NativeFailuresR1.test_actual_instance_budget_reaches_worker_as_plan",
+      "reason": "Fixture had static node count above declared limit, so compiler correctly reported PLAN_INVALID before dynamic expansion. Replaced fixture with compiler-valid real map expansion; expected DYNAMIC_INSTANCE_LIMIT unchanged; old failure retained.",
+      "result_file": "runs/review-r1-publication/range-TEST_RESULTS.json",
+      "result_sha256": "139c53d167b94296a2c7bd18d9a8fc62d783fdde85efeee4c359ceced91a8aae"
+    },
+    "supplementary_tests_passed": 62,
+    "ci_repair_c2ddd71": {
+      "head": "c2ddd712284b1808041aaa576b477e9bc874b370",
+      "run_id": 35838298843,
+      "native_build": "PASS",
+      "inherited_native": "PASS",
+      "full_tests": {
+        "run": 1993,
+        "pass": 1486,
+        "errors": 507,
+        "skip": 0
+      },
+      "causes": {
+        "JOURNAL_CLOSED": 502,
+        "dictionary_changed_during_iteration": 3,
+        "test_output_directory_collision": 1,
+        "test_missing_limits_dictionary": 1
+      },
+      "report": "runs/review-r1-publication/range-c2ddd71-TEST_RESULTS.json",
+      "report_sha256": "4786129ec65785b2e1a8038f271e027b821b186278451d36b2af60e3e3c2f31f",
+      "status": "FAILURE_PRESERVED_FIXES_PENDING_EXACT_HEAD_ACCEPTANCE"
+    },
+    "latest_supplementary_evidence": [
+      {
+        "report": "runs/review-r1-formal-f3-01/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 3
+      },
+      {
+        "report": "runs/review-r1-formal-f4-02/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 3
+      },
+      {
+        "report": "runs/review-r1-formal-documents01/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 4
+      },
+      {
+        "report": "runs/r1-ej02/TEST_RESULTS.json",
+        "status": "PASS",
+        "tests_run": 31
+      }
+    ],
+    "wsl_native_followup": {
+      "report": "runs/review-r1-linux-native01",
+      "status": "RUNNING_PRE_BATCHING_SOURCE",
+      "finding": "Dense F3 allocation-event fsync overhead exceeded unchanged 20s test budget. Bounded durable journal batching implemented on Windows source, not changed in the running WSL clone."
+    }
+  },
+  "review_r1_exact_head_6cc": {
+    "head": "6cc127459ed43f0a75430a67b6dfe829c9ec0a25",
+    "workflow_run": 35843955586,
+    "target_python": "3.12.14",
+    "native_build": "PASS",
+    "full_tests": 2014,
+    "status": "PASS",
+    "inherited_native": "PASS",
+    "scope": "INTERMEDIATE_COMMIT_NOT_FINAL_ACCEPTANCE"
+  },
+  "status_authority": {
+    "checked_in_state": "PRE_EXECUTION_CHECKPOINT_NOT_SELF_CERTIFICATION",
+    "final_state": "Use the exact-head ACCEPTANCE.json and DELIVERY_MANIFEST.json generated after commit; do not treat this checkpoint as newer than those source-bound reports."
+  },
+  "latest_dispatch_supplement": {
+    "environment": "Linux WSL Python 3.12.14 with hash-locked dependencies; intermediate 6cc binary, current Python source overlay",
+    "runs/r1-dispatch02": {
+      "tests": 25,
+      "status": "PASS"
+    },
+    "runs/r1-output02": {
+      "tests": 17,
+      "status": "PASS"
+    },
+    "scope": "SUPPLEMENTARY_NOT_EXACT_FINAL_HEAD"
+  }
+}

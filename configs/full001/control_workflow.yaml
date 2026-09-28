@@ -1,0 +1,89 @@
+# Offline deployment candidate. Existing authenticated control endpoint only.
+# No deployment, IAM grant, model call or worker permission is authorized here.
+main:
+  params: [args]
+  steps:
+    - submit:
+        try:
+          call: http.post
+          args:
+            url: ${args.control_url + "/campaigns/" + args.campaign_id + "/runs"}
+            auth:
+              type: OIDC
+              audience: ${args.control_url}
+            headers:
+              Idempotency-Key: ${args.idempotency_key}
+            body:
+              version: ${args.campaign_version}
+              slot_id: ${args.slot_id}
+              workflow_hash: ${args.workflow_hash}
+            timeout: 30
+          result: submitted
+        except:
+          as: submit_error
+          steps:
+            - reconcile_submission:
+                call: http.get
+                args:
+                  url: ${args.control_url + "/requests/" + args.idempotency_key}
+                  auth:
+                    type: OIDC
+                    audience: ${args.control_url}
+                  timeout: 30
+                result: previous
+            - recover_original_run:
+                assign:
+                  - submitted:
+                      body: ${previous.body.response}
+    - remember_run:
+        assign:
+          - run_id: ${submitted.body.id}
+          - polls: 0
+    - inspect:
+        call: http.get
+        args:
+          url: ${args.control_url + "/runs/" + run_id}
+          auth:
+            type: OIDC
+            audience: ${args.control_url}
+        result: observed
+    - check:
+        switch:
+          - condition: ${observed.body.status in ["COMPLETED", "MODEL_FAILURE", "PLAN_INVALID", "INFRA_FAILURE", "TIMEOUT", "OOM", "CANCELLED", "UNKNOWN", "SENT_UNCONFIRMED"]}
+            next: artifacts
+          - condition: ${polls >= args.max_polls}
+            next: request_cancel
+    - wait:
+        call: sys.sleep
+        args:
+          seconds: 5
+    - increment:
+        assign:
+          - polls: ${polls + 1}
+        next: inspect
+    - request_cancel:
+        call: http.post
+        args:
+          url: ${args.control_url + "/runs/" + run_id + "/cancel"}
+          auth:
+            type: OIDC
+            audience: ${args.control_url}
+          headers:
+            Idempotency-Key: ${args.idempotency_key + ".cancel"}
+          body:
+            version: ${observed.body.version}
+        result: cancel_receipt
+    - artifacts:
+        call: http.get
+        args:
+          url: ${args.control_url + "/runs/" + run_id + "/artifacts"}
+          auth:
+            type: OIDC
+            audience: ${args.control_url}
+        result: artifact_index
+    - done:
+        return:
+          run_id: ${run_id}
+          last_observed: ${observed.body}
+          artifacts: ${artifact_index.body}
+          new_attempt_authorized: false

@@ -1,0 +1,145 @@
+{
+  "spec_version": "RCWG-FULL-001/1.0.0",
+  "execution_authorized": false,
+  "formal_ready": false,
+  "status": "BLOCKED_NOT_FROZEN",
+  "protocol": "RCWG 1.0",
+  "task_input_version": "1.0",
+  "workir_version": "1.0",
+  "implementation_profile": "RCWG_FULL001_COMPAT1",
+  "generator_slots": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "executor_slots": [
+    "E0",
+    "E1"
+  ],
+  "generation_protocols": [
+    "P0",
+    "P1"
+  ],
+  "generation_attempt_labels": [
+    17,
+    29
+  ],
+  "labels_are_provider_rng_seeds_only_if_verified": true,
+  "development": {
+    "templates": 24,
+    "bases_per_template": 5,
+    "conditions_per_base": 4,
+    "condition_instances": 480
+  },
+  "test": {
+    "templates": 48,
+    "bases_per_template": 5,
+    "conditions_per_base": 4,
+    "condition_instances": 960,
+    "deterministic_condition_instances": 640,
+    "semantic_condition_instances": 320
+  },
+  "primary": {
+    "generation_slots": 23040,
+    "deterministic_execution_slots": 46080,
+    "semantic_execution_slots": 15360,
+    "total_execution_slots": 61440,
+    "execution_repeats": {
+      "deterministic": 3,
+      "semantic": 2
+    },
+    "nominal_generator_http_requests_if_every_stage_is_sent": 34560
+  },
+  "budgets": {
+    "p0_max_output_tokens": 16384,
+    "p1_logical_max_output_tokens": 4096,
+    "p1_physical_max_output_tokens": 12288,
+    "max_input_tokens": 12288,
+    "max_final_json_bytes": 65536,
+    "max_recursive_logical_nodes": 48,
+    "max_dynamic_node_instances": 4096,
+    "max_loop_iterations": 16,
+    "max_region_depth": 2
+  },
+  "analysis": {
+    "primary_epsilon": 0.2,
+    "sensitivity_epsilons": [
+      0.1,
+      0.5
+    ],
+    "bootstrap_replicates": 10000,
+    "bootstrap_unit": "test_template_within_family_paired",
+    "confidence": 0.95,
+    "multiplicity": "Holm within preregistered hypothesis family",
+    "unknown": "fixed-denominator identification bounds, not CI"
+  },
+  "diagnostics": [
+    {
+      "id": "E2",
+      "name": "FrozenPlan_vs_AdaptivePlan",
+      "bases": 240,
+      "targets": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "reuse_adaptive_from": "E1"
+    },
+    {
+      "id": "E3",
+      "name": "logic_physical_schedule_isolation",
+      "conditions": 240,
+      "models": [
+        "G0",
+        "G2",
+        "G5"
+      ]
+    },
+    {
+      "id": "E4",
+      "name": "granularity_and_information",
+      "conditions": 160,
+      "models": [
+        "G2",
+        "G5"
+      ]
+    },
+    {
+      "id": "E5",
+      "name": "metric_validity",
+      "controlled_plans": 120
+    },
+    {
+      "id": "E6",
+      "name": "predeclared_generalization",
+      "reuse": "E1 strata"
+    },
+    {
+      "id": "E7",
+      "name": "executor_crosscheck",
+      "conditions": 120,
+      "models": [
+        "G2",
+        "G5"
+      ],
+      "executor": "E1"
+    },
+    {
+      "id": "E8",
+      "name": "external_replication",
+      "conditions": 180,
+      "models": [
+        "G2",
+        "G5"
+      ],
+      "panels": {
+        "SemBench_compatible": 60,
+        "QASPER": 60,
+        "reviewed_graph_text": 60
+      }
+    }
+  ]
+}

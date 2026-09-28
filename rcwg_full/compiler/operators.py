@@ -1,0 +1,200 @@
+"""COMPAT1 additive contracts. Legacy validation is called for unchanged forms."""
+from copy import deepcopy
+from dataclasses import replace
+from rcwg_spec.common import ContractError
+from .typesystem import Type, row_schema, with_rows, unwrap_ref, type_json, check_declared,parse_schema
+from .predicates import analyze_predicate
+from .contracts import (validate_operator as legacy, REGISTRY, _object, _fields,
+    _integer, _string, _enum, _mapped, _id_mappings, _ref, IDENT)
+
+
+def fail(code, path):
+    raise ContractError(code, path, 'COMPAT1 contract violation')
+
+
+# Binding alters values, never static representation, service, authority or paths.
+# The range is checked again after resolving the actual value in the worker.
+BINDABLE = {
+    'top_k': {'k': ('Int64', 1)},
+    'text_retrieve': {'query': ('Utf8', 'binding'), 'limit': ('Int64', 1), 'offset': ('Int64', 0)},
+    'semantic_extract': {'question': ('Utf8', 'binding'), 'context_budget': ('Int64', 1)},
+    'graph_reachability': {'max_hops': ('Int64', 1)},
+    'split_documents': {'size': ('Int64', 1024), 'overlap': ('Int64', 0)},
+    'gather_context': {'window': ('Int64', 1)},
+    'read_documents': {'batch_size': ('Int64', 1)},
+    'stream_read': {'batch_size': ('Int64', 1)},
+    'collect': {'limit': ('Int64', 1)},
+    'stats': {'sample_size': ('Int64', 1)},
+}
+
+
+def bind_parameters(node, resolve, path):
+    candidate, resolved = deepcopy(node), []
+    allowed = BINDABLE.get(node['operator'], {})
+    for i, binding in enumerate(node.get('param_bindings', [])):
+        at = path + '/param_bindings/' + str(i)
+        name = binding['parameter']
+        if name not in allowed:
+            fail('PARAMETER_BINDING_FORBIDDEN', at)
+        typ = resolve(binding['ref']).type
+        if 'field' in binding:
+            if typ.kind != 'Record' or binding['field'] not in dict(typ.schema):
+                fail('FIELD_NOT_FOUND', at + '/field')
+            typ = dict(typ.schema)[binding['field']]
+        expected, witness = allowed[name]
+        if typ.kind != expected:
+            fail('PARAMETER_TYPE', at)
+        candidate['params'][name] = witness
+        resolved.append({**binding, 'type':type_json(typ), 'range_check':'AFTER_RESOLUTION'})
+    return candidate, resolved
+
+
+def _view(source, view, path):
+    source = unwrap_ref(source)
+    if source.kind=='PathSet' and view in {'nodes','edges'}:
+        field='node_id' if view=='nodes' else 'edge_id'
+        item=source.item if view=='nodes' else source.metadata.get('edge_id_type')
+        if item is None:fail('INPUT_METADATA_REQUIRED',path)
+        return source,{'target':source.item,field:item,'ordinal':Type('Int64')}
+    if view == 'rows':
+        return source, row_schema(source, path)
+    if view == 'edges' and source.kind in {'Graph','GraphView','EdgeStream'}:
+        return source, dict(source.schema)
+    if view == 'nodes' and source.kind in {'Graph','GraphView','NodeSet'}:
+        schema = dict(source.metadata.get('node_schema', {}))
+        schema['node_id'] = source.metadata.get('node_id_type', source.item or Type('Int64'))
+        metadata={**source.metadata,'node_id_mappings':{'node_id':{'domain':source.domain,'revision':source.revision}}}
+        return replace(source,metadata=metadata), schema
+    if view == 'ids' and source.kind in {'Set','IDSet','RankedIDSet','NodeSet'}:
+        return source, {'id':source.item}
+    if view == 'paths' and source.kind == 'PathSet':
+        return source, {'target':source.item, 'distance':Type('Nullable',item=Type('Float64')),
+                        'reachable':Type('Bool'), 'nodes':Type('List',item=source.item),
+                        'edges':Type('List',item=source.metadata.get('edge_id_type',Type('Utf8')))}
+    fail('TYPE_MISMATCH', path)
+
+
+def _project(node, inputs, path):
+    params = node['params']
+    _object(params, set(), {'columns','source_view','representation','expressions','field_map'}, path+'/params')
+    impl = node['implementation']
+    if impl not in REGISTRY['project'][0]: fail('UNKNOWN_IMPLEMENTATION',path)
+    representation = params.get('representation','same')
+    _enum(representation, {'same','table','record','set'}, path+'/params/representation')
+    obligations, aliases = [], {}
+    if 'field_map' in params:
+        mapping = params['field_map']
+        if representation != 'record' or set(params) != {'representation','field_map'}:
+            fail('PARAMETER_UNKNOWN',path+'/params')
+        if type(mapping) is not dict or not mapping or set(mapping.values()) != set(inputs) or len(mapping)!=len(inputs):
+            fail('PORT_MISMATCH',path+'/params/field_map')
+        if not all(IDENT.fullmatch(k) for k in mapping): fail('PARAMETER_RANGE',path)
+        typ = Type('Record', schema=tuple((k,inputs[v]) for k,v in mapping.items()))
+        if impl=='column_view': aliases={'rows':list(inputs)}
+        obligations.append({'code':'RECORD_CAPABILITY_LEASES','path':path,'copy_semantics':'values_and_handle_wrappers'})
+    else:
+        if set(inputs) != {'rows'}: fail('PORT_MISMATCH',path+'/inputs')
+        source, schema = _view(inputs['rows'],params.get('source_view','rows'),path+'/inputs/rows')
+        selected = _fields(params.get('columns',[]), schema, path+'/params/columns', allow_empty=True)
+        expressions = params.get('expressions',{})
+        if type(expressions) is not dict: fail('PARAMETER_TYPE',path+'/params/expressions')
+        for name, ast in expressions.items():
+            if not IDENT.fullmatch(name) or name in selected: fail('PARAMETER_RANGE',path+'/params/expressions')
+            typ, guards = analyze_predicate(ast,schema,path+'/params/expressions/'+name,require_bool=False)
+            if typ.kind=='List':
+                if not 0<=typ.metadata.get('max_length',4097)<=4096:fail('PARAMETER_RANGE',path)
+                if typ.item.kind in {'Empty','Null'}:fail('TYPE_MISMATCH',path)
+            selected[name]=typ
+            obligations.extend(guards)
+        if not selected: fail('PARAMETER_REQUIRED',path+'/params/columns')
+        if representation == 'same':
+            if params.get('source_view','rows')!='rows': fail('TYPE_MISMATCH',path)
+            typ=with_rows(source,selected)
+        elif representation in {'table','record'}:
+            typ=Type('Table' if representation=='table' else 'Record',tuple(selected.items()),
+                     domain=source.domain,revision=source.revision,metadata=dict(source.metadata))
+            if representation=='record': obligations.append({'code':'CARDINALITY_EXACTLY_ONE','path':path})
+        else:
+            if len(selected)!=1: fail('PARAMETER_RANGE',path+'/params/columns')
+            name,item=next(iter(selected.items()))
+            mappings=[m for m in _id_mappings(source) if m['field']==name]
+            kind,domain,revision='Set',source.domain,source.revision
+            if source.kind in {'NodeSet','Graph','GraphView'} and name in {'id','node_id'}:kind='NodeSet'
+            elif name in source.metadata.get('node_id_mappings',{}):
+                identity=source.metadata['node_id_mappings'][name];kind,domain,revision='NodeSet',identity['domain'],identity['revision']
+            elif source.kind in {'IDSet','RankedIDSet'}:kind='IDSet'
+            elif mappings:kind,domain,revision='IDSet',mappings[0]['domain'],mappings[0]['revision']
+            typ=Type(kind,item=item,domain=domain,revision=revision)
+        if typ.kind in {'Table','Record','Stream'}:
+            typ=_mapped(typ,[m for m in _id_mappings(source) if m['field'] in selected])
+            node_mappings={k:v for k,v in source.metadata.get('node_id_mappings',{}).items() if k in params.get('columns',[])}
+            for name,expression in expressions.items():
+                if set(expression)=={'field'} and expression['field'] in source.metadata.get('node_id_mappings',{}):
+                    node_mappings[name]=source.metadata['node_id_mappings'][expression['field']]
+            typ=replace(typ,metadata={**typ.metadata,'node_id_mappings':node_mappings})
+        if impl=='column_view':aliases={'rows':['rows']}
+    if set(node['outputs'])!={'rows'}: fail('PORT_MISMATCH',path+'/outputs')
+    check_declared(typ,node['outputs']['rows'],path+'/outputs/rows')
+    return {'outputs':{'rows':typ},'alias_inputs':aliases,'runtime_obligations':obligations,'dispatch_id':'project:'+impl}
+
+
+def validate_operator(node, inputs, *, task, stage, path):
+    op, p = node['operator'], node['params']
+    if op in {'read_documents','text_retrieve','split_documents','gather_context','semantic_extract','evidence_merge','evidence_validate'}:
+        inputs={k:unwrap_ref(t) for k,t in inputs.items()}
+    if op=='semantic_extract':
+        def json_field(typ):
+            if typ.kind in {'Int64','Float64','Bool','Utf8','Date','Timestamp'}:return True
+            if typ.kind in {'Nullable','List'}:return json_field(typ.item)
+            return typ.kind=='Record' and all(json_field(t) for _,t in typ.schema)
+        if not all(json_field(t) for t in parse_schema(p['field_schema'],path+'/params/field_schema').values()):fail('SEMANTIC_FIELD_TYPE',path+'/params/field_schema')
+    if op=='split_documents':
+        adapted=deepcopy(node);adapted['outputs']={'chunks':'ChunkStream'}
+        result=legacy(adapted,inputs,task=task,stage=stage,path=path);source=inputs['documents']
+        ident=source.metadata['id_type'];integer=Type('Int64');string=Type('Utf8')
+        segment=Type('Record',schema=(('document_id',ident),('revision',string),('source_start_cp',integer),('source_end_cp',integer),('presented_start_cp',integer),('presented_end_cp',integer)))
+        schema=(('document_id',ident),('revision',string),('section_id',Type('Nullable',item=string)),('chunk_ordinal',integer),('text',string),('text_sha256',string),('segments',Type('List',item=segment,metadata={'max_length':4096})))
+        result['outputs']['chunks']=replace(source,kind='ChunkStream',schema=schema)
+        check_declared(result['outputs']['chunks'],node['outputs']['chunks'],path+'/outputs/chunks');return result
+    if op=='filter' and unwrap_ref(inputs['rows']).kind in {'DocumentStream','ChunkStream'}:
+        source=unwrap_ref(inputs['rows']);adapted=deepcopy(node);adapted['outputs']={'rows':'Table'}
+        result=legacy(adapted,{'rows':replace(source,kind='Table')},task=task,stage=stage,path=path)
+        result['outputs']['rows']=source;check_declared(source,node['outputs']['rows'],path+'/outputs/rows')
+        result['runtime_obligations'].append({'code':'DOCUMENT_METADATA_PRESERVATION','path':path});return result
+    if op=='join':
+        result=legacy(node,inputs,task=task,stage=stage,path=path)
+        mappings={};mode=p['join_type'];overlap=set(row_schema(inputs['left']))&set(row_schema(inputs['right']))
+        for side,source in inputs.items():
+            if mode in {'semi','anti'} and side=='right':continue
+            for field,identity in source.metadata.get('node_id_mappings',{}).items():
+                name=side+'.'+field if mode not in {'semi','anti'} and field in overlap else field
+                if name in dict(result['outputs']['rows'].schema):mappings[name]=identity
+        output=result['outputs']['rows'];result['outputs']['rows']=replace(output,metadata={**output.metadata,'node_id_mappings':mappings})
+        return result
+    if op.startswith('graph_'):
+        result=legacy(node,{k:unwrap_ref(t) for k,t in inputs.items()},task=task,stage=stage,path=path)
+        if op=='graph_shortest_path':
+            graph=unwrap_ref(inputs['graph']);edge_id=dict(graph.schema).get('edge_id')
+            if edge_id is not None:result['outputs']['paths']=replace(result['outputs']['paths'],metadata={**graph.metadata,'edge_id_type':edge_id})
+        return result
+    if op=='broadcast' and inputs['artifact'].kind=='Stream':
+        adapted=deepcopy(node);adapted['outputs']={k:'ArtifactRef' for k in node['outputs']}
+        result=legacy(adapted,inputs,task=task,stage=stage,path=path)
+        result['outputs']={k:inputs['artifact'] for k in result['outputs']}
+        for k,typ in result['outputs'].items():check_declared(typ,node['outputs'][k],path+'/outputs/'+k)
+        result['runtime_obligations'].append({'code':'BOUNDED_STREAM_FANOUT','path':path})
+        return result
+    if op=='project' and set(p)-{'columns'}:
+        return _project(node,inputs,path)
+    extra={'top_k':{'partition_by'},'text_retrieve':{'offset'},'semantic_extract':{'question'}}.get(op,set())
+    if not (set(p)&extra):
+        return legacy(node,inputs,task=task,stage=stage,path=path)
+    adapted=deepcopy(node)
+    for name in extra: adapted['params'].pop(name,None)
+    result=legacy(adapted,inputs,task=task,stage=stage,path=path)
+    if op=='top_k':
+        _fields(p['partition_by'],row_schema(inputs['rows'],path),path+'/params/partition_by',allow_empty=True)
+        result['runtime_obligations'].append({'code':'EXACT_PARTITION_TOP_K','path':path})
+    elif op=='text_retrieve': _integer(p['offset'],path+'/params/offset')
+    else:_string(p['question'],path+'/params/question')
+    return result
