@@ -56,6 +56,27 @@ def assemble(task, binding, *, protocol, stage, attempt_id, request_id, trial_la
             'reference_token_count':None,'provider_usage':None,'formal_ready':False}
 
 
+def assemble_recovery2(task, binding, **kwargs):
+    """Opt-in public grammar clarification; never mutates old request bytes."""
+    request=assemble(task,binding,**kwargs)
+    checked=validate_public_task(task)['normalized_task']
+    contract=checked['output_contract']
+    names={contract.get('id'),contract.get('contract_id')}-{None}
+    if contract.get('type')=='ordered_records' and contract.get('mode')=='exact':
+        names.add('exact_ordered_topk_v1')
+    public={'assembly_profile':'FULL001_REQUEST_2','compiler_profile':'RCWG_FULL001_COMPAT1',
+            'allowed_source_ids':sorted(d['id'] for d in checked['datasets']),
+            'alias_pattern':'^[a-z][a-z0-9_]{0,47}$','allowed_emit_contract_names':sorted(names),
+            'emit_parameter_type':'string','external_reference':'$input.alias',
+            'node_reference':'node.port','region_reference':'$bound.alias'}
+    path='prompts/full001/recovery2.txt';raw=read(ROOT/path)
+    request['body']['systemInstruction']['parts'].append({'text':raw.decode()+'\n'+canonical(public).decode()})
+    request.update(schema_version='FULL001_REQUEST_2',body_hash=digest(request['body']),
+                   input_bytes=len(canonical(request['body'])),input_characters=len(canonical(request['body']).decode()))
+    request['source_hashes'][path]=sha(raw)
+    return request
+
+
 def parse_final(raw,stage,*,allow_single_fence=False):
     if type(raw) is not bytes:raise ValueError('RESPONSE_BYTES')
     original=sha(raw)

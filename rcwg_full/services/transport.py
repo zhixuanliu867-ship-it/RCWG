@@ -1,12 +1,17 @@
 """Use already bound API001 authentication and HTTPS; never log in or retry."""
 import re
 import time
+import hashlib
+import json
+import http.client
+from datetime import datetime,timezone
 import urllib.request
 import urllib.error
 from urllib.parse import urlsplit
 from rcwg_api.common import fail
 from rcwg_api.vertex import Response
 from .bindings import validate_binding,account_hash
+from .transport_evidence import PROFILE,TransportFailure,exception_fields
 
 
 class ExistingVertexTransport:
@@ -19,27 +24,100 @@ class ExistingVertexTransport:
         if not hasattr(existing,'opener') or not hasattr(existing,'token_source'):raise ValueError('EXISTING_VERTEX_TRANSPORT_REQUIRED')
 
     def send(self,kind,body,request_id,*,reservation):
+        return self.send_with_evidence(kind,body,request_id,reservation=reservation)
+
+    def send_with_evidence(self,kind,body,request_id,*,reservation,evidence_sink=None):
         if reservation is None:raise PermissionError('RESERVATION_REQUIRED')
         if kind not in {'G','E','COUNT'} or type(body) is not bytes or len(body)>131072:raise ValueError('REQUEST_INPUT')
-        token=self.existing.token_source()
-        if type(token) is not str or not token or re.search(r'\s',token):fail('AUTH_FAILED')
-        endpoint=self.binding['endpoint']+(':countTokens' if kind=='COUNT' else ':generateContent')
-        request=urllib.request.Request(endpoint,data=body,headers={'Authorization':'Bearer '+token,
-              'Content-Type':'application/json','Accept':'application/json','Accept-Encoding':'identity',
-              'x-goog-user-project':self.existing.config['project_id']},method='POST')
         started=time.perf_counter_ns()
-        self.existing.dispatch_count+=1
+        state={'transport_profile':PROFILE,'local_request_id':request_id,'kind':kind,
+               'request_body_sha256':hashlib.sha256(body).hexdigest(),'phase':'CREDENTIALS',
+               'sent':False,'http_status':None,'response_headers':{},'response_complete':False,
+               'received_bytes':0,'provider_response_id':None,'model_version':None,'usage':None}
+        raw=bytearray();token=None;sequence=0;prefix_saved=0
+        def emit(event):
+            nonlocal sequence,prefix_saved
+            if evidence_sink is None:return
+            sequence+=1;prefix=bytes(raw[:65536])
+            sanitized=prefix.replace(token.encode(),b'<REDACTED_CREDENTIAL>') if token else prefix
+            record={**state,'event':event,'sequence':sequence,'observed_utc':datetime.now(timezone.utc).isoformat(),
+                    'elapsed_ns':time.perf_counter_ns()-started,'raw_prefix_bytes':len(prefix),
+                    'raw_prefix_sha256':hashlib.sha256(prefix).hexdigest(),
+                    'credential_echo_redacted':sanitized!=prefix}
+            fragment=sanitized if len(prefix)>prefix_saved else None
+            evidence_sink(record,fragment);prefix_saved=len(prefix)
+        def observe(phase,inference_send_started):
+            state['phase']=phase
+            state['sent']=None if inference_send_started else False
+            emit('TRANSPORT_PHASE')
         try:
+            emit('REQUEST_REGISTERED')
+            token=self.existing.token_source()
+            if type(token) is not str or not token or re.search(r'\s',token):fail('AUTH_FAILED')
+            state['phase']='REQUEST_PREPARATION'
+            endpoint=self.binding['endpoint']+(':countTokens' if kind=='COUNT' else ':generateContent')
+            request=urllib.request.Request(endpoint,data=body,headers={'Authorization':'Bearer '+token,
+                  'Content-Type':'application/json','Accept':'application/json','Accept-Encoding':'identity',
+                  'x-goog-user-project':self.existing.config['project_id']},method='POST')
+            request._rcwg_transport_observer=observe
+            # An uninstrumented legacy opener cannot distinguish connect/write/wait.
+            # Only the traced connection may subsequently prove zero POST bytes.
+            state.update(phase='OPEN_SEND_OR_WAIT',sent=None)
+            deadline=time.monotonic()+self.existing.config['request_timeout_s']
+            state['http_deadline_seconds']=self.existing.config['request_timeout_s']
+            emit('HTTP_DISPATCH_ENTERED');self.existing.dispatch_count+=1
             try:response=self.existing.opener.open(request,timeout=self.existing.config['request_timeout_s'])
             except urllib.error.HTTPError as exc:response=exc
             with response:
-                raw=response.read(self.existing.config['max_response_bytes']+1)
-                if len(raw)>self.existing.config['max_response_bytes']:fail('RESPONSE_BYTE_LIMIT')
-                code=response.code
-                headers={k.lower():v for k,v in response.headers.items() if k.lower() in {'x-request-id','x-goog-request-id','content-type','retry-after'}}
+                code=response.code;headers={}
+                for key,value in response.headers.items():
+                    key=key.lower()
+                    if key in {'x-request-id','x-goog-request-id','content-type','retry-after','content-length','date'}:
+                        value=str(value)
+                        if len(value)<=512 and not any(ord(c)<32 for c in value) and token not in value:
+                            headers[key]=value
+                state.update(phase='RESPONSE_HEADERS',sent=True,http_status=code,response_headers=headers)
+                emit('RESPONSE_HEADERS')
+                limit=self.existing.config['max_response_bytes']
+                state['phase']='RESPONSE_BODY'
+                while True:
+                    remaining=deadline-time.monotonic()
+                    if remaining<=0:raise TimeoutError('HTTP_TOTAL_DEADLINE')
+                    sock=getattr(getattr(getattr(response,'fp',None),'raw',None),'_sock',None)
+                    if sock is not None:sock.settimeout(remaining)
+                    try:chunk=response.read(min(16384,limit+1-len(raw)))
+                    except http.client.IncompleteRead as exc:
+                        raw.extend(exc.partial[:limit+1-len(raw)]);state['received_bytes']=len(raw)
+                        emit('PARTIAL_BODY');raise
+                    if not chunk:break
+                    raw.extend(chunk);state['received_bytes']=len(raw);emit('BODY_CHUNK')
+                    if len(raw)>limit:fail('RESPONSE_BYTE_LIMIT')
+                if headers.get('content-length','').isdigit() and len(raw)!=int(headers['content-length']):
+                    raise http.client.IncompleteRead(b'',int(headers['content-length'])-len(raw))
+                state['response_complete']=True
+                if token.encode() in raw:fail('CREDENTIAL_ECHO_IN_RESPONSE')
+                try:
+                    envelope=json.loads(raw)
+                    if isinstance(envelope,dict):
+                        for key,target in [('responseId','provider_response_id'),('modelVersion','model_version')]:
+                            value=envelope.get(key)
+                            if isinstance(value,str) and re.fullmatch(r'[\w.:-]{1,256}',value):state[target]=value
+                        usage=envelope.get('usageMetadata')
+                        if isinstance(usage,dict):
+                            state['usage']={k:v for k,v in usage.items() if re.fullmatch(r'[A-Za-z]{1,64}',k) and type(v) is int and v>=0}
+                except (ValueError,UnicodeError):pass
+                state['phase']='COMPLETE';emit('RESPONSE_COMPLETE')
             if 300<=code<400:fail('HTTP_REDIRECT_DENIED')
-            return Response(code,raw,headers,time.perf_counter_ns()-started)
-        except (OSError,ValueError,urllib.error.URLError):fail('TRANSPORT_UNCERTAIN_NO_RETRY')
+            return Response(code,bytes(raw),headers,time.perf_counter_ns()-started)
+        except Exception as exc:
+            state.update(exception_fields(exc))
+            known={'AUTH_FAILED','AUTH_PREFLIGHT_FAILED','AUTH_OVERRIDE_CONFIG','RESPONSE_BYTE_LIMIT',
+                   'CREDENTIAL_ECHO_IN_RESPONSE','HTTP_REDIRECT_DENIED'}
+            state['error_code']=getattr(exc,'code',None) if getattr(exc,'code',None) in known else None
+            try:emit('TRANSPORT_FAILURE')
+            except Exception:state['evidence_persistence_failed']=True
+            code='TRANSPORT_UNCERTAIN_NO_RETRY' if state['sent'] is None else 'TRANSPORT_CONFIRMED_NOT_SENT' if state['sent'] is False else 'RESPONSE_INCOMPLETE_OR_REJECTED'
+            raise TransportFailure(code,state) from None
 
 
 class ExistingWindowsTransport:

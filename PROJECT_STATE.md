@@ -242,3 +242,14 @@ Actual candidate rehydration exposed insertion-order-dependent alpha identities:
 This checkpoint requires new exact-source build and affected/full acceptance evidence before inheriting software-complete status. The nine calibration checks, actual service binding/paid receipts, human labels, real reference timings and campaign freeze remain separate external evidence requirements. R2's original 150,880 NOT_RUN slot plan and all failures are retained privately; changed source identities are not silently inserted into that old plan.
 
 Reopening the complete real-source export found a second ordering issue: QASPER's public document arrays followed source object insertion order, while canonical private JSON reordered paper keys, causing authenticated reconstruction to fail. FULL001_UPSTREAM_3 sorts paper identities during adaptation and retains original source bytes. A fifth R2 test authenticates the stored multi-paper round trip and rejects changed public content. Actual source exports are rebuilt and reauthenticated before delivery; the earlier export and reproduced failure remain private evidence.
+
+## AUTO2-RECOVERY-R1 — 2026-09-28
+
+The explicit user recovery delegation supersedes historical per-module approval
+text within AUTO2. Continue the same two-phase task and USD100 budget root, with
+a USD5 recovery subcap. The sealed initial run, unresolved request and all holds
+remain intact. Recovery adds durable task dispatch fencing, phased HTTP evidence,
+one conditional independent fixed-E epoch, and opt-in public request grammar v2.
+See docs/full001/AUTO2_RECOVERY_R1.md. Target-environment full acceptance is being
+rerun on the current source; Windows supplementary passes alone are not full
+acceptance. No new calibration/formal efficiency claim or merge is made.

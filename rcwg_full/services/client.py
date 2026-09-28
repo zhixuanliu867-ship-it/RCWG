@@ -33,6 +33,13 @@ class RequestIndex:
         self.db.execute('CREATE TABLE IF NOT EXISTS requests(id TEXT PRIMARY KEY,payload_hash TEXT NOT NULL,status TEXT NOT NULL,result TEXT)')
 
     @serialized
+    def lookup(self,request_id,payload):
+        row=self.db.execute('SELECT payload_hash,result FROM requests WHERE id=?',(request_id,)).fetchone()
+        if row is None:return None
+        if row[0]!=digest(payload):raise ValueError('REQUEST_ID_PAYLOAD_CONFLICT')
+        return json.loads(row[1]) if row[1] else {'status':'SENT_UNCONFIRMED','request_id':request_id,'reconciliation_required':True}
+
+    @serialized
     def begin(self,request_id,payload):
         if not isinstance(request_id,str) or str(uuid.UUID(request_id))!=request_id:raise ValueError('REQUEST_UUID')
         self.db.execute('BEGIN IMMEDIATE')
@@ -132,10 +139,23 @@ class ServiceClient:
             return finish('NOT_AUTHORIZED',sent=False,reason=getattr(exc,'code',type(exc).__name__))
         self.index.record(rid,'SENDING',{'request_id':rid,'status':'SENT_UNCONFIRMED','reservation_microusd':reservation,'sent':None})
         try:
-            response=self.transport.send(kind,canonical(request['body']),rid,reservation=reservation)
+            def transport_evidence(record,prefix):
+                name='transport-'+str(record['sequence']).zfill(4)
+                if prefix is not None:
+                    record={**record,'saved_prefix_sha256':write(self.index.root/rid/(name+'.prefix'),prefix)}
+                write(self.index.root/rid/(name+'.json'),record)
+            if hasattr(self.transport,'send_with_evidence'):
+                response=self.transport.send_with_evidence(kind,canonical(request['body']),rid,
+                    reservation=reservation,evidence_sink=transport_evidence)
+            else:response=self.transport.send(kind,canonical(request['body']),rid,reservation=reservation)
         except Exception as exc:
-            result=finish('SENT_UNCONFIRMED',sent=None,reason=getattr(exc,'code',type(exc).__name__),reservation_microusd=reservation)
-            if self.mode=='LIVE':self.budget.observe(rid,'SENT_UNCONFIRMED',digest(result))
+            evidence=getattr(exc,'transport_evidence',None)
+            sent=evidence['sent'] if evidence is not None else None
+            status='SENT_UNCONFIRMED' if sent is None else 'INFRA_FAILURE'
+            result=finish(status,sent=sent,reason=getattr(exc,'code',type(exc).__name__),reservation_microusd=reservation,
+                          transport_evidence=evidence,http_status=evidence.get('http_status') if evidence else None,
+                          response_complete=evidence.get('response_complete',False) if evidence else False)
+            if self.mode=='LIVE':self.budget.observe(rid,status,digest(result))
             return result
         raw_hash=write(self.index.root/rid/'response.raw',response.body)
         try:
@@ -152,6 +172,7 @@ class ServiceClient:
             # WorkIR parse failures are classified only after valid text delivery.
             parsed={'error':exc.code};status='INFRA_FAILURE'
         result=finish(status,sent=True,response=parsed,http_status=response.status,response_raw_hash=raw_hash,
+                      response_headers=response.headers,response_complete=True,
                       service_latency_ns=response.elapsed_ns,reservation_microusd=reservation)
         if self.mode=='LIVE':self.budget.observe(rid,status,digest(result))
         return result
@@ -176,6 +197,12 @@ class ServiceClient:
 def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,request_id_factory=None):
     protocol=slot['protocol'];stages=['physical'] if protocol=='P0' else ['logical','physical']
     if protocol not in {'P0','P1'}:raise ValueError('GENERATION_PROTOCOL')
+    profile=slot.get('request_profile','FULL001_REQUEST_1')
+    if profile not in {'FULL001_REQUEST_1','FULL001_REQUEST_2'}:raise ValueError('REQUEST_PROFILE')
+    assembler=assemble
+    if profile=='FULL001_REQUEST_2':
+        from .requests import assemble_recovery2
+        assembler=assemble_recovery2
     records=[];logical=None;plan=None;status='COMPLETED'
     if slot.get('generation_stage')=='GUIDED_PHYSICAL':
         from rcwg_full.campaign.transforms import public_guidance
@@ -187,7 +214,7 @@ def generate(task,slot,client,attempt_id,*,local_counter=None,guidance=None,requ
                  'information_requirements':[task['instruction']], 'permissible_alternatives':[],'uncertainty':[]}
     for stage in stages:
         if status!='COMPLETED':records.append({'stage':stage,'status':'NOT_RUN','request_id':None});continue
-        request=assemble(task,client.binding,protocol=protocol,stage=stage,attempt_id=attempt_id,
+        request=assembler(task,client.binding,protocol=protocol,stage=stage,attempt_id=attempt_id,
                          request_id=request_id_factory(stage) if request_id_factory else str(uuid.uuid4()),trial_label=slot['trial_label'],logical=logical,guidance=guidance)
         measurement=None
         try:

@@ -120,7 +120,15 @@ class Pipeline:
             preparation_gate(evidence,self.current_identity(),self.config['measurement_profile'])
             first=self.capability('G0',initial)
         capabilities={'G0':first}
-        for slot in ['G1','G2','G3','G4','G5']:capabilities[slot]=self.capability(slot,initial)
+        self.save_once('private/capabilities/G0.json',first)
+        if first.get('status') in {'SENT_UNCONFIRMED','UNKNOWN','SERVICE_DRIFT','NOT_AUTHORIZED'}:
+            self.require_resolved_facility(first,'capability:G0')
+        for slot in ['G1','G2','G3','G4','G5']:
+            record=self.capability(slot,initial)
+            capabilities[slot]=record
+            self.save_once('private/capabilities/'+slot+'.json',record)
+            if record.get('status') in {'SENT_UNCONFIRMED','UNKNOWN','SERVICE_DRIFT','NOT_AUTHORIZED'}:
+                self.require_resolved_facility(record,'capability:'+slot)
         self.save_once('CAPABILITIES.json',capabilities)
         self.available=[s for s,r in capabilities.items() if r['status'] in {'COMPLETED','MODEL_FAILURE'} and r.get('http_status')==200]
         for slot,record in capabilities.items():

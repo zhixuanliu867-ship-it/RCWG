@@ -15,7 +15,9 @@ from rcwg_full.evidence import digest,read,sha,write
 from rcwg_full.services.bindings import validate_binding,account_hash
 from rcwg_full.services.client import ServiceClient
 from rcwg_full.services.transport import ExistingVertexTransport
+from rcwg_full.services.transport_evidence import EvidenceHTTPSHandler,PROFILE as TRANSPORT_PROFILE
 from rcwg_api.vertex import NoRedirect
+from .dispatch import DispatchGate
 
 _PROVIDER_ADMISSION=threading.RLock()
 
@@ -41,10 +43,29 @@ class ScopeBudget:
 
 class DelegatedClient(ServiceClient):
     def call(self,request,kind,*,input_measurement=None):
+        if kind not in {'G','E','COUNT'}:raise ValueError('REQUEST_KIND')
         # The legacy semantic worker may schedule four node RPCs. AUTO2's
         # task-wide provider limit remains one, including COUNT and other slots.
         with _PROVIDER_ADMISSION:
-            return super().call(request,kind,input_measurement=input_measurement)
+            gate=DispatchGate(self.budget.state)
+            with gate.locked():
+                if request['binding_hash']!=digest(self.binding) or request['body_hash']!=digest(request['body']):
+                    raise ValueError('REQUEST_BINDING')
+                payload={**request,'mode':self.mode,'kind':kind,'input_measurement':input_measurement}
+                old=self.index.lookup(request['request_id'],payload)
+                if old is not None:return old
+                try:gate.admit(request['request_id'],kind,body_hash=request['body_hash'],scope_hash=self.scope_hash)
+                except PermissionError as exc:
+                    return {'status':'NOT_AUTHORIZED','request_id':request['request_id'],'sent':False,
+                            'reason':str(exc),'reservation_microusd':None,'task_dispatch_blocked':True}
+                try:
+                    result=super().call(request,kind,input_measurement=input_measurement)
+                except BaseException:
+                    gate.finish(request['request_id'],{'status':'UNKNOWN','reason':'CLIENT_EXITED_WITHOUT_TERMINAL_RECORD'})
+                    raise
+                # Durable fuse is committed while the OS permit is still held.
+                gate.finish(request['request_id'],result)
+                return result
 
     def __init__(self,binding,transport,budget,index):
         self.binding=validate_requested(binding);self.transport=transport;self.budget=budget
@@ -104,8 +125,8 @@ class ExistingWindowsIdentity:
     def existing_transport(self):
         config={'auth_mode':'GCLOUD_USER','project_id':self.identity['project_id'],
                 'login_account':self.identity['principal'],'service_account':None,'location':'global',
-                'request_timeout_s':90,'max_response_bytes':1048576}
+                'request_timeout_s':90,'max_response_bytes':1048576,'transport_profile':TRANSPORT_PROFILE}
         proxy=self.binding['proxy'];url=f"http://{proxy['address']}:{proxy['port']}"
         opener=urllib.request.build_opener(urllib.request.ProxyHandler({'https':url}),NoRedirect(),
-                                          urllib.request.HTTPSHandler(context=ssl.create_default_context()))
+                                          EvidenceHTTPSHandler(context=ssl.create_default_context()))
         return SimpleNamespace(config=config,opener=opener,token_source=self,dispatch_count=0)

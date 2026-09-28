@@ -150,6 +150,8 @@ class TaskState:
         with self.db() as db:
             db.execute('BEGIN IMMEDIATE')
             if db.execute('SELECT 1 FROM reservations WHERE id=?',(request_id,)).fetchone():raise PermissionError('REQUEST_ALREADY_RESERVED_NO_REPLAY')
+            from .recovery import check_reservation
+            check_reservation(db,request_id,kind,amount,sid)
             used=db.execute('SELECT COALESCE(SUM(amount),0) FROM reservations').fetchone()[0]
             scope_used=db.execute('SELECT COALESCE(SUM(amount),0) FROM reservations WHERE scope=?',(sid,)).fetchone()[0]
             count=db.execute('SELECT COUNT(*) FROM reservations WHERE scope=? AND kind=?',(sid,kind)).fetchone()[0]
