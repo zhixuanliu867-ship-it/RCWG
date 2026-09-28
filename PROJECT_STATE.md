@@ -352,3 +352,32 @@ and incomplete multi-field support remain distinct findings, with no old
 score relabeling or new E calls. Private reports preserve the raw failure,
 full slot denominators, budget continuity and cleanup evidence. Formal
 metrics remain null; PR9 remains draft and unmerged.
+
+### NEXT-LIVE-002 explicitly authorized finite COUNT recovery
+
+The owner explicitly authorized one new COUNT attempt for the proven unsent
+TLS failure above. A private versioned controller passed 12 offline tests,
+including one-time installation, preserved reservations and refusal of sent,
+unknown, advanced-packet, altered-binding and reset-budget cases. The one
+new COUNT consumed one of the original two extra attempts without raising
+the whole-packet cap. The original failure and its hold remain unchanged.
+The revalidated ordinary-uid worker used the same executable source/build
+and data; its new boot identity was bound to the remaining scope ceiling.
+
+The recovery COUNT returned complete HTTP 200. The first G then timed out
+in WAIT_RESPONSE with zero response bytes, no HTTP status, response ID or
+usage. It is SENT_UNCONFIRMED, not proof that the provider did or did not
+complete generation. Its USD0.189440 hold is retained and it was not retried.
+The durable dispatcher fused again. F2 has one unresolved logical attempt,
+11 unstarted logical slots and all 36 native slots NOT_RUN; F3 remains
+unstarted. F4's separate frozen-profile memory shortfall also remains.
+
+The current cumulative conservative reservations are USD56.305198;
+USD11.283868 remains under the same USD15 recovery subcap. The original
+root, epoch, all earlier reservation rows and both unknown holds are retained.
+Actual invoice cost and provider active-request count are unobservable.
+The task is PAUSED_EXTERNAL. The worker exited, task cgroups were removed,
+and the original claim-ledger ownership was restored. The initial sealed
+checkpoint is intact; a separate recovery checkpoint preserves raw evidence,
+controller provenance and the explicit authorization. Executable source and
+its exact CI remain unchanged. Formal metrics stay null; PR9 stays draft.
