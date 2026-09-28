@@ -53,3 +53,5 @@ Preparation of that panel is not model accuracy evidence or a replacement test
 denominator. Private source text, annotations, requests and cloud identity remain
 outside public Git. New and historical test failures and exact-source CI evidence
 are retained in the private recovery delivery.
+
+Final bounded recovery evidence: code commit fe934ee280c8e0ff47b932b7e82abcd354030dcd passed 2,149 full tests and 270 subtests. The real recovery added 5 G / 4 E / 9 COUNT dispatches. E correctness was 0/4 despite complete HTTP 200 responses. F1 development stopped on a complete G0 HTTP 429 RESOURCE_EXHAUSTED after two invalid G2 plans; nine later logical trials and all 36 model execution slots stayed NOT_RUN. No second unknown, retry, epoch reset, or output repair occurred. Existing WSL reference correctness probes passed and task cgroups were cleaned up. New reservations USD0.859557 and cumulative USD53.448623 remain conservative holds, not invoice cost. Capacity refusal is the immediate live blocker; formal metrology remains unadmitted. Documentation updates after the tested commit do not alter its executable source closure.
