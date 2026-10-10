@@ -47,3 +47,18 @@ or expected sentinel outcomes to conceal implementation failures.
 
 ## EXEC-001 当前票
 完整目标与权限见 docs/exec001/CODEX_TASK.md、DECISIONS.md、ACCEPTANCE.md。只完成参考脚本不能宣称X00-X15完成。受测源码必须覆盖rcwg_exec和worker/verifier。合并授权只限明确审过的PR2/3 SHA，使用match-head，不绕过CI。F1 reference计量scope保留，不自动升级formal。
+
+## Cursor Cloud specific instructions
+
+Cloud Agents use the saved environment's uv 0.13.0 and CPython 3.12.14. `python3.12` on `PATH` is `/usr/local/bin/python3.12` (3.12.14). Ubuntu's `/usr/bin/python3.12` is 3.12.3 and fails gates that require exactly 3.12.14. From the repository root, `uv sync --frozen` refreshes the lockfile environment (no third-party packages). Equivalent runners:
+
+```bash
+python3.12 -m unittest discover -s tests -v
+uv run --offline --frozen --python 3.12.14 python -m unittest discover -s tests -v
+```
+
+There is no dev server. Offline product checks are `python3.12 -m rcwg_boot check`, `smoke`, and `api-probe` (mock transport, `api_requests` 0). `python3.12 -m rcwg_boot check --formal` exits 2 with status `BLOCKED_NOT_FROZEN`. `python3.12 -m rcwg_spec validate-public-task specs/spec001b/examples/public_F6.json` returns `PUBLIC_TASK_VALIDATED`.
+
+`WindowsProtocolTests.test_one_preparation_cannot_reset_by_output_directory` requires the checkout path to resolve under `/home`, which is true on WSL and GitHub-hosted runners. This agent's checkout is `/workspace`, so that test raises `WSL_PREPARATION_REQUIRED`. The rest of `tests/` passes on 3.12.14. Leave that path gate unchanged.
+
+Do not apt-install extra packages, enable cloud or IAM, or send live model requests from this environment. `runs/` stays untracked.
