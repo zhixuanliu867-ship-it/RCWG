@@ -50,7 +50,7 @@ or expected sentinel outcomes to conceal implementation failures.
 
 ## Cursor Cloud specific instructions
 
-Cloud Agents use the saved environment's uv 0.13.0 and CPython 3.12.14. `python3.12` on `PATH` is `/usr/local/bin/python3.12` (3.12.14). Ubuntu's `/usr/bin/python3.12` is 3.12.3 and fails gates that require exactly 3.12.14. From the repository root, `uv sync --frozen` refreshes the lockfile environment (no third-party packages). Equivalent runners:
+Cloud Agents use the saved environment's uv 0.13.0 and CPython 3.12.14. `python3.12` resolves to that uv interpreter (`/usr/local/bin/python3.12` links to `~/.local/bin/python3.12`). Ubuntu's `/usr/bin/python3.12` is 3.12.3 and fails gates that require exactly 3.12.14. From the repository root, `uv sync --frozen` refreshes the lockfile environment (no third-party packages). Equivalent runners:
 
 ```bash
 python3.12 -m unittest discover -s tests -v
