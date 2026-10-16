@@ -1,0 +1,30 @@
+{
+  "id": "A17__related",
+  "parent": "A17",
+  "family": "A17",
+  "scenario": "analytics",
+  "dataset": "northwind",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "NORTHWIND",
+  "requirements": {
+    "objects": [
+      "BSBEV",
+      "CACTU",
+      "CENTC",
+      "ERNSH"
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of requested customer summary objects",
+    "largest": "native customer ID"
+  },
+  "task": "Summarize all purchases for customer IDs ['BSBEV', 'CACTU', 'CENTC', 'ERNSH'] in northwind. Return rows with customer_id,order_count (distinct orders/invoices),item_count (sum of line quantities),total_amount (sum of line price times quantity, applying line Discount in Northwind; round to 2 decimals). Also return largest: the customer ID with greatest total_amount; ties lexicographic ID. Update: one requested customer has been replaced. Underlying purchases are unchanged."
+}

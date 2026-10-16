@@ -1,0 +1,27 @@
+{
+  "id": "A01__related",
+  "parent": "A01",
+  "family": "A01",
+  "scenario": "analytics",
+  "dataset": "debit",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Summarize 2012 consumption for customer IDs [38, 75]. Return rows with customer_id,count (monthly records),total_amount (sum consumption). Update: one requested object has been replaced. Data values did not change.",
+  "requirements": {
+    "objects": [
+      38,
+      75
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of objects specified in the task"
+  },
+  "source_cluster": "BIRD_debit"
+}

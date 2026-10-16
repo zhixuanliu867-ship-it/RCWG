@@ -1,0 +1,29 @@
+{
+  "id": "A06__base",
+  "parent": "A06",
+  "family": "A06",
+  "scenario": "analytics",
+  "dataset": "financial",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Summarize all loans for regions ['south Bohemia', 'south Moravia', 'west Bohemia']. Return rows with region,loan_count,total_amount,adverse_count (status B or D). Also return largest: the customer ID or region with greatest total_amount; ties use smallest ID or lexicographic region.",
+  "requirements": {
+    "objects": [
+      "south Bohemia",
+      "south Moravia",
+      "west Bohemia"
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of objects specified in the task",
+    "largest": "integer customer ID or region string"
+  },
+  "source_cluster": "BIRD_financial"
+}

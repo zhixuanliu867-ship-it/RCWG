@@ -1,0 +1,27 @@
+{
+  "id": "A02__related",
+  "parent": "A02",
+  "family": "A02",
+  "scenario": "analytics",
+  "dataset": "financial",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Summarize all loans for regions ['central Bohemia', 'south Bohemia']. Return rows with region,loan_count,total_amount,adverse_count (status B or D). Update: one requested object has been replaced. Data values did not change.",
+  "requirements": {
+    "objects": [
+      "central Bohemia",
+      "south Bohemia"
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of objects specified in the task"
+  },
+  "source_cluster": "BIRD_financial"
+}

@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "combined_stages": 6000,
+  "valid": 3873,
+  "initial_valid": 1479,
+  "pair_count_independently_recomputed": 5006,
+  "relations_checked": {
+    "equal": 2393,
+    "a_dominates": 1420,
+    "b_dominates": 821,
+    "tradeoff": 372
+  },
+  "work_time_formula_rows_checked": 1318,
+  "conditional_denominators_checked_models": 10,
+  "transport_markers_separate": 4,
+  "vector_pdfs": [
+    {
+      "file": "figure_0_experiment_design.pdf",
+      "pages": 1,
+      "raster_images": 0,
+      "sha256": "877f7968fd9940e1f1d7690624c030e5d207ad49c3ad3678b6e73baa200b2665"
+    },
+    {
+      "file": "figure_1_correct_work_differences.pdf",
+      "pages": 1,
+      "raster_images": 0,
+      "sha256": "3c5113d12a8ce9751d078e59f1cc91239faabb9aeac76d6d4dbf3fe12769ed58"
+    },
+    {
+      "file": "figure_2_work_to_time.pdf",
+      "pages": 1,
+      "raster_images": 0,
+      "sha256": "26ac62369d23dc4ffb277052959471c0f93a75385f4c9d6f1c2da83dbb6bd27d"
+    },
+    {
+      "file": "figure_3_selective_adaptation.pdf",
+      "pages": 1,
+      "raster_images": 0,
+      "sha256": "2e887c4a120a62a2d38b06e708bb84c2ad23b4faffe5511acc89153e70975be8"
+    }
+  ]
+}

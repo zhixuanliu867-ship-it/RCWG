@@ -1,4 +1,12 @@
-# RCWG project state — 2026-09-18
+# WELD project state — 2026-10-16
+
+Current release: WELD, Work, Execution, and Lifecycle Diagnostics. Repository: `zhixuanliu867-ship-it/WELD`. The owner approved the public research documentation, repository rename, and MIT license for original code.
+
+The current manuscript uses 100 parents, 20 source clusters, five scenarios, ten API-served models, 6,000 logical stages, and 8,874 fixed-response native executions. It studies work among valid workflows, realized time benefit, and selective adaptation. `weld_release/` contains bilingual papers, figures, numerical tables, public task cards, measured evaluator source, and an offline numerical reproduction entry point. Full raw responses, source assets, and private validation labels remain in the separate archive. No model experiment was run for this release.
+
+The public quick start independently checks counts, work dominance, paired eligibility, adaptation, and parent-weighted timing means. Its result and the public-tree checks are recorded in `docs/weld/RELEASE_ACCEPTANCE.md`. Remote publication and CI must be confirmed separately from local tests.
+
+## Preserved RCWG project state — 2026-09-18
 
 Ticket: **RCWG-BOOT-001**
 

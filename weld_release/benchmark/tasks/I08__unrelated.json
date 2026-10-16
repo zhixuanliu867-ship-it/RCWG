@@ -1,0 +1,30 @@
+{
+  "id": "I08__unrelated",
+  "parent": "I08",
+  "family": "I08",
+  "scenario": "incident",
+  "dataset": "incident_unit2",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "unrelated",
+  "condition": "unrelated",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Using the current split timestamp 1705666511, find the metric containing 'latency-90' with largest post/pre mean ratio. Return top_metric and ratio. The comparison includes all metrics matching that string. Also return top_trace_service and trace_ratio for the largest post/pre median trace duration ratio across services, plus log_matches counting case-insensitive regex 'error' across all logs. Update: the incident display title changed; timestamp and telemetry are unchanged.",
+  "requirements": {
+    "metric_filter": "latency-90",
+    "log_regex": "error"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number",
+    "top_trace_service": "string",
+    "trace_ratio": "number",
+    "log_matches": "number"
+  },
+  "source_cluster": "RCAEval_RE2_CHECKOUT",
+  "cut_timestamp": 1705666511
+}

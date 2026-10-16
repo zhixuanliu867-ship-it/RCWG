@@ -1,0 +1,27 @@
+{
+  "id": "A15__related",
+  "parent": "A15",
+  "family": "A15",
+  "scenario": "analytics",
+  "dataset": "northwind",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "NORTHWIND",
+  "requirements": {
+    "objects": [
+      "ALFKI",
+      "BOTTM"
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of requested customer summary objects"
+  },
+  "task": "Summarize all purchases for customer IDs ['ALFKI', 'BOTTM'] in northwind. Return rows with customer_id,order_count (distinct orders/invoices),item_count (sum of line quantities),total_amount (sum of line price times quantity, applying line Discount in Northwind; round to 2 decimals). Update: one requested customer has been replaced. Underlying purchases are unchanged."
+}

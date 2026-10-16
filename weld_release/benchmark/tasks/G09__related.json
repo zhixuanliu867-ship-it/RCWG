@@ -1,0 +1,29 @@
+{
+  "id": "G09__related",
+  "parent": "G09",
+  "family": "G09",
+  "scenario": "graph",
+  "dataset": "graph_cluster1",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+  "requirements": {
+    "authors": [
+      1093973
+    ],
+    "year_min": 2000,
+    "year_max": 2024,
+    "reference_author": null
+  },
+  "answer_schema": {
+    "authors": "array of author summary objects"
+  },
+  "task": "For authors [1093973], summarize publications in 2000-2024 inclusive. Return authors with author_id,count,total_citations,top_id,top_citations. Top means largest citations, ties smallest ID; no publications means null top. Update: requested publication window changed; retain applicable prior evidence."
+}

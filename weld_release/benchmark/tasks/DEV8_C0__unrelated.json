@@ -1,0 +1,51 @@
+{
+  "id": "DEV8_C0__unrelated",
+  "parent": "DEV8_C0",
+  "family": "DEV8_C0",
+  "scenario": "code_review",
+  "dataset": "packaging",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "unrelated",
+  "condition": "unrelated",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CODE_packaging",
+  "requirements": {
+    "scoped_case_ids": [
+      "lower_bounds::ge_4",
+      "lower_bounds::ge_5",
+      "upper_bounds::le_0",
+      "upper_bounds::le_1",
+      "combined_sets::set_4",
+      "combined_sets::set_5"
+    ],
+    "candidate_paths": [
+      "src/packaging/specifiers.py",
+      "src/packaging/version.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ],
+    "affected_paths": [
+      "source path"
+    ]
+  },
+  "public_context": {
+    "check_names": [
+      "lower_bounds",
+      "upper_bounds",
+      "combined_sets",
+      "version_normalization"
+    ]
+  },
+  "task": "Review the current packaging snapshot for registered cases ['lower_bounds::ge_4', 'lower_bounds::ge_5', 'upper_bounds::le_0', 'upper_bounds::le_1', 'combined_sets::set_4', 'combined_sets::set_5']. Compare observations to public case_contracts. Return verdict approve if none differ, otherwise request_changes, and regression_ids as all differing check_id::case_id strings. Other registered cases are outside this request. Inspect these candidate entrypoint modules ['src/packaging/specifiers.py', 'src/packaging/version.py']. Under this review contract, return affected_paths as this module set if a scoped behavior regresses, otherwise []. Update: only ticket title changed; implementation and registered inputs are unchanged."
+}

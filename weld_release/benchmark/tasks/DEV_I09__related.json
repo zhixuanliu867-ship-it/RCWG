@@ -1,0 +1,30 @@
+{
+  "id": "DEV_I09__related",
+  "parent": "DEV_I09",
+  "family": "DEV_I09",
+  "scenario": "incident",
+  "dataset": "incident_unit1",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Using the current split timestamp 1705354626, find the metric containing '_mem' with largest post/pre mean ratio. Return top_metric and ratio. The comparison includes all metrics matching that string. Also return top_trace_service and trace_ratio for the largest post/pre median trace duration ratio across services, plus log_matches counting case-insensitive regex 'timeout' across all logs. Update: the comparison split timestamp changed; raw telemetry records are unchanged.",
+  "requirements": {
+    "metric_filter": "_mem",
+    "log_regex": "timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number",
+    "top_trace_service": "string",
+    "trace_ratio": "number",
+    "log_matches": "number"
+  },
+  "source_cluster": "RCAEval_RE2_CHECKOUT",
+  "cut_timestamp": 1705354626
+}

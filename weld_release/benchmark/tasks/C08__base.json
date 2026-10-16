@@ -1,0 +1,53 @@
+{
+  "id": "C08__base",
+  "parent": "C08",
+  "family": "C08",
+  "scenario": "code_review",
+  "dataset": "requests",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Review the current requests snapshot for only these registered behavior cases: ['http_transport_samples::standard_upgrade', 'http_transport_samples::upgrade_nonstandard_same_port', 'http_transport_samples::upgrade_nonstandard_ports', 'http_transport_samples::cookie_domain', 'http_transport_samples::other_host', 'http_transport_samples::standard_explicit_upgrade']. Compare observed outcomes to the public case_contracts. Return verdict approve if none differ, otherwise request_changes; return regression_ids as exact check_id::case_id strings for all differing scoped cases. Other cases are outside this review request. Inspect the implementation modules ['src/requests/models.py', 'src/requests/sessions.py', 'src/requests/utils.py']. The change propagates through these listed candidate entrypoints. Return affected_paths as this module set if any scoped behavior regresses, otherwise [].",
+  "requirements": {
+    "scoped_case_ids": [
+      "http_transport_samples::standard_upgrade",
+      "http_transport_samples::upgrade_nonstandard_same_port",
+      "http_transport_samples::upgrade_nonstandard_ports",
+      "http_transport_samples::cookie_domain",
+      "http_transport_samples::other_host",
+      "http_transport_samples::standard_explicit_upgrade"
+    ],
+    "candidate_paths": [
+      "src/requests/models.py",
+      "src/requests/sessions.py",
+      "src/requests/utils.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ],
+    "affected_paths": [
+      "source path"
+    ]
+  },
+  "source_cluster": "CODE_requests",
+  "public_context": {
+    "check_names": [
+      "http_transport_samples",
+      "request_state_samples",
+      "stream_transport_samples",
+      "request_copy_samples",
+      "package_smoke"
+    ]
+  }
+}

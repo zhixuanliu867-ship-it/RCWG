@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="842.4pt" height="280.8pt" viewBox="0 0 842.4 280.8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-16T21:17:43.323864</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.6, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 280.8 
+L 842.4 280.8 
+L 842.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 14.1 113.76 
+L 165.9 113.76 
+Q 169.35 113.76 169.35 110.43 
+L 169.35 37.17 
+Q 169.35 33.84 165.9 33.84 
+L 14.1 33.84 
+Q 10.65 33.84 10.65 37.17 
+L 10.65 110.43 
+Q 10.65 113.76 14.1 113.76 
+z
+" clip-path="url(#p78fa8a275d)" style="fill: #31688e; fill-opacity: 0.070588; stroke: #31688e; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 179.7 113.76 
+L 331.5 113.76 
+Q 334.95 113.76 334.95 110.43 
+L 334.95 37.17 
+Q 334.95 33.84 331.5 33.84 
+L 179.7 33.84 
+Q 176.25 33.84 176.25 37.17 
+L 176.25 110.43 
+Q 176.25 113.76 179.7 113.76 
+z
+" clip-path="url(#p78fa8a275d)" style="fill: #21918c; fill-opacity: 0.070588; stroke: #21918c; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 345.3 113.76 
+L 497.1 113.76 
+Q 500.55 113.76 500.55 110.43 
+L 500.55 37.17 
+Q 500.55 33.84 497.1 33.84 
+L 345.3 33.84 
+Q 341.85 33.84 341.85 37.17 
+L 341.85 110.43 
+Q 341.85 113.76 345.3 113.76 
+z
+" clip-path="url(#p78fa8a275d)" style="fill: #5c6caf; fill-opacity: 0.070588; stroke: #5c6caf; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 510.9 113.76 
+L 662.7 113.76 
+Q 666.15 113.76 666.15 110.43 
+L 666.15 37.17 
+Q 666.15 33.84 662.7 33.84 
+L 510.9 33.84 
+Q 507.45 33.84 507.45 37.17 
+L 507.45 110.43 
+Q 507.45 113.76 510.9 113.76 
+z
+" clip-path="url(#p78fa8a275d)" style="fill: #c38331; fill-opacity: 0.070588; stroke: #c38331; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 676.5 113.76 
+L 828.3 113.76 
+Q 831.75 113.76 831.75 110.43 
+L 831.75 37.17 
+Q 831.75 33.84 828.3 33.84 
+L 676.5 33.84 
+Q 673.05 33.84 673.05 37.17 
+L 673.05 110.43 
+Q 673.05 113.76 676.5 113.76 
+z
+" clip-path="url(#p78fa8a275d)" style="fill: #9b4f6c; fill-opacity: 0.070588; stroke: #9b4f6c; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 24.45 217.656 
+L 817.95 217.656 
+" clip-path="url(#p78fa8a275d)" style="fill: none; stroke: #c6c6c6; stroke-width: 0.8; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #31688e" x="90" y="55.152" transform="rotate(-0 90 55.152)">Graph retrieval</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(65.919102 81.376398)">STaRK MAG</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(55.486016 90.894539)">4 graph clusters</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(53.570859 129.994398)">Filter, aggregate,</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(53.611367 139.512539)">follow references</text>
+   </g>
+   <g id="patch_7">
+    <path d="M 90 151.724358 
+Q 90 162.046039 90 171.249686 
+" style="fill: none; stroke: #31688e; stroke-linecap: round"/>
+    <path d="M 91.8 167.649686 
+L 90 171.249686 
+L 88.2 167.649686 
+" style="fill: none; stroke: #31688e; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(62.609766 185.761266)">20 parents</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(38.471484 195.839297)">5 easy + 15 medium</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #21918c" x="255.6" y="55.152" transform="rotate(-0 255.6 55.152)">Code review</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(215.305352 81.376398)">4 Python packages</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(202.235273 90.894539)">seeded + clean revisions</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(208.608281 129.994398)">Read, probe, compare</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(224.000586 139.512539)">case + version</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 255.6 151.724358 
+Q 255.6 162.046039 255.6 171.249686 
+" style="fill: none; stroke: #21918c; stroke-linecap: round"/>
+    <path d="M 257.4 167.649686 
+L 255.6 171.249686 
+L 253.8 167.649686 
+" style="fill: none; stroke: #21918c; stroke-linecap: round"/>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(228.209766 185.761266)">20 parents</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(204.071484 195.839297)">5 easy + 15 medium</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5c6caf" x="421.2" y="55.152" transform="rotate(-0 421.2 55.152)">SQL analytics</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(401.83793 81.376398)">BIRD × 2</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(375.805352 90.894539)">Chinook + Northwind</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(379.882031 129.994398)">Scope objects, join,</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(383.785391 139.512539)">batch aggregates</text>
+   </g>
+   <g id="patch_9">
+    <path d="M 421.2 151.724358 
+Q 421.2 162.046039 421.2 171.249686 
+" style="fill: none; stroke: #5c6caf; stroke-linecap: round"/>
+    <path d="M 423 167.649686 
+L 421.2 171.249686 
+L 419.4 167.649686 
+" style="fill: none; stroke: #5c6caf; stroke-linecap: round"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(393.809766 185.761266)">20 parents</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(369.671484 195.839297)">5 easy + 15 medium</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #c38331" x="586.8" y="55.152" transform="rotate(-0 586.8 55.152)">Telemetry diagnosis</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(569.198359 81.376398)">RCAEval</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(547.662812 90.894539)">4 incident clusters</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(546.327383 129.994398)">Choose modalities,</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(545.260234 139.512539)">aggregate windows</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 586.8 151.724358 
+Q 586.8 162.046039 586.8 171.249686 
+" style="fill: none; stroke: #c38331; stroke-linecap: round"/>
+    <path d="M 588.6 167.649686 
+L 586.8 171.249686 
+L 585 167.649686 
+" style="fill: none; stroke: #c38331; stroke-linecap: round"/>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(559.409766 185.761266)">20 parents</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(535.271484 195.839297)">5 easy + 15 medium</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9b4f6c" x="752.4" y="55.152" transform="rotate(-0 752.4 55.152)">Business operations</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(714.584961 81.376398)">AppWorld exports</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(716.450977 90.894539)">4 task snapshots</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(709.553359 129.994398)">Read, reuse, update</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'" transform="translate(719.736094 139.512539)">protected state</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 752.4 151.724358 
+Q 752.4 162.046039 752.4 171.249686 
+" style="fill: none; stroke: #9b4f6c; stroke-linecap: round"/>
+    <path d="M 754.2 167.649686 
+L 752.4 171.249686 
+L 750.6 167.649686 
+" style="fill: none; stroke: #9b4f6c; stroke-linecap: round"/>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(725.009766 185.761266)">20 parents</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(700.871484 195.839297)">5 easy + 15 medium</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle" x="421.2" y="240.3" transform="rotate(-0 421.2 240.3)">Each parent: BASE  →  same checkpoint  →  RELEVANT / IRRELEVANT CHANGE</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle" x="421.2" y="268.272" transform="rotate(-0 421.2 268.272)">100 parents × 3 conditions × 2 repeats × 10 models = 6,000 stages</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p78fa8a275d">
+   <rect x="7.2" y="7.2" width="828" height="266.4"/>
+  </clipPath>
+ </defs>
+</svg>

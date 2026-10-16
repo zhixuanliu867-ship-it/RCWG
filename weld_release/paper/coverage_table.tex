@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccc}
+\toprule
+Evaluation & Executed outcome & Native work vector & Work--time pairing & Relevant updates & Valid-prefix cost\\
+\midrule
+WorFBench & $\circ$ & -- & -- & -- & --\\
+FlowBench / FlowMind & $\checkmark$ & -- & -- & -- & --\\
+AgentBoard & $\checkmark$ & -- & -- & -- & --\\
+AppWorld & $\checkmark$ & -- & -- & -- & --\\
+ClawArena-Team & $\checkmark$ & -- & -- & $\checkmark$ & --\\
+OrchBench & $\circ$ & $\circ$ & $\circ$ & -- & --\\
+\textbf{WELD} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$\\
+\bottomrule
+\end{tabular}
+\caption{Reported coverage of the operational measurements used here. $\checkmark$: direct coverage; $\circ$: related coverage with a different measurement domain; --: no separately reported protocol of this definition in the inspected version. Native work vector retains heterogeneous execution units. Work--time pairing jointly measures native work and observed time for matched valid workflows. Valid-prefix cost measures new work from a validated completed checkpoint. WorFBench includes downstream execution; OrchBench reports simulated quality, makespan, and tokens. Appendix~\ref{app:coverage} gives the source mapping.}
+\label{tab:coverage}
+\end{table*}

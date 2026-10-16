@@ -1,0 +1,65 @@
+{
+  "id": "B06__unrelated",
+  "parent": "B06",
+  "family": "B06",
+  "scenario": "appworld",
+  "dataset": "appworld_export",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "unrelated",
+  "condition": "unrelated",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Reconcile payment requests for members [16, 17, 18, 19, 20]. Read their bill-share and paid amounts from payment_records. For each member set requested cents to max(0,share_cents-paid_cents); leave no positive request for fully paid members. Preserve all other application state. request_payment replaces by member ID. Return completion=\"done\" when the ledger requests are correct. Update: display theme changed. Business requirements, ledgers and protected preferences are unchanged.",
+  "requirements": {
+    "members": [
+      16,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "answer_schema": {
+    "completion": "done"
+  },
+  "source_cluster": "APPWORLD_DINNER_22cc237",
+  "initial_state": {
+    "playing": {},
+    "requests": {},
+    "preferences": {
+      "volume": 37,
+      "locale": "en"
+    }
+  },
+  "ledger": [
+    {
+      "id": 16,
+      "share_cents": 1450,
+      "paid_cents": 1450
+    },
+    {
+      "id": 17,
+      "share_cents": 1750,
+      "paid_cents": 0
+    },
+    {
+      "id": 18,
+      "share_cents": 2050,
+      "paid_cents": 0
+    },
+    {
+      "id": 19,
+      "share_cents": 2350,
+      "paid_cents": 2350
+    },
+    {
+      "id": 20,
+      "share_cents": 2650,
+      "paid_cents": 0
+    }
+  ]
+}

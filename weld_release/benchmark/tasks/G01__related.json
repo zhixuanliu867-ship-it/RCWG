@@ -1,0 +1,29 @@
+{
+  "id": "G01__related",
+  "parent": "G01",
+  "family": "G01",
+  "scenario": "graph",
+  "dataset": "graph",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "For each author ID in [321630], summarize authored publications in 2000-2024 inclusive: paper count, total citations, top paper ID and citations (ties smallest ID; no papers means null top). Return authors rows with exactly author_id,count,total_citations,top_id,top_citations. Update: the requested publication window changed; keep applicable prior evidence.",
+  "requirements": {
+    "authors": [
+      321630
+    ],
+    "year_min": 2000,
+    "year_max": 2024,
+    "reference_author": null
+  },
+  "answer_schema": {
+    "authors": "array of requested author summary objects"
+  },
+  "source_cluster": "STARK_MAG_SHARED_SLICE"
+}

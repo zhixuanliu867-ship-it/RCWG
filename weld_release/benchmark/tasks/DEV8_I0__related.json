@@ -1,0 +1,30 @@
+{
+  "id": "DEV8_I0__related",
+  "parent": "DEV8_I0",
+  "family": "DEV8_I0",
+  "scenario": "incident",
+  "dataset": "re2ob_currencyservice_cpu_1",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_CURRENCY",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number",
+    "top_trace_service": "string",
+    "trace_ratio": "number",
+    "log_matches": "number"
+  },
+  "cut_timestamp": 1705682997,
+  "task": "At split timestamp 1705682997, identify the metric containing '_cpu' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio. Also return top_trace_service and trace_ratio for the largest post/pre median duration ratio across services, and log_matches counting case-insensitive regex 'error' across all logs. Update: split timestamp changed; raw telemetry is unchanged."
+}

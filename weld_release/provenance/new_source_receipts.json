@@ -1,0 +1,119 @@
+[
+  {
+    "kind": "code",
+    "key": "packaging",
+    "url": "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz",
+    "sha256": "d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f",
+    "upstream": {
+      "Documentation": "https://packaging.pypa.io/",
+      "Source": "https://github.com/pypa/packaging"
+    },
+    "version": "25.0"
+  },
+  {
+    "kind": "code",
+    "key": "dotenv",
+    "url": "https://files.pythonhosted.org/packages/f6/b0/4bc07ccd3572a2f9df7e6782f52b0c6c90dcbb803ac4a167702d7d0dfe1e/python_dotenv-1.1.1.tar.gz",
+    "sha256": "a8a6399716257f45be6a007360200409fce5cda2661e3dec71d23dc15f6189ab",
+    "upstream": {
+      "Homepage": "https://github.com/theskumar/python-dotenv"
+    },
+    "version": "1.1.1"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_currencyservice_cpu_1\\metrics.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_currencyservice_cpu_1/metrics.parquet",
+    "bytes": 159637,
+    "sha256": "ed8471d2f53c0c3f4095b25eff69d5c45762425afaa973d4dbdc04d7bc32c0f3"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_currencyservice_cpu_1\\logs.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_currencyservice_cpu_1/logs.parquet",
+    "bytes": 342888,
+    "sha256": "4fd881f7620902c141a7cfa2cd4c6c8115ab2d85c6c0a7fd1914a8dcf9a0c1ba"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_currencyservice_cpu_1\\traces.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_currencyservice_cpu_1/traces.parquet",
+    "bytes": 10214448,
+    "sha256": "04d1512a44ece85f370caeaa09d24e441adc7f67bbebc0de689faea0d5563a63"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_currencyservice_cpu_1\\inject_time.txt",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_currencyservice_cpu_1/inject_time.txt",
+    "bytes": 10,
+    "sha256": "87a24c90d82e973adc4df3a1216a85141e2caac93a982cc78e99999b0e80dec7"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_productcatalogservice_delay_1\\metrics.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_productcatalogservice_delay_1/metrics.parquet",
+    "bytes": 153586,
+    "sha256": "58640c77551e8eddb189f555457d597fefebd65ac28043d1f633891cd9f0178d"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_productcatalogservice_delay_1\\logs.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_productcatalogservice_delay_1/logs.parquet",
+    "bytes": 312686,
+    "sha256": "51243d1ea9378b7ec45c87c450d19f104a8c143f87cbafbe5c768df03bbff565"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_productcatalogservice_delay_1\\traces.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_productcatalogservice_delay_1/traces.parquet",
+    "bytes": 9445147,
+    "sha256": "5669ed603a30e6727cc2279b774844c545fd6410a9dc9ac5f869f9ae67f15036"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2ob_productcatalogservice_delay_1\\inject_time.txt",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2ob_productcatalogservice_delay_1/inject_time.txt",
+    "bytes": 10,
+    "sha256": "add38087b4414942f62d47bff8e07a144417c939eefe5f8f5bd5d3220edb3d8a"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2tt_ts-order-service_cpu_1\\metrics.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2tt_ts-order-service_cpu_1/metrics.parquet",
+    "bytes": 1023946,
+    "sha256": "98b3bca0944f8b9d505d07078f55723e6e9f29e2186a4dcc7a2e807d9b000645"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2tt_ts-order-service_cpu_1\\logs.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2tt_ts-order-service_cpu_1/logs.parquet",
+    "bytes": 2921420,
+    "sha256": "d1bfbc44853434a97ac16f57cc83ef46297262b51fe0c0e28e4ca90494245c88"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2tt_ts-order-service_cpu_1\\traces.parquet",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2tt_ts-order-service_cpu_1/traces.parquet",
+    "bytes": 15927967,
+    "sha256": "bb2fe8cf69ff16e8d80f1ef02d20657c55ba23cea8fca2ef1c57476b9b14a18a"
+  },
+  {
+    "kind": "telemetry",
+    "file": "sources\\re2tt_ts-order-service_cpu_1\\inject_time.txt",
+    "url": "https://huggingface.co/datasets/phamquiluan/RCAEval/resolve/afeacb11bcc94dadfd1c8f483ee4377b2b8b614e/re2tt_ts-order-service_cpu_1/inject_time.txt",
+    "bytes": 10,
+    "sha256": "702bdfd6a6e74f043dc36c905a29833c69b82a8255bdc3fe943037ced877ea7f"
+  },
+  {
+    "kind": "database",
+    "key": "chinook",
+    "bytes": 1007616,
+    "sha256": "7651ba378ac2fcd0dfc3c66fb101f7a7eed3ba39a612ec642b96e20702061f15"
+  },
+  {
+    "kind": "database",
+    "key": "northwind",
+    "bytes": 24702976,
+    "sha256": "2f4f5c68dfcd33ba27373eae48c7a4869800c68095ee0f9f0da494f83382a877"
+  }
+]

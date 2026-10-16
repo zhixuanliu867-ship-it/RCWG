@@ -21,3 +21,6 @@ gold/
 *.pdf
 *.docx
 .DS_Store
+# Public WELD reproduction outputs and local environments.
+weld_release/reproduced/
+.venv-weld/
