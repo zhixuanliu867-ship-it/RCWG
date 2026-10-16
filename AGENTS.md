@@ -1,4 +1,12 @@
-# RCWG agent working agreement
+# WELD agent working agreement
+
+## Current public release — 2026-10-16
+
+The owner authorized the WELD public research release, repository rename, and MIT licensing of original project code. The current manuscript, 100-parent/10-model study, public task cards, evaluator snapshot, and result tables live in `weld_release/`; reading and reproduction instructions live in `docs/weld/`. Keep credentials, private labels, full source assets, and raw API responses out of public Git. Preserve the original `specs/reference_v1_0/` and `prompts/v1_1/` bytes and the early RCWG history.
+
+For release edits, run `python weld_release/scripts/reproduce_results.py` and `python scripts/check_public_tree.py`. The public quick start is offline. Retain exact data values; version changes to the measured source separately. Rebuild the public file manifest only for intentional release changes and document the reason. The sections below record earlier tickets; their matrix and environment status do not describe the WELD paper.
+
+## Historical RCWG agreement
 
 Read `PROJECT_STATE.md`, `docs/START_HERE_zh.md`, `docs/API_ENV_AMENDMENT.md`, and `docs/SPEC_AUDIT.md` before editing.
 

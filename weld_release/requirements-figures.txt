@@ -1,0 +1,4 @@
+# Portable plotting requirements; original exact versions are in provenance/.
+numpy>=1.26
+pandas>=2.2
+matplotlib>=3.8

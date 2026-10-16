@@ -1,0 +1,30 @@
+{
+  "id": "A18__base",
+  "parent": "A18",
+  "family": "A18",
+  "scenario": "analytics",
+  "dataset": "northwind",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "NORTHWIND",
+  "requirements": {
+    "objects": [
+      "CONSH",
+      "DRACD",
+      "DUMON",
+      "EASTC"
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of requested customer summary objects",
+    "largest": "native customer ID"
+  },
+  "task": "Summarize all purchases for customer IDs ['CONSH', 'DRACD', 'DUMON', 'EASTC'] in northwind. Return rows with customer_id,order_count (distinct orders/invoices),item_count (sum of line quantities),total_amount (sum of line price times quantity, applying line Discount in Northwind; round to 2 decimals). Also return largest: the customer ID with greatest total_amount; ties lexicographic ID."
+}

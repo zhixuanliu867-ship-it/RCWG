@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccc}
+\toprule
+Evaluation & Executed outcome & Native work vector & Work--time pairing & Relevant updates & Valid-prefix cost\\
+\midrule
+WorFBench & $\circ$ & -- & -- & -- & --\\
+FlowBench / FlowMind & $\checkmark$ & -- & -- & -- & --\\
+AgentBoard & $\checkmark$ & -- & -- & -- & --\\
+AppWorld & $\checkmark$ & -- & -- & -- & --\\
+ClawArena-Team & $\checkmark$ & -- & -- & $\checkmark$ & --\\
+OrchBench & $\circ$ & $\circ$ & $\circ$ & -- & --\\
+\textbf{WELD} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$\\
+\bottomrule
+\end{tabular}
+\caption{按本文操作定义映射的已报告测量。勾选为直接覆盖，圆圈为相关但测量域不同，横线为未单独报告该协议。Native work vector 保留领域单位；Work--time pairing 配对比较有效方案的原生工作与实际时间；Valid-prefix cost 测量有效完成前缀后的新增代价。}
+\label{tab:zh_coverage}
+\end{table*}

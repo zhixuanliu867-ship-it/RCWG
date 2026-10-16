@@ -1,0 +1,44 @@
+{
+  "id": "C09__base",
+  "parent": "C09",
+  "family": "C09",
+  "scenario": "code_review",
+  "dataset": "packaging",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CODE_packaging",
+  "requirements": {
+    "scoped_case_ids": [
+      "lower_bounds::ge_0",
+      "lower_bounds::ge_1"
+    ],
+    "candidate_paths": [
+      "src/packaging/specifiers.py",
+      "src/packaging/version.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ]
+  },
+  "public_context": {
+    "check_names": [
+      "lower_bounds",
+      "upper_bounds",
+      "combined_sets",
+      "version_normalization"
+    ]
+  },
+  "task": "Review the current packaging snapshot for registered cases ['lower_bounds::ge_0', 'lower_bounds::ge_1']. Compare observations to public case_contracts. Return verdict approve if none differ, otherwise request_changes, and regression_ids as all differing check_id::case_id strings. Other registered cases are outside this request."
+}

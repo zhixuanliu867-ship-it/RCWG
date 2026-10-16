@@ -1,0 +1,6158 @@
+{
+  "version": "WELD_R8_100P",
+  "parents": 100,
+  "source_clusters": 20,
+  "main_cards": 300,
+  "easy_parents": 25,
+  "medium_parents": 75,
+  "new_main_stages": 1800,
+  "combined_main_stages": 3000,
+  "native_benchmark_scores": false,
+  "task_cards": [
+    {
+      "id": "G01__base",
+      "parent": "G01",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          321630
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G01__related",
+      "parent": "G01",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          321630
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G01__unrelated",
+      "parent": "G01",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          321630
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "A01__base",
+      "parent": "A01",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          38,
+          39
+        ]
+      }
+    },
+    {
+      "id": "A01__related",
+      "parent": "A01",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          38,
+          75
+        ]
+      }
+    },
+    {
+      "id": "A01__unrelated",
+      "parent": "A01",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          38,
+          39
+        ]
+      }
+    },
+    {
+      "id": "C01__base",
+      "parent": "C01",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C01__related",
+      "parent": "C01",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C01__unrelated",
+      "parent": "C01",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "I01__base",
+      "parent": "I01",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I01__related",
+      "parent": "I01",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I01__unrelated",
+      "parent": "I01",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "B01__base",
+      "parent": "B01",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 1800
+        }
+      }
+    },
+    {
+      "id": "B01__related",
+      "parent": "B01",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 5700
+        }
+      }
+    },
+    {
+      "id": "B01__unrelated",
+      "parent": "B01",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 1800
+        }
+      }
+    },
+    {
+      "id": "G02__base",
+      "parent": "G02",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          52239
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G02__related",
+      "parent": "G02",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          52239
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G02__unrelated",
+      "parent": "G02",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          52239
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "A02__base",
+      "parent": "A02",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "central Bohemia",
+          "east Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A02__related",
+      "parent": "A02",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "central Bohemia",
+          "south Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A02__unrelated",
+      "parent": "A02",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "central Bohemia",
+          "east Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "C02__base",
+      "parent": "C02",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C02__related",
+      "parent": "C02",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C02__unrelated",
+      "parent": "C02",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "I02__base",
+      "parent": "I02",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I02__related",
+      "parent": "I02",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I02__unrelated",
+      "parent": "I02",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "B02__base",
+      "parent": "B02",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "B02__related",
+      "parent": "B02",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "B02__unrelated",
+      "parent": "B02",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "G03__base",
+      "parent": "G03",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1087604,
+          1073089
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 1087604
+      }
+    },
+    {
+      "id": "G03__related",
+      "parent": "G03",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1087604,
+          1073089
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 1087604
+      }
+    },
+    {
+      "id": "G03__unrelated",
+      "parent": "G03",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1087604,
+          1073089
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 1087604
+      }
+    },
+    {
+      "id": "A03__base",
+      "parent": "A03",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          214,
+          215,
+          216,
+          224
+        ]
+      }
+    },
+    {
+      "id": "A03__related",
+      "parent": "A03",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          214,
+          215,
+          216,
+          236
+        ]
+      }
+    },
+    {
+      "id": "A03__unrelated",
+      "parent": "A03",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          214,
+          215,
+          216,
+          224
+        ]
+      }
+    },
+    {
+      "id": "C03__base",
+      "parent": "C03",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C03__related",
+      "parent": "C03",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C03__unrelated",
+      "parent": "C03",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "I03__base",
+      "parent": "I03",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I03__related",
+      "parent": "I03",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I03__unrelated",
+      "parent": "I03",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "B03__base",
+      "parent": "B03",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 2400,
+          "afternoon": 1500
+        }
+      }
+    },
+    {
+      "id": "B03__related",
+      "parent": "B03",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 5700,
+          "afternoon": 1500
+        }
+      }
+    },
+    {
+      "id": "B03__unrelated",
+      "parent": "B03",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 2400,
+          "afternoon": 1500
+        }
+      }
+    },
+    {
+      "id": "G04__base",
+      "parent": "G04",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          908185,
+          508504
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 908185
+      }
+    },
+    {
+      "id": "G04__related",
+      "parent": "G04",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          908185,
+          508504
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 908185
+      }
+    },
+    {
+      "id": "G04__unrelated",
+      "parent": "G04",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          908185,
+          508504
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 908185
+      }
+    },
+    {
+      "id": "A04__base",
+      "parent": "A04",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "north Bohemia",
+          "north Moravia",
+          "south Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A04__related",
+      "parent": "A04",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "north Bohemia",
+          "north Moravia",
+          "west Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A04__unrelated",
+      "parent": "A04",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "north Bohemia",
+          "north Moravia",
+          "south Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "C04__base",
+      "parent": "C04",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C04__related",
+      "parent": "C04",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C04__unrelated",
+      "parent": "C04",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "I04__base",
+      "parent": "I04",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I04__related",
+      "parent": "I04",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I04__unrelated",
+      "parent": "I04",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "B04__base",
+      "parent": "B04",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "B04__related",
+      "parent": "B04",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "B04__unrelated",
+      "parent": "B04",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "G05__base",
+      "parent": "G05",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          115399,
+          282786
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 115399
+      }
+    },
+    {
+      "id": "G05__related",
+      "parent": "G05",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          115399,
+          282786
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 115399
+      }
+    },
+    {
+      "id": "G05__unrelated",
+      "parent": "G05",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          115399,
+          282786
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 115399
+      }
+    },
+    {
+      "id": "A05__base",
+      "parent": "A05",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          407,
+          408,
+          419,
+          420
+        ]
+      }
+    },
+    {
+      "id": "A05__related",
+      "parent": "A05",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          407,
+          408,
+          419,
+          453
+        ]
+      }
+    },
+    {
+      "id": "A05__unrelated",
+      "parent": "A05",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          407,
+          408,
+          419,
+          420
+        ]
+      }
+    },
+    {
+      "id": "C05__base",
+      "parent": "C05",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C05__related",
+      "parent": "C05",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C05__unrelated",
+      "parent": "C05",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "I05__base",
+      "parent": "I05",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I05__related",
+      "parent": "I05",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I05__unrelated",
+      "parent": "I05",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "B05__base",
+      "parent": "B05",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 3000,
+          "afternoon": 2100
+        }
+      }
+    },
+    {
+      "id": "B05__related",
+      "parent": "B05",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 5700,
+          "afternoon": 2100
+        }
+      }
+    },
+    {
+      "id": "B05__unrelated",
+      "parent": "B05",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 3000,
+          "afternoon": 2100
+        }
+      }
+    },
+    {
+      "id": "G06__base",
+      "parent": "G06",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          68221,
+          852941
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 68221
+      }
+    },
+    {
+      "id": "G06__related",
+      "parent": "G06",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          68221,
+          852941
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 68221
+      }
+    },
+    {
+      "id": "G06__unrelated",
+      "parent": "G06",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          68221,
+          852941
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 68221
+      }
+    },
+    {
+      "id": "A06__base",
+      "parent": "A06",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "south Bohemia",
+          "south Moravia",
+          "west Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A06__related",
+      "parent": "A06",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "south Bohemia",
+          "south Moravia",
+          "central Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A06__unrelated",
+      "parent": "A06",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "south Bohemia",
+          "south Moravia",
+          "west Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "C06__base",
+      "parent": "C06",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C06__related",
+      "parent": "C06",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C06__unrelated",
+      "parent": "C06",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "I06__base",
+      "parent": "I06",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I06__related",
+      "parent": "I06",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I06__unrelated",
+      "parent": "I06",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "B06__base",
+      "parent": "B06",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          16,
+          17,
+          18,
+          19,
+          20
+        ]
+      }
+    },
+    {
+      "id": "B06__related",
+      "parent": "B06",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          16,
+          17,
+          18,
+          19,
+          20
+        ]
+      }
+    },
+    {
+      "id": "B06__unrelated",
+      "parent": "B06",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          16,
+          17,
+          18,
+          19,
+          20
+        ]
+      }
+    },
+    {
+      "id": "G07__base",
+      "parent": "G07",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          384991,
+          130247
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 384991
+      }
+    },
+    {
+      "id": "G07__related",
+      "parent": "G07",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          384991,
+          130247
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 384991
+      }
+    },
+    {
+      "id": "G07__unrelated",
+      "parent": "G07",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          384991,
+          130247
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 384991
+      }
+    },
+    {
+      "id": "A07__base",
+      "parent": "A07",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          592,
+          598,
+          600,
+          602
+        ]
+      }
+    },
+    {
+      "id": "A07__related",
+      "parent": "A07",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          592,
+          598,
+          600,
+          623
+        ]
+      }
+    },
+    {
+      "id": "A07__unrelated",
+      "parent": "A07",
+      "scenario": "analytics",
+      "dataset": "debit",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_debit",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          592,
+          598,
+          600,
+          602
+        ]
+      }
+    },
+    {
+      "id": "C07__base",
+      "parent": "C07",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C07__related",
+      "parent": "C07",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "C07__unrelated",
+      "parent": "C07",
+      "scenario": "code_review",
+      "dataset": "itsdangerous",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_itsdangerous",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "temporal_samples::timed_future_positive_limit",
+          "temporal_samples::timed_future_zero_limit",
+          "temporal_samples::urlsafe_timed_future_positive_limit",
+          "temporal_samples::urlsafe_timed_future_zero_limit",
+          "serialization_samples::plain_old-key_sha256_configured",
+          "serialization_samples::plain_old-key_sha256_request-specific"
+        ],
+        "candidate_paths": [
+          "src/itsdangerous/_age_policy.py",
+          "src/itsdangerous/timed.py"
+        ]
+      }
+    },
+    {
+      "id": "I07__base",
+      "parent": "I07",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I07__related",
+      "parent": "I07",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I07__unrelated",
+      "parent": "I07",
+      "scenario": "incident",
+      "dataset": "incident_unit1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "B07__base",
+      "parent": "B07",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 4200,
+          "afternoon": 3300
+        }
+      }
+    },
+    {
+      "id": "B07__related",
+      "parent": "B07",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 5700,
+          "afternoon": 3300
+        }
+      }
+    },
+    {
+      "id": "B07__unrelated",
+      "parent": "B07",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "sessions": {
+          "morning": 4200,
+          "afternoon": 3300
+        }
+      }
+    },
+    {
+      "id": "G08__base",
+      "parent": "G08",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          398037,
+          260725
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 398037
+      }
+    },
+    {
+      "id": "G08__related",
+      "parent": "G08",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          398037,
+          260725
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 398037
+      }
+    },
+    {
+      "id": "G08__unrelated",
+      "parent": "G08",
+      "scenario": "graph",
+      "dataset": "graph",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_SHARED_SLICE",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          398037,
+          260725
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 398037
+      }
+    },
+    {
+      "id": "A08__base",
+      "parent": "A08",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "west Bohemia",
+          "Prague",
+          "central Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A08__related",
+      "parent": "A08",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "west Bohemia",
+          "Prague",
+          "north Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "A08__unrelated",
+      "parent": "A08",
+      "scenario": "analytics",
+      "dataset": "financial",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "BIRD_financial",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "west Bohemia",
+          "Prague",
+          "central Bohemia"
+        ]
+      }
+    },
+    {
+      "id": "C08__base",
+      "parent": "C08",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C08__related",
+      "parent": "C08",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "C08__unrelated",
+      "parent": "C08",
+      "scenario": "code_review",
+      "dataset": "requests",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_requests",
+      "new_source": false,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "http_transport_samples::standard_upgrade",
+          "http_transport_samples::upgrade_nonstandard_same_port",
+          "http_transport_samples::upgrade_nonstandard_ports",
+          "http_transport_samples::cookie_domain",
+          "http_transport_samples::other_host",
+          "http_transport_samples::standard_explicit_upgrade"
+        ],
+        "candidate_paths": [
+          "src/requests/models.py",
+          "src/requests/sessions.py",
+          "src/requests/utils.py"
+        ]
+      }
+    },
+    {
+      "id": "I08__base",
+      "parent": "I08",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I08__related",
+      "parent": "I08",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I08__unrelated",
+      "parent": "I08",
+      "scenario": "incident",
+      "dataset": "incident_unit2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CHECKOUT",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "B08__base",
+      "parent": "B08",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          22,
+          23,
+          24,
+          25,
+          26
+        ]
+      }
+    },
+    {
+      "id": "B08__related",
+      "parent": "B08",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          22,
+          23,
+          24,
+          25,
+          26
+        ]
+      }
+    },
+    {
+      "id": "B08__unrelated",
+      "parent": "B08",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_DINNER_22cc237",
+      "new_source": false,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          22,
+          23,
+          24,
+          25,
+          26
+        ]
+      }
+    },
+    {
+      "id": "G09__base",
+      "parent": "G09",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1093973
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G09__related",
+      "parent": "G09",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1093973
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G09__unrelated",
+      "parent": "G09",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          1093973
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G10__base",
+      "parent": "G10",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          318255,
+          24978
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 318255
+      }
+    },
+    {
+      "id": "G10__related",
+      "parent": "G10",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          318255,
+          24978
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 318255
+      }
+    },
+    {
+      "id": "G10__unrelated",
+      "parent": "G10",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          318255,
+          24978
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 318255
+      }
+    },
+    {
+      "id": "G11__base",
+      "parent": "G11",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          647781,
+          1086725
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 647781
+      }
+    },
+    {
+      "id": "G11__related",
+      "parent": "G11",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          647781,
+          1086725
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 647781
+      }
+    },
+    {
+      "id": "G11__unrelated",
+      "parent": "G11",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          647781,
+          1086725
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 647781
+      }
+    },
+    {
+      "id": "G12__base",
+      "parent": "G12",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          610106,
+          328213
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 610106
+      }
+    },
+    {
+      "id": "G12__related",
+      "parent": "G12",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          610106,
+          328213
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 610106
+      }
+    },
+    {
+      "id": "G12__unrelated",
+      "parent": "G12",
+      "scenario": "graph",
+      "dataset": "graph_cluster1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_STANFORD_UNIVERSITY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          610106,
+          328213
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 610106
+      }
+    },
+    {
+      "id": "G13__base",
+      "parent": "G13",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          870600
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G13__related",
+      "parent": "G13",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          870600
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G13__unrelated",
+      "parent": "G13",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          870600
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G14__base",
+      "parent": "G14",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          45946,
+          347493
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 45946
+      }
+    },
+    {
+      "id": "G14__related",
+      "parent": "G14",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          45946,
+          347493
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 45946
+      }
+    },
+    {
+      "id": "G14__unrelated",
+      "parent": "G14",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          45946,
+          347493
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 45946
+      }
+    },
+    {
+      "id": "G15__base",
+      "parent": "G15",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          317642,
+          316819
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 317642
+      }
+    },
+    {
+      "id": "G15__related",
+      "parent": "G15",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          317642,
+          316819
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 317642
+      }
+    },
+    {
+      "id": "G15__unrelated",
+      "parent": "G15",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          317642,
+          316819
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 317642
+      }
+    },
+    {
+      "id": "G16__base",
+      "parent": "G16",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          270284,
+          324151
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 270284
+      }
+    },
+    {
+      "id": "G16__related",
+      "parent": "G16",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          270284,
+          324151
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 270284
+      }
+    },
+    {
+      "id": "G16__unrelated",
+      "parent": "G16",
+      "scenario": "graph",
+      "dataset": "graph_cluster2",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_MASSACHUSETTS_INSTITUTE_OF_TECHNOLOGY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          270284,
+          324151
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 270284
+      }
+    },
+    {
+      "id": "G17__base",
+      "parent": "G17",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          243583
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G17__related",
+      "parent": "G17",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          243583
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G17__unrelated",
+      "parent": "G17",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          243583
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": null
+      }
+    },
+    {
+      "id": "G18__base",
+      "parent": "G18",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          146614,
+          86192
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 146614
+      }
+    },
+    {
+      "id": "G18__related",
+      "parent": "G18",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          146614,
+          86192
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 146614
+      }
+    },
+    {
+      "id": "G18__unrelated",
+      "parent": "G18",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          146614,
+          86192
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 146614
+      }
+    },
+    {
+      "id": "G19__base",
+      "parent": "G19",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          612090,
+          3223
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 612090
+      }
+    },
+    {
+      "id": "G19__related",
+      "parent": "G19",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          612090,
+          3223
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 612090
+      }
+    },
+    {
+      "id": "G19__unrelated",
+      "parent": "G19",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          612090,
+          3223
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 612090
+      }
+    },
+    {
+      "id": "G20__base",
+      "parent": "G20",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          184307,
+          103966
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 184307
+      }
+    },
+    {
+      "id": "G20__related",
+      "parent": "G20",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          184307,
+          103966
+        ],
+        "year_min": 2000,
+        "year_max": 2024,
+        "reference_author": 184307
+      }
+    },
+    {
+      "id": "G20__unrelated",
+      "parent": "G20",
+      "scenario": "graph",
+      "dataset": "graph_cluster3",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "authors": [
+          184307,
+          103966
+        ],
+        "year_min": 2010,
+        "year_max": 2014,
+        "reference_author": 184307
+      }
+    },
+    {
+      "id": "C09__base",
+      "parent": "C09",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C09__related",
+      "parent": "C09",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C09__unrelated",
+      "parent": "C09",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C10__base",
+      "parent": "C10",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "lower_bounds::ge_3",
+          "upper_bounds::le_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C10__related",
+      "parent": "C10",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "lower_bounds::ge_3",
+          "upper_bounds::le_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C10__unrelated",
+      "parent": "C10",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "lower_bounds::ge_3",
+          "upper_bounds::le_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C11__base",
+      "parent": "C11",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "upper_bounds::le_2",
+          "upper_bounds::le_3"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C11__related",
+      "parent": "C11",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "upper_bounds::le_2",
+          "upper_bounds::le_3"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C11__unrelated",
+      "parent": "C11",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_0",
+          "upper_bounds::le_1",
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "upper_bounds::le_2",
+          "upper_bounds::le_3"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C12__base",
+      "parent": "C12",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "upper_bounds::le_3",
+          "upper_bounds::le_5"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C12__related",
+      "parent": "C12",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "upper_bounds::le_3",
+          "upper_bounds::le_5"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C12__unrelated",
+      "parent": "C12",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "upper_bounds::le_4",
+          "combined_sets::set_0",
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "upper_bounds::le_3",
+          "upper_bounds::le_5"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C13__base",
+      "parent": "C13",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "upper_bounds::le_5",
+          "combined_sets::set_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C13__related",
+      "parent": "C13",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "upper_bounds::le_5",
+          "combined_sets::set_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C13__unrelated",
+      "parent": "C13",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "combined_sets::set_1",
+          "combined_sets::set_3",
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "upper_bounds::le_5",
+          "combined_sets::set_2"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C14__base",
+      "parent": "C14",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "combined_sets::set_2",
+          "combined_sets::set_4"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C14__related",
+      "parent": "C14",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "combined_sets::set_2",
+          "combined_sets::set_4"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C14__unrelated",
+      "parent": "C14",
+      "scenario": "code_review",
+      "dataset": "packaging",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_packaging",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "lower_bounds::ge_0",
+          "lower_bounds::ge_1",
+          "lower_bounds::ge_4",
+          "lower_bounds::ge_5",
+          "combined_sets::set_2",
+          "combined_sets::set_4"
+        ],
+        "candidate_paths": [
+          "src/packaging/specifiers.py",
+          "src/packaging/version.py"
+        ]
+      }
+    },
+    {
+      "id": "C15__base",
+      "parent": "C15",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C15__related",
+      "parent": "C15",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C15__unrelated",
+      "parent": "C15",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C16__base",
+      "parent": "C16",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C16__related",
+      "parent": "C16",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C16__unrelated",
+      "parent": "C16",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C17__base",
+      "parent": "C17",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_0",
+          "public_values::values_1",
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_6",
+          "parser_records::parse_7"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C17__related",
+      "parent": "C17",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_0",
+          "public_values::values_1",
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_6",
+          "parser_records::parse_7"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C17__unrelated",
+      "parent": "C17",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_0",
+          "public_values::values_1",
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_6",
+          "parser_records::parse_7"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C18__base",
+      "parent": "C18",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_7",
+          "parser_records::parse_8"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C18__related",
+      "parent": "C18",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_7",
+          "parser_records::parse_8"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C18__unrelated",
+      "parent": "C18",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "public_values::values_2",
+          "public_values::values_3",
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_7",
+          "parser_records::parse_8"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C19__base",
+      "parent": "C19",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "parser_records::parse_8",
+          "parser_records::parse_9"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C19__related",
+      "parent": "C19",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "parser_records::parse_8",
+          "parser_records::parse_9"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C19__unrelated",
+      "parent": "C19",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_0",
+          "parser_records::parse_1",
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "parser_records::parse_8",
+          "parser_records::parse_9"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C20__base",
+      "parent": "C20",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "public_values::values_0",
+          "public_values::values_1",
+          "parser_records::parse_9",
+          "public_values::values_4"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C20__related",
+      "parent": "C20",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "fixed"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "public_values::values_0",
+          "public_values::values_1",
+          "parser_records::parse_9",
+          "public_values::values_4"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "C20__unrelated",
+      "parent": "C20",
+      "scenario": "code_review",
+      "dataset": "dotenv",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CODE_dotenv",
+      "new_source": true,
+      "conditions": {
+        "snapshot_folder": "v1"
+      },
+      "requirements": {
+        "scoped_case_ids": [
+          "parser_records::parse_4",
+          "parser_records::parse_5",
+          "public_values::values_0",
+          "public_values::values_1",
+          "parser_records::parse_9",
+          "public_values::values_4"
+        ],
+        "candidate_paths": [
+          "src/dotenv/parser.py",
+          "src/dotenv/main.py"
+        ]
+      }
+    },
+    {
+      "id": "A09__base",
+      "parent": "A09",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "A09__related",
+      "parent": "A09",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          1,
+          10
+        ]
+      }
+    },
+    {
+      "id": "A09__unrelated",
+      "parent": "A09",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "A10__base",
+      "parent": "A10",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    },
+    {
+      "id": "A10__related",
+      "parent": "A10",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          6,
+          7,
+          8,
+          15
+        ]
+      }
+    },
+    {
+      "id": "A10__unrelated",
+      "parent": "A10",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    },
+    {
+      "id": "A11__base",
+      "parent": "A11",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          11,
+          12,
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "A11__related",
+      "parent": "A11",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          11,
+          12,
+          13,
+          20
+        ]
+      }
+    },
+    {
+      "id": "A11__unrelated",
+      "parent": "A11",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          11,
+          12,
+          13,
+          14
+        ]
+      }
+    },
+    {
+      "id": "A12__base",
+      "parent": "A12",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          16,
+          17,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "id": "A12__related",
+      "parent": "A12",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          16,
+          17,
+          18,
+          25
+        ]
+      }
+    },
+    {
+      "id": "A12__unrelated",
+      "parent": "A12",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          16,
+          17,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "id": "A13__base",
+      "parent": "A13",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          21,
+          22,
+          23,
+          24
+        ]
+      }
+    },
+    {
+      "id": "A13__related",
+      "parent": "A13",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          21,
+          22,
+          23,
+          30
+        ]
+      }
+    },
+    {
+      "id": "A13__unrelated",
+      "parent": "A13",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          21,
+          22,
+          23,
+          24
+        ]
+      }
+    },
+    {
+      "id": "A14__base",
+      "parent": "A14",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          26,
+          27,
+          28,
+          29
+        ]
+      }
+    },
+    {
+      "id": "A14__related",
+      "parent": "A14",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          26,
+          27,
+          28,
+          35
+        ]
+      }
+    },
+    {
+      "id": "A14__unrelated",
+      "parent": "A14",
+      "scenario": "analytics",
+      "dataset": "chinook",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "CHINOOK",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          26,
+          27,
+          28,
+          29
+        ]
+      }
+    },
+    {
+      "id": "A15__base",
+      "parent": "A15",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "ALFKI",
+          "ANATR"
+        ]
+      }
+    },
+    {
+      "id": "A15__related",
+      "parent": "A15",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "ALFKI",
+          "BOTTM"
+        ]
+      }
+    },
+    {
+      "id": "A15__unrelated",
+      "parent": "A15",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "ALFKI",
+          "ANATR"
+        ]
+      }
+    },
+    {
+      "id": "A16__base",
+      "parent": "A16",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BLAUS",
+          "BLONP"
+        ]
+      }
+    },
+    {
+      "id": "A16__related",
+      "parent": "A16",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BLAUS",
+          "COMMI"
+        ]
+      }
+    },
+    {
+      "id": "A16__unrelated",
+      "parent": "A16",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BLAUS",
+          "BLONP"
+        ]
+      }
+    },
+    {
+      "id": "A17__base",
+      "parent": "A17",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BSBEV",
+          "CACTU",
+          "CENTC",
+          "CHOPS"
+        ]
+      }
+    },
+    {
+      "id": "A17__related",
+      "parent": "A17",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BSBEV",
+          "CACTU",
+          "CENTC",
+          "ERNSH"
+        ]
+      }
+    },
+    {
+      "id": "A17__unrelated",
+      "parent": "A17",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "BSBEV",
+          "CACTU",
+          "CENTC",
+          "CHOPS"
+        ]
+      }
+    },
+    {
+      "id": "A18__base",
+      "parent": "A18",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "CONSH",
+          "DRACD",
+          "DUMON",
+          "EASTC"
+        ]
+      }
+    },
+    {
+      "id": "A18__related",
+      "parent": "A18",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "CONSH",
+          "DRACD",
+          "DUMON",
+          "FRANK"
+        ]
+      }
+    },
+    {
+      "id": "A18__unrelated",
+      "parent": "A18",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "CONSH",
+          "DRACD",
+          "DUMON",
+          "EASTC"
+        ]
+      }
+    },
+    {
+      "id": "A19__base",
+      "parent": "A19",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FAMIA",
+          "FISSA",
+          "FOLIG",
+          "FOLKO"
+        ]
+      }
+    },
+    {
+      "id": "A19__related",
+      "parent": "A19",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FAMIA",
+          "FISSA",
+          "FOLIG",
+          "GODOS"
+        ]
+      }
+    },
+    {
+      "id": "A19__unrelated",
+      "parent": "A19",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FAMIA",
+          "FISSA",
+          "FOLIG",
+          "FOLKO"
+        ]
+      }
+    },
+    {
+      "id": "A20__base",
+      "parent": "A20",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FRANR",
+          "FRANS",
+          "FURIB",
+          "GALED"
+        ]
+      }
+    },
+    {
+      "id": "A20__related",
+      "parent": "A20",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FRANR",
+          "FRANS",
+          "FURIB",
+          "HILAA"
+        ]
+      }
+    },
+    {
+      "id": "A20__unrelated",
+      "parent": "A20",
+      "scenario": "analytics",
+      "dataset": "northwind",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "NORTHWIND",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "objects": [
+          "FRANR",
+          "FRANS",
+          "FURIB",
+          "GALED"
+        ]
+      }
+    },
+    {
+      "id": "I09__base",
+      "parent": "I09",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I09__related",
+      "parent": "I09",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I09__unrelated",
+      "parent": "I09",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I10__base",
+      "parent": "I10",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I10__related",
+      "parent": "I10",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I10__unrelated",
+      "parent": "I10",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I11__base",
+      "parent": "I11",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I11__related",
+      "parent": "I11",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I11__unrelated",
+      "parent": "I11",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I12__base",
+      "parent": "I12",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I12__related",
+      "parent": "I12",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I12__unrelated",
+      "parent": "I12",
+      "scenario": "incident",
+      "dataset": "re2ob_currencyservice_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_CURRENCY",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I13__base",
+      "parent": "I13",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I13__related",
+      "parent": "I13",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I13__unrelated",
+      "parent": "I13",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I14__base",
+      "parent": "I14",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I14__related",
+      "parent": "I14",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I14__unrelated",
+      "parent": "I14",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I15__base",
+      "parent": "I15",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I15__related",
+      "parent": "I15",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I15__unrelated",
+      "parent": "I15",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I16__base",
+      "parent": "I16",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I16__related",
+      "parent": "I16",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I16__unrelated",
+      "parent": "I16",
+      "scenario": "incident",
+      "dataset": "re2ob_productcatalogservice_delay_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I17__base",
+      "parent": "I17",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I17__related",
+      "parent": "I17",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I17__unrelated",
+      "parent": "I17",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "error|fail|timeout"
+      }
+    },
+    {
+      "id": "I18__base",
+      "parent": "I18",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I18__related",
+      "parent": "I18",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I18__unrelated",
+      "parent": "I18",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "latency-90",
+        "log_regex": "error"
+      }
+    },
+    {
+      "id": "I19__base",
+      "parent": "I19",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I19__related",
+      "parent": "I19",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I19__unrelated",
+      "parent": "I19",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_mem",
+        "log_regex": "timeout"
+      }
+    },
+    {
+      "id": "I20__base",
+      "parent": "I20",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I20__related",
+      "parent": "I20",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "I20__unrelated",
+      "parent": "I20",
+      "scenario": "incident",
+      "dataset": "re2tt_ts-order-service_cpu_1",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "RCAEval_RE2_TT_ORDER",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "metric_filter": "_cpu",
+        "log_regex": "fail"
+      }
+    },
+    {
+      "id": "B09__base",
+      "parent": "B09",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          155
+        ]
+      }
+    },
+    {
+      "id": "B09__related",
+      "parent": "B09",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          155,
+          156
+        ]
+      }
+    },
+    {
+      "id": "B09__unrelated",
+      "parent": "B09",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          155
+        ]
+      }
+    },
+    {
+      "id": "B10__base",
+      "parent": "B10",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          156,
+          157,
+          158
+        ]
+      }
+    },
+    {
+      "id": "B10__related",
+      "parent": "B10",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          156,
+          157,
+          158,
+          155
+        ]
+      }
+    },
+    {
+      "id": "B10__unrelated",
+      "parent": "B10",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          156,
+          157,
+          158
+        ]
+      }
+    },
+    {
+      "id": "B11__base",
+      "parent": "B11",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          157,
+          158,
+          159
+        ]
+      }
+    },
+    {
+      "id": "B11__related",
+      "parent": "B11",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          157,
+          158,
+          159,
+          155
+        ]
+      }
+    },
+    {
+      "id": "B11__unrelated",
+      "parent": "B11",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          157,
+          158,
+          159
+        ]
+      }
+    },
+    {
+      "id": "B12__base",
+      "parent": "B12",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          158,
+          159,
+          654
+        ]
+      }
+    },
+    {
+      "id": "B12__related",
+      "parent": "B12",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          158,
+          159,
+          654,
+          155
+        ]
+      }
+    },
+    {
+      "id": "B12__unrelated",
+      "parent": "B12",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          158,
+          159,
+          654
+        ]
+      }
+    },
+    {
+      "id": "B13__base",
+      "parent": "B13",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          159,
+          654,
+          155
+        ]
+      }
+    },
+    {
+      "id": "B13__related",
+      "parent": "B13",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          159,
+          654,
+          155,
+          156
+        ]
+      }
+    },
+    {
+      "id": "B13__unrelated",
+      "parent": "B13",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          159,
+          654,
+          155
+        ]
+      }
+    },
+    {
+      "id": "B14__base",
+      "parent": "B14",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          654,
+          155,
+          156
+        ]
+      }
+    },
+    {
+      "id": "B14__related",
+      "parent": "B14",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          654,
+          155,
+          156,
+          157
+        ]
+      }
+    },
+    {
+      "id": "B14__unrelated",
+      "parent": "B14",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_3fcc458",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "download_playlists": [
+          654,
+          155,
+          156
+        ]
+      }
+    },
+    {
+      "id": "B15__base",
+      "parent": "B15",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          35,
+          43
+        ]
+      }
+    },
+    {
+      "id": "B15__related",
+      "parent": "B15",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          35,
+          43
+        ]
+      }
+    },
+    {
+      "id": "B15__unrelated",
+      "parent": "B15",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          35,
+          43
+        ]
+      }
+    },
+    {
+      "id": "B16__base",
+      "parent": "B16",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          43,
+          45
+        ]
+      }
+    },
+    {
+      "id": "B16__related",
+      "parent": "B16",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          43,
+          45
+        ]
+      }
+    },
+    {
+      "id": "B16__unrelated",
+      "parent": "B16",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "easy",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          43,
+          45
+        ]
+      }
+    },
+    {
+      "id": "B17__base",
+      "parent": "B17",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          45,
+          58,
+          60,
+          68
+        ]
+      }
+    },
+    {
+      "id": "B17__related",
+      "parent": "B17",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          45,
+          58,
+          60,
+          68
+        ]
+      }
+    },
+    {
+      "id": "B17__unrelated",
+      "parent": "B17",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          45,
+          58,
+          60,
+          68
+        ]
+      }
+    },
+    {
+      "id": "B18__base",
+      "parent": "B18",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          58,
+          60,
+          68,
+          72
+        ]
+      }
+    },
+    {
+      "id": "B18__related",
+      "parent": "B18",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          58,
+          60,
+          68,
+          72
+        ]
+      }
+    },
+    {
+      "id": "B18__unrelated",
+      "parent": "B18",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          58,
+          60,
+          68,
+          72
+        ]
+      }
+    },
+    {
+      "id": "B19__base",
+      "parent": "B19",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          60,
+          68,
+          72,
+          85
+        ]
+      }
+    },
+    {
+      "id": "B19__related",
+      "parent": "B19",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          60,
+          68,
+          72,
+          85
+        ]
+      }
+    },
+    {
+      "id": "B19__unrelated",
+      "parent": "B19",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          60,
+          68,
+          72,
+          85
+        ]
+      }
+    },
+    {
+      "id": "B20__base",
+      "parent": "B20",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "base",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          68,
+          72,
+          85,
+          86
+        ]
+      }
+    },
+    {
+      "id": "B20__related",
+      "parent": "B20",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "related",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          68,
+          72,
+          85,
+          86
+        ]
+      }
+    },
+    {
+      "id": "B20__unrelated",
+      "parent": "B20",
+      "scenario": "appworld",
+      "dataset": "appworld_export",
+      "difficulty": "medium",
+      "split": "main",
+      "r5_condition": "unrelated",
+      "source_cluster": "APPWORLD_90adc3f",
+      "new_source": true,
+      "conditions": {},
+      "requirements": {
+        "members": [
+          68,
+          72,
+          85,
+          86
+        ]
+      }
+    }
+  ],
+  "note": "Source clusters retain shared-corpus relations. MAG institutional neighborhoods share a corpus and some reference nodes. AppWorld task snapshots share generated base data."
+}

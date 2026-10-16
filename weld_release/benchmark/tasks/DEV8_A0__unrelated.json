@@ -1,0 +1,30 @@
+{
+  "id": "DEV8_A0__unrelated",
+  "parent": "DEV8_A0",
+  "family": "DEV8_A0",
+  "scenario": "analytics",
+  "dataset": "chinook",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "unrelated",
+  "condition": "unrelated",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CHINOOK",
+  "requirements": {
+    "objects": [
+      31,
+      32,
+      33,
+      34
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of requested customer summary objects",
+    "largest": "native customer ID"
+  },
+  "task": "Summarize all purchases for customer IDs [31, 32, 33, 34] in chinook. Return rows with customer_id,order_count (distinct orders/invoices),item_count (sum of line quantities),total_amount (sum of line price times quantity, applying line Discount in Northwind; round to 2 decimals). Also return largest: the customer ID with greatest total_amount; ties lexicographic ID. Update: only report display order changed. Requested customers and purchases are unchanged."
+}

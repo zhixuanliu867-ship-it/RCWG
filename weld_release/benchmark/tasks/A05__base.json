@@ -1,0 +1,30 @@
+{
+  "id": "A05__base",
+  "parent": "A05",
+  "family": "A05",
+  "scenario": "analytics",
+  "dataset": "debit",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Summarize 2012 consumption for customer IDs [407, 408, 419, 420]. Return rows with customer_id,count (monthly records),total_amount (sum consumption). Also return largest: the customer ID or region with greatest total_amount; ties use smallest ID or lexicographic region.",
+  "requirements": {
+    "objects": [
+      407,
+      408,
+      419,
+      420
+    ]
+  },
+  "answer_schema": {
+    "rows": "array of objects specified in the task",
+    "largest": "integer customer ID or region string"
+  },
+  "source_cluster": "BIRD_debit"
+}

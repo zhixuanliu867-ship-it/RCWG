@@ -1,0 +1,27 @@
+{
+  "id": "I09__base",
+  "parent": "I09",
+  "family": "I09",
+  "scenario": "incident",
+  "dataset": "re2ob_currencyservice_cpu_1",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_CURRENCY",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error|fail|timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number"
+  },
+  "cut_timestamp": 1705682817,
+  "task": "At split timestamp 1705682817, identify the metric containing '_cpu' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio."
+}

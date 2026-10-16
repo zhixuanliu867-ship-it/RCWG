@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="734.4pt" height="279.5904pt" viewBox="0 0 734.4 279.5904" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-16T21:17:44.654007</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.6, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 279.5904 
+L 734.4 279.5904 
+L 734.4 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 7.2 223.539537 
+L 727.2 223.539537 
+L 727.2 198.416236 
+L 7.2 198.416236 
+z
+" clip-path="url(#p674d190e60)" style="fill: #e9f0f8; stroke: #e9f0f8; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 10.628571 29.531823 
+L 723.771429 29.531823 
+" clip-path="url(#p674d190e60)" style="fill: none; stroke: #000000; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 10.628571 197.85794 
+L 723.771429 197.85794 
+" clip-path="url(#p674d190e60)" style="fill: none; stroke: #386cb0; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 10.628571 224.935276 
+L 723.771429 224.935276 
+" clip-path="url(#p674d190e60)" style="fill: none; stroke: #000000; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(223.875937 15.810333)">Executed</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(225.253359 25.888365)">outcome</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(333.57519 15.810333)">Native</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(319.914877 25.888365)">work vector</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(426.125926 15.775177)">Work–time</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(434.927645 25.853208)">pairing</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(533.33471 15.810333)">Relevant</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(535.207835 25.888365)">updates</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(629.287868 15.810333)">Valid-prefix</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(628.588259 25.888365)">update cost</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="45.97265" transform="rotate(-0 15.428571 45.97265)">WorFBench</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #6c7978" x="247.2" y="47.352338" transform="rotate(-0 247.2 47.352338)">◐</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="350.057143" y="46.524525" transform="rotate(-0 350.057143 46.524525)">—</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="452.914286" y="46.524525" transform="rotate(-0 452.914286 46.524525)">—</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="555.771429" y="46.524525" transform="rotate(-0 555.771429 46.524525)">—</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="46.524525" transform="rotate(-0 658.628571 46.524525)">—</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="73.887429" transform="rotate(-0 15.428571 73.887429)">FlowBench / FlowMind</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="247.2" y="75.543054" transform="rotate(-0 247.2 75.543054)">✓</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="350.057143" y="74.439304" transform="rotate(-0 350.057143 74.439304)">—</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="452.914286" y="74.439304" transform="rotate(-0 452.914286 74.439304)">—</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="555.771429" y="74.439304" transform="rotate(-0 555.771429 74.439304)">—</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="74.439304" transform="rotate(-0 658.628571 74.439304)">—</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="101.802208" transform="rotate(-0 15.428571 101.802208)">AgentBoard</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="247.2" y="103.457833" transform="rotate(-0 247.2 103.457833)">✓</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="350.057143" y="102.354083" transform="rotate(-0 350.057143 102.354083)">—</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="452.914286" y="102.354083" transform="rotate(-0 452.914286 102.354083)">—</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="555.771429" y="102.354083" transform="rotate(-0 555.771429 102.354083)">—</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="102.354083" transform="rotate(-0 658.628571 102.354083)">—</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="129.716987" transform="rotate(-0 15.428571 129.716987)">AppWorld</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="247.2" y="131.372612" transform="rotate(-0 247.2 131.372612)">✓</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="350.057143" y="130.268862" transform="rotate(-0 350.057143 130.268862)">—</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="452.914286" y="130.268862" transform="rotate(-0 452.914286 130.268862)">—</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="555.771429" y="130.268862" transform="rotate(-0 555.771429 130.268862)">—</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="130.268862" transform="rotate(-0 658.628571 130.268862)">—</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="157.631766" transform="rotate(-0 15.428571 157.631766)">ClawArena-Team</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="247.2" y="159.287391" transform="rotate(-0 247.2 159.287391)">✓</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="350.057143" y="158.183641" transform="rotate(-0 350.057143 158.183641)">—</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="452.914286" y="158.183641" transform="rotate(-0 452.914286 158.183641)">—</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="555.771429" y="159.287391" transform="rotate(-0 555.771429 159.287391)">✓</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="158.183641" transform="rotate(-0 658.628571 158.183641)">—</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="185.546545" transform="rotate(-0 15.428571 185.546545)">OrchBench</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #6c7978" x="247.2" y="186.926232" transform="rotate(-0 247.2 186.926232)">◐</text>
+   </g>
+   <g id="text_38">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #6c7978" x="350.057143" y="186.926232" transform="rotate(-0 350.057143 186.926232)">◐</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #6c7978" x="452.914286" y="186.926232" transform="rotate(-0 452.914286 186.926232)">◐</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="555.771429" y="186.09842" transform="rotate(-0 555.771429 186.09842)">—</text>
+   </g>
+   <g id="text_41">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #9a9a9a" x="658.628571" y="186.09842" transform="rotate(-0 658.628571 186.09842)">—</text>
+   </g>
+   <g id="text_42">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="15.428571" y="213.461324" transform="rotate(-0 15.428571 213.461324)">WELD</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="247.2" y="215.116949" transform="rotate(-0 247.2 215.116949)">✓</text>
+   </g>
+   <g id="text_44">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="350.057143" y="215.116949" transform="rotate(-0 350.057143 215.116949)">✓</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="452.914286" y="215.116949" transform="rotate(-0 452.914286 215.116949)">✓</text>
+   </g>
+   <g id="text_46">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="555.771429" y="215.116949" transform="rotate(-0 555.771429 215.116949)">✓</text>
+   </g>
+   <g id="text_47">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #245b57" x="658.628571" y="215.116949" transform="rotate(-0 658.628571 215.116949)">✓</text>
+   </g>
+   <g id="text_48">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start" x="14.057143" y="239.450961" transform="rotate(-0 14.057143 239.450961)">✓ Direct coverage     ◐ Related measurement in a different domain     — Not separately reported</text>
+   </g>
+   <g id="text_49">
+    <text style="font-size: 8px; font-family: 'DejaVu Sans'; text-anchor: start" x="14.057143" y="254.245794" transform="rotate(-0 14.057143 254.245794)">Columns use WELD operational definitions. Simulation, downstream timing, and usage-only analyses are distinguished.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p674d190e60">
+   <rect x="7.2" y="7.2" width="720" height="265.1904"/>
+  </clipPath>
+ </defs>
+</svg>

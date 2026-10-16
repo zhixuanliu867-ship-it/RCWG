@@ -1,0 +1,19 @@
+name: WELD public reproduction
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python weld_release/scripts/reproduce_results.py
+      - run: python scripts/check_public_tree.py

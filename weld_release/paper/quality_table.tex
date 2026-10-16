@@ -1,0 +1,24 @@
+\begin{table*}[t]
+\centering\small\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Model & Graph & Code & SQL & Telemetry & Business & All stages & Initial \\
+\midrule
+\multicolumn{8}{l}{\emph{Open-weight model families, served through APIs}}\\
+DeepSeek V4 Pro 0813 & 29.2 & 34.2 & 70.0 & 61.7 & 29.2 & 44.8 & 58.5 \\
+Kimi K2.6 & 52.5 & 48.3 & 78.3 & 67.5 & 65.0 & 62.3 & 76.5 \\
+Qwen3.8 Flash & 84.2 & 40.0 & 88.3 & 65.8 & 56.7 & 67.0 & 79.5 \\
+Gemma 4 31B & 86.7 & 23.3 & 98.3 & 66.7 & 63.3 & 67.7 & 80.5 \\
+GLM-5.3 Flash & 97.5 & 63.3 & 92.5 & 86.7 & 98.3 & 87.7 & 92.0 \\
+MiniMax M3 & 0.0 & 10.0 & 5.8 & 20.8 & 6.7 & 8.7 & 9.5 \\
+\midrule
+\multicolumn{8}{l}{\emph{Closed-model APIs}}\\
+Gemini 3.8 Flash & 100.0 & 71.7 & 99.2 & 70.8 & 100.0 & 88.3 & 98.0 \\
+Gemini 3.7 Flash & 100.0 & 68.3 & 100.0 & 76.7 & 100.0 & 89.0 & \textbf{98.5} \\
+Grok 4.3 & 41.7 & 18.3 & 57.5 & 49.2 & 17.5 & 36.8 & 48.5 \\
+GPT-6 Luna & 98.3 & 72.5 & 100.0 & 98.3 & 96.7 & \textbf{93.2} & 98.0 \\
+\bottomrule
+\end{tabular}
+\caption{Joint-valid rates (\%). Each scenario column includes 120 stages per model; all stages includes 600, and initial includes 200. The balanced design makes the all-stage rate equal to the equal-scenario macro mean. Bold marks the best all-stage and initial rates. Endpoint-family grouping is descriptive: the Qwen production API is not identified with a specific released checkpoint.}
+\label{tab:quality}
+\end{table*}

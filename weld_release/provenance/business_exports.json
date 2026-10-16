@@ -1,0 +1,18 @@
+[
+  {
+    "task": "3fcc458_1",
+    "playlists": 6,
+    "requests": 32,
+    "user_records": 106,
+    "sha256": "5d8058e80f275072f81f58a851236d20f81f566dfb718fb28aa1f2868c4d1a63",
+    "adaptation": "Native record export with authored controlled update tasks and local state transitions; not a native AppWorld score."
+  },
+  {
+    "task": "90adc3f_1",
+    "playlists": 4,
+    "requests": 43,
+    "user_records": 106,
+    "sha256": "b5fae23f33a24b3c8c7fd3b2265c927721561e3df486b42fb9571e9c1c946888",
+    "adaptation": "Native record export with authored controlled update tasks and local state transitions; not a native AppWorld score."
+  }
+]

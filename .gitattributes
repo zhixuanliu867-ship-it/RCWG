@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.sh text eol=lf
 *.ps1 text eol=crlf
+# Frozen research-release hashes are over exact stored bytes on every OS.
+weld_release/** -text -whitespace

@@ -1,0 +1,51 @@
+{
+  "pass_all": true,
+  "formal_stages": 3000,
+  "combined_stages": 6000,
+  "parents": 100,
+  "source_clusters": 20,
+  "models": 10,
+  "physical_stages": 3008,
+  "physical_requests": 5325,
+  "request_statuses": {
+    "SETTLED": 5321,
+    "UNKNOWN": 4
+  },
+  "prefix_consistency": true,
+  "integrity_errors": 0,
+  "combined_committed_usd": 19.415226188,
+  "source_hashes": 1092,
+  "asset_hashes": 638,
+  "replay": {
+    "complete": true,
+    "all_models_collected": true,
+    "planned": 8874,
+    "completed": 8874,
+    "all_valid": true,
+    "models": 10,
+    "random_seed": 20261016,
+    "native_timing_campaign": "R9 D-volume isolated native replay; complete restart after E-volume exhaustion; all model cohorts measured together"
+  },
+  "vector_figures": [
+    {
+      "figure": "figure_0_experiment_design",
+      "editable_text_objects": 22,
+      "raster_images": 0
+    },
+    {
+      "figure": "figure_1_correct_work_differences",
+      "editable_text_objects": 32,
+      "raster_images": 0
+    },
+    {
+      "figure": "figure_2_work_to_time",
+      "editable_text_objects": 34,
+      "raster_images": 0
+    },
+    {
+      "figure": "figure_3_selective_adaptation",
+      "editable_text_objects": 59,
+      "raster_images": 0
+    }
+  ]
+}

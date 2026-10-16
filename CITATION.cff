@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Please cite the WELD manuscript when using this benchmark or its results."
+type: software
+title: "WELD: Work, Execution, and Lifecycle Diagnostics"
+version: 0.1.0
+date-released: 2026-10-16
+authors:
+  - family-names: Liu
+    given-names: Zhixuan
+    affiliation: Northeastern University
+  - family-names: Yan
+    given-names: Qi
+    affiliation: Northeastern University
+repository-code: "https://github.com/zhixuanliu867-ship-it/WELD"
+url: "https://github.com/zhixuanliu867-ship-it/WELD"
+license: MIT
+keywords:
+  - language models
+  - dynamic workflows
+  - benchmark
+  - workflow effectiveness

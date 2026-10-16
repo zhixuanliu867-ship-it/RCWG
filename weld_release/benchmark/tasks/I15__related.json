@@ -1,0 +1,30 @@
+{
+  "id": "I15__related",
+  "parent": "I15",
+  "family": "I15",
+  "scenario": "incident",
+  "dataset": "re2ob_productcatalogservice_delay_1",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_PRODUCTCATALOG",
+  "requirements": {
+    "metric_filter": "_mem",
+    "log_regex": "timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number",
+    "top_trace_service": "string",
+    "trace_ratio": "number",
+    "log_matches": "number"
+  },
+  "cut_timestamp": 1705394698,
+  "task": "At split timestamp 1705394698, identify the metric containing '_mem' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio. Also return top_trace_service and trace_ratio for the largest post/pre median duration ratio across services, and log_matches counting case-insensitive regex 'timeout' across all logs. Update: split timestamp changed; raw telemetry is unchanged."
+}

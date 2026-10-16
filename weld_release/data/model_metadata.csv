@@ -1,0 +1,11 @@
+﻿model,label,group,cohort
+deepseek,DeepSeek V4 Pro 0813,Open-weight family API,existing5
+kimi,Kimi K2.6,Open-weight family API,existing5
+qwen,Qwen3.8 Flash,Open-weight family API,existing5
+gemma,Gemma 4 31B,Open-weight family API,existing5
+glm,GLM-5.3 Flash,Open-weight family API,added5
+minimax,MiniMax M3,Open-weight family API,added5
+gemini,Gemini 3.8 Flash,Closed API,existing5
+gemini37,Gemini 3.7 Flash,Closed API,added5
+grok,Grok 4.3,Closed API,added5
+luna,GPT-6 Luna,Closed API,added5

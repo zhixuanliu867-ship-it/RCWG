@@ -1,0 +1,45 @@
+{
+  "id": "C01__base",
+  "parent": "C01",
+  "family": "C01",
+  "scenario": "code_review",
+  "dataset": "itsdangerous",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Review the current itsdangerous snapshot for only these registered behavior cases: ['temporal_samples::timed_future_positive_limit', 'temporal_samples::timed_future_zero_limit']. Compare observed outcomes to the public case_contracts. Return verdict approve if none differ, otherwise request_changes; return regression_ids as exact check_id::case_id strings for all differing scoped cases. Other cases are outside this review request.",
+  "requirements": {
+    "scoped_case_ids": [
+      "temporal_samples::timed_future_positive_limit",
+      "temporal_samples::timed_future_zero_limit"
+    ],
+    "candidate_paths": [
+      "src/itsdangerous/_age_policy.py",
+      "src/itsdangerous/timed.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ]
+  },
+  "source_cluster": "CODE_itsdangerous",
+  "public_context": {
+    "check_names": [
+      "serialization_samples",
+      "diagnostic_reader_samples",
+      "temporal_samples",
+      "temporal_diagnostic_samples",
+      "package_smoke"
+    ]
+  }
+}

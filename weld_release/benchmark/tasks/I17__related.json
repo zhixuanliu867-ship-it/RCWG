@@ -1,0 +1,27 @@
+{
+  "id": "I17__related",
+  "parent": "I17",
+  "family": "I17",
+  "scenario": "incident",
+  "dataset": "re2tt_ts-order-service_cpu_1",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_TT_ORDER",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error|fail|timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number"
+  },
+  "cut_timestamp": 1705935185,
+  "task": "At split timestamp 1705935185, identify the metric containing '_cpu' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio. Update: split timestamp changed; raw telemetry is unchanged."
+}

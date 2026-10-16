@@ -1,0 +1,27 @@
+{
+  "id": "I01__base",
+  "parent": "I01",
+  "family": "I01",
+  "scenario": "incident",
+  "dataset": "incident_unit1",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Using the current split timestamp 1705354566, find the metric containing '_cpu' with largest post/pre mean ratio. Return top_metric and ratio. The comparison includes all metrics matching that string.",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error|fail|timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number"
+  },
+  "source_cluster": "RCAEval_RE2_CHECKOUT",
+  "cut_timestamp": 1705354566
+}

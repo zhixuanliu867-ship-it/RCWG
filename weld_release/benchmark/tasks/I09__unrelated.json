@@ -1,0 +1,27 @@
+{
+  "id": "I09__unrelated",
+  "parent": "I09",
+  "family": "I09",
+  "scenario": "incident",
+  "dataset": "re2ob_currencyservice_cpu_1",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "unrelated",
+  "condition": "unrelated",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_CURRENCY",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error|fail|timeout"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number"
+  },
+  "cut_timestamp": 1705682817,
+  "task": "At split timestamp 1705682817, identify the metric containing '_cpu' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio. Update: only incident display title changed; timestamp and telemetry are unchanged."
+}

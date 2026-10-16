@@ -1,0 +1,49 @@
+{
+  "id": "C17__related",
+  "parent": "C17",
+  "family": "C17",
+  "scenario": "code_review",
+  "dataset": "dotenv",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {
+    "snapshot_folder": "v1"
+  },
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CODE_dotenv",
+  "requirements": {
+    "scoped_case_ids": [
+      "public_values::values_0",
+      "public_values::values_1",
+      "public_values::values_2",
+      "public_values::values_3",
+      "parser_records::parse_6",
+      "parser_records::parse_7"
+    ],
+    "candidate_paths": [
+      "src/dotenv/parser.py",
+      "src/dotenv/main.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ],
+    "affected_paths": [
+      "source path"
+    ]
+  },
+  "public_context": {
+    "check_names": [
+      "parser_records",
+      "public_values"
+    ]
+  },
+  "task": "Review the current dotenv snapshot for registered cases ['public_values::values_0', 'public_values::values_1', 'public_values::values_2', 'public_values::values_3', 'parser_records::parse_6', 'parser_records::parse_7']. Compare observations to public case_contracts. Return verdict approve if none differ, otherwise request_changes, and regression_ids as all differing check_id::case_id strings. Other registered cases are outside this request. Inspect these candidate entrypoint modules ['src/dotenv/parser.py', 'src/dotenv/main.py']. Under this review contract, return affected_paths as this module set if a scoped behavior regresses, otherwise []. Update: implementation revision changed. Establish current behavior with the required checks."
+}

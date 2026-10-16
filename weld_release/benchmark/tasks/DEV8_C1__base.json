@@ -1,0 +1,49 @@
+{
+  "id": "DEV8_C1__base",
+  "parent": "DEV8_C1",
+  "family": "DEV8_C1",
+  "scenario": "code_review",
+  "dataset": "dotenv",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CODE_dotenv",
+  "requirements": {
+    "scoped_case_ids": [
+      "public_values::values_0",
+      "public_values::values_1",
+      "public_values::values_2",
+      "public_values::values_3",
+      "public_values::values_4",
+      "public_values::values_5"
+    ],
+    "candidate_paths": [
+      "src/dotenv/parser.py",
+      "src/dotenv/main.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ],
+    "affected_paths": [
+      "source path"
+    ]
+  },
+  "public_context": {
+    "check_names": [
+      "parser_records",
+      "public_values"
+    ]
+  },
+  "task": "Review the current dotenv snapshot for registered cases ['public_values::values_0', 'public_values::values_1', 'public_values::values_2', 'public_values::values_3', 'public_values::values_4', 'public_values::values_5']. Compare observations to public case_contracts. Return verdict approve if none differ, otherwise request_changes, and regression_ids as all differing check_id::case_id strings. Other registered cases are outside this request. Inspect these candidate entrypoint modules ['src/dotenv/parser.py', 'src/dotenv/main.py']. Under this review contract, return affected_paths as this module set if a scoped behavior regresses, otherwise []."
+}

@@ -1,0 +1,52 @@
+{
+  "id": "C05__base",
+  "parent": "C05",
+  "family": "C05",
+  "scenario": "code_review",
+  "dataset": "itsdangerous",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Review the current itsdangerous snapshot for only these registered behavior cases: ['temporal_samples::timed_future_positive_limit', 'temporal_samples::timed_future_zero_limit', 'temporal_samples::urlsafe_timed_future_positive_limit', 'temporal_samples::urlsafe_timed_future_zero_limit', 'serialization_samples::plain_old-key_sha256_configured', 'serialization_samples::plain_old-key_sha256_request-specific']. Compare observed outcomes to the public case_contracts. Return verdict approve if none differ, otherwise request_changes; return regression_ids as exact check_id::case_id strings for all differing scoped cases. Other cases are outside this review request. Inspect the implementation modules ['src/itsdangerous/_age_policy.py', 'src/itsdangerous/timed.py']. The change propagates through these listed candidate entrypoints. Return affected_paths as this module set if any scoped behavior regresses, otherwise [].",
+  "requirements": {
+    "scoped_case_ids": [
+      "temporal_samples::timed_future_positive_limit",
+      "temporal_samples::timed_future_zero_limit",
+      "temporal_samples::urlsafe_timed_future_positive_limit",
+      "temporal_samples::urlsafe_timed_future_zero_limit",
+      "serialization_samples::plain_old-key_sha256_configured",
+      "serialization_samples::plain_old-key_sha256_request-specific"
+    ],
+    "candidate_paths": [
+      "src/itsdangerous/_age_policy.py",
+      "src/itsdangerous/timed.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ],
+    "affected_paths": [
+      "source path"
+    ]
+  },
+  "source_cluster": "CODE_itsdangerous",
+  "public_context": {
+    "check_names": [
+      "serialization_samples",
+      "diagnostic_reader_samples",
+      "temporal_samples",
+      "temporal_diagnostic_samples",
+      "package_smoke"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "C16__related",
+  "parent": "C16",
+  "family": "C16",
+  "scenario": "code_review",
+  "dataset": "dotenv",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "CODE_dotenv",
+  "requirements": {
+    "scoped_case_ids": [
+      "parser_records::parse_4",
+      "parser_records::parse_5"
+    ],
+    "candidate_paths": [
+      "src/dotenv/parser.py",
+      "src/dotenv/main.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ]
+  },
+  "public_context": {
+    "check_names": [
+      "parser_records",
+      "public_values"
+    ]
+  },
+  "task": "Review the current dotenv snapshot for registered cases ['parser_records::parse_4', 'parser_records::parse_5']. Compare observations to public case_contracts. Return verdict approve if none differ, otherwise request_changes, and regression_ids as all differing check_id::case_id strings. Other registered cases are outside this request. Update: implementation revision changed. Establish current behavior with the required checks."
+}

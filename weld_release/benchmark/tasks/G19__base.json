@@ -1,0 +1,31 @@
+{
+  "id": "G19__base",
+  "parent": "G19",
+  "family": "G19",
+  "scenario": "graph",
+  "dataset": "graph_cluster3",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "STARK_MAG_UNIVERSITY_OF_TOKYO",
+  "requirements": {
+    "authors": [
+      612090,
+      3223
+    ],
+    "year_min": 2010,
+    "year_max": 2014,
+    "reference_author": 612090
+  },
+  "answer_schema": {
+    "authors": "array of author summary objects",
+    "references": "array of integer IDs"
+  },
+  "task": "For authors [612090, 3223], summarize publications in 2010-2014 inclusive. Return authors with author_id,count,total_citations,top_id,top_citations. Top means largest citations, ties smallest ID; no publications means null top. Also return references: all in-graph outgoing citation IDs of the first requested author's top paper."
+}

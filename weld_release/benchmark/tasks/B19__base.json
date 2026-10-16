@@ -1,0 +1,83 @@
+{
+  "id": "B19__base",
+  "parent": "B19",
+  "family": "B19",
+  "scenario": "appworld",
+  "dataset": "appworld_export",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "APPWORLD_90adc3f",
+  "requirements": {
+    "members": [
+      60,
+      68,
+      72,
+      85
+    ]
+  },
+  "answer_schema": {
+    "completion": "done"
+  },
+  "business_export": "assets/appworld_exports/90adc3f_1.json",
+  "initial_state": {
+    "playing": {},
+    "requests": {
+      "60": 5000,
+      "68": 3000,
+      "72": 58900,
+      "85": 40800
+    },
+    "preferences": {
+      "volume": 37,
+      "locale": "en"
+    }
+  },
+  "source_request_ids": [
+    2039,
+    2040,
+    2041,
+    2042,
+    2043,
+    2044,
+    2045,
+    2055,
+    2056,
+    2057,
+    2058,
+    2059,
+    6099,
+    6100,
+    6101,
+    6105
+  ],
+  "ledger": [
+    {
+      "id": 60,
+      "share_cents": 5000,
+      "paid_cents": 900
+    },
+    {
+      "id": 68,
+      "share_cents": 3000,
+      "paid_cents": 900
+    },
+    {
+      "id": 72,
+      "share_cents": 58900,
+      "paid_cents": 900
+    },
+    {
+      "id": 85,
+      "share_cents": 40800,
+      "paid_cents": 900
+    }
+  ],
+  "task": "Reconcile existing payment requests for members [60, 68, 72, 85]. payment_records gives original requested totals (share_cents) and confirmed credits (paid_cents). Set each requested amount to max(0,share_cents-paid_cents). request_payment replaces the member total. Preserve other state. Return completion=\"done\" after reconciliation."
+}

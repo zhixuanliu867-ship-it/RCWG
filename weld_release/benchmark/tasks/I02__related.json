@@ -1,0 +1,27 @@
+{
+  "id": "I02__related",
+  "parent": "I02",
+  "family": "I02",
+  "scenario": "incident",
+  "dataset": "incident_unit2",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r1",
+  "final_version": "r1",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Using the current split timestamp 1705666571, find the metric containing 'latency-90' with largest post/pre mean ratio. Return top_metric and ratio. The comparison includes all metrics matching that string. Update: the comparison split timestamp changed; raw telemetry records are unchanged.",
+  "requirements": {
+    "metric_filter": "latency-90",
+    "log_regex": "error"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number"
+  },
+  "source_cluster": "RCAEval_RE2_CHECKOUT",
+  "cut_timestamp": 1705666571
+}

@@ -1,0 +1,6 @@
+﻿model,stages,responses,json_objects,invalid_or_non_object,transport_error_records
+gemini37,600,1061,1061,0,0
+glm,600,1146,1145,1,0
+grok,600,1016,1013,3,3
+luna,600,1330,1242,88,0
+minimax,600,768,736,32,1

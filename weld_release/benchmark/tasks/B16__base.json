@@ -1,0 +1,61 @@
+{
+  "id": "B16__base",
+  "parent": "B16",
+  "family": "B16",
+  "scenario": "appworld",
+  "dataset": "appworld_export",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "APPWORLD_90adc3f",
+  "requirements": {
+    "members": [
+      43,
+      45
+    ]
+  },
+  "answer_schema": {
+    "completion": "done"
+  },
+  "business_export": "assets/appworld_exports/90adc3f_1.json",
+  "initial_state": {
+    "playing": {},
+    "requests": {
+      "43": 24700,
+      "45": 3000
+    },
+    "preferences": {
+      "volume": 37,
+      "locale": "en"
+    }
+  },
+  "source_request_ids": [
+    2060,
+    2061,
+    2062,
+    2063,
+    2064,
+    2065,
+    2066,
+    6098
+  ],
+  "ledger": [
+    {
+      "id": 43,
+      "share_cents": 24700,
+      "paid_cents": 600
+    },
+    {
+      "id": 45,
+      "share_cents": 3000,
+      "paid_cents": 600
+    }
+  ],
+  "task": "Reconcile existing payment requests for members [43, 45]. payment_records gives original requested totals (share_cents) and confirmed credits (paid_cents). Set each requested amount to max(0,share_cents-paid_cents). request_payment replaces the member total. Preserve other state. Return completion=\"done\" after reconciliation."
+}

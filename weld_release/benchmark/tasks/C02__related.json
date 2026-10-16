@@ -1,0 +1,46 @@
+{
+  "id": "C02__related",
+  "parent": "C02",
+  "family": "C02",
+  "scenario": "code_review",
+  "dataset": "requests",
+  "difficulty": "easy",
+  "split": "main",
+  "r5_condition": "related",
+  "condition": "related",
+  "initial_version": "r2",
+  "final_version": "r2",
+  "conditions": {
+    "snapshot_folder": "fixed"
+  },
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Review the current requests snapshot for only these registered behavior cases: ['http_transport_samples::standard_upgrade', 'http_transport_samples::upgrade_nonstandard_same_port']. Compare observed outcomes to the public case_contracts. Return verdict approve if none differ, otherwise request_changes; return regression_ids as exact check_id::case_id strings for all differing scoped cases. Other cases are outside this review request. Update: implementation revision changed. Repeat checks needed to establish current behavior.",
+  "requirements": {
+    "scoped_case_ids": [
+      "http_transport_samples::standard_upgrade",
+      "http_transport_samples::upgrade_nonstandard_same_port"
+    ],
+    "candidate_paths": [
+      "src/requests/models.py",
+      "src/requests/sessions.py",
+      "src/requests/utils.py"
+    ]
+  },
+  "answer_schema": {
+    "verdict": "approve | request_changes",
+    "regression_ids": [
+      "check_id::case_id"
+    ]
+  },
+  "source_cluster": "CODE_requests",
+  "public_context": {
+    "check_names": [
+      "http_transport_samples",
+      "request_state_samples",
+      "stream_transport_samples",
+      "request_copy_samples",
+      "package_smoke"
+    ]
+  }
+}

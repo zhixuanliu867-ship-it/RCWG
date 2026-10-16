@@ -1,0 +1,74 @@
+[
+  {
+    "dataset": "packaging",
+    "candidate_paths": [
+      "src/packaging/specifiers.py",
+      "src/packaging/version.py"
+    ],
+    "regressions": [
+      "lower_bounds::ge_0",
+      "lower_bounds::ge_1",
+      "lower_bounds::ge_4",
+      "lower_bounds::ge_5",
+      "upper_bounds::le_0",
+      "upper_bounds::le_1",
+      "upper_bounds::le_4",
+      "combined_sets::set_0",
+      "combined_sets::set_1",
+      "combined_sets::set_3"
+    ],
+    "unchanged": [
+      "lower_bounds::ge_2",
+      "lower_bounds::ge_3",
+      "upper_bounds::le_2",
+      "upper_bounds::le_3",
+      "upper_bounds::le_5",
+      "combined_sets::set_2",
+      "combined_sets::set_4",
+      "combined_sets::set_5",
+      "combined_sets::set_6",
+      "combined_sets::set_7",
+      "version_normalization::version_0",
+      "version_normalization::version_1",
+      "version_normalization::version_2",
+      "version_normalization::version_3",
+      "version_normalization::version_4",
+      "version_normalization::version_5"
+    ],
+    "source_kind": "published upstream package with explicitly seeded mutations; not an upstream bug report",
+    "normative": "Declared unchanged upstream behavior for the public registered inputs; expected values measured on the fixed snapshot and checked with upstream test semantics."
+  },
+  {
+    "dataset": "dotenv",
+    "candidate_paths": [
+      "src/dotenv/parser.py",
+      "src/dotenv/main.py"
+    ],
+    "regressions": [
+      "parser_records::parse_0",
+      "parser_records::parse_1",
+      "parser_records::parse_4",
+      "parser_records::parse_5",
+      "public_values::values_0",
+      "public_values::values_1",
+      "public_values::values_2",
+      "public_values::values_3"
+    ],
+    "unchanged": [
+      "parser_records::parse_2",
+      "parser_records::parse_3",
+      "parser_records::parse_6",
+      "parser_records::parse_7",
+      "parser_records::parse_8",
+      "parser_records::parse_9",
+      "public_values::values_4",
+      "public_values::values_5",
+      "public_values::values_6",
+      "public_values::values_7",
+      "public_values::values_8",
+      "public_values::values_9"
+    ],
+    "source_kind": "published upstream package with explicitly seeded mutations; not an upstream bug report",
+    "normative": "Declared unchanged upstream behavior for the public registered inputs; expected values measured on the fixed snapshot and checked with upstream test semantics."
+  }
+]

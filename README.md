@@ -1,68 +1,99 @@
-# RCWG
+# WELD
 
-## RCWG-BOOT-001 · 仓库与环境交付包
+**Work, Execution, and Lifecycle Diagnostics**
+An executable benchmark for how language models build and adapt dynamic workflows.
 
-**当前状态：工程包已生成；等待用户 WSL2、Python 3.12、容器及云端验收。**
+[English paper](weld_release/paper/WELD_ACL_EN.pdf) · [中文论文](weld_release/paper/WELD_ACL_ZH.pdf) · [中文说明](README_zh.md) · [Reading guide](docs/weld/READING.md) · [Reproduction](docs/weld/REPRODUCING.md)
 
-开发端采用 Windows + WSL2；模型推理采用 API；本轮推荐 Google Cloud Workflows + Cloud Run Jobs + Cloud Storage。BOOT 核心工具仅依赖 Python 标准库，默认使用 mock，目标解释器为 Python 3.12。目标系统中的补丁版本、镜像 digest 和云项目在验收后登记。
+**WELD: How Well Do Language Models Build and Adapt Dynamic Workflows?**
+Zhixuan Liu and Qi Yan · Northeastern University
+Research manuscript, October 2026. Qi Yan is the corresponding author.
 
-从 `docs/START_HERE_zh.md` 开始。第一步只运行只读环境检查：
+## What WELD measures
 
-```bash
-python3 scripts/doctor.py runs/wsl-doctor.json
-```
+A correct answer can come from very different amounts of work. A smaller workload can yield a modest speedup. A completed result can remain correct after one change and require fresh evidence after another. WELD measures these relationships through model-created workflows, fixed native workers, executable validators, and versioned execution records.
 
-获得批准并准备好目标解释器后，在仓库根目录运行：
+The model chooses investigations, dispatches dependent operations, reads observations, and revises its workflow while it runs. WELD records the initial plan, revisions, actual execution, artifact provenance, and resource use separately.
 
-```bash
-python3.12 -m unittest discover -s tests -v
-python3.12 -m rcwg_boot check
-python3.12 -m rcwg_boot smoke
-python3.12 -m rcwg_boot api-probe
-```
+![WELD execution and measurement protocol](weld_release/figures/figure_0_experiment_design.svg)
 
-最后一条命令默认 mock，真实模型请求数为 0。`check --formal` 应退出码 2，状态 `BLOCKED_NOT_FROZEN`。
+Three questions organize the benchmark:
 
-### 目录
+1. **Among valid solutions, which workflows do less work?** Compare vectors of domain-native work on the same task. Keep dominance, equality, and resource trade-offs distinct.
+2. **How much of a workload reduction becomes an end-to-end benefit?** Compare work savings with observed time savings, separating online completion, request admission, and fixed-response native replay.
+3. **How well does a completed workflow adapt?** Branch from the same checkpoint into relevant and irrelevant changes. Measure restored validity, preservation, new work, time, and reuse.
 
-| 路径 | 作用 |
+Task validity is reported over **every attempted stage**. It also determines eligibility for paired work and timing comparisons. WELD reports a measurement profile; it does not combine quality, work, time, and adaptation into a weighted total.
+
+## Released experiment
+
+| Item | Final study |
+|---|---:|
+| Scenarios | 5 |
+| Parent tasks / source clusters | 100 / 20 |
+| Easy / medium parents | 25 / 75 |
+| Conditions | initial, relevant change, irrelevant change |
+| Models / generation repeats | 10 / 2 |
+| Logical stages | 6,000 |
+| Fixed-response native executions | 8,874 |
+
+Every scenario has 20 parents: five easy and fifteen medium. The scenarios cover graph investigation, code review and impact analysis, relational analytics, telemetry investigation, and application-state operations. See [dataset construction](docs/weld/DATASETS.md) for sources and transformations.
+
+All ten models were served through APIs. Tables separate six open-weight model families from four closed-model APIs. Endpoint, route, and sampling records define each evaluated system; see [experiment configuration](docs/weld/EXPERIMENTS.md).
+
+## Main observations
+
+| Observation | Released evidence |
 |---|---|
-| `AGENTS.md` / `PROJECT_STATE.md` | Codex 约束、验收状态与交接入口 |
-| `rcwg_boot/` / `tests/` | 只读诊断、完整性检查、固定冒烟夹具、手工 API 探针和单元测试 |
-| `specs/reference_v1_0/` | 原始机器规格，25 个文件逐字节保留 |
-| `prompts/v1_1/` | 最新表达版提示词，8 个文件逐字节保留 |
-| `provenance/SOURCE_INVENTORY.json` | 两份源归档及每个成员文件的 SHA256；覆盖范围明确 |
-| `configs/boot.json` | BOOT 默认约束、预算分配和待验收项 |
-| `infra/gcp/` | 单次 mock 工作流 YAML、Job 模板、清理步骤 |
-| `docs/` | 操作卡、成本、环境变更、规格差异、Codex 指令、验收记录 |
+| Valid solutions induce different work | **2,241 of 5,006** valid initial pairs exhibit work dominance; 372 exhibit trade-offs. |
+| Call counts hide native work | **187 pairs** have equal tool-call counts but unequal primary native work. |
+| Work savings can be attenuated online | On medium tasks, the equal-parent mean work-saving minus time-saving gap is **31.6 percentage points**, or **14.5 points** after subtracting local admission waits. Native replay often realizes the savings. |
+| Repair and preservation differ | From 1,479 valid initial results, **807 relevant** and **1,468 irrelevant** continuations remain valid: 54.6% and 99.3%. |
 
-### 研究配置的延续
+These quantities use different eligible populations. [Metrics](docs/weld/METRICS.md) defines every denominator, timing domain, and unit. Timing estimates average pairs within parents before averaging across parents.
 
-原有正式设计保留 6 个生成模型槽位、32 个算子、72 个模板、960 个冻结测试条件实例及其运行矩阵。`specs/reference_v1_0/configs/campaign.json` 保存原始数目；本轮不会把这些改成小规模研究方案。
+## Start in one minute
 
-BOOT 的固定 top-k 夹具用于检查执行、验证、散列和归档。它不实现 WorkIR 执行器，不生成正式实验成绩。完整 C++/Arrow 算子、控制区域、独立验收与资源计量继续按原工作包建设。
-
-API 更改登记于 `docs/API_ENV_AMENDMENT.md`。云工作流负责外层提交和归档；正式 WorkIR 内部调度继续由统一执行器负责。远端模型 GPU/CPU/显存字段保留 `null` 和不可观测标记。
-
-### 隐私与发布
-
-密钥、账号凭据、真实运行结果、隐藏测试和完整研究原稿保存在私有位置。本仓库保留机器规格、提示词草案及教学样例；推送前由研究负责人审核公开范围。暂不自动授予开源许可证。
-
-### SPEC-001B：完整静态契约与离线验收
-
-`rcwg_spec.compiler.validate_workflow(task, plan)` 校验全族公开输入、32 算子／56 实现的参数与类型、控制区域和资源／生命周期义务。`IR_VALIDATED` 表示静态契约通过；执行内核仍为 `NOT_IMPLEMENTED`，正式门禁仍关闭。
-
-在已有 WSL 环境使用固定解释器，所有输出路径必须是新的：
+Python 3.12 or newer is sufficient for the numerical reproduction. This command uses only the standard library and makes no API calls.
 
 ```bash
-bash scripts/accept_spec001b.sh
-uv run --offline --frozen --python 3.12.14 python -m rcwg_spec validate-public-task specs/spec001b/examples/public_F6.json
-uv run --offline --frozen --python 3.12.14 python -m rcwg_spec validate-workflow \
-  --task specs/reference_v1_0/examples/task_input.json \
-  --plan specs/reference_v1_0/examples/workflow_topk.json \
-  --output runs/spec001b-manual/typed-report.json
+git clone https://github.com/zhixuanliu867-ship-it/WELD.git
+cd WELD
+python weld_release/scripts/reproduce_results.py
 ```
 
-完整验收脚本检查固定的真实测试 ID 集合、每个实现分支的合法／非法／dispatch 测试、未改动的 27 个哨兵、六项隔离源码突变、受测字节与暂存树一致，以及原件与正式门禁。通过状态为 `SPEC001B_OFFLINE_GATES_PASS`；最终交付还需独立 CI、补丁 clean apply/tree 和交付文件证明。单独 `rcwg_spec check` 保留 SPEC-001A 的历史 profile；完整 B 以新脚本为准。
+It verifies release hashes, the task matrix, validity counts, work relations, and adaptation denominators, then writes `weld_release/reproduced/summary.json`. [Reproduction instructions](docs/weld/REPRODUCING.md) cover figures, manuscript compilation, and full-archive replay.
 
-P0/P1 组装与私有归档接口见 `docs/spec001b/GENERATION_AND_BINDING.md`；实际契约规则见 `OPERATOR_CONTRACT_NOTES.md`。EXEC-001 对接入口见 `docs/spec001b/EXEC-001_INTERFACE.md`。`runs/` 日志和原始响应保持私有；六族示例均为 `BOOT_ONLY` 工程夹具。
+## Repository map
+
+| Path | Contents |
+|---|---|
+| `weld_release/paper/` | English/Chinese manuscripts, LaTeX, bibliography, ACL style |
+| `weld_release/figures/` | Editable SVG, vector PDF, PNG previews |
+| `weld_release/data/` | All 6,000 stage records, pair tables, timing and adaptation analyses |
+| `weld_release/benchmark/` | Measured evaluator, domain adapters, public task cards, experiment scripts |
+| `weld_release/provenance/` | Source receipts, code hashes, model profiles, acceptance evidence |
+| `weld_release/scripts/` | Numerical reproduction and figure generation |
+| `docs/weld/` | Reading, dataset, metric, experiment, and reproduction documentation |
+
+Root-level `rcwg_*` packages, original specifications, and older documents preserve the early RCWG implementation. The current paper uses `weld_release/`; [history](docs/weld/HISTORY.md) explains the transition.
+
+## Data access
+
+This repository releases numerical tables, public task cards, evaluator source, figure scripts, and manuscripts. The full archive additionally contains raw model responses, physical attempts, frozen source assets, and evaluation labels. Those large artifacts are maintained separately and are **not downloaded by the quick-start command**. Full trace replay requires that archive. The public table reproduction is immediately runnable; [data availability](docs/weld/REPRODUCING.md#data-availability) states the exact coverage.
+
+## Citation
+
+```bibtex
+@misc{liu2026weld,
+  title  = {WELD: How Well Do Language Models Build and Adapt Dynamic Workflows?},
+  author = {Liu, Zhixuan and Yan, Qi},
+  year   = {2026},
+  note   = {Research manuscript},
+  url    = {https://github.com/zhixuanliu867-ship-it/WELD}
+}
+```
+
+## License
+
+Original WELD code uses the [MIT License](LICENSE). Upstream datasets, third-party code, and the ACL template retain their respective terms; see [notices](THIRD_PARTY_NOTICES.md). Report reproducibility issues through [GitHub Issues](https://github.com/zhixuanliu867-ship-it/WELD/issues), including the release commit and failing command.

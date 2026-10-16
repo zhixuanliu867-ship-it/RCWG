@@ -1,0 +1,31 @@
+{
+  "id": "G06__base",
+  "parent": "G06",
+  "family": "G06",
+  "scenario": "graph",
+  "dataset": "graph",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "For each author ID in [68221, 852941], summarize authored publications in 2010-2014 inclusive: paper count, total citations, top paper ID and citations (ties smallest ID; no papers means null top). Return authors rows with exactly author_id,count,total_citations,top_id,top_citations. Also return all in-graph reference IDs of the first requested author's top paper, as references (empty if no top).",
+  "requirements": {
+    "authors": [
+      68221,
+      852941
+    ],
+    "year_min": 2010,
+    "year_max": 2014,
+    "reference_author": 68221
+  },
+  "answer_schema": {
+    "authors": "array of requested author summary objects",
+    "references": "array of integer IDs"
+  },
+  "source_cluster": "STARK_MAG_SHARED_SLICE"
+}

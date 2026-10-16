@@ -1,0 +1,40 @@
+{
+  "id": "B12__base",
+  "parent": "B12",
+  "family": "B12",
+  "scenario": "appworld",
+  "dataset": "appworld_export",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "APPWORLD_3fcc458",
+  "requirements": {
+    "download_playlists": [
+      158,
+      159,
+      654
+    ]
+  },
+  "answer_schema": {
+    "completion": "done"
+  },
+  "business_export": "assets/appworld_exports/3fcc458_1.json",
+  "initial_state": {
+    "playing": {},
+    "requests": {},
+    "preferences": {
+      "volume": 37,
+      "locale": "en"
+    },
+    "downloaded": [
+      1
+    ]
+  },
+  "task": "Prepare playlists [158, 159, 654] for offline listening. Ensure every song in these playlists is downloaded. Preserve prior downloads and all other application state. Existing downloaded songs may be reused; extra valid downloads may remain. Return completion=\"done\" after the required state is established."
+}

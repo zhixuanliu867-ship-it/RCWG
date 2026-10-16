@@ -1,0 +1,30 @@
+{
+  "id": "DEV8_I2__base",
+  "parent": "DEV8_I2",
+  "family": "DEV8_I2",
+  "scenario": "incident",
+  "dataset": "re2tt_ts-order-service_cpu_1",
+  "difficulty": "medium",
+  "split": "dev",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R8_source_extension",
+  "source_cluster": "RCAEval_RE2_TT_ORDER",
+  "requirements": {
+    "metric_filter": "_cpu",
+    "log_regex": "error"
+  },
+  "answer_schema": {
+    "top_metric": "string",
+    "ratio": "number",
+    "top_trace_service": "string",
+    "trace_ratio": "number",
+    "log_matches": "number"
+  },
+  "cut_timestamp": 1705935125,
+  "task": "At split timestamp 1705935125, identify the metric containing '_cpu' with greatest post/pre mean ratio across all matching metrics. Return top_metric and ratio. Also return top_trace_service and trace_ratio for the largest post/pre median duration ratio across services, and log_matches counting case-insensitive regex 'error' across all logs."
+}

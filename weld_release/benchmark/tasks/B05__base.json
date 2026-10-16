@@ -1,0 +1,35 @@
+{
+  "id": "B05__base",
+  "parent": "B05",
+  "family": "B05",
+  "scenario": "appworld",
+  "dataset": "appworld_export",
+  "difficulty": "medium",
+  "split": "main",
+  "r5_condition": "base",
+  "condition": "base",
+  "initial_version": "r0",
+  "final_version": "r0",
+  "conditions": {},
+  "handoffs": [],
+  "track": "R6_tiered_native",
+  "task": "Start a whole owned playlist for each workout session: minimum duration in seconds {'morning': 3000, 'afternoon': 2100}. Any existing playlist meeting each duration is acceptable, and sessions may share a playlist. Preserve volume/locale and other sessions. Return completion=\"done\" after the required player states are established.",
+  "requirements": {
+    "sessions": {
+      "morning": 3000,
+      "afternoon": 2100
+    }
+  },
+  "answer_schema": {
+    "completion": "done"
+  },
+  "source_cluster": "APPWORLD_WORKOUT_b0a8eae",
+  "initial_state": {
+    "playing": {},
+    "requests": {},
+    "preferences": {
+      "volume": 37,
+      "locale": "en"
+    }
+  }
+}
