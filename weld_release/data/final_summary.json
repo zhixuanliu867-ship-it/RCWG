@@ -1,0 +1,21 @@
+{
+  "main_n": 6000,
+  "main_valid": 3873,
+  "base_n": 2000,
+  "base_valid": 1479,
+  "new_n": 3000,
+  "new_valid": 1892,
+  "parents": 100,
+  "source_clusters": 20,
+  "models": 10,
+  "pairs": 5006,
+  "parents_with_pairs": 100,
+  "equal_pairs": 2393,
+  "dominance_pairs": 2241,
+  "tradeoff_pairs": 372,
+  "common_ten_cells": 8,
+  "common_all_model_cells": 8,
+  "planned_stages": 6000,
+  "all_models_complete": true,
+  "pending_models": []
+}

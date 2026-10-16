@@ -24,3 +24,8 @@ gold/
 # Public WELD reproduction outputs and local environments.
 weld_release/reproduced/
 .venv-weld/
+# Explicitly reviewed public tables and compiled manuscript/vector figures.
+!weld_release/data/
+!weld_release/data/**
+!weld_release/paper/*.pdf
+!weld_release/figures/*.pdf

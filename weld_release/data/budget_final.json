@@ -1,0 +1,131 @@
+{
+  "request_count": 5710,
+  "settled_cost_usd": 8.157210226,
+  "unresolved_reserved_usd": 0.570416173,
+  "committed_usd": 8.727626399,
+  "admission_ceiling_usd": 89.312400211,
+  "absolute_user_ceiling_usd": 100.0,
+  "fuse": null,
+  "budget_scope": "Continuation of user USD100 authorization; R8 spend and unresolved reservations remain charged to that authorization.",
+  "prior_round_spend_usd": 10.687599789,
+  "combined_committed_usd": 19.415226188,
+  "groups": {
+    "preflight": {
+      "requests": 21,
+      "settled_usd": 0.00090386,
+      "unknown_requests": 8,
+      "retained_reservation_usd": 0.110179311
+    },
+    "development": {
+      "requests": 364,
+      "settled_usd": 0.612390635,
+      "unknown_requests": 0,
+      "retained_reservation_usd": 0.0
+    },
+    "main": {
+      "requests": 5325,
+      "settled_usd": 7.543915730999978,
+      "unknown_requests": 4,
+      "retained_reservation_usd": 0.46023686199999997
+    }
+  },
+  "unknown_requests": [
+    {
+      "id": "req-b6fab8fe59b74587aaa8ebbf0c0e7d2e",
+      "episode": "PREFLIGHT9_mistral",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-7a25ca693a8b400dbe7badfac9b9d975",
+      "episode": "PREFLIGHT9_mistral_retry1",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-f6e39a703d3047f890a86bb004971c15",
+      "episode": "PREFLIGHT9_mistral_retry2",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-e2e5016b8266484ab970a3eff0797cc4",
+      "episode": "PREFLIGHT9_mistral_retry3",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-05a06563fb614cfc968e7946378f7d99",
+      "episode": "PREFLIGHT9_MISTRAL_ZDR",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_404",
+      "generation_id": null
+    },
+    {
+      "id": "req-ec5e338e31c84960a908efa3f3c9e1af",
+      "episode": "PREFLIGHT9_MISTRAL_ZDR",
+      "status": "UNKNOWN",
+      "reserved": 13814770,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-8d3154a677084c6fa40056d62ce4fb88",
+      "episode": "PREFLIGHT9_MISTRAL_RECOVERY_1",
+      "status": "UNKNOWN",
+      "reserved": 13816286,
+      "error_code": "HTTP_429",
+      "generation_id": null
+    },
+    {
+      "id": "req-d8cb01bdc6884d88954ca256a6e91556",
+      "episode": "R9_grok_r2_B04__unrelated",
+      "status": "UNKNOWN",
+      "reserved": 154432526,
+      "error_code": "TransportStop",
+      "generation_id": "gen-1792091332-sYFuGZbfY2cAhotmt4OY"
+    },
+    {
+      "id": "req-d429af3888ca4895ae0bb7e4740e5652",
+      "episode": "R9_minimax_r2_C05__unrelated",
+      "status": "UNKNOWN",
+      "reserved": 34592086,
+      "error_code": "IncompleteRead",
+      "generation_id": null
+    },
+    {
+      "id": "req-80677bb7b5eb452da0b0a3f85408eb8a",
+      "episode": "R9_grok_r2_A04__base",
+      "status": "UNKNOWN",
+      "reserved": 127879625,
+      "error_code": "TransportStop",
+      "generation_id": "gen-1792091438-5ytA9BMTBKTc8sue3DLf"
+    },
+    {
+      "id": "req-a5045daeeda94752b0e8e1e729b44ff0",
+      "episode": "R9_grok_r2_I10__base",
+      "status": "UNKNOWN",
+      "reserved": 143332625,
+      "error_code": "TransportStop",
+      "generation_id": "gen-1792091467-urLwHkL79cJQIwxzGEt6"
+    },
+    {
+      "id": "req-c151748845cd4c6cbd383917f9abd5d9",
+      "episode": "PREFLIGHT9_GLM_REPLACEMENT",
+      "status": "UNKNOWN",
+      "reserved": 13466825,
+      "error_code": "HTTP_400",
+      "generation_id": null
+    }
+  ],
+  "settled_cost_definition": "Provider usage.cost receipts, not reconciled invoice. Unknown requests retain maximum reservations."
+}
